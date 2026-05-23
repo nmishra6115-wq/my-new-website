@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FinCrimeHub</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <style>
+      @keyframes coreGlow {
+        0% { transform: translate(0px, 0px) scale(1); opacity: 0.3; }
+        50% { transform: translate(40px, -30px) scale(1.1); opacity: 0.6; }
+        100% { transform: translate(-20px, 20px) scale(0.95); opacity: 0.3; }
+      }
+      
+      @keyframes coreGlowTwo {
+        0% { transform: translate(0px, 0px) scale(1); opacity: 0.4; }
+        50% { transform: translate(-40px, 40px) scale(0.9); opacity: 0.2; }
+        100% { transform: translate(20px, -20px) scale(1.05); opacity: 0.4; }
+      }
+
+      .hard-drift-one {
+        position: absolute;
+        top: 80px;
+        left: 20%;
+        width: 600px;
+        height: 600px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(34,211,238,0.2) 0%, rgba(59,130,246,0.05) 60%, transparent 80%);
+        filter: blur(80px);
+        pointer-events: none;
+        z-index: 1;
+        animation: coreGlow 12s infinite alternate ease-in-out;
+      }
+
+      .hard-drift-two {
+        position: absolute;
+        top: 150px;
+        right: 15%;
+        width: 500px;
+        height: 500px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(168,85,247,0.15) 0%, rgba(236,72,153,0.02) 60%, transparent 80%);
+        filter: blur(90px);
+        pointer-events: none;
+        z-index: 1;
+        animation: coreGlowTwo 16s infinite alternate ease-in-out;
+      }
+      
+      body {
+        background-color: #030712 !important;
+        margin: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>

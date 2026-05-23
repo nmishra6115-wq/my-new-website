@@ -1,0 +1,17 @@
+#root {
+  background: transparent !important;
+  min-height: 100vh;
+}
+
+body {
+  margin: 0;
+  background-color: #030712 !important;
+}
+@keyframes marquee {
+  0% { transform: translateX(100%); }
+  100% { transform: translateX(-100%); }
+}
+.animate-marquee {
+  display: inline-block;
+  animation: marquee 20s linear infinite;
+}
