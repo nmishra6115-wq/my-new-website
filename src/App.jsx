@@ -8,7 +8,7 @@ export default function App() {
   const [pageIndex, setPageIndex] = useState(0);
   const [isMuted, setIsMuted] = useState(true);
   const [filter, setFilter] = useState("All");
-  const [isMenuOpen, setIsMenuOpen] = useState(false); // Added for mobile menu
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const [referrals, setReferrals] = useState(() => {
     const saved = localStorage.getItem('kyc_referrals');
@@ -40,27 +40,35 @@ export default function App() {
     <div className="bg-[#030712] text-slate-100 font-sans min-h-screen flex flex-col">
       
       {/* NAVIGATION */}
-      <nav className="p-8 border-b border-white/5 flex items-center justify-between sticky top-0 bg-[#030712]/80 backdrop-blur-md z-50">
-        <h1 className="text-2xl font-black tracking-[0.2em] text-emerald-500 cursor-pointer" onClick={() => { setActiveView(null); setIsMenuOpen(false); }}>
+      <nav className="p-6 border-b border-white/5 flex items-center justify-between sticky top-0 bg-[#030712]/90 backdrop-blur-md z-50 w-full">
+        <h1 className="text-xl md:text-2xl font-black tracking-[0.2em] text-emerald-500 cursor-pointer" 
+            onClick={() => { setActiveView(null); setIsMenuOpen(false); }}>
           AMLDecode
         </h1>
-        
+
+        {/* Desktop Links */}
+        <div className="hidden md:flex gap-8 items-center">
+          <button onClick={() => setActiveView('notes')} className="text-xs font-bold hover:text-emerald-400 transition-all">NOTES</button>
+          <button onClick={() => setActiveView('jobs')} className="text-xs font-bold hover:text-indigo-400 transition-all">JOBS</button>
+          <button onClick={() => setActiveView('referralForm')} className="text-xs font-bold hover:text-white transition-all">SUBMIT REFERRAL</button>
+          <button onClick={() => setActiveView('availability')} className="text-xs font-bold hover:text-white transition-all">AVAILABLE REFERRAL</button>
+        </div>
+
         {/* Mobile Menu Button */}
-        <button 
-          className="md:hidden text-emerald-500 text-2xl" 
-          onClick={() => setIsMenuOpen(!isMenuOpen)}
-        >
+        <button className="md:hidden text-emerald-500 text-xl" onClick={() => setIsMenuOpen(!isMenuOpen)}>
           {isMenuOpen ? "✕" : "☰"}
         </button>
-
-        {/* Links Div */}
-        <div className={`${isMenuOpen ? 'flex' : 'hidden'} md:flex flex-col md:flex-row absolute md:static top-24 left-0 w-full bg-[#030712] p-8 md:p-0 gap-6 border-b border-white/5 md:border-0`}>
-          <button onClick={() => { setActiveView('notes'); setIsMenuOpen(false); }} className="text-sm font-bold hover:text-emerald-400 transition-all text-left">NOTES</button>
-          <button onClick={() => { setActiveView('jobs'); setIsMenuOpen(false); }} className="text-sm font-bold hover:text-indigo-400 transition-all text-left">JOBS</button>
-          <button onClick={() => { setActiveView('referralForm'); setIsMenuOpen(false); }} className="text-sm font-bold hover:text-white transition-all text-left">SUBMIT REFERRAL</button>
-          <button onClick={() => { setActiveView('availability'); setIsMenuOpen(false); }} className="text-sm font-bold hover:text-white transition-all text-left">AVAILABLE REFERRAL</button>
-        </div>
       </nav>
+
+      {/* Mobile Menu Dropdown */}
+      {isMenuOpen && (
+        <div className="md:hidden flex flex-col bg-[#030712] p-6 gap-4 border-b border-white/5">
+          <button onClick={() => { setActiveView('notes'); setIsMenuOpen(false); }} className="text-sm font-bold text-left">NOTES</button>
+          <button onClick={() => { setActiveView('jobs'); setIsMenuOpen(false); }} className="text-sm font-bold text-left">JOBS</button>
+          <button onClick={() => { setActiveView('referralForm'); setIsMenuOpen(false); }} className="text-sm font-bold text-left">SUBMIT REFERRAL</button>
+          <button onClick={() => { setActiveView('availability'); setIsMenuOpen(false); }} className="text-sm font-bold text-left">AVAILABLE REFERRAL</button>
+        </div>
+      )}
 
       {/* VIDEO */}
       {!activeView && (
@@ -98,8 +106,7 @@ export default function App() {
         </main>
       )}
 
-      {/* OVERLAYS (Notes, Jobs, Form, Availability) remain unchanged */}
-      {/* (Shortened for space, keep your original overlay code here) */}
+      {/* OVERLAYS (Keep your existing code for notes, jobs, etc. here) */}
       
       <footer className="py-10 text-center text-slate-500 border-t border-white/5">© 2026 AML Decode | DESIGNED BY @NITESH</footer>
     </div>
