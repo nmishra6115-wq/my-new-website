@@ -48,8 +48,8 @@ export default function App() {
         <div className="hidden md:flex gap-8 items-center">
           <button onClick={() => setActiveView('notes')} className="text-sm font-black text-emerald-400 hover:text-white transition-all uppercase tracking-widest">NOTES</button>
           <button onClick={() => setActiveView('jobs')} className="text-sm font-black text-indigo-400 hover:text-white transition-all uppercase tracking-widest">JOBS</button>
-          <button onClick={() => setActiveView('referralForm')} className="text-sm font-black text-white hover:text-emerald-400 transition-all uppercase tracking-widest">SUBMIT</button>
-          <button onClick={() => setActiveView('availability')} className="text-sm font-black text-emerald-400 hover:text-white transition-all uppercase tracking-widest">AVAILABLE</button>
+          <button onClick={() => setActiveView('referralForm')} className="text-sm font-black text-white hover:text-emerald-400 transition-all uppercase tracking-widest">SUBMIT REFERRAL</button>
+          <button onClick={() => setActiveView('availability')} className="text-sm font-black text-emerald-400 hover:text-white transition-all uppercase tracking-widest">AVAILABLE REFERRAL</button>
         </div>
         <button className="md:hidden text-emerald-500 text-2xl" onClick={() => setIsMenuOpen(!isMenuOpen)}>
           {isMenuOpen ? "✕" : "☰"}
