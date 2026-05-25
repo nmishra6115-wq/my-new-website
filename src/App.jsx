@@ -45,8 +45,8 @@ AMLDecode</h1>
         <div className="flex gap-6">
           <button onClick={() => setActiveView('notes')} className="text-sm font-bold hover:text-emerald-400 transition-all">NOTES</button>
           <button onClick={() => setActiveView('jobs')} className="text-sm font-bold hover:text-indigo-400 transition-all">JOBS</button>
-          <button onClick={() => setActiveView('referralForm')} className="text-sm font-bold hover:text-white transition-all">SUBMIT</button>
-          <button onClick={() => setActiveView('availability')} className="text-sm font-bold hover:text-white transition-all">AVAILABILITY</button>
+          <button onClick={() => setActiveView('referralForm')} className="text-sm font-bold hover:text-white transition-all">SUBMIT REFERRAL</button>
+          <button onClick={() => setActiveView('availability')} className="text-sm font-bold hover:text-white transition-all">AVAILABLE REFERRAL</button>
         </div>
       </nav>
 
