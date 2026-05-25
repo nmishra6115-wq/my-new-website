@@ -1,3 +1,5 @@
+import { Analytics } from "@vercel/analytics/next"
+
 import { Analytics } from '@vercel/analytics/react';
 
 // Wrap your main app component with <Analytics />
