@@ -39,38 +39,33 @@ export default function App() {
   return (
     <div className="bg-[#030712] text-slate-100 font-mono min-h-screen flex flex-col">
       
-      {/* NAVIGATION - CYBERPUNK STYLE */}
+      {/* NAVIGATION */}
       <nav className="p-6 border-b border-emerald-500/30 flex items-center justify-between sticky top-0 bg-[#030712]/90 backdrop-blur-lg z-50 w-full shadow-[0_0_20px_rgba(16,185,129,0.1)]">
         <h1 className="text-xl md:text-2xl font-black tracking-[0.3em] text-emerald-500 cursor-pointer hover:text-white transition-all uppercase" 
             onClick={() => { setActiveView(null); setIsMenuOpen(false); }}>
           &gt; AML_DECODE
         </h1>
-
-        {/* Desktop Links */}
         <div className="hidden md:flex gap-8 items-center">
-          <button onClick={() => setActiveView('notes')} className="text-[10px] tracking-[0.2em] font-bold text-emerald-500/70 hover:text-white hover:shadow-[0_0_8px_#10b981] transition-all uppercase border-b border-transparent hover:border-emerald-500">NOTES</button>
-          <button onClick={() => setActiveView('jobs')} className="text-[10px] tracking-[0.2em] font-bold text-indigo-500/70 hover:text-white hover:shadow-[0_0_8px_#6366f1] transition-all uppercase border-b border-transparent hover:border-indigo-500">JOBS</button>
-          <button onClick={() => setActiveView('referralForm')} className="text-[10px] tracking-[0.2em] font-bold text-white/70 hover:text-white hover:shadow-[0_0_8px_#ffffff] transition-all uppercase border-b border-transparent hover:border-white">SUBMIT</button>
-          <button onClick={() => setActiveView('availability')} className="text-[10px] tracking-[0.2em] font-bold text-emerald-500/70 hover:text-white hover:shadow-[0_0_8px_#10b981] transition-all uppercase border-b border-transparent hover:border-emerald-500">AVAILABLE</button>
+          <button onClick={() => setActiveView('notes')} className="text-sm font-black text-emerald-400 hover:text-white transition-all uppercase tracking-widest">NOTES</button>
+          <button onClick={() => setActiveView('jobs')} className="text-sm font-black text-indigo-400 hover:text-white transition-all uppercase tracking-widest">JOBS</button>
+          <button onClick={() => setActiveView('referralForm')} className="text-sm font-black text-white hover:text-emerald-400 transition-all uppercase tracking-widest">SUBMIT</button>
+          <button onClick={() => setActiveView('availability')} className="text-sm font-black text-emerald-400 hover:text-white transition-all uppercase tracking-widest">AVAILABLE</button>
         </div>
-
-        {/* Mobile Menu Button */}
-        <button className="md:hidden text-emerald-500 text-xl" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+        <button className="md:hidden text-emerald-500 text-2xl" onClick={() => setIsMenuOpen(!isMenuOpen)}>
           {isMenuOpen ? "✕" : "☰"}
         </button>
       </nav>
 
-      {/* Mobile Menu Dropdown */}
       {isMenuOpen && (
         <div className="md:hidden flex flex-col bg-[#030712] p-6 gap-4 border-b border-emerald-500/30">
-          <button onClick={() => { setActiveView('notes'); setIsMenuOpen(false); }} className="text-sm font-bold text-left text-emerald-400">NOTES</button>
-          <button onClick={() => { setActiveView('jobs'); setIsMenuOpen(false); }} className="text-sm font-bold text-left text-indigo-400">JOBS</button>
-          <button onClick={() => { setActiveView('referralForm'); setIsMenuOpen(false); }} className="text-sm font-bold text-left">SUBMIT</button>
-          <button onClick={() => { setActiveView('availability'); setIsMenuOpen(false); }} className="text-sm font-bold text-left text-emerald-400">AVAILABLE</button>
+          <button onClick={() => { setActiveView('notes'); setIsMenuOpen(false); }} className="text-lg font-black text-left text-emerald-400">NOTES</button>
+          <button onClick={() => { setActiveView('jobs'); setIsMenuOpen(false); }} className="text-lg font-black text-left text-indigo-400">JOBS</button>
+          <button onClick={() => { setActiveView('referralForm'); setIsMenuOpen(false); }} className="text-lg font-black text-left">SUBMIT</button>
+          <button onClick={() => { setActiveView('availability'); setIsMenuOpen(false); }} className="text-lg font-black text-left text-emerald-400">AVAILABLE</button>
         </div>
       )}
 
-      {/* VIDEO */}
+      {/* VIDEO SECTION */}
       {!activeView && (
         <section className="w-full relative">
            <video className="w-full h-[500px] object-cover" autoPlay muted={isMuted} loop playsInline>
@@ -87,15 +82,26 @@ export default function App() {
         <main className="flex-grow max-w-7xl mx-auto px-6 py-16">
           <h2 className="text-4xl font-black text-center mb-16 text-white uppercase tracking-widest">Portal Access</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-24">
-              <div onClick={() => setActiveView('notes')} className="p-8 bg-slate-900 border border-emerald-500/20 rounded-lg cursor-pointer hover:bg-slate-800 transition hover:border-emerald-500"><div className="text-4xl mb-6">📖</div><h3 className="font-bold text-emerald-400 mb-2 uppercase">Notes</h3><p className="text-sm text-slate-400">Compliance library.</p></div>
-              <div onClick={() => setActiveView('jobs')} className="p-8 bg-slate-900 border border-indigo-500/20 rounded-lg cursor-pointer hover:bg-slate-800 transition hover:border-indigo-500"><div className="text-4xl mb-6">💼</div><h3 className="font-bold text-indigo-400 mb-2 uppercase">Jobs</h3><p className="text-sm text-slate-400">Industry roles.</p></div>
-              <div onClick={() => setActiveView('referralForm')} className="p-8 bg-slate-900 border border-white/10 rounded-lg cursor-pointer hover:bg-slate-800 transition hover:border-white"><div className="text-4xl mb-6">📤</div><h3 className="font-bold text-white mb-2 uppercase">Submit</h3><p className="text-sm text-slate-400">Post referrals.</p></div>
-              <div onClick={() => setActiveView('availability')} className="p-8 bg-slate-900 border border-emerald-500/20 rounded-lg cursor-pointer hover:bg-slate-800 transition hover:border-emerald-500"><div className="text-4xl mb-6">🔍</div><h3 className="font-bold text-emerald-400 mb-2 uppercase">Availability</h3><p className="text-sm text-slate-400">Check slots.</p></div>
+              <div onClick={() => setActiveView('notes')} className="p-8 bg-slate-900 border border-emerald-500/20 rounded hover:border-emerald-500 transition cursor-pointer"><div className="text-4xl mb-6">📖</div><h3 className="font-bold text-emerald-400 mb-2 uppercase">Notes</h3></div>
+              <div onClick={() => setActiveView('jobs')} className="p-8 bg-slate-900 border border-indigo-500/20 rounded hover:border-indigo-500 transition cursor-pointer"><div className="text-4xl mb-6">💼</div><h3 className="font-bold text-indigo-400 mb-2 uppercase">Jobs</h3></div>
+              <div onClick={() => setActiveView('referralForm')} className="p-8 bg-slate-900 border border-white/10 rounded hover:border-white transition cursor-pointer"><div className="text-4xl mb-6">📤</div><h3 className="font-bold text-white mb-2 uppercase">Submit</h3></div>
+              <div onClick={() => setActiveView('availability')} className="p-8 bg-slate-900 border border-emerald-500/20 rounded hover:border-emerald-500 transition cursor-pointer"><div className="text-4xl mb-6">🔍</div><h3 className="font-bold text-emerald-400 mb-2 uppercase">Availability</h3></div>
           </div>
+          <section className="border-t border-white/5 pt-16">
+            <h2 className="text-xl font-black text-red-500 mb-8 tracking-widest">● LATEST INDUSTRY NEWS</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {kycNews.map((news, idx) => (
+                <a key={idx} href={news.link} target="_blank" rel="noopener noreferrer" className="block p-6 bg-slate-900 border border-white/5 rounded hover:border-red-500 transition-all">
+                  <h4 className="text-md font-semibold text-slate-200 mb-4">{news.headline}</h4>
+                  <span className="text-red-500 text-xs font-bold uppercase tracking-widest">Read More →</span>
+                </a>
+              ))}
+            </div>
+          </section>
         </main>
       )}
 
-      {/* OVERLAYS */}
+      {/* OVERLAY SECTIONS */}
       {activeView === 'notes' && (
         <div className="fixed inset-0 z-[100] bg-black/95 p-12 overflow-y-auto">
           <button onClick={() => setActiveView(null)} className="text-emerald-400 font-bold mb-10">&larr; BACK_TO_SYSTEM</button>
