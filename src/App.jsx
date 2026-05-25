@@ -107,7 +107,7 @@ AMLDecode</h1>
               <option value="Bengaluru">Bengaluru</option>
               <option value="Kolkata">Kolkata</option>
               <option value="Gurugram">Gurugram</option>
-              <option value="Mumbai">Mumbai</option>
+              <option value="Mumbai">Remote</option>
             </select>
             <div className="bg-slate-900 rounded-2xl border border-slate-800 overflow-hidden">
               {(filter === "All" ? jobOpenings : jobOpenings.filter(j => j.location === filter)).map((job, idx) => (
