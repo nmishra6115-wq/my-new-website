@@ -41,7 +41,7 @@ export default function App() {
       {/* NAVIGATION */}
       <nav className="p-8 border-b border-white/5 flex items-center justify-between sticky top-0 bg-[#030712]/80 backdrop-blur-md z-50">
         <h1 className="text-2xl font-black tracking-[0.2em] text-emerald-500 cursor-pointer" onClick={() => setActiveView(null)}>
-AMLdecode</h1>
+AMLDecode</h1>
         <div className="flex gap-6">
           <button onClick={() => setActiveView('notes')} className="text-sm font-bold hover:text-emerald-400 transition-all">NOTES</button>
           <button onClick={() => setActiveView('jobs')} className="text-sm font-bold hover:text-indigo-400 transition-all">JOBS</button>
