@@ -84,8 +84,8 @@ export default function App() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-24">
               <div onClick={() => setActiveView('notes')} className="p-8 bg-slate-900 border border-emerald-500/20 rounded hover:border-emerald-500 transition cursor-pointer"><div className="text-4xl mb-6">📖</div><h3 className="font-bold text-emerald-400 mb-2 uppercase">Notes</h3></div>
               <div onClick={() => setActiveView('jobs')} className="p-8 bg-slate-900 border border-indigo-500/20 rounded hover:border-indigo-500 transition cursor-pointer"><div className="text-4xl mb-6">💼</div><h3 className="font-bold text-indigo-400 mb-2 uppercase">Jobs</h3></div>
-              <div onClick={() => setActiveView('referralForm')} className="p-8 bg-slate-900 border border-white/10 rounded hover:border-white transition cursor-pointer"><div className="text-4xl mb-6">📤</div><h3 className="font-bold text-white mb-2 uppercase">Submit</h3></div>
-              <div onClick={() => setActiveView('availability')} className="p-8 bg-slate-900 border border-emerald-500/20 rounded hover:border-emerald-500 transition cursor-pointer"><div className="text-4xl mb-6">🔍</div><h3 className="font-bold text-emerald-400 mb-2 uppercase">Availability</h3></div>
+              <div onClick={() => setActiveView('referralForm')} className="p-8 bg-slate-900 border border-white/10 rounded hover:border-white transition cursor-pointer"><div className="text-4xl mb-6">📤</div><h3 className="font-bold text-white mb-2 uppercase">Submit Referral</h3></div>
+              <div onClick={() => setActiveView('availability')} className="p-8 bg-slate-900 border border-emerald-500/20 rounded hover:border-emerald-500 transition cursor-pointer"><div className="text-4xl mb-6">🔍</div><h3 className="font-bold text-emerald-400 mb-2 uppercase">Available Referral</h3></div>
           </div>
           <section className="border-t border-white/5 pt-16">
             <h2 className="text-xl font-black text-red-500 mb-8 tracking-widest">● LATEST INDUSTRY NEWS</h2>
