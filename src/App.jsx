@@ -67,11 +67,28 @@ AMLDecode</h1>
         <main className="flex-grow max-w-7xl mx-auto px-6 py-16">
           <h2 className="text-4xl font-black text-center mb-16 text-white">How to use this Portal</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-24">
-              <div className="p-8 bg-slate-900 border border-emerald-500/20 rounded-3xl"><div className="text-4xl mb-6">📖</div><h3 className="font-bold text-emerald-400 mb-2">Notes</h3><p className="text-sm text-slate-400">Review compliance frameworks.</p></div>
-              <div className="p-8 bg-slate-900 border border-indigo-500/20 rounded-3xl"><div className="text-4xl mb-6">💼</div><h3 className="font-bold text-indigo-400 mb-2">Job Search</h3><p className="text-sm text-slate-400">Filter and apply to roles.</p></div>
-              <div className="p-8 bg-slate-900 border border-white/10 rounded-3xl"><div className="text-4xl mb-6">📤</div><h3 className="font-bold text-white mb-2">Submit</h3><p className="text-sm text-slate-400">Post referral details.</p></div>
-              <div className="p-8 bg-slate-900 border border-emerald-500/20 rounded-3xl"><div className="text-4xl mb-6">🔍</div><h3 className="font-bold text-emerald-400 mb-2">Availability</h3><p className="text-sm text-slate-400">Review referral slots.</p></div>
-          </div>
+  
+  <div onClick={() => setActiveView('notes')} className="p-8 bg-slate-900 border border-emerald-500/20 rounded-3xl cursor-pointer hover:bg-slate-800 transition">
+    <div className="text-4xl mb-6">📖</div><h3 className="font-bold text-emerald-400 mb-2">Notes</h3>
+    <p className="text-sm text-slate-400">Review compliance frameworks.</p>
+  </div>
+
+  <div onClick={() => setActiveView('jobs')} className="p-8 bg-slate-900 border border-indigo-500/20 rounded-3xl cursor-pointer hover:bg-slate-800 transition">
+    <div className="text-4xl mb-6">💼</div><h3 className="font-bold text-indigo-400 mb-2">Job Search</h3>
+    <p className="text-sm text-slate-400">Filter and apply to roles.</p>
+  </div>
+
+  <div onClick={() => setActiveView('referralForm')} className="p-8 bg-slate-900 border border-white/10 rounded-3xl cursor-pointer hover:bg-slate-800 transition">
+    <div className="text-4xl mb-6">📤</div><h3 className="font-bold text-white mb-2">Submit</h3>
+    <p className="text-sm text-slate-400">Post referral details.</p>
+  </div>
+
+  <div onClick={() => setActiveView('availability')} className="p-8 bg-slate-900 border border-emerald-500/20 rounded-3xl cursor-pointer hover:bg-slate-800 transition">
+    <div className="text-4xl mb-6">🔍</div><h3 className="font-bold text-emerald-400 mb-2">Availability</h3>
+    <p className="text-sm text-slate-400">Review referral slots.</p>
+  </div>
+
+</div>
           <section className="border-t border-white/5 pt-16">
             <h2 className="text-xl font-bold text-red-500 mb-8 flex items-center gap-2">● LATEST INDUSTRY NEWS</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
