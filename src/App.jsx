@@ -38,10 +38,13 @@ export default function App() {
         </div>
         <button className="md:hidden text-emerald-500 text-2xl" onClick={() => setIsMenuOpen(!isMenuOpen)}>{isMenuOpen ? "✕" : "☰"}</button>
       </nav>
-<div className="overflow-hidden whitespace-nowrap w-full">
-  <h2 className="animate-slide font-black text-emerald-500 uppercase">
-    ● UPCOMING COMPLIANCE DEADLINES: EU SANCTIONS UPDATE JUNE 2026 ●
-  </h2>
+{/* ADVERTISEMENT MARQUEE */}
+<div className="w-full bg-emerald-950/20 border-y border-emerald-500/20 py-3 overflow-hidden">
+  <div className="animate-slow-scroll whitespace-nowrap">
+    <span className="text-emerald-500 font-black tracking-[0.2em] uppercase text-sm">
+      ● ADVERTISEMENT: STREAMLINE YOUR AML PROCESSES WITH OUR ADVANCED KYC VERIFICATION TOOLS — CONTACT US TODAY FOR A DEMO ●
+    </span>
+  </div>
 </div>
       {!activeView && (
         <main className="flex-grow">

@@ -50,16 +50,11 @@ body { background-color: #030712 !important; background-attachment: fixed !impor
   from { transform: translateX(100%); }
   to { transform: translateX(-100%); }
 }
-.animate-marquee {
-  display: inline-block;
-  white-space: nowrap;
-  animation: slide 20s linear infinite;
-}
-@keyframes slide-left {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(100%); }
+@keyframes scroll-left {
+  0% { transform: translateX(100%); }
+  100% { transform: translateX(-100%); }
 }
 
-.animate-slide {
-  animation: slide-left 10s linear infinite;
+.animate-slow-scroll {
+  animation: scroll-left 20s linear infinite;
 }
