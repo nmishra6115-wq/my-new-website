@@ -11,85 +11,126 @@ const NewsSkeleton = () => (
 );
 
 export default function App() {
-  const [activeView, setActiveView] = useState('home');
+  const [activeView, setActiveView] = useState(null);
+  const [pageIndex, setPageIndex] = useState(0);
+  const [isMuted, setIsMuted] = useState(true);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  
-  // New features state
-  const [password, setPassword] = useState('');
+  const [submissions, setSubmissions] = useState([]);
+  const [partnerFiles, setPartnerFiles] = useState([]);
   const [isAuthorized, setIsAuthorized] = useState(false);
-  const [jobPosts, setJobPosts] = useState([]); 
-
-  const isMaintenanceMode = true; // Set to false when live
 
   useEffect(() => {
     const timer = setTimeout(() => setIsLoading(false), 2000);
     return () => clearTimeout(timer);
   }, []);
 
-  if (isMaintenanceMode) {
-    return (
-      <div className="min-h-screen bg-[#030712] flex flex-col items-center justify-center text-emerald-500 font-mono">
-        <h1 className="text-5xl font-black mb-4 uppercase tracking-widest">&gt; SYSTEM_UPGRADE</h1>
-      </div>
-    );
-  }
-
   return (
-    <div className="text-slate-100 font-mono min-h-screen flex flex-col bg-[#030712]">
+    <div className="text-slate-100 font-mono min-h-screen flex flex-col relative bg-[#030712]">
+      
       {/* NAVIGATION */}
-      <nav className="p-6 border-b border-emerald-500/30 flex items-center justify-between sticky top-0 bg-[#030712]/90 backdrop-blur-lg z-50">
-        <h1 className="text-xl font-black text-emerald-500 cursor-pointer uppercase" onClick={() => setActiveView('home')}>&gt; AML_DECODE</h1>
-        <div className="hidden md:flex gap-6 text-xs font-bold text-emerald-400 uppercase tracking-widest">
-          {['NOTES', 'JOBS', 'POST_JOB', 'LIVE_FEED'].map((item) => (
-            <button key={item} onClick={() => setActiveView(item.toLowerCase())}>{item.replace('_', ' ')}</button>
+      <nav className="p-6 border-b border-emerald-500/30 flex items-center justify-between sticky top-0 bg-[#030712]/90 backdrop-blur-lg z-50 w-full shadow-[0_0_20px_rgba(16,185,129,0.1)]">
+        <h1 className="text-xl md:text-2xl font-black tracking-[0.3em] text-emerald-500 cursor-pointer uppercase hover:text-white transition-all" onClick={() => setActiveView(null)}>&gt; AML_DECODE</h1>
+        <div className="hidden md:flex gap-6 items-center">
+          {['NOTES', 'JOBS', 'SUBMIT', 'AVAILABLE', 'CONTRIBUTE', 'NETWORK'].map((item) => (
+            <button key={item} onClick={() => setActiveView(item === 'SUBMIT' ? 'referralForm' : (item === 'AVAILABLE' ? 'available' : item.toLowerCase()))} className="text-xs font-black text-emerald-400 hover:text-white transition-all uppercase tracking-widest">{item}</button>
           ))}
         </div>
+        <button className="md:hidden text-emerald-500 text-2xl" onClick={() => setIsMenuOpen(!isMenuOpen)}>{isMenuOpen ? "✕" : "☰"}</button>
       </nav>
 
-      <main className="flex-grow">
-        {activeView === 'home' ? (
-          <>
-            <section className="w-full relative"><video className="w-full h-[500px] object-cover" autoPlay muted loop playsInline><source src="/intro.mp4" type="video/mp4" /></video></section>
+      {!activeView && (
+        <main className="flex-grow">
+          {/* VIDEO SECTION */}
+          <section className="w-full relative bg-black">
+             <video 
+               className="w-full h-[500px] object-cover" 
+               autoPlay 
+               muted={isMuted} 
+               loop 
+               playsInline
+               key={isMuted ? 'muted' : 'unmuted'}
+             >
+               <source src="/intro.mp4" type="video/mp4" />
+             </video>
+             <button onClick={() => setIsMuted(!isMuted)} className="absolute bottom-8 right-8 bg-black/50 text-emerald-500 border border-emerald-500/50 px-4 py-2 rounded-lg backdrop-blur-md z-20">
+               {isMuted ? "🔇 Unmute" : "🔊 Mute"}
+             </button>
+          </section>
+
+          {/* DASHBOARD */}
+          <div className="max-w-7xl mx-auto px-6 py-16">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-24">
+              <div onClick={() => setActiveView('network')} className="p-8 border border-purple-500/50 bg-purple-900/10 rounded cursor-pointer hover:bg-purple-900/20 transition-all text-center">
+                <div className="text-4xl mb-4">🤝</div>
+                <h3 className="font-bold text-purple-400 uppercase tracking-widest mb-2">Featured Network</h3>
+                <p className="text-sm text-slate-300">Exclusive job openings and media from verified partners.</p>
+              </div>
+              {[ {id: 'notes', icon: '📖', label: 'Notes', color: 'registry-card'}, {id: 'jobs', icon: '💼', label: 'Jobs', color: 'jobs-card'}, {id: 'referralForm', icon: '📤', label: 'Submit', color: 'submit-card'}, {id: 'available', icon: '🔍', label: 'Available', color: 'avail-card'}, {id: 'contribute', icon: '📁', label: 'Contribute', color: 'upload-card'} ].map(card => (
+                <div key={card.id} onClick={() => setActiveView(card.id)} className={`${card.color} custom-card p-8 border border-emerald-500/20 rounded cursor-pointer transition-all duration-300 hover:translate-y-[-5px]`}><div className="text-4xl mb-6">{card.icon}</div><h3 className="font-bold text-emerald-400 uppercase">{card.label}</h3></div>
+              ))}
+            </div>
             
-            <div className="max-w-7xl mx-auto px-6 py-16">
-              <div className="mb-12 p-6 border-2 border-dashed border-emerald-500/50 rounded-lg text-center text-emerald-500">📢 ADVERTISEMENT SLOT</div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-                {[ {id: 'notes', label: 'Notes'}, {id: 'jobs', label: 'Jobs'}, {id: 'post_job', label: 'Post Job'}, {id: 'live_feed', label: 'Live Feed'} ].map(card => (
-                  <div key={card.id} onClick={() => setActiveView(card.id)} className="p-8 border border-emerald-500/20 rounded cursor-pointer hover:bg-slate-800 text-center uppercase font-bold">{card.label}</div>
+            {/* LATEST NEWS */}
+            <section className="border-t border-white/5 pt-16">
+              <h2 className="text-xl font-black text-red-500 mb-8 tracking-widest">● LATEST NEWS</h2>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {isLoading ? <><NewsSkeleton /><NewsSkeleton /><NewsSkeleton /></> : kycNews.map((n, i) => (
+                  <a key={i} href={n.link} target="_blank" rel="noopener noreferrer" className="block p-6 bg-[#030712]/80 border border-white/5 rounded hover:border-red-500 transition-all"><h4 className="text-md font-semibold text-slate-200 mb-4">{n.headline}</h4></a>
                 ))}
               </div>
-            </div>
-          </>
-        ) : (
-          <div className="max-w-4xl mx-auto p-12">
-            <button onClick={() => setActiveView('home')} className="text-emerald-400 mb-8">&larr; BACK</button>
-            
-            {activeView === 'notes' && <div className="space-y-6">{notesContent.map((n, i) => <div key={i} className="p-4 border">{n.title}</div>)}</div>}
-            {activeView === 'jobs' && <div className="space-y-6">{jobOpenings.map((j, i) => <div key={i} className="p-4 border">{j.role}</div>)}</div>}
-            
-            {activeView === 'post_job' && !isAuthorized && (
-              <form onSubmit={(e) => { e.preventDefault(); if(password === 'my-super-secret-123') setIsAuthorized(true); else alert('Wrong!'); }}>
-                <input type="password" placeholder="Enter Password" onChange={(e) => setPassword(e.target.value)} className="w-full p-4 bg-slate-900 border mb-4" />
-                <button className="w-full bg-emerald-600 p-4">UNLOCK</button>
-              </form>
-            )}
+            </section>
+          </div>
+        </main>
+      )}
 
-            {activeView === 'post_job' && isAuthorized && (
-              <form onSubmit={(e) => { e.preventDefault(); setJobPosts([...jobPosts, e.target[0].value]); setActiveView('home'); }}>
-                <textarea className="w-full p-4 bg-slate-900 border mb-4" placeholder="Description" required />
-                <button className="w-full bg-emerald-600 p-4">POST TO FEED</button>
-              </form>
+      {/* OVERLAY SECTION */}
+      {activeView && (
+        <div className="fixed inset-0 z-[100] bg-black/95 p-12 overflow-y-auto animate-in fade-in zoom-in duration-300">
+          <button onClick={() => setActiveView(null)} className="text-emerald-400 font-bold mb-10 hover:text-white">&larr; BACK</button>
+          <div className="max-w-4xl mx-auto text-white">
+            {activeView === 'notes' && <div className="flex gap-12"><div className="w-1/4 space-y-2">{notesContent.map((item, idx) => <button key={idx} onClick={() => setPageIndex(idx)} className="w-full text-left p-4 rounded border border-slate-700 hover:border-emerald-500">{item.title}</button>)}</div><div className="w-3/4"><h1 className="text-4xl font-bold mb-6">{notesContent[pageIndex].title}</h1><p className="text-lg text-slate-300 whitespace-pre-line">{notesContent[pageIndex].body}</p></div></div>}
+            {activeView === 'jobs' && <div className="max-w-4xl mx-auto"><h1 className="text-4xl font-black mb-8">ACTIVE_OPENINGS</h1><div className="bg-[#030712]/80 rounded border border-slate-800">{jobOpenings.map((job, idx) => <div key={idx} className="flex items-center justify-between p-6 border-b border-slate-800"><div><p className="text-emerald-400 font-bold text-xs">{job.company}</p><h2 className="text-lg font-semibold">{job.role}</h2></div><a href={job.link} target="_blank" className="px-6 py-2 bg-indigo-600 rounded text-sm hover:bg-indigo-500">APPLY</a></div>)}</div></div>}
+            {activeView === 'referralForm' && (
+              <div className="max-w-xl mx-auto"><h1 className="text-3xl font-black mb-8 uppercase text-emerald-500">Submit Referral</h1><form className="space-y-4" onSubmit={(e) => { e.preventDefault(); const data = {name: e.target[0].value, email: e.target[1].value, company: e.target[2].value, role: e.target[3].value}; setSubmissions([...submissions, data]); alert("Submitted!"); }}><input type="text" placeholder="Full Name" className="w-full p-4 bg-[#030712] border border-slate-700 rounded" required /><input type="email" placeholder="Email" className="w-full p-4 bg-[#030712] border border-slate-700 rounded" required /><input type="text" placeholder="Company" className="w-full p-4 bg-[#030712] border border-slate-700 rounded" required /><input type="text" placeholder="Role" className="w-full p-4 bg-[#030712] border border-slate-700 rounded" required /><textarea placeholder="Description" className="w-full p-4 bg-[#030712] border border-slate-700 rounded" required></textarea><button type="submit" className="w-full py-4 bg-emerald-600 font-bold uppercase">Send Data</button></form></div>
             )}
-
-            {activeView === 'live_feed' && (
-              <div className="space-y-4">{jobPosts.map((p, i) => <div key={i} className="p-6 border">{p}</div>)}</div>
+            {activeView === 'available' && (
+              <div className="max-w-4xl mx-auto"><h1 className="text-3xl font-black mb-6 uppercase tracking-widest text-emerald-500">Live Availability</h1>{submissions.map((s, i) => <div key={i} className="p-4 mb-4 border border-slate-700 bg-slate-900 rounded"><p className="font-bold">{s.name} - {s.role} at {s.company}</p></div>)}<div className="mt-8 text-center"><a href="mailto:nitesh@example.com?subject=Interested in Referral" className="px-8 py-4 bg-emerald-600 hover:bg-emerald-500 text-black font-black uppercase tracking-widest transition-all">I am interested</a></div></div>
+            )}
+            {activeView === 'contribute' && (
+              <div className="max-w-xl mx-auto border border-slate-800 p-16 text-center bg-[#030712]/50 rounded">
+                {!isAuthorized ? (
+                  <div>
+                    <h1 className="text-2xl font-bold mb-6 text-emerald-500 uppercase tracking-widest">Partner Access</h1>
+                    <input 
+                      type="password" 
+                      placeholder="Enter Secure Key" 
+                      className="w-full p-4 bg-black border border-emerald-500/30 rounded text-center mb-6" 
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          fetch('/api/verify', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ password: e.target.value })
+                          })
+                          .then(res => res.json())
+                          .then(data => { if (data.authorized) setIsAuthorized(true); else alert("Invalid Key"); });
+                        }
+                      }} 
+                    />
+                  </div>
+                ) : (
+                  <div><h1 className="text-3xl font-black mb-8 text-emerald-500">SECURE UPLOAD</h1><input type="file" onChange={(e) => setPartnerFiles([...partnerFiles, e.target.files[0].name])} className="text-white mb-8" /><button onClick={() => alert("Upload Success!")} className="w-full py-4 bg-emerald-600 text-black font-black uppercase">Submit Content</button></div>
+                )}
+              </div>
+            )}
+            {activeView === 'network' && (
+              <div className="max-w-4xl mx-auto"><h1 className="text-3xl font-black mb-8 uppercase text-emerald-500">Network Feed</h1>{partnerFiles.length === 0 ? <p className="text-slate-500">No partner uploads yet.</p> : partnerFiles.map((file, i) => <div key={i} className="p-6 mb-4 bg-slate-900 border border-purple-500/30 rounded flex justify-between items-center"><span className="font-bold">{file}</span><button className="text-purple-400">View</button></div>)}</div>
             )}
           </div>
-        )}
-      </main>
-
-      <footer className="py-10 text-center text-slate-500 border-t border-white/5 uppercase text-xs">© 2026 AML_DECODE</footer>
+        </div>
+      )}
+      <footer className="py-10 text-center text-slate-500 border-t border-white/5 uppercase text-xs tracking-widest">© 2026 AML_DECODE / Designed by @Nitesh</footer>
     </div>
   );
 }
