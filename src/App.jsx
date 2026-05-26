@@ -168,7 +168,7 @@ export default function App() {
                 {!isAuthorized ? (
                   <div>
                     <h1 className="text-2xl font-bold mb-6 text-emerald-500 uppercase tracking-widest">Partner Access</h1>
-                    <input type="password" placeholder="Enter Secure Key" className="w-full p-4 bg-black border border-emerald-500/30 rounded text-center mb-6" onKeyDown={(e) => { if (e.key === 'Enter' && e.target.value === '123') setIsAuthorized(true); }} />
+                    <input type="password" placeholder="Enter Secure Key" className="w-full p-4 bg-black border border-emerald-500/30 rounded text-center mb-6" onKeyDown={(e) => { if (e.key === 'Enter' && e.target.value === 'my-super-secret-123') setIsAuthorized(true); }} />
                   </div>
                 ) : (
                   <div><h1 className="text-3xl font-black mb-8 text-emerald-500">SECURE UPLOAD</h1><input type="file" onChange={(e) => { const f = e.target.files[0]; if(f) setPartnerFiles([...partnerFiles, { name: f.name, url: URL.createObjectURL(f) }]); }} className="text-white mb-8" /><button onClick={() => alert("Upload Success!")} className="w-full py-4 bg-emerald-600 text-black font-black uppercase">Submit Content</button></div>
