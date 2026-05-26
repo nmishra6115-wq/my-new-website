@@ -66,7 +66,7 @@ export default function App() {
                 <h3 className="font-bold text-purple-400 uppercase tracking-widest mb-2">Featured Network</h3>
                 <p className="text-sm text-slate-300">Exclusive job openings and media from verified partners.</p>
               </div>
-              {[ {id: 'notes', icon: '📖', label: 'Notes', color: 'registry-card'}, {id: 'jobs', icon: '💼', label: 'Jobs', color: 'jobs-card'}, {id: 'referralForm', icon: '📤', label: 'Submit', color: 'submit-card'}, {id: 'available', icon: '🔍', label: 'Available', color: 'avail-card'}, {id: 'contribute', icon: '📁', label: 'Contribute', color: 'upload-card'} ].map(card => (
+              {[ {id: 'notes', icon: '📖', label: 'Notes', color: 'registry-card'}, {id: 'jobs', icon: '💼', label: 'Jobs', color: 'jobs-card'}, {id: 'referralForm', icon: '📤', label: 'Submit Referral', color: 'submit-card'}, {id: 'available', icon: '🔍', label: 'Available Referral', color: 'avail-card'}, {id: 'contribute', icon: '📁', label: 'Contribute', color: 'upload-card'} ].map(card => (
                 <div key={card.id} onClick={() => setActiveView(card.id)} className={`${card.color} custom-card p-8 border border-emerald-500/20 rounded cursor-pointer transition-all duration-300 hover:translate-y-[-5px]`}><div className="text-4xl mb-6">{card.icon}</div><h3 className="font-bold text-emerald-400 uppercase">{card.label}</h3></div>
               ))}
             </div>
