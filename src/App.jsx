@@ -181,7 +181,7 @@ export default function App() {
     }}
     className="bg-blue-600 px-4 py-2 rounded text-xs uppercase font-bold"
   >
-    Backup Data
+    
   </button>
 </div>
                     <h1 className="text-2xl font-bold mb-6 text-emerald-500 uppercase tracking-widest">Partner Access</h1>
