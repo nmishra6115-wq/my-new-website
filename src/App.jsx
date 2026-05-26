@@ -164,9 +164,26 @@ export default function App() {
               <div className="max-w-4xl mx-auto"><h1 className="text-3xl font-black mb-6 uppercase tracking-widest text-emerald-500">Live Availability</h1>{submissions.map((s, i) => <div key={i} className="p-4 mb-4 border border-slate-700 bg-slate-900 rounded"><p className="font-bold">{s.name} - {s.role} at {s.company}</p></div>)}<div className="mt-8 text-center"><a href="mailto:nitesh@example.com?subject=Interested in Referral" className="px-8 py-4 bg-emerald-600 hover:bg-emerald-500 text-black font-black uppercase tracking-widest transition-all">I am interested</a></div></div>
             )}
             {activeView === 'contribute' && (
+              
               <div className="max-w-xl mx-auto border border-slate-800 p-16 text-center bg-[#030712]/50 rounded">
                 {!isAuthorized ? (
                   <div>
+                    <div className="flex gap-4 mt-4">
+  <button 
+    onClick={() => {
+      const data = JSON.stringify({ submissions, partnerFiles });
+      const blob = new Blob([data], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'aml_data_backup.json';
+      a.click();
+    }}
+    className="bg-blue-600 px-4 py-2 rounded text-xs uppercase font-bold"
+  >
+    Backup Data
+  </button>
+</div>
                     <h1 className="text-2xl font-bold mb-6 text-emerald-500 uppercase tracking-widest">Partner Access</h1>
                     <input type="password" placeholder="Enter Secure Key" className="w-full p-4 bg-black border border-emerald-500/30 rounded text-center mb-6" onKeyDown={(e) => { if (e.key === 'Enter' && e.target.value === 'my-super-secret-123') setIsAuthorized(true); }} />
                   </div>
