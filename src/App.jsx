@@ -23,19 +23,7 @@ export default function App() {
 
 const [partnerFiles, setPartnerFiles] = useState(() => {
   const saved = localStorage.getItem("partnerFiles");
-  if (!saved) return [];
-  
-  try {
-    const parsed = JSON.parse(saved);
-    // If it's a plain string, reset to empty array
-    if (typeof parsed[0] === 'string') {
-      localStorage.removeItem("partnerFiles");
-      return [];
-    }
-    return parsed;
-  } catch (e) {
-    return [];
-  }
+  return saved ? JSON.parse(saved) : [];
 });
   const [isAuthorized, setIsAuthorized] = useState(false);
 
@@ -175,17 +163,22 @@ useEffect(() => {
                 {!isAuthorized ? (
                   <div>
                     <h1 className="text-2xl font-bold mb-6 text-emerald-500 uppercase tracking-widest">Partner Access</h1>
-                   <input 
-  type="file" 
-  onChange={(e) => {
-    const file = e.target.files[0];
-    if (file) {
-      // Save an object instead of just the name string
-      setPartnerFiles([...partnerFiles, { name: file.name, url: URL.createObjectURL(file) }]);
-    }
-  }} 
-  className="text-white mb-8" 
-/>
+                    <input 
+                      type="password" 
+                      placeholder="Enter Secure Key" 
+                      className="w-full p-4 bg-black border border-emerald-500/30 rounded text-center mb-6" 
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          fetch('/api/verify', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ password: e.target.value })
+                          })
+                          .then(res => res.json())
+                          .then(data => { if (data.authorized) setIsAuthorized(true); else alert("Invalid Key"); });
+                        }
+                      }} 
+                    />
                   </div>
                 ) : (
                   <div><h1 className="text-3xl font-black mb-8 text-emerald-500">SECURE UPLOAD</h1><input type="file" onChange={(e) => setPartnerFiles([...partnerFiles, e.target.files[0].name])} className="text-white mb-8" /><button onClick={() => alert("Upload Success!")} className="w-full py-4 bg-emerald-600 text-black font-black uppercase">Submit Content</button></div>
