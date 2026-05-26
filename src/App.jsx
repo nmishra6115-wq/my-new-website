@@ -29,15 +29,40 @@ export default function App() {
     <div className="text-slate-100 font-mono min-h-screen flex flex-col relative bg-[#030712]">
       
       {/* NAVIGATION */}
+     {/* NAVIGATION */}
       <nav className="p-6 border-b border-emerald-500/30 flex items-center justify-between sticky top-0 bg-[#030712]/90 backdrop-blur-lg z-50 w-full shadow-[0_0_20px_rgba(16,185,129,0.1)]">
         <h1 className="text-xl md:text-2xl font-black tracking-[0.3em] text-emerald-500 cursor-pointer uppercase hover:text-white transition-all" onClick={() => setActiveView(null)}>&gt; AML_DECODE</h1>
+        
+        {/* DESKTOP NAV */}
         <div className="hidden md:flex gap-6 items-center">
           {['NOTES', 'JOBS', 'SUBMIT', 'AVAILABLE', 'CONTRIBUTE', 'NETWORK'].map((item) => (
             <button key={item} onClick={() => setActiveView(item === 'SUBMIT' ? 'referralForm' : (item === 'AVAILABLE' ? 'available' : item.toLowerCase()))} className="text-xs font-black text-emerald-400 hover:text-white transition-all uppercase tracking-widest">{item}</button>
           ))}
         </div>
-        <button className="md:hidden text-emerald-500 text-2xl" onClick={() => setIsMenuOpen(!isMenuOpen)}>{isMenuOpen ? "✕" : "☰"}</button>
+        
+        {/* MOBILE TOGGLE */}
+        <button className="md:hidden text-emerald-500 text-2xl z-[60]" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+          {isMenuOpen ? "✕" : "☰"}
+        </button>
       </nav>
+
+      {/* FIXED MOBILE MENU (This was missing from your code) */}
+      {isMenuOpen && (
+        <div className="md:hidden absolute top-20 left-0 w-full bg-[#030712]/95 border-b border-emerald-500/30 p-6 flex flex-col gap-4 z-50">
+          {['NOTES', 'JOBS', 'SUBMIT', 'AVAILABLE', 'CONTRIBUTE', 'NETWORK'].map((item) => (
+            <button 
+              key={item} 
+              onClick={() => { 
+                setActiveView(item === 'SUBMIT' ? 'referralForm' : (item === 'AVAILABLE' ? 'available' : item.toLowerCase())); 
+                setIsMenuOpen(false); 
+              }} 
+              className="text-lg font-black text-left text-emerald-400 uppercase tracking-widest"
+            >
+              {item}
+            </button>
+          ))}
+        </div>
+      )}
 
       {!activeView && (
         <main className="flex-grow">
