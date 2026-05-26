@@ -36,6 +36,7 @@ export default function App() {
   useEffect(() => {
     const timer = setTimeout(() => setIsLoading(false), 2000);
     const fetchActivities = async () => {
+      // Fetching from Supabase without .order to avoid errors
       const { data } = await supabase.from('activities').select('description');
       if (data) setActivities(data);
     };
@@ -45,9 +46,14 @@ export default function App() {
 
   return (
     <div className="text-slate-100 font-mono min-h-screen flex flex-col bg-[#030712]">
-      {/* NAVIGATION BAR */}
+      {/* NAVIGATION */}
       <nav className="p-6 border-b border-emerald-500/30 flex items-center justify-between sticky top-0 bg-[#030712]/90 backdrop-blur-lg z-50">
         <h1 className="text-xl font-black tracking-[0.3em] text-emerald-500 cursor-pointer uppercase" onClick={() => setActiveView(null)}>&gt; AML_DECODE</h1>
+        <div className="hidden md:flex gap-6">
+          {['NOTES', 'JOBS', 'SUBMIT', 'AVAILABLE', 'CONTRIBUTE', 'NETWORK'].map((item) => (
+            <button key={item} onClick={() => setActiveView(item.toLowerCase())} className="text-xs font-black text-emerald-400 hover:text-white uppercase tracking-widest">{item}</button>
+          ))}
+        </div>
       </nav>
 
       {!activeView && (
@@ -63,10 +69,19 @@ export default function App() {
           <div className="max-w-7xl mx-auto px-6 py-16">
             <ActivityFeed activities={activities} />
             
-            {/* CARDS */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-24">
-              {[ {id: 'notes', icon: '📖', label: 'Notes'}, {id: 'jobs', icon: '💼', label: 'Jobs'}, {id: 'referralForm', icon: '📤', label: 'Submit Referral'} ].map(card => (
-                <div key={card.id} onClick={() => setActiveView(card.id)} className="p-8 bg-slate-900 border border-emerald-500/20 rounded cursor-pointer hover:bg-slate-800 transition-all">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-24">
+              <div onClick={() => setActiveView('network')} className="p-8 border border-purple-500/50 bg-purple-900/10 rounded cursor-pointer hover:bg-purple-900/20 text-center">
+                <div className="text-4xl mb-4">🤝</div>
+                <h3 className="font-bold text-purple-400 uppercase tracking-widest">Featured Network</h3>
+              </div>
+              {[ 
+                {id: 'notes', icon: '📖', label: 'Notes'}, 
+                {id: 'jobs', icon: '💼', label: 'Jobs'}, 
+                {id: 'referralForm', icon: '📤', label: 'Submit Referral'},
+                {id: 'available', icon: '🔍', label: 'Available Referral'},
+                {id: 'contribute', icon: '📁', label: 'Contribute'} 
+              ].map(card => (
+                <div key={card.id} onClick={() => setActiveView(card.id)} className="p-8 bg-slate-900 border border-emerald-500/20 rounded cursor-pointer hover:bg-slate-800">
                   <div className="text-4xl mb-6">{card.icon}</div>
                   <h3 className="font-bold text-emerald-400 uppercase">{card.label}</h3>
                 </div>
