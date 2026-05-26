@@ -16,15 +16,25 @@ export default function App() {
   const [isMuted, setIsMuted] = useState(true);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [submissions, setSubmissions] = useState([]);
-  const [partnerFiles, setPartnerFiles] = useState([]);
+  const [submissions, setSubmissions] = useState(() => {
+  const saved = localStorage.getItem("submissions");
+  return saved ? JSON.parse(saved) : [];
+});
+
+const [partnerFiles, setPartnerFiles] = useState(() => {
+  const saved = localStorage.getItem("partnerFiles");
+  return saved ? JSON.parse(saved) : [];
+});
   const [isAuthorized, setIsAuthorized] = useState(false);
 
   useEffect(() => {
     const timer = setTimeout(() => setIsLoading(false), 2000);
     return () => clearTimeout(timer);
   }, []);
-
+useEffect(() => {
+  localStorage.setItem("submissions", JSON.stringify(submissions));
+  localStorage.setItem("partnerFiles", JSON.stringify(partnerFiles));
+}, [submissions, partnerFiles]);
   return (
     <div className="text-slate-100 font-mono min-h-screen flex flex-col relative bg-[#030712]">
       
