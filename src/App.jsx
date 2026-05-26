@@ -32,7 +32,7 @@ export default function App() {
       <nav className="p-6 border-b border-emerald-500/30 flex items-center justify-between sticky top-0 bg-[#030712]/90 backdrop-blur-lg z-50 w-full shadow-[0_0_20px_rgba(16,185,129,0.1)]">
         <h1 className="text-xl md:text-2xl font-black tracking-[0.3em] text-emerald-500 cursor-pointer uppercase hover:text-white transition-all" onClick={() => setActiveView(null)}>&gt; AML_DECODE</h1>
         <div className="hidden md:flex gap-6 items-center">
-          {['NOTES', 'JOBS', 'SUBMIT', 'AVAILABLE', 'CONTRIBUTE', 'NETWORK'].map((item) => (
+          {['NOTES', 'JOBS', 'SUBMIT REFERRAL', 'AVAILABLE REFERRAL', 'REQUITER DASHBOARD', 'DIRECT REQUITER JOBS'].map((item) => (
             <button key={item} onClick={() => setActiveView(item === 'SUBMIT' ? 'referralForm' : (item === 'AVAILABLE' ? 'available' : item.toLowerCase()))} className="text-xs font-black text-emerald-400 hover:text-white transition-all uppercase tracking-widest">{item}</button>
           ))}
         </div>
@@ -72,7 +72,7 @@ export default function App() {
                 <h3 className="font-bold text-purple-400 uppercase tracking-widest mb-2">Featured Network</h3>
                 <p className="text-sm text-slate-300">Exclusive job openings and media from verified partners.</p>
               </div>
-              {[ {id: 'notes', icon: '📖', label: 'Notes', color: 'registry-card'}, {id: 'jobs', icon: '💼', label: 'Jobs', color: 'jobs-card'}, {id: 'referralForm', icon: '📤', label: 'Submit', color: 'submit-card'}, {id: 'available', icon: '🔍', label: 'Available', color: 'avail-card'}, {id: 'contribute', icon: '📁', label: 'Contribute', color: 'upload-card'} ].map(card => (
+              {[ {id: 'notes', icon: '📖', label: 'Notes', color: 'registry-card'}, {id: 'jobs', icon: '💼', label: 'Jobs', color: 'jobs-card'}, {id: 'referralForm', icon: '📤', label: 'Submit Referral', color: 'submit-card'}, {id: 'available', icon: '🔍', label: 'Available Referral', color: 'avail-card'}, {id: 'contribute', icon: '📁', label: 'Requiter Dashboard', color: 'upload-card'} ].map(card => (
                 <div key={card.id} onClick={() => setActiveView(card.id)} className={`${card.color} custom-card p-8 border border-emerald-500/20 rounded cursor-pointer transition-all duration-300 hover:translate-y-[-5px]`}><div className="text-4xl mb-6">{card.icon}</div><h3 className="font-bold text-emerald-400 uppercase">{card.label}</h3></div>
               ))}
             </div>
