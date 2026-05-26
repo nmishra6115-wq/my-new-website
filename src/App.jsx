@@ -48,8 +48,8 @@ export default function App() {
         <div className="hidden md:flex gap-8 items-center">
           <button onClick={() => setActiveView('notes')} className="text-sm font-black text-emerald-400 hover:text-white transition-all uppercase tracking-widest">NOTES</button>
           <button onClick={() => setActiveView('jobs')} className="text-sm font-black text-indigo-400 hover:text-white transition-all uppercase tracking-widest">JOBS</button>
-          <button onClick={() => setActiveView('referralForm')} className="text-sm font-black text-white hover:text-emerald-400 transition-all uppercase tracking-widest">SUBMIT REFERRAL</button>
-          <button onClick={() => setActiveView('availability')} className="text-sm font-black text-emerald-400 hover:text-white transition-all uppercase tracking-widest">AVAILABLE REFERRAL</button>
+          <button onClick={() => setActiveView('referralForm')} className="text-sm font-black text-white hover:text-emerald-400 transition-all uppercase tracking-widest">SUBMIT</button>
+          <button onClick={() => setActiveView('availability')} className="text-sm font-black text-emerald-400 hover:text-white transition-all uppercase tracking-widest">AVAILABLE</button>
         </div>
         <button className="md:hidden text-emerald-500 text-2xl" onClick={() => setIsMenuOpen(!isMenuOpen)}>
           {isMenuOpen ? "✕" : "☰"}
@@ -84,9 +84,17 @@ export default function App() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-24">
               <div onClick={() => setActiveView('notes')} className="p-8 bg-slate-900 border border-emerald-500/20 rounded hover:border-emerald-500 transition cursor-pointer"><div className="text-4xl mb-6">📖</div><h3 className="font-bold text-emerald-400 mb-2 uppercase">Notes</h3></div>
               <div onClick={() => setActiveView('jobs')} className="p-8 bg-slate-900 border border-indigo-500/20 rounded hover:border-indigo-500 transition cursor-pointer"><div className="text-4xl mb-6">💼</div><h3 className="font-bold text-indigo-400 mb-2 uppercase">Jobs</h3></div>
-              <div onClick={() => setActiveView('referralForm')} className="p-8 bg-slate-900 border border-white/10 rounded hover:border-white transition cursor-pointer"><div className="text-4xl mb-6">📤</div><h3 className="font-bold text-white mb-2 uppercase">Submit Referral</h3></div>
-              <div onClick={() => setActiveView('availability')} className="p-8 bg-slate-900 border border-emerald-500/20 rounded hover:border-emerald-500 transition cursor-pointer"><div className="text-4xl mb-6">🔍</div><h3 className="font-bold text-emerald-400 mb-2 uppercase">Available Referral</h3></div>
+              <div onClick={() => setActiveView('referralForm')} className="p-8 bg-slate-900 border border-white/10 rounded hover:border-white transition cursor-pointer"><div className="text-4xl mb-6">📤</div><h3 className="font-bold text-white mb-2 uppercase">Submit</h3></div>
+              
+              <div onClick={() => setActiveView('availability')} className="p-8 bg-slate-900 border border-emerald-500/20 rounded hover:border-emerald-500 transition cursor-pointer relative">
+                  <span className="absolute top-4 right-4 flex h-3 w-3">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+                  </span>
+                  <div className="text-4xl mb-6">🔍</div><h3 className="font-bold text-emerald-400 mb-2 uppercase">Availability</h3>
+              </div>
           </div>
+          
           <section className="border-t border-white/5 pt-16">
             <h2 className="text-xl font-black text-red-500 mb-8 tracking-widest">● LATEST INDUSTRY NEWS</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
