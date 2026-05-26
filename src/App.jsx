@@ -38,7 +38,11 @@ export default function App() {
         </div>
         <button className="md:hidden text-emerald-500 text-2xl" onClick={() => setIsMenuOpen(!isMenuOpen)}>{isMenuOpen ? "✕" : "☰"}</button>
       </nav>
-
+<div className="overflow-hidden whitespace-nowrap w-full">
+  <h2 className="animate-slide font-black text-emerald-500 uppercase">
+    ● UPCOMING COMPLIANCE DEADLINES: EU SANCTIONS UPDATE JUNE 2026 ●
+  </h2>
+</div>
       {!activeView && (
         <main className="flex-grow">
           {/* VIDEO SECTION */}
