@@ -38,10 +38,10 @@ export default function App() {
   {[
     { label: 'NOTES', id: 'notes' },
     { label: 'JOBS', id: 'jobs' },
-    { label: 'SUBMIT', id: 'referralForm' },
-    { label: 'AVAILABLE', id: 'available' },
-    { label: 'CONTRIBUTE', id: 'contribute' },
-    { label: 'NETWORK', id: 'network' }
+    { label: 'SUBMIT REFERRAL', id: 'referralForm' },
+    { label: 'AVAILABLE REFERRAL', id: 'available' },
+    { label: 'HR DASHBOARD', id: 'contribute' },
+    { label: 'NETWORK JOBS', id: 'network' }
   ].map((item) => (
     <button 
       key={item.id} 
@@ -65,10 +65,10 @@ export default function App() {
   {[
     { label: 'NOTES', id: 'notes' },
     { label: 'JOBS', id: 'jobs' },
-    { label: 'SUBMIT', id: 'referralForm' },
-    { label: 'AVAILABLE', id: 'available' },
-    { label: 'CONTRIBUTE', id: 'contribute' },
-    { label: 'NETWORK', id: 'network' }
+    { label: 'SUBMIT REFERRAL', id: 'referralForm' },
+    { label: 'AVAILABLE REFERRAL', id: 'available' },
+    { label: 'HR DASHBOARD', id: 'contribute' },
+    { label: 'NETWORK JOBS', id: 'network' }
   ].map((item) => (
     <button 
       key={item.id} 
