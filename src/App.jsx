@@ -18,6 +18,7 @@ export default function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [submissions, setSubmissions] = useState([]);
   const [partnerFiles, setPartnerFiles] = useState([]);
+  const [isAuthorized, setIsAuthorized] = useState(false);
 
   useEffect(() => {
     const timer = setTimeout(() => setIsLoading(false), 2000);
@@ -36,38 +37,22 @@ export default function App() {
         <button className="md:hidden text-emerald-500 text-2xl" onClick={() => setIsMenuOpen(!isMenuOpen)}>{isMenuOpen ? "✕" : "☰"}</button>
       </nav>
 
-      {isMenuOpen && (
-        <div className="md:hidden flex flex-col bg-[#030712]/95 p-6 gap-4 border-b border-emerald-500/30">
-          {['NOTES', 'JOBS', 'SUBMIT', 'AVAILABLE', 'CONTRIBUTE', 'NETWORK'].map((item) => (
-            <button key={item} onClick={() => { setActiveView(item === 'SUBMIT' ? 'referralForm' : (item === 'AVAILABLE' ? 'available' : item.toLowerCase())); setIsMenuOpen(false); }} className="text-lg font-black text-left">{item}</button>
-          ))}
-        </div>
-      )}
-
       {!activeView && (
-        <>
-          <section className="w-full relative">
-             <video className="w-full h-[500px] object-cover" autoPlay muted={isMuted} loop playsInline><source src="/intro.mp4" type="video/mp4" /></video>
-             <button onClick={() => setIsMuted(!isMuted)} className="absolute bottom-8 right-8 bg-black/50 text-emerald-500 border border-emerald-500/50 px-4 py-2 rounded-lg backdrop-blur-md">{isMuted ? "🔇 Unmute" : "🔊 Mute"}</button>
-          </section>
-
-          <main className="flex-grow max-w-7xl mx-auto px-6 py-16">
-            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-6 mb-24">
-              {[ {id: 'notes', icon: '📖', label: 'Notes', color: 'registry-card'}, {id: 'jobs', icon: '💼', label: 'Jobs', color: 'jobs-card'}, {id: 'referralForm', icon: '📤', label: 'Submit', color: 'submit-card'}, {id: 'available', icon: '🔍', label: 'Available', color: 'avail-card'}, {id: 'contribute', icon: '📁', label: 'Contribute', color: 'upload-card'}, {id: 'network', icon: '🤝', label: 'Network', color: 'partner-card'} ].map(card => (
-                <div key={card.id} onClick={() => setActiveView(card.id)} className={`${card.color} custom-card p-6 border border-emerald-500/20 rounded cursor-pointer transition-all duration-300 hover:translate-y-[-5px]`}><div className="text-3xl mb-4">{card.icon}</div><h3 className="font-bold text-emerald-400 uppercase text-xs">{card.label}</h3></div>
+        <main className="flex-grow max-w-7xl mx-auto px-6 py-16">
+          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-6 mb-24">
+            {[ {id: 'notes', icon: '📖', label: 'Notes', color: 'registry-card'}, {id: 'jobs', icon: '💼', label: 'Jobs', color: 'jobs-card'}, {id: 'referralForm', icon: '📤', label: 'Submit', color: 'submit-card'}, {id: 'available', icon: '🔍', label: 'Available', color: 'avail-card'}, {id: 'contribute', icon: '📁', label: 'Contribute', color: 'upload-card'}, {id: 'network', icon: '🤝', label: 'Network', color: 'partner-card'} ].map(card => (
+              <div key={card.id} onClick={() => setActiveView(card.id)} className={`${card.color} custom-card p-6 border border-emerald-500/20 rounded cursor-pointer transition-all duration-300 hover:translate-y-[-5px]`}><div className="text-3xl mb-4">{card.icon}</div><h3 className="font-bold text-emerald-400 uppercase text-xs">{card.label}</h3></div>
+            ))}
+          </div>
+          <section className="border-t border-white/5 pt-16">
+            <h2 className="text-xl font-black text-red-500 mb-8 tracking-widest">● LATEST NEWS</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {isLoading ? <><NewsSkeleton /><NewsSkeleton /><NewsSkeleton /></> : kycNews.map((n, i) => (
+                <a key={i} href={n.link} target="_blank" rel="noopener noreferrer" className="block p-6 bg-[#030712]/80 border border-white/5 rounded hover:border-red-500 transition-all"><h4 className="text-md font-semibold text-slate-200 mb-4">{n.headline}</h4></a>
               ))}
             </div>
-
-            <section className="border-t border-white/5 pt-16">
-              <h2 className="text-xl font-black text-red-500 mb-8 tracking-widest">● LATEST NEWS</h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {isLoading ? <><NewsSkeleton /><NewsSkeleton /><NewsSkeleton /></> : kycNews.map((n, i) => (
-                  <a key={i} href={n.link} target="_blank" rel="noopener noreferrer" className="block p-6 bg-[#030712]/80 border border-white/5 rounded hover:border-red-500 transition-all"><h4 className="text-md font-semibold text-slate-200 mb-4">{n.headline}</h4></a>
-                ))}
-              </div>
-            </section>
-          </main>
-        </>
+          </section>
+        </main>
       )}
 
       {activeView && (
@@ -83,7 +68,13 @@ export default function App() {
               <div className="max-w-4xl mx-auto"><h1 className="text-3xl font-black mb-6 uppercase tracking-widest text-emerald-500">Live Availability</h1>{submissions.map((s, i) => <div key={i} className="p-4 mb-4 border border-slate-700 bg-slate-900 rounded"><p className="font-bold">{s.name} - {s.role} at {s.company}</p></div>)}<div className="mt-8 text-center"><a href="mailto:nitesh@example.com?subject=Interested in Referral" className="px-8 py-4 bg-emerald-600 hover:bg-emerald-500 text-black font-black uppercase tracking-widest transition-all">I am interested</a></div></div>
             )}
             {activeView === 'contribute' && (
-              <div className="max-w-xl mx-auto border-2 border-dashed border-emerald-500/50 p-16 text-center"><h1 className="text-3xl font-black mb-8 text-emerald-500">UPLOAD CONTENT</h1><input type="file" onChange={(e) => setPartnerFiles([...partnerFiles, e.target.files[0].name])} className="text-white mb-8" /><button onClick={() => alert("Upload Success!")} className="px-8 py-4 bg-emerald-600 text-black font-black uppercase">Submit Upload</button></div>
+              <div className="max-w-xl mx-auto border border-slate-800 p-16 text-center bg-[#030712]/50 rounded">
+                {!isAuthorized ? (
+                  <div><h1 className="text-2xl font-bold mb-6 text-emerald-500 uppercase tracking-widest">Partner Access</h1><input type="password" placeholder="Enter Secure Key" className="w-full p-4 bg-black border border-emerald-500/30 rounded text-center mb-6" onChange={(e) => { if(e.target.value === "AML_SECURE_2026") setIsAuthorized(true) }} /></div>
+                ) : (
+                  <div><h1 className="text-3xl font-black mb-8 text-emerald-500">SECURE UPLOAD</h1><input type="file" onChange={(e) => setPartnerFiles([...partnerFiles, e.target.files[0].name])} className="text-white mb-8" /><button onClick={() => alert("Upload Success!")} className="w-full py-4 bg-emerald-600 text-black font-black uppercase">Submit Content</button></div>
+                )}
+              </div>
             )}
             {activeView === 'network' && (
               <div className="max-w-4xl mx-auto"><h1 className="text-3xl font-black mb-8 uppercase text-emerald-500">Network Feed</h1>{partnerFiles.length === 0 ? <p className="text-slate-500">No partner uploads yet.</p> : partnerFiles.map((file, i) => <div key={i} className="p-6 mb-4 bg-slate-900 border border-purple-500/30 rounded flex justify-between items-center"><span className="font-bold">{file}</span><button className="text-purple-400">View</button></div>)}</div>
