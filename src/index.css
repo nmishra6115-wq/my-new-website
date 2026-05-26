@@ -55,11 +55,11 @@ body { background-color: #030712 !important; background-attachment: fixed !impor
   white-space: nowrap;
   animation: slide 20s linear infinite;
 }
-@keyframes slide-right {
+@keyframes slide-left {
   0% { transform: translateX(-100%); }
   100% { transform: translateX(100%); }
 }
 
 .animate-slide {
-  animation: slide-right 10s linear infinite;
+  animation: slide-left 10s linear infinite;
 }
