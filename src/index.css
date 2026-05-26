@@ -46,3 +46,12 @@ body { background-color: #030712 !important; background-attachment: fixed !impor
 .jobs-card:hover { border-color: #6366F1 !important; background-color: rgba(99, 102, 241, 0.1) !important; }
 .submit-card:hover { border-color: #F59E0B !important; background-color: rgba(245, 158, 11, 0.1) !important; }
 .avail-card:hover { border-color: #EF4444 !important; background-color: rgba(239, 68, 68, 0.1) !important; }
+@keyframes slide {
+  from { transform: translateX(100%); }
+  to { transform: translateX(-100%); }
+}
+.animate-marquee {
+  display: inline-block;
+  white-space: nowrap;
+  animation: slide 20s linear infinite;
+}

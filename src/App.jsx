@@ -57,6 +57,12 @@ export default function App() {
                {isMuted ? "🔇 Unmute" : "🔊 Mute"}
              </button>
           </section>
+          {/* Moving Advertisement Banner */}
+<div className="w-full bg-black border-y border-emerald-500/30 overflow-hidden py-3 my-4">
+  <div className="animate-marquee text-emerald-500 font-bold uppercase tracking-[0.5em] text-sm">
+    📢 ADVERTISEMENT: PROMOTE YOUR COMPLIANCE SERVICES HERE • CONTACT US FOR PLACEMENTS • 📢 ADVERTISEMENT: PROMOTE YOUR COMPLIANCE SERVICES HERE •
+  </div>
+</div>
 
           {/* DASHBOARD */}
           <div className="max-w-7xl mx-auto px-6 py-16">
