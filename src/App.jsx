@@ -16,55 +16,27 @@ export default function App() {
     fetchActivities();
   }, []);
 
-  // SIMPLE RENDER FUNCTION
-  const renderView = () => {
-    // 1. HOME VIEW
-    if (activeView === 'home') {
+  // Updated rendering for Array-based content
+  const renderContent = (data) => {
+    if (Array.isArray(data)) {
       return (
-        <div className="max-w-7xl mx-auto px-6 py-24">
-          <section className="w-full h-[50vh] bg-black mb-16 overflow-hidden">
-            <video className="w-full h-full object-cover" autoPlay muted loop playsInline>
-              <source src="/intro.mp4" type="video/mp4" />
-            </video>
-          </section>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-24">
-            {[ {id: 'notes', label: 'NOTES', icon: '📖'}, {id: 'jobs', label: 'JOBS', icon: '💼'}, {id: 'submit', label: 'SUBMIT', icon: '📤'} ].map(card => (
-              <div key={card.id} onClick={() => setActiveView(card.id)} className="p-10 bg-slate-900 border border-emerald-500/20 cursor-pointer hover:bg-emerald-900/10 text-center">
-                <div className="text-4xl mb-4">{card.icon}</div>
-                <h3 className="font-bold text-emerald-400">{card.label}</h3>
-              </div>
-            ))}
-          </div>
+        <div className="space-y-8">
+          {data.map((item, index) => (
+            <div key={index} className="border-b border-emerald-500/20 pb-6">
+              <h2 className="text-2xl font-bold text-emerald-400 mb-2">{item.title}</h2>
+              <p className="text-slate-300 whitespace-pre-line leading-relaxed">{item.body}</p>
+            </div>
+          ))}
         </div>
       );
     }
-
-    // 2. CONTENT VIEWS (NOTES/JOBS)
-    if (activeView === 'notes' || activeView === 'jobs') {
-      return (
-        <div className="max-w-4xl mx-auto py-32 px-6">
-          <button onClick={() => setActiveView('home')} className="text-emerald-500 mb-8 underline">← BACK TO HOME</button>
-          <h1 className="text-4xl font-black uppercase text-emerald-500 mb-8">{activeView}</h1>
-          <pre className="whitespace-pre-wrap text-slate-300 font-sans leading-relaxed">
-            {activeView === 'notes' ? notesContent : jobOpenings}
-          </pre>
-        </div>
-      );
-    }
-
-    // 3. FALLBACK (If something goes wrong)
-    return (
-      <div className="p-20 text-center">
-        <p className="text-red-500">View not found.</p>
-        <button onClick={() => setActiveView('home')} className="text-emerald-500 underline mt-4">Return Home</button>
-      </div>
-    );
+    return <p className="text-slate-400">Content loading...</p>;
   };
 
   return (
     <div className="flex flex-col min-h-screen bg-[#030712] text-slate-100 font-mono">
-      <nav className="fixed top-0 w-full z-50 p-6 bg-[#030712]/90 border-b border-emerald-500/30 flex justify-between items-center">
+      {/* NAVIGATION */}
+      <nav className="fixed top-0 w-full z-50 bg-[#030712]/95 border-b border-emerald-500/30 p-6 flex justify-between items-center">
         <h1 className="text-xl font-black text-emerald-500 cursor-pointer" onClick={() => setActiveView('home')}>&gt; AML_DECODE</h1>
         <div className="flex gap-6 text-xs font-bold text-emerald-400">
           <button onClick={() => setActiveView('notes')}>NOTES</button>
@@ -72,11 +44,22 @@ export default function App() {
         </div>
       </nav>
 
-      <main className="flex-grow">{renderView()}</main>
+      {/* CONTENT AREA */}
+      <main className="flex-grow pt-24 pb-10 w-full max-w-5xl mx-auto px-6">
+        {activeView === 'home' ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div onClick={() => setActiveView('notes')} className="p-10 bg-slate-900 border border-emerald-500/20 cursor-pointer hover:bg-emerald-900/10 text-center">NOTES</div>
+            <div onClick={() => setActiveView('jobs')} className="p-10 bg-slate-900 border border-emerald-500/20 cursor-pointer hover:bg-emerald-900/10 text-center">JOBS</div>
+          </div>
+        ) : (
+          <div className="bg-slate-900 p-8 border border-emerald-500/20">
+            <button onClick={() => setActiveView('home')} className="text-emerald-500 mb-6 underline">← BACK</button>
+            {renderContent(activeView === 'notes' ? notesContent : jobOpenings)}
+          </div>
+        )}
+      </main>
 
-      <footer className="py-10 text-center text-slate-500 border-t border-white/5 uppercase text-xs">
-        © 2026 AML_DECODE
-      </footer>
+      <footer className="py-6 text-center border-t border-white/5 text-xs text-slate-500">© 2026 AML_DECODE</footer>
     </div>
   );
 }
