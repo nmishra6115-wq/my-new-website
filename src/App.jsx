@@ -84,12 +84,22 @@ export default function App() {
       {/* OVERLAY SECTION */}
       {activeView && (
         <div className="fixed inset-0 z-[100] bg-black/95 p-12 overflow-y-auto animate-in fade-in zoom-in duration-300">
-          <button onClick={() => setActiveView(null)} className="text-emerald-400 font-bold mb-10">&larr; BACK</button>
+          <button onClick={() => setActiveView(null)} className="text-emerald-400 font-bold mb-10 hover:text-white">&larr; BACK</button>
           <div className="max-w-6xl mx-auto text-white">
             {activeView === 'notes' && <div className="flex gap-12"><div className="w-1/4 space-y-2">{notesContent.map((item, idx) => <button key={idx} onClick={() => setPageIndex(idx)} className="w-full text-left p-4 rounded border border-slate-700 hover:border-emerald-500">{item.title}</button>)}</div><div className="w-3/4"><h1 className="text-4xl font-bold mb-6">{notesContent[pageIndex].title}</h1><p className="text-lg text-slate-300 whitespace-pre-line">{notesContent[pageIndex].body}</p></div></div>}
             {activeView === 'jobs' && <div className="max-w-4xl mx-auto"><h1 className="text-4xl font-black mb-8">ACTIVE_OPENINGS</h1><div className="bg-[#030712]/80 rounded border border-slate-800">{jobOpenings.map((job, idx) => <div key={idx} className="flex items-center justify-between p-6 border-b border-slate-800"><div><p className="text-emerald-400 font-bold text-xs">{job.company}</p><h2 className="text-lg font-semibold">{job.role}</h2></div><a href={job.link} target="_blank" className="px-6 py-2 bg-indigo-600 rounded text-sm hover:bg-indigo-500">APPLY</a></div>)}</div></div>}
             {activeView === 'referralForm' && (
-              <div className="max-w-xl mx-auto"><h1 className="text-3xl font-black mb-8">SUBMIT DATA</h1><form className="space-y-4" onSubmit={(e) => { e.preventDefault(); alert("Submitted"); }}><input type="text" placeholder="Full Name" className="w-full p-4 bg-slate-900 border border-emerald-500/30 rounded" required /><input type="text" placeholder="Company" className="w-full p-4 bg-slate-900 border border-emerald-500/30 rounded" required /><button type="submit" className="w-full py-4 bg-emerald-600 font-bold uppercase">Send</button></form></div>
+              <div className="max-w-xl mx-auto">
+                <h1 className="text-3xl font-black mb-8 uppercase tracking-widest text-emerald-500">Submit Referral</h1>
+                <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); alert("Referral Submitted"); }}>
+                  <input type="text" placeholder="Full Name" className="w-full p-4 bg-[#030712] border border-slate-700 rounded focus:border-emerald-500 outline-none" required />
+                  <input type="email" placeholder="Your Email ID" className="w-full p-4 bg-[#030712] border border-slate-700 rounded focus:border-emerald-500 outline-none" required />
+                  <input type="text" placeholder="Company to Refer" className="w-full p-4 bg-[#030712] border border-slate-700 rounded focus:border-emerald-500 outline-none" required />
+                  <input type="text" placeholder="Role for Referral" className="w-full p-4 bg-[#030712] border border-slate-700 rounded focus:border-emerald-500 outline-none" required />
+                  <textarea placeholder="Job Description (Short Summary)" className="w-full p-4 bg-[#030712] border border-slate-700 rounded focus:border-emerald-500 outline-none h-32" required></textarea>
+                  <button type="submit" className="w-full py-4 bg-emerald-600 hover:bg-emerald-500 text-black font-black uppercase tracking-widest transition-all">Submit Referral</button>
+                </form>
+              </div>
             )}
             {activeView === 'availability' && <div className="max-w-xl mx-auto text-center"><h1 className="text-3xl font-black mb-6">AVAILABILITY</h1><p>Status dashboard active.</p></div>}
           </div>
