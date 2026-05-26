@@ -36,7 +36,6 @@ export default function App() {
   useEffect(() => {
     const timer = setTimeout(() => setIsLoading(false), 2000);
     const fetchActivities = async () => {
-      // NOTE: Removed .order('created_at') to prevent the 400 Error until you add that column
       const { data } = await supabase.from('activities').select('description');
       if (data) setActivities(data);
     };
@@ -44,31 +43,27 @@ export default function App() {
     return () => clearTimeout(timer);
   }, []);
 
-  const handleSaveActivity = async (type, desc) => {
-    await supabase.from('activities').insert([{ activity_type: type, description: desc }]);
-    const { data } = await supabase.from('activities').select('description');
-    if (data) setActivities(data);
-  };
-
   return (
     <div className="text-slate-100 font-mono min-h-screen flex flex-col bg-[#030712]">
-      {/* 1. NAVIGATION */}
+      {/* NAVIGATION BAR */}
       <nav className="p-6 border-b border-emerald-500/30 flex items-center justify-between sticky top-0 bg-[#030712]/90 backdrop-blur-lg z-50">
         <h1 className="text-xl font-black tracking-[0.3em] text-emerald-500 cursor-pointer uppercase" onClick={() => setActiveView(null)}>&gt; AML_DECODE</h1>
       </nav>
 
       {!activeView && (
-        <main className="flex-grow">
-          {/* 2. VIDEO SECTION */}
+        <main className="flex-grow w-full">
+          {/* VIDEO */}
           <section className="w-full relative bg-black">
             <video className="w-full h-[500px] object-cover" autoPlay muted loop playsInline>
               <source src="/intro.mp4" type="video/mp4" />
             </video>
           </section>
 
-          {/* 3. DASHBOARD CARDS & FEED */}
+          {/* DASHBOARD */}
           <div className="max-w-7xl mx-auto px-6 py-16">
             <ActivityFeed activities={activities} />
+            
+            {/* CARDS */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-24">
               {[ {id: 'notes', icon: '📖', label: 'Notes'}, {id: 'jobs', icon: '💼', label: 'Jobs'}, {id: 'referralForm', icon: '📤', label: 'Submit Referral'} ].map(card => (
                 <div key={card.id} onClick={() => setActiveView(card.id)} className="p-8 bg-slate-900 border border-emerald-500/20 rounded cursor-pointer hover:bg-slate-800 transition-all">
@@ -78,7 +73,7 @@ export default function App() {
               ))}
             </div>
 
-            {/* 4. LATEST NEWS */}
+            {/* NEWS */}
             <section className="border-t border-white/5 pt-16">
               <h2 className="text-xl font-black text-red-500 mb-8 tracking-widest">● LATEST NEWS</h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -91,7 +86,7 @@ export default function App() {
         </main>
       )}
 
-      {/* 5. FOOTER */}
+      {/* FOOTER */}
       <footer className="py-10 text-center text-slate-500 border-t border-white/5 uppercase text-xs tracking-widest">
         © 2026 AML_DECODE / Designed by @Nitesh
       </footer>
