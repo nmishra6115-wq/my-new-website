@@ -100,7 +100,7 @@ export default function App() {
       <div className="w-full bg-emerald-950/20 border-y border-emerald-500/20 py-3 overflow-hidden">
         <div className="animate-slow-scroll whitespace-nowrap">
           <span className="text-emerald-500 font-black tracking-[0.2em] uppercase text-sm">
-            ● ANNOUNCEMENTS: New Jobs has been added ●
+            ● ANNOUNCEMENTS: New Jobs has been added ● KPMG Hiring in Bengaluru loction, Please apply through Network Job Section . Wells Fargo Referral is available Now.
           </span>
         </div>
       </div>
