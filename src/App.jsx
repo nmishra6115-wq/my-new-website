@@ -3,7 +3,6 @@ import { notesContent } from './content';
 import { jobOpenings } from './jobs';
 import { kycNews } from './news';
 
-// Skeleton component for News
 const NewsSkeleton = () => (
   <div className="block p-6 bg-slate-900 border border-white/5 rounded animate-pulse">
     <div className="h-4 bg-slate-800 rounded w-full mb-4"></div>
@@ -26,57 +25,41 @@ export default function App() {
 
   useEffect(() => {
     localStorage.setItem('kyc_referrals', JSON.stringify(referrals));
-    // Simulate data loading
     const timer = setTimeout(() => setIsLoading(false), 2000);
     return () => clearTimeout(timer);
   }, [referrals]);
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
-    const newRef = {
-      name: e.target.name.value,
-      company: e.target.company.value,
-      designation: e.target.designation.value,
-      roleDesc: e.target.roleDesc.value,
-      email: e.target.email.value,
-      createdAt: Date.now()
-    };
+    const newRef = { name: e.target.name.value, company: e.target.company.value, designation: e.target.designation.value, roleDesc: e.target.roleDesc.value, email: e.target.email.value, createdAt: Date.now() };
     setReferrals([...referrals, newRef]);
     e.target.reset();
     setActiveView(null);
   };
 
-  const activeReferrals = referrals.filter(ref => (Date.now() - ref.createdAt) < (15 * 24 * 60 * 60 * 1000));
   const overlayStyle = "fixed inset-0 z-[100] bg-black/95 p-12 overflow-y-auto transition-all duration-500 ease-out translate-y-0";
 
   return (
-    <div className="bg-[#030712] text-slate-100 font-mono min-h-screen flex flex-col">
-      
+    <div className="bg-[#030712] text-slate-100 font-mono min-h-screen flex flex-col relative overflow-hidden">
+      {/* LIVE ANIMATED BACKGROUND */}
+      <div className="fixed inset-0 z-[-1] opacity-20 pointer-events-none animate-scan bg-[linear-gradient(rgba(16,185,129,0.2)_1px,transparent_1px),linear-gradient(90deg,rgba(16,185,129,0.2)_1px,transparent_1px)] bg-[size:50px_50px]"></div>
+
       {/* NAVIGATION */}
       <nav className="p-6 border-b border-emerald-500/30 flex items-center justify-between sticky top-0 bg-[#030712]/90 backdrop-blur-lg z-50 w-full shadow-[0_0_20px_rgba(16,185,129,0.1)]">
-        <h1 className="text-xl md:text-2xl font-black tracking-[0.3em] text-emerald-500 cursor-pointer hover:text-white transition-all uppercase" 
-            onClick={() => { setActiveView(null); setIsMenuOpen(false); }}>
-          &gt; AML_DECODE
-        </h1>
+        <h1 className="text-xl md:text-2xl font-black tracking-[0.3em] text-emerald-500 cursor-pointer hover:text-white transition-all uppercase" onClick={() => { setActiveView(null); setIsMenuOpen(false); }}>&gt; AML_DECODE</h1>
         <div className="hidden md:flex gap-8 items-center">
           {['NOTES', 'JOBS', 'SUBMIT', 'AVAILABLE'].map((item) => (
-            <button key={item} onClick={() => setActiveView(item.toLowerCase() === 'submit' ? 'referralForm' : item.toLowerCase())} className="text-sm font-black text-emerald-400 hover:text-white transition-all uppercase tracking-widest">
-              {item}
-            </button>
+            <button key={item} onClick={() => setActiveView(item.toLowerCase() === 'submit' ? 'referralForm' : item.toLowerCase())} className="text-sm font-black text-emerald-400 hover:text-white transition-all uppercase tracking-widest">{item}</button>
           ))}
         </div>
-        <button className="md:hidden text-emerald-500 text-2xl" onClick={() => setIsMenuOpen(!isMenuOpen)}>
-          {isMenuOpen ? "✕" : "☰"}
-        </button>
+        <button className="md:hidden text-emerald-500 text-2xl" onClick={() => setIsMenuOpen(!isMenuOpen)}>{isMenuOpen ? "✕" : "☰"}</button>
       </nav>
 
       {/* MOBILE MENU */}
       {isMenuOpen && (
         <div className="md:hidden flex flex-col bg-[#030712] p-6 gap-4 border-b border-emerald-500/30">
           {['NOTES', 'JOBS', 'SUBMIT', 'AVAILABLE'].map((item) => (
-            <button key={item} onClick={() => { setActiveView(item.toLowerCase() === 'submit' ? 'referralForm' : item.toLowerCase()); setIsMenuOpen(false); }} className="text-lg font-black text-left">
-              {item}
-            </button>
+            <button key={item} onClick={() => { setActiveView(item.toLowerCase() === 'submit' ? 'referralForm' : item.toLowerCase()); setIsMenuOpen(false); }} className="text-lg font-black text-left">{item}</button>
           ))}
         </div>
       )}
@@ -85,9 +68,7 @@ export default function App() {
       {!activeView && (
         <>
           <section className="w-full relative">
-             <video className="w-full h-[500px] object-cover" autoPlay muted={isMuted} loop playsInline>
-                <source src="/intro.mp4" type="video/mp4" />
-             </video>
+             <video className="w-full h-[500px] object-cover" autoPlay muted={isMuted} loop playsInline><source src="/intro.mp4" type="video/mp4" /></video>
              <button onClick={() => setIsMuted(!isMuted)} className="absolute bottom-8 right-8 bg-black/50 text-emerald-500 border border-emerald-500/50 px-4 py-2 rounded-lg backdrop-blur-md">
                {isMuted ? "🔇 Unmute" : "🔊 Mute"}
              </button>
@@ -125,23 +106,9 @@ export default function App() {
       {activeView && (
         <div className={overlayStyle}>
           <button onClick={() => setActiveView(null)} className="text-emerald-400 font-bold mb-10">&larr; BACK_TO_SYSTEM</button>
-          {activeView === 'notes' && (
-            <div className="max-w-6xl mx-auto flex gap-12">
-              <div className="w-1/4 space-y-2">{notesContent.map((item, idx) => <button key={idx} onClick={() => setPageIndex(idx)} className="w-full text-left p-4 rounded border border-slate-700 hover:border-emerald-500">{item.title}</button>)}</div>
-              <div className="w-3/4"><h1 className="text-4xl font-bold mb-6">{notesContent[pageIndex].title}</h1><p className="text-lg text-slate-300 whitespace-pre-line">{notesContent[pageIndex].body}</p></div>
-            </div>
-          )}
-          {activeView === 'jobs' && (
-            <div className="max-w-5xl mx-auto">
-              <h1 className="text-4xl font-black mb-8">ACTIVE_OPENINGS</h1>
-              <div className="bg-slate-900 rounded border border-slate-800">
-                {jobOpenings.map((job, idx) => <div key={idx} className="flex items-center justify-between p-6 border-b border-slate-800"><div><p className="text-emerald-400 font-bold text-xs">{job.company}</p><h2 className="text-lg font-semibold">{job.role}</h2></div><a href={job.link} target="_blank" className="px-6 py-2 bg-indigo-600 rounded text-sm hover:bg-indigo-500">APPLY</a></div>)}
-              </div>
-            </div>
-          )}
-          {activeView === 'referralForm' && (
-            <form onSubmit={handleFormSubmit} className="max-w-2xl mx-auto bg-slate-900 p-8 rounded"><input name="name" placeholder="Name" className="w-full p-4 mb-4 bg-black border border-slate-700 rounded" required /><input name="email" type="email" placeholder="Email" className="w-full p-4 mb-4 bg-black border border-slate-700 rounded" required /><button type="submit" className="w-full py-4 bg-emerald-600 rounded font-bold uppercase tracking-widest">Submit Data</button></form>
-          )}
+          {activeView === 'notes' && <div className="max-w-6xl mx-auto flex gap-12"><div className="w-1/4 space-y-2">{notesContent.map((item, idx) => <button key={idx} onClick={() => setPageIndex(idx)} className="w-full text-left p-4 rounded border border-slate-700 hover:border-emerald-500">{item.title}</button>)}</div><div className="w-3/4"><h1 className="text-4xl font-bold mb-6">{notesContent[pageIndex].title}</h1><p className="text-lg text-slate-300 whitespace-pre-line">{notesContent[pageIndex].body}</p></div></div>}
+          {activeView === 'jobs' && <div className="max-w-5xl mx-auto"><h1 className="text-4xl font-black mb-8">ACTIVE_OPENINGS</h1><div className="bg-slate-900 rounded border border-slate-800">{jobOpenings.map((job, idx) => <div key={idx} className="flex items-center justify-between p-6 border-b border-slate-800"><div><p className="text-emerald-400 font-bold text-xs">{job.company}</p><h2 className="text-lg font-semibold">{job.role}</h2></div><a href={job.link} target="_blank" className="px-6 py-2 bg-indigo-600 rounded text-sm hover:bg-indigo-500">APPLY</a></div>)}</div></div>}
+          {activeView === 'referralForm' && <form onSubmit={handleFormSubmit} className="max-w-2xl mx-auto bg-slate-900 p-8 rounded"><input name="name" placeholder="Name" className="w-full p-4 mb-4 bg-black border border-slate-700 rounded" required /><input name="email" type="email" placeholder="Email" className="w-full p-4 mb-4 bg-black border border-slate-700 rounded" required /><button type="submit" className="w-full py-4 bg-emerald-600 rounded font-bold uppercase tracking-widest">Submit Data</button></form>}
         </div>
       )}
 
