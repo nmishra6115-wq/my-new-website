@@ -1,84 +1,93 @@
 import React, { useState, useEffect } from 'react';
-import { supabase } from './supabaseClient';
 import { notesContent } from './content';
 import { jobOpenings } from './jobs';
 import { kycNews } from './news';
 
+const NewsSkeleton = () => (
+  <div className="block p-6 bg-slate-900 border border-white/5 rounded animate-pulse">
+    <div className="h-4 bg-slate-800 rounded w-full mb-4"></div>
+    <div className="h-4 bg-slate-800 rounded w-2/3"></div>
+  </div>
+);
+
 export default function App() {
-  const [activeView, setActiveView] = useState('home');
-  const [activities, setActivities] = useState([]);
+  const [activeView, setActiveView] = useState(null);
+  const [pageIndex, setPageIndex] = useState(0);
+  const [isMuted, setIsMuted] = useState(true);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [submissions, setSubmissions] = useState([]);
 
   useEffect(() => {
-    const fetchActivities = async () => {
-      const { data } = await supabase.from('activities').select('description');
-      if (data) setActivities(data);
-    };
-    fetchActivities();
+    const timer = setTimeout(() => setIsLoading(false), 2000);
+    return () => clearTimeout(timer);
   }, []);
 
-  const renderContent = (data) => (
-    <div className="space-y-8">
-      {Array.isArray(data) ? data.map((item, i) => (
-        <div key={i} className="border-b border-emerald-500/20 pb-6">
-          <h2 className="text-2xl font-bold text-emerald-400 mb-2">{item.title}</h2>
-          <p className="text-slate-300 whitespace-pre-line leading-relaxed">{item.body}</p>
-        </div>
-      )) : <p>Loading...</p>}
-    </div>
-  );
-
   return (
-    <div className="min-h-screen bg-[#030712] text-slate-100 font-mono flex flex-col">
-      {/* 1. NAVIGATION */}
-      <nav className="fixed top-0 w-full z-50 bg-[#030712]/95 border-b border-emerald-500/30 p-6 flex justify-between items-center">
-        <h1 className="text-xl font-black text-emerald-500 cursor-pointer" onClick={() => setActiveView('home')}>&gt; AML_DECODE</h1>
-        <div className="hidden md:flex gap-6 text-xs font-bold text-emerald-400">
-          {['NOTES', 'JOBS', 'SUBMIT', 'AVAILABLE', 'CONTRIBUTE'].map(item => (
-            <button key={item} onClick={() => setActiveView(item.toLowerCase())}>{item}</button>
+    <div className="text-slate-100 font-mono min-h-screen flex flex-col relative">
+      
+      <nav className="p-6 border-b border-emerald-500/30 flex items-center justify-between sticky top-0 bg-[#030712]/90 backdrop-blur-lg z-50 w-full shadow-[0_0_20px_rgba(16,185,129,0.1)]">
+        <h1 className="text-xl md:text-2xl font-black tracking-[0.3em] text-emerald-500 cursor-pointer uppercase hover:text-white transition-all" onClick={() => setActiveView(null)}>&gt; AML_DECODE</h1>
+        <div className="hidden md:flex gap-8 items-center">
+          {['NOTES', 'JOBS', 'SUBMIT', 'AVAILABLE'].map((item) => (
+            <button key={item} onClick={() => setActiveView(item === 'SUBMIT' ? 'referralForm' : item.toLowerCase())} className="text-sm font-black text-emerald-400 hover:text-white transition-all uppercase tracking-widest">{item}</button>
           ))}
         </div>
+        <button className="md:hidden text-emerald-500 text-2xl" onClick={() => setIsMenuOpen(!isMenuOpen)}>{isMenuOpen ? "✕" : "☰"}</button>
       </nav>
 
-      {/* 2. MAIN CONTENT */}
-      <main className="flex-grow pt-24 pb-20 w-full max-w-7xl mx-auto px-6">
-        {activeView === 'home' ? (
-          <>
-            <section className="w-full h-[50vh] bg-black mb-16 overflow-hidden">
-              <video className="w-full h-full object-cover" autoPlay muted loop playsInline><source src="/intro.mp4" type="video/mp4" /></video>
-            </section>
-            
-            <section className="mb-16 border border-emerald-500/20 bg-emerald-950/10 p-8 rounded">
-              <h2 className="text-emerald-500 font-black mb-6 uppercase">● LIVE NETWORK UPDATES</h2>
-              {activities.map((act, i) => <p key={i} className="text-sm border-b border-white/5 py-2">{act.description}</p>)}
-            </section>
+      {isMenuOpen && (
+        <div className="md:hidden flex flex-col bg-[#030712]/95 p-6 gap-4 border-b border-emerald-500/30">
+          {['NOTES', 'JOBS', 'SUBMIT REFERRAL', 'AVAILABLE REFERRAL'].map((item) => (
+            <button key={item} onClick={() => { setActiveView(item === 'SUBMIT' ? 'referralForm' : item.toLowerCase()); setIsMenuOpen(false); }} className="text-lg font-black text-left">{item}</button>
+          ))}
+        </div>
+      )}
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-24">
-              {[ {id: 'notes', label: 'NOTES', icon: '📖'}, {id: 'jobs', label: 'JOBS', icon: '💼'}, {id: 'submit', label: 'SUBMIT', icon: '📤'}, {id: 'available', label: 'AVAILABLE', icon: '🔍'}, {id: 'contribute', label: 'CONTRIBUTE', icon: '📁'} ].map(card => (
-                <div key={card.id} onClick={() => setActiveView(card.id)} className="p-10 bg-slate-900 border border-emerald-500/20 cursor-pointer hover:bg-emerald-900/10 text-center">
-                  <div className="text-4xl mb-6">{card.icon}</div>
-                  <h3 className="font-bold text-emerald-400">{card.label}</h3>
-                </div>
+      {!activeView && (
+        <>
+          <section className="w-full relative">
+             <video className="w-full h-[500px] object-cover" autoPlay muted={isMuted} loop playsInline><source src="/intro.mp4" type="video/mp4" /></video>
+             <button onClick={() => setIsMuted(!isMuted)} className="absolute bottom-8 right-8 bg-black/50 text-emerald-500 border border-emerald-500/50 px-4 py-2 rounded-lg backdrop-blur-md">
+               {isMuted ? "🔇 Unmute" : "🔊 Mute"}
+             </button>
+          </section>
+
+          <main className="flex-grow max-w-7xl mx-auto px-6 py-16">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-24">
+              {[ {id: 'notes', icon: '📖', label: 'Notes', color: 'registry-card'}, {id: 'jobs', icon: '💼', label: 'Jobs', color: 'jobs-card'}, {id: 'referralForm', icon: '📤', label: 'Submit Referral', color: 'submit-card'}, {id: 'Available Referral', icon: '🔍', label: 'Available Referral', color: 'avail-card'} ].map(card => (
+                <div key={card.id} onClick={() => setActiveView(card.id)} className={`${card.color} custom-card p-8 border border-emerald-500/20 rounded cursor-pointer transition-all duration-300 hover:translate-y-[-5px]`}><div className="text-4xl mb-6">{card.icon}</div><h3 className="font-bold text-emerald-400 uppercase">{card.label}</h3></div>
               ))}
             </div>
 
             <section className="border-t border-white/5 pt-16">
-              <h2 className="text-xl font-black text-red-500 mb-8 uppercase">● LATEST NEWS</h2>
+              <h2 className="text-xl font-black text-red-500 mb-8 tracking-widest">● LATEST NEWS</h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {kycNews.map((n, i) => <a key={i} href={n.link} target="_blank" className="p-6 bg-[#030712] border border-white/5 hover:border-red-500">{n.headline}</a>)}
+                {isLoading ? <><NewsSkeleton /><NewsSkeleton /><NewsSkeleton /></> : kycNews.map((n, i) => (
+                  <a key={i} href={n.link} target="_blank" rel="noopener noreferrer" className="block p-6 bg-[#030712]/80 border border-white/5 rounded hover:border-red-500 transition-all"><h4 className="text-md font-semibold text-slate-200 mb-4">{n.headline}</h4></a>
+                ))}
               </div>
             </section>
-          </>
-        ) : (
-          <div className="bg-slate-900 p-8 border border-emerald-500/20">
-            <button onClick={() => setActiveView('home')} className="text-emerald-500 mb-6 underline">← BACK</button>
-            <h1 className="text-4xl font-black uppercase text-emerald-500 mb-8">{activeView}</h1>
-            {renderContent(activeView === 'notes' ? notesContent : jobOpenings)}
-          </div>
-        )}
-      </main>
+          </main>
+        </>
+      )}
 
-      {/* 3. FOOTER */}
-      <footer className="py-10 text-center border-t border-white/5 text-xs text-slate-500">© 2026 AML_DECODE</footer>
+      {activeView && (
+        <div className="fixed inset-0 z-[100] bg-black/95 p-12 overflow-y-auto animate-in fade-in zoom-in duration-300">
+          <button onClick={() => setActiveView(null)} className="text-emerald-400 font-bold mb-10 hover:text-white">&larr; BACK</button>
+          <div className="max-w-6xl mx-auto text-white">
+            {activeView === 'notes' && <div className="flex gap-12"><div className="w-1/4 space-y-2">{notesContent.map((item, idx) => <button key={idx} onClick={() => setPageIndex(idx)} className="w-full text-left p-4 rounded border border-slate-700 hover:border-emerald-500">{item.title}</button>)}</div><div className="w-3/4"><h1 className="text-4xl font-bold mb-6">{notesContent[pageIndex].title}</h1><p className="text-lg text-slate-300 whitespace-pre-line">{notesContent[pageIndex].body}</p></div></div>}
+            {activeView === 'jobs' && <div className="max-w-4xl mx-auto"><h1 className="text-4xl font-black mb-8">ACTIVE_OPENINGS</h1><div className="bg-[#030712]/80 rounded border border-slate-800">{jobOpenings.map((job, idx) => <div key={idx} className="flex items-center justify-between p-6 border-b border-slate-800"><div><p className="text-emerald-400 font-bold text-xs">{job.company}</p><h2 className="text-lg font-semibold">{job.role}</h2></div><a href={job.link} target="_blank" className="px-6 py-2 bg-indigo-600 rounded text-sm hover:bg-indigo-500">APPLY</a></div>)}</div></div>}
+            {activeView === 'referralForm' && (
+              <div className="max-w-xl mx-auto"><h1 className="text-3xl font-black mb-8 uppercase text-emerald-500">Submit Referral</h1><form className="space-y-4" onSubmit={(e) => { e.preventDefault(); const data = {name: e.target[0].value, email: e.target[1].value, company: e.target[2].value, role: e.target[3].value}; setSubmissions([...submissions, data]); alert("Submitted!"); }}><input type="text" placeholder="Full Name" className="w-full p-4 bg-[#030712] border border-slate-700 rounded" required /><input type="email" placeholder="Email" className="w-full p-4 bg-[#030712] border border-slate-700 rounded" required /><input type="text" placeholder="Company" className="w-full p-4 bg-[#030712] border border-slate-700 rounded" required /><input type="text" placeholder="Role" className="w-full p-4 bg-[#030712] border border-slate-700 rounded" required /><textarea placeholder="Description" className="w-full p-4 bg-[#030712] border border-slate-700 rounded" required></textarea><button type="submit" className="w-full py-4 bg-emerald-600 font-bold uppercase">Send Data</button></form></div>
+            )}
+            {activeView === 'availability' && (
+              <div className="max-w-4xl mx-auto"><h1 className="text-3xl font-black mb-6 uppercase tracking-widest text-emerald-500">Live Availability</h1>{submissions.map((s, i) => <div key={i} className="p-4 mb-4 border border-slate-700 bg-slate-900 rounded"><p className="font-bold">{s.name} - {s.role} at {s.company}</p></div>)}<div className="mt-8 text-center"><a href="mailto:nitesh@example.com?subject=Interested in Referral" className="px-8 py-4 bg-emerald-600 hover:bg-emerald-500 text-black font-black uppercase tracking-widest transition-all">I am interested</a></div></div>
+            )}
+          </div>
+        </div>
+      )}
+      <footer className="py-10 text-center text-slate-500 border-t border-white/5 uppercase text-xs tracking-widest">© 2026 AML_DECODE / Designed by @Nitesh</footer>
     </div>
   );
 }
