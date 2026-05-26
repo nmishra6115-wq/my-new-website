@@ -34,11 +34,24 @@ export default function App() {
         <h1 className="text-xl md:text-2xl font-black tracking-[0.3em] text-emerald-500 cursor-pointer uppercase hover:text-white transition-all" onClick={() => setActiveView(null)}>&gt; AML_DECODE</h1>
         
         {/* DESKTOP NAV */}
-        <div className="hidden md:flex gap-6 items-center">
-          {['NOTES', 'JOBS', 'SUBMIT REFERRAL', 'AVAILABLE REFERRAL', 'HR DASHBOARD', 'NETWORK JOBS'].map((item) => (
-            <button key={item} onClick={() => setActiveView(item === 'SUBMIT' ? 'referralForm' : (item === 'AVAILABLE' ? 'available' : item.toLowerCase()))} className="text-xs font-black text-emerald-400 hover:text-white transition-all uppercase tracking-widest">{item}</button>
-          ))}
-        </div>
+       <div className="hidden md:flex gap-6 items-center">
+  {[
+    { label: 'NOTES', id: 'notes' },
+    { label: 'JOBS', id: 'jobs' },
+    { label: 'SUBMIT', id: 'referralForm' },
+    { label: 'AVAILABLE', id: 'available' },
+    { label: 'CONTRIBUTE', id: 'contribute' },
+    { label: 'NETWORK', id: 'network' }
+  ].map((item) => (
+    <button 
+      key={item.id} 
+      onClick={() => setActiveView(item.id)} 
+      className="text-xs font-black text-emerald-400 hover:text-white transition-all uppercase tracking-widest"
+    >
+      {item.label}
+    </button>
+  ))}
+</div>
         
         {/* MOBILE TOGGLE */}
         <button className="md:hidden text-emerald-500 text-2xl z-[60]" onClick={() => setIsMenuOpen(!isMenuOpen)}>
@@ -48,20 +61,27 @@ export default function App() {
 
       {/* FIXED MOBILE MENU (This was missing from your code) */}
       {isMenuOpen && (
-        <div className="md:hidden absolute top-20 left-0 w-full bg-[#030712]/95 border-b border-emerald-500/30 p-6 flex flex-col gap-4 z-50">
-          {['NOTES', 'JOBS', 'SUBMIT', 'AVAILABLE', 'CONTRIBUTE', 'NETWORK'].map((item) => (
-            <button 
-              key={item} 
-              onClick={() => { 
-                setActiveView(item === 'SUBMIT' ? 'referralForm' : (item === 'AVAILABLE' ? 'available' : item.toLowerCase())); 
-                setIsMenuOpen(false); 
-              }} 
-              className="text-lg font-black text-left text-emerald-400 uppercase tracking-widest"
-            >
-              {item}
-            </button>
-          ))}
-        </div>
+      <div className="md:hidden absolute top-20 left-0 w-full bg-[#030712]/95 border-b border-emerald-500/30 p-6 flex flex-col gap-4 z-50">
+  {[
+    { label: 'NOTES', id: 'notes' },
+    { label: 'JOBS', id: 'jobs' },
+    { label: 'SUBMIT', id: 'referralForm' },
+    { label: 'AVAILABLE', id: 'available' },
+    { label: 'CONTRIBUTE', id: 'contribute' },
+    { label: 'NETWORK', id: 'network' }
+  ].map((item) => (
+    <button 
+      key={item.id} 
+      onClick={() => { 
+        setActiveView(item.id); 
+        setIsMenuOpen(false); 
+      }} 
+      className="text-lg font-black text-left text-emerald-400 uppercase"
+    >
+      {item.label}
+    </button>
+  ))}
+</div>
       )}
 
       {!activeView && (
