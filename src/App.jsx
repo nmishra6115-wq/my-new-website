@@ -16,17 +16,8 @@ export default function App() {
   const [isMuted, setIsMuted] = useState(true);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [submissions, setSubmissions] = useState(() => {
-    const saved = localStorage.getItem("submissions");
-    return saved ? JSON.parse(saved) : [];
-  });
-
-  const [partnerFiles, setPartnerFiles] = useState(() => {
-    const saved = localStorage.getItem("partnerFiles");
-    // This safely handles existing data without crashing
-    if (!saved) return [];
-    try { const parsed = JSON.parse(saved); return typeof parsed[0] === 'string' ? [] : parsed; } catch { return []; }
-  });
+  const [submissions, setSubmissions] = useState([]);
+const [partnerFiles, setPartnerFiles] = useState([]);
   const [isAuthorized, setIsAuthorized] = useState(false);
 
   useEffect(() => {
@@ -158,7 +149,20 @@ export default function App() {
             {activeView === 'notes' && <div className="flex gap-12"><div className="w-1/4 space-y-2">{notesContent.map((item, idx) => <button key={idx} onClick={() => setPageIndex(idx)} className="w-full text-left p-4 rounded border border-slate-700 hover:border-emerald-500">{item.title}</button>)}</div><div className="w-3/4"><h1 className="text-4xl font-bold mb-6">{notesContent[pageIndex]?.title}</h1><p className="text-lg text-slate-300 whitespace-pre-line">{notesContent[pageIndex]?.body}</p></div></div>}
             {activeView === 'jobs' && <div className="max-w-4xl mx-auto"><h1 className="text-4xl font-black mb-8">ACTIVE_OPENINGS</h1><div className="bg-[#030712]/80 rounded border border-slate-800">{jobOpenings.map((job, idx) => <div key={idx} className="flex items-center justify-between p-6 border-b border-slate-800"><div><p className="text-emerald-400 font-bold text-xs">{job.company}</p><h2 className="text-lg font-semibold">{job.role}</h2></div><a href={job.link} target="_blank" className="px-6 py-2 bg-indigo-600 rounded text-sm hover:bg-indigo-500">APPLY</a></div>)}</div></div>}
             {activeView === 'referralForm' && (
-              <div className="max-w-xl mx-auto"><h1 className="text-3xl font-black mb-8 uppercase text-emerald-500">Submit Referral</h1><form className="space-y-4" onSubmit={(e) => { e.preventDefault(); const data = {name: e.target[0].value, email: e.target[1].value, company: e.target[2].value, role: e.target[3].value}; setSubmissions([...submissions, data]); alert("Submitted!"); }}><input type="text" placeholder="Full Name" className="w-full p-4 bg-[#030712] border border-slate-700 rounded" required /><input type="email" placeholder="Email" className="w-full p-4 bg-[#030712] border border-slate-700 rounded" required /><input type="text" placeholder="Company" className="w-full p-4 bg-[#030712] border border-slate-700 rounded" required /><input type="text" placeholder="Role" className="w-full p-4 bg-[#030712] border border-slate-700 rounded" required /><textarea placeholder="Description" className="w-full p-4 bg-[#030712] border border-slate-700 rounded" required></textarea><button type="submit" className="w-full py-4 bg-emerald-600 font-bold uppercase">Send Data</button></form></div>
+              <div className="max-w-xl mx-auto"><h1 className="text-3xl font-black mb-8 uppercase text-emerald-500">Submit Referral</h1><form className="space-y-4" onSubmit={async (e) => { 
+  e.preventDefault(); 
+  const data = {name: e.target[0].value, email: e.target[1].value, company: e.target[2].value, role: e.target[3].value}; 
+  
+  // Send to Supabase
+  const { error } = await supabase.from('submissions').insert([data]);
+  
+  if (!error) {
+    setSubmissions([...submissions, data]); 
+    alert("Submitted!");
+  } else {
+    alert("Error saving to database: " + error.message);
+  }
+}}><input type="text" placeholder="Full Name" className="w-full p-4 bg-[#030712] border border-slate-700 rounded" required /><input type="email" placeholder="Email" className="w-full p-4 bg-[#030712] border border-slate-700 rounded" required /><input type="text" placeholder="Company" className="w-full p-4 bg-[#030712] border border-slate-700 rounded" required /><input type="text" placeholder="Role" className="w-full p-4 bg-[#030712] border border-slate-700 rounded" required /><textarea placeholder="Description" className="w-full p-4 bg-[#030712] border border-slate-700 rounded" required></textarea><button type="submit" className="w-full py-4 bg-emerald-600 font-bold uppercase">Send Data</button></form></div>
             )}
             {activeView === 'available' && (
               <div className="max-w-4xl mx-auto"><h1 className="text-3xl font-black mb-6 uppercase tracking-widest text-emerald-500">Live Availability</h1>{submissions.map((s, i) => <div key={i} className="p-4 mb-4 border border-slate-700 bg-slate-900 rounded"><p className="font-bold">{s.name} - {s.role} at {s.company}</p></div>)}<div className="mt-8 text-center"><a href="mailto:nitesh@example.com?subject=Interested in Referral" className="px-8 py-4 bg-emerald-600 hover:bg-emerald-500 text-black font-black uppercase tracking-widest transition-all">I am interested</a></div></div>
@@ -185,8 +189,43 @@ export default function App() {
   </button>
 </div>
                     <h1 className="text-2xl font-bold mb-6 text-emerald-500 uppercase tracking-widest">Partner Access</h1>
-                    <input type="password" placeholder="Enter Secure Key" className="w-full p-4 bg-black border border-emerald-500/30 rounded text-center mb-6" onKeyDown={(e) => { if (e.key === 'Enter' && e.target.value === 'my-super-secret-123') setIsAuthorized(true); }} />
-                  </div>
+<input 
+  type="file" 
+  onChange={async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // 1. Upload the file to your bucket
+    const fileName = `${Date.now()}_${file.name}`; // Unique name to prevent overwrites
+    const { data: uploadData, error: uploadError } = await supabase.storage
+      .from('partner-files') // <-- Use your actual bucket name here
+      .upload(fileName, file);
+
+    if (uploadError) {
+      alert("Upload failed: " + uploadError.message);
+      return;
+    }
+
+    // 2. Get the public URL
+    const { data: { publicUrl } } = supabase.storage
+      .from('partner-files')
+      .getPublicUrl(fileName);
+
+    // 3. Save the record to your 'partner_files' database table
+    const { error: dbError } = await supabase
+      .from('partner_files')
+      .insert([{ name: file.name, url: publicUrl }]);
+
+    if (dbError) {
+      alert("Database error: " + dbError.message);
+    } else {
+      alert("Success! File is live.");
+      // Update local state so it appears immediately without refreshing
+      setPartnerFiles([...partnerFiles, { name: file.name, url: publicUrl }]);
+    }
+  }} 
+  className="text-white mb-8" 
+/>                  </div>
                 ) : (
                   <div><h1 className="text-3xl font-black mb-8 text-emerald-500">SECURE UPLOAD</h1><input type="file" onChange={(e) => { const f = e.target.files[0]; if(f) setPartnerFiles([...partnerFiles, { name: f.name, url: URL.createObjectURL(f) }]); }} className="text-white mb-8" /><button onClick={() => alert("Upload Success!")} className="w-full py-4 bg-emerald-600 text-black font-black uppercase">Submit Content</button></div>
                 )}
