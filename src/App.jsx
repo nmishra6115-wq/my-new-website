@@ -1,3 +1,5 @@
+// Paste this inside your App function, right before the 'return'
+console.log("Current activeView is:", activeView);
 import React, { useState, useEffect } from 'react';
 import { notesContent } from './content';
 import { jobOpenings } from './jobs';
