@@ -136,52 +136,57 @@ export default function App() {
       )}
 
       {/* OVERLAY SECTION */}
-    {activeView && (
+   
+     
+      
+      {activeView && (
   <div className="fixed inset-0 z-[100] bg-black/95 p-12 overflow-y-auto">
-    <button onClick={() => setActiveView(null)} className="text-emerald-400 mb-10">&larr; BACK</button>
+    <button onClick={() => setActiveView(null)} className="text-emerald-400 mb-10 text-xl font-bold">&larr; BACK</button>
     
     <div className="max-w-4xl mx-auto text-white">
-      {/* 1. NOTES SECTION */}
-      {activeView === 'notes' && <div>...Notes Content...</div>}
       
-      {/* 2. JOBS SECTION */}
-      {activeView === 'jobs' && <div>...Jobs Content...</div>}
-      
-      {/* 3. SUBMIT REFERRAL SECTION */}
-      {activeView === 'referralForm' && <div>...Form Content...</div>}
-      
-      {/* 4. CONTRIBUTE SECTION */}
-      {activeView === 'contribute' && (
-        <div className="max-w-xl mx-auto border border-slate-800 p-16 text-center">
-          {!isAuthorized ? (
-            <input type="password" onKeyDown={(e) => {if(e.key==='Enter' && e.target.value==='123') setIsAuthorized(true)}} />
-          ) : (
-            <input type="file" onChange={(e) => {
-              if(e.target.files[0]) setPartnerFiles([...partnerFiles, {name: e.target.files[0].name, url: URL.createObjectURL(e.target.files[0])}]);
-            }} />
-          )}
+      {/* 1. NETWORK FEED (Simplest possible version) */}
+      {activeView === 'network' && (
+        <div>
+          <h1 className="text-3xl font-black mb-8 text-emerald-500">NETWORK FEED</h1>
+          {partnerFiles.length === 0 ? <p>No files uploaded.</p> : partnerFiles.map((file, i) => (
+            <div key={i} className="p-4 border border-slate-700 flex justify-between">
+              <span>{file.name}</span>
+              <button onClick={() => window.open(file.url, '_blank')} className="text-blue-400">View</button>
+            </div>
+          ))}
         </div>
       )}
-      
-      {/* 5. NETWORK SECTION - THIS IS THE SECTION THAT WAS CAUSING THE ERROR */}
-      {activeView === 'network' && (
-        <div className="max-w-4xl mx-auto">
-          <h1 className="text-3xl font-black mb-8 uppercase text-emerald-500">Network Feed</h1>
-          {partnerFiles.length === 0 ? (
-            <p className="text-slate-500">No partner uploads yet.</p>
+
+      {/* 2. CONTRIBUTE (Simplified password & upload) */}
+      {activeView === 'contribute' && (
+        <div className="p-16 border border-slate-800 text-center">
+          {!isAuthorized ? (
+            <input 
+              type="password" 
+              placeholder="Enter Key" 
+              className="p-4 bg-black border border-emerald-500 text-white"
+              onChange={(e) => {
+                if(e.target.value === '123') setIsAuthorized(true);
+              }}
+            />
           ) : (
-            partnerFiles.map((file, i) => (
-              <div key={i} className="p-6 mb-4 bg-slate-900 border border-purple-500/30 rounded flex justify-between items-center">
-                <span className="font-bold">{file.name}</span>
-                <button onClick={() => window.open(file.url, '_blank')} className="text-purple-400 font-bold">View</button>
-              </div>
-            ))
+            <input 
+              type="file" 
+              onChange={(e) => {
+                if(e.target.files[0]) {
+                  const f = e.target.files[0];
+                  setPartnerFiles([...partnerFiles, { name: f.name, url: URL.createObjectURL(f) }]);
+                }
+              }} 
+            />
           )}
         </div>
       )}
     </div>
   </div>
 )}
+)
       <footer className="py-10 text-center text-slate-500 border-t border-white/5 uppercase text-xs tracking-widest">© 2026 AML_DECODE / Designed by @Nitesh</footer>
     </div>
   );
