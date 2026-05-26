@@ -3,99 +3,94 @@ import { notesContent } from './content';
 import { jobOpenings } from './jobs';
 import { kycNews } from './news';
 
+const NewsSkeleton = () => (
+  <div className="block p-6 bg-slate-900 border border-white/5 rounded animate-pulse">
+    <div className="h-4 bg-slate-800 rounded w-full mb-4"></div>
+    <div className="h-4 bg-slate-800 rounded w-2/3"></div>
+  </div>
+);
+
 export default function App() {
   const [activeView, setActiveView] = useState(null);
   const [pageIndex, setPageIndex] = useState(0);
+  const [isMuted, setIsMuted] = useState(true);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setIsLoading(false), 2000);
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
-    <div className="min-h-screen bg-[#0A0C10] text-slate-300 font-sans selection:bg-emerald-500/30">
+    <div className="text-slate-100 font-mono min-h-screen flex flex-col relative overflow-hidden">
       
-      {/* PROFESSIONAL NAV */}
-      <nav className="sticky top-0 z-50 border-b border-white/5 bg-[#0A0C10]/80 backdrop-blur-xl px-8 py-4 flex items-center justify-between">
-        <h1 className="text-sm font-bold tracking-[0.2em] text-white cursor-pointer" onClick={() => setActiveView(null)}>
-          INSTITUTIONAL_TERMINAL <span className="text-emerald-500">v2.0</span>
-        </h1>
-        <div className="flex gap-6 text-[10px] font-bold tracking-widest uppercase">
-          {['NOTES', 'JOBS', 'SUBMIT', 'AVAILABLE'].map(item => (
-            <button key={item} onClick={() => setActiveView(item === 'SUBMIT' ? 'referralForm' : item.toLowerCase())} className="hover:text-emerald-400 transition-colors">
-              {item}
-            </button>
+      {/* BACKGROUND CLASS ADDED HERE */}
+      <div className="cyber-bg"></div>
+
+      {/* NAVIGATION */}
+      <nav className="p-6 border-b border-emerald-500/30 flex items-center justify-between sticky top-0 bg-[#030712]/90 backdrop-blur-lg z-50 w-full shadow-[0_0_20px_rgba(16,185,129,0.1)]">
+        <h1 className="text-xl md:text-2xl font-black tracking-[0.3em] text-emerald-500 cursor-pointer uppercase hover:text-white transition-all" onClick={() => setActiveView(null)}>&gt; AML_DECODE</h1>
+        <div className="hidden md:flex gap-8 items-center">
+          {['NOTES', 'JOBS', 'SUBMIT', 'AVAILABLE'].map((item) => (
+            <button key={item} onClick={() => setActiveView(item === 'SUBMIT' ? 'referralForm' : item.toLowerCase())} className="text-sm font-black text-emerald-400 hover:text-white transition-all uppercase tracking-widest">{item}</button>
           ))}
         </div>
+        <button className="md:hidden text-emerald-500 text-2xl" onClick={() => setIsMenuOpen(!isMenuOpen)}>{isMenuOpen ? "✕" : "☰"}</button>
       </nav>
 
-      <main className="max-w-6xl mx-auto p-8">
-        {!activeView ? (
-          <>
-            {/* LIVE FEED VIDEO */}
-            <section className="mb-12 border border-white/5 overflow-hidden">
-              <video className="w-full h-[400px] object-cover opacity-80 hover:opacity-100 transition-opacity" autoPlay muted loop playsInline>
-                <source src="/intro.mp4" type="video/mp4" />
-              </video>
-            </section>
+      {/* MOBILE MENU */}
+      {isMenuOpen && (
+        <div className="md:hidden flex flex-col bg-[#030712]/95 p-6 gap-4 border-b border-emerald-500/30">
+          {['NOTES', 'JOBS', 'SUBMIT', 'AVAILABLE'].map((item) => (
+            <button key={item} onClick={() => { setActiveView(item === 'SUBMIT' ? 'referralForm' : item.toLowerCase()); setIsMenuOpen(false); }} className="text-lg font-black text-left">{item}</button>
+          ))}
+        </div>
+      )}
 
-            {/* HERO */}
-            <header className="py-10">
-              <h2 className="text-4xl font-extrabold text-white mb-2">Compliance Operations</h2>
-              <p className="text-slate-500 max-w-lg">Advanced monitoring, document verification, and global regulatory framework management.</p>
-            </header>
+      {/* VIDEO & MAIN CONTENT */}
+      {!activeView && (
+        <>
+          <section className="w-full relative">
+             <video className="w-full h-[500px] object-cover" autoPlay muted={isMuted} loop playsInline><source src="/intro.mp4" type="video/mp4" /></video>
+             <button onClick={() => setIsMuted(!isMuted)} className="absolute bottom-8 right-8 bg-black/50 text-emerald-500 border border-emerald-500/50 px-4 py-2 rounded-lg backdrop-blur-md">
+               {isMuted ? "🔇 Unmute" : "🔊 Mute"}
+             </button>
+          </section>
 
-            {/* DASHBOARD GRID */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-              {[ 
-                {title: 'Registry', desc: 'System Notes', id: 'notes'}, 
-                {title: 'Employment', desc: 'Market Openings', id: 'jobs'}, 
-                {title: 'Submission', desc: 'Secure Upload', id: 'referralForm'},
-                {title: 'Status', desc: 'Live Availability', id: 'availability'}
-              ].map(card => (
-                <div key={card.id} onClick={() => setActiveView(card.id)} className="group p-8 border border-white/5 bg-white/[0.02] hover:bg-white/[0.04] transition-all cursor-pointer">
-                  <h3 className="text-lg font-bold text-white mb-1 group-hover:text-emerald-400">{card.title}</h3>
-                  <p className="text-xs text-slate-500">{card.desc}</p>
+          <main className="flex-grow max-w-7xl mx-auto px-6 py-16">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-24">
+              {[ {id: 'notes', icon: '📖', label: 'Notes'}, {id: 'jobs', icon: '💼', label: 'Jobs'}, {id: 'referralForm', icon: '📤', label: 'Submit'}, {id: 'availability', icon: '🔍', label: 'Availability'} ].map(card => (
+                <div key={card.id} onClick={() => setActiveView(card.id)} className="p-8 bg-[#030712]/80 border border-emerald-500/20 rounded cursor-pointer transition-all duration-300 hover:border-emerald-500 hover:translate-x-1 hover:translate-y-[-4px] hover:shadow-[0_0_20px_rgba(16,185,129,0.4)]">
+                  <div className="text-4xl mb-6">{card.icon}</div><h3 className="font-bold text-emerald-400 uppercase">{card.label}</h3>
                 </div>
               ))}
             </div>
-          </>
-        ) : (
-          /* OVERLAY CONTENT AREA */
-          <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <button onClick={() => setActiveView(null)} className="text-[10px] uppercase tracking-widest text-emerald-500 mb-8 hover:underline">← Return to Dashboard</button>
             
-            <div className="bg-[#11141A] p-12 border border-white/5 rounded-sm">
-              {activeView === 'notes' && (
-                <div className="flex gap-12">
-                  <div className="w-1/4 space-y-2">
-                    {notesContent.map((item, idx) => (
-                      <button key={idx} onClick={() => setPageIndex(idx)} className="block w-full text-left p-3 text-sm border-b border-white/5 hover:text-emerald-400">{item.title}</button>
-                    ))}
-                  </div>
-                  <div className="w-3/4">
-                    <h1 className="text-2xl font-bold text-white mb-4">{notesContent[pageIndex].title}</h1>
-                    <p className="text-slate-400 leading-relaxed">{notesContent[pageIndex].body}</p>
-                  </div>
-                </div>
-              )}
+            <section className="border-t border-white/5 pt-16">
+              <h2 className="text-xl font-black text-red-500 mb-8 tracking-widest">● LATEST NEWS</h2>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {isLoading ? <><NewsSkeleton /><NewsSkeleton /><NewsSkeleton /></> : kycNews.map((n, i) => (
+                  <a key={i} href={n.link} target="_blank" rel="noopener noreferrer" className="block p-6 bg-[#030712]/80 border border-white/5 rounded hover:border-red-500 transition-all"><h4 className="text-md font-semibold text-slate-200 mb-4">{n.headline}</h4></a>
+                ))}
+              </div>
+            </section>
+          </main>
+        </>
+      )}
 
-              {activeView === 'jobs' && (
-                <div>
-                  <h1 className="text-3xl font-bold text-white mb-8">Active Openings</h1>
-                  <div className="space-y-4">
-                    {jobOpenings.map((job, idx) => (
-                      <div key={idx} className="flex justify-between items-center p-6 bg-white/[0.02] border border-white/5">
-                        <div><p className="text-emerald-500 text-[10px] font-bold uppercase">{job.company}</p><h2 className="text-white font-bold">{job.role}</h2></div>
-                        <a href={job.link} target="_blank" rel="noopener noreferrer" className="px-4 py-2 border border-emerald-500/20 text-[10px] hover:bg-emerald-500 hover:text-black transition-all">APPLY</a>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
+      {/* OVERLAY SECTION */}
+      {activeView && (
+        <div className="fixed inset-0 z-[100] bg-black/95 p-12 overflow-y-auto animate-in fade-in zoom-in duration-300">
+          <button onClick={() => setActiveView(null)} className="text-emerald-400 font-bold mb-10">&larr; BACK</button>
+          <div className="max-w-6xl mx-auto text-white">
+            {activeView === 'notes' && <div className="flex gap-12"><div className="w-1/4 space-y-2">{notesContent.map((item, idx) => <button key={idx} onClick={() => setPageIndex(idx)} className="w-full text-left p-4 rounded border border-slate-700 hover:border-emerald-500">{item.title}</button>)}</div><div className="w-3/4"><h1 className="text-4xl font-bold mb-6">{notesContent[pageIndex].title}</h1><p className="text-lg text-slate-300 whitespace-pre-line">{notesContent[pageIndex].body}</p></div></div>}
+            {activeView === 'jobs' && <div className="max-w-4xl mx-auto"><h1 className="text-4xl font-black mb-8">ACTIVE_OPENINGS</h1><div className="bg-[#030712]/80 rounded border border-slate-800">{jobOpenings.map((job, idx) => <div key={idx} className="flex items-center justify-between p-6 border-b border-slate-800"><div><p className="text-emerald-400 font-bold text-xs">{job.company}</p><h2 className="text-lg font-semibold">{job.role}</h2></div><a href={job.link} target="_blank" className="px-6 py-2 bg-indigo-600 rounded text-sm hover:bg-indigo-500">APPLY</a></div>)}</div></div>}
           </div>
-        )}
-      </main>
-      
-      <footer className="w-full p-8 text-[9px] text-slate-600 tracking-[0.2em] border-t border-white/5 mt-20">
-        © 2026 AML_Decode / Designed by NITESH
-      </footer>
+        </div>
+      )}
+
+      <footer className="py-10 text-center text-slate-500 border-t border-white/5 uppercase text-xs tracking-widest">© 2026 AML_DECODE / Designed by @Nitesh</footer>
     </div>
   );
 }
