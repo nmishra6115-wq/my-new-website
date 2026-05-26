@@ -30,15 +30,14 @@ const ActivityFeed = ({ activities }) => (
 
 export default function App() {
   const [activeView, setActiveView] = useState(null);
-  const [pageIndex, setPageIndex] = useState(0);
-  const [isMuted, setIsMuted] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
   const [activities, setActivities] = useState([]);
 
   useEffect(() => {
     const timer = setTimeout(() => setIsLoading(false), 2000);
     const fetchActivities = async () => {
-      const { data } = await supabase.from('activities').select('*').order('created_at', { ascending: false });
+      // NOTE: Removed .order('created_at') to prevent the 400 Error until you add that column
+      const { data } = await supabase.from('activities').select('description');
       if (data) setActivities(data);
     };
     fetchActivities();
@@ -47,30 +46,29 @@ export default function App() {
 
   const handleSaveActivity = async (type, desc) => {
     await supabase.from('activities').insert([{ activity_type: type, description: desc }]);
-    const { data } = await supabase.from('activities').select('*').order('created_at', { ascending: false });
+    const { data } = await supabase.from('activities').select('description');
     if (data) setActivities(data);
   };
 
   return (
-    <div className="text-slate-100 font-mono min-h-screen bg-[#030712]">
+    <div className="text-slate-100 font-mono min-h-screen flex flex-col bg-[#030712]">
+      {/* 1. NAVIGATION */}
       <nav className="p-6 border-b border-emerald-500/30 flex items-center justify-between sticky top-0 bg-[#030712]/90 backdrop-blur-lg z-50">
         <h1 className="text-xl font-black tracking-[0.3em] text-emerald-500 cursor-pointer uppercase" onClick={() => setActiveView(null)}>&gt; AML_DECODE</h1>
       </nav>
 
       {!activeView && (
-        <main className="w-full">
+        <main className="flex-grow">
+          {/* 2. VIDEO SECTION */}
           <section className="w-full relative bg-black">
-            <video className="w-full h-[500px] object-cover" autoPlay muted={isMuted} loop playsInline>
+            <video className="w-full h-[500px] object-cover" autoPlay muted loop playsInline>
               <source src="/intro.mp4" type="video/mp4" />
             </video>
-            <button onClick={() => setIsMuted(!isMuted)} className="absolute bottom-8 right-8 bg-black/50 text-emerald-500 border border-emerald-500/50 px-4 py-2 rounded-lg">
-              {isMuted ? "🔇 Unmute" : "🔊 Mute"}
-            </button>
           </section>
 
+          {/* 3. DASHBOARD CARDS & FEED */}
           <div className="max-w-7xl mx-auto px-6 py-16">
             <ActivityFeed activities={activities} />
-            
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-24">
               {[ {id: 'notes', icon: '📖', label: 'Notes'}, {id: 'jobs', icon: '💼', label: 'Jobs'}, {id: 'referralForm', icon: '📤', label: 'Submit Referral'} ].map(card => (
                 <div key={card.id} onClick={() => setActiveView(card.id)} className="p-8 bg-slate-900 border border-emerald-500/20 rounded cursor-pointer hover:bg-slate-800 transition-all">
@@ -79,24 +77,24 @@ export default function App() {
                 </div>
               ))}
             </div>
+
+            {/* 4. LATEST NEWS */}
+            <section className="border-t border-white/5 pt-16">
+              <h2 className="text-xl font-black text-red-500 mb-8 tracking-widest">● LATEST NEWS</h2>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {isLoading ? <><NewsSkeleton /><NewsSkeleton /><NewsSkeleton /></> : kycNews.map((n, i) => (
+                  <a key={i} href={n.link} target="_blank" rel="noopener noreferrer" className="block p-6 bg-[#030712]/80 border border-white/5 rounded hover:border-red-500 transition-all"><h4 className="text-md font-semibold text-slate-200 mb-4">{n.headline}</h4></a>
+                ))}
+              </div>
+            </section>
           </div>
         </main>
       )}
 
-      {activeView && (
-        <div className="fixed inset-0 z-[100] bg-black/95 p-12 overflow-y-auto">
-          <button onClick={() => setActiveView(null)} className="text-emerald-400 font-bold mb-10">&larr; BACK</button>
-          {activeView === 'referralForm' && (
-            <div className="max-w-xl mx-auto">
-              <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); handleSaveActivity('referral', `Referral: ${e.target[0].value} for ${e.target[1].value}`); alert("Submitted!"); }}>
-                <input type="text" placeholder="Full Name" className="w-full p-4 bg-black border border-slate-700 rounded" required />
-                <input type="text" placeholder="Role" className="w-full p-4 bg-black border border-slate-700 rounded" required />
-                <button type="submit" className="w-full py-4 bg-emerald-600 font-bold uppercase">Send Data</button>
-              </form>
-            </div>
-          )}
-        </div>
-      )}
+      {/* 5. FOOTER */}
+      <footer className="py-10 text-center text-slate-500 border-t border-white/5 uppercase text-xs tracking-widest">
+        © 2026 AML_DECODE / Designed by @Nitesh
+      </footer>
     </div>
   );
 }
