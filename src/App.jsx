@@ -26,7 +26,9 @@ export default function App() {
   }, []);
 
   return (
-    <div className="text-slate-100 font-mono min-h-screen flex flex-col relative">
+    <div className="text-slate-100 font-mono min-h-screen flex flex-col relative bg-[#030712]">
+      
+      {/* NAVIGATION */}
       <nav className="p-6 border-b border-emerald-500/30 flex items-center justify-between sticky top-0 bg-[#030712]/90 backdrop-blur-lg z-50 w-full shadow-[0_0_20px_rgba(16,185,129,0.1)]">
         <h1 className="text-xl md:text-2xl font-black tracking-[0.3em] text-emerald-500 cursor-pointer uppercase hover:text-white transition-all" onClick={() => setActiveView(null)}>&gt; AML_DECODE</h1>
         <div className="hidden md:flex gap-6 items-center">
@@ -38,23 +40,46 @@ export default function App() {
       </nav>
 
       {!activeView && (
-        <main className="flex-grow max-w-7xl mx-auto px-6 py-16">
-          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-6 mb-24">
-            {[ {id: 'notes', icon: '📖', label: 'Notes', color: 'registry-card'}, {id: 'jobs', icon: '💼', label: 'Jobs', color: 'jobs-card'}, {id: 'referralForm', icon: '📤', label: 'Submit', color: 'submit-card'}, {id: 'available', icon: '🔍', label: 'Available', color: 'avail-card'}, {id: 'contribute', icon: '📁', label: 'Contribute', color: 'upload-card'}, {id: 'network', icon: '🤝', label: 'Network', color: 'partner-card'} ].map(card => (
-              <div key={card.id} onClick={() => setActiveView(card.id)} className={`${card.color} custom-card p-6 border border-emerald-500/20 rounded cursor-pointer transition-all duration-300 hover:translate-y-[-5px]`}><div className="text-3xl mb-4">{card.icon}</div><h3 className="font-bold text-emerald-400 uppercase text-xs">{card.label}</h3></div>
-            ))}
-          </div>
-          <section className="border-t border-white/5 pt-16">
-            <h2 className="text-xl font-black text-red-500 mb-8 tracking-widest">● LATEST NEWS</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {isLoading ? <><NewsSkeleton /><NewsSkeleton /><NewsSkeleton /></> : kycNews.map((n, i) => (
-                <a key={i} href={n.link} target="_blank" rel="noopener noreferrer" className="block p-6 bg-[#030712]/80 border border-white/5 rounded hover:border-red-500 transition-all"><h4 className="text-md font-semibold text-slate-200 mb-4">{n.headline}</h4></a>
+        <main className="flex-grow">
+          {/* VIDEO SECTION */}
+          <section className="w-full relative bg-black">
+             <video 
+               className="w-full h-[500px] object-cover" 
+               autoPlay 
+               muted={isMuted} 
+               loop 
+               playsInline
+               key={isMuted ? 'muted' : 'unmuted'}
+             >
+               <source src="/intro.mp4" type="video/mp4" />
+             </video>
+             <button onClick={() => setIsMuted(!isMuted)} className="absolute bottom-8 right-8 bg-black/50 text-emerald-500 border border-emerald-500/50 px-4 py-2 rounded-lg backdrop-blur-md z-20">
+               {isMuted ? "🔇 Unmute" : "🔊 Mute"}
+             </button>
+          </section>
+
+          {/* DASHBOARD */}
+          <div className="max-w-7xl mx-auto px-6 py-16">
+            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-6 mb-24">
+              {[ {id: 'notes', icon: '📖', label: 'Notes', color: 'registry-card'}, {id: 'jobs', icon: '💼', label: 'Jobs', color: 'jobs-card'}, {id: 'referralForm', icon: '📤', label: 'Submit', color: 'submit-card'}, {id: 'available', icon: '🔍', label: 'Available', color: 'avail-card'}, {id: 'contribute', icon: '📁', label: 'Contribute', color: 'upload-card'}, {id: 'network', icon: '🤝', label: 'Network', color: 'partner-card'} ].map(card => (
+                <div key={card.id} onClick={() => setActiveView(card.id)} className={`${card.color} custom-card p-6 border border-emerald-500/20 rounded cursor-pointer transition-all duration-300 hover:translate-y-[-5px]`}><div className="text-3xl mb-4">{card.icon}</div><h3 className="font-bold text-emerald-400 uppercase text-xs">{card.label}</h3></div>
               ))}
             </div>
-          </section>
+            
+            {/* LATEST NEWS */}
+            <section className="border-t border-white/5 pt-16">
+              <h2 className="text-xl font-black text-red-500 mb-8 tracking-widest">● LATEST NEWS</h2>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {isLoading ? <><NewsSkeleton /><NewsSkeleton /><NewsSkeleton /></> : kycNews.map((n, i) => (
+                  <a key={i} href={n.link} target="_blank" rel="noopener noreferrer" className="block p-6 bg-[#030712]/80 border border-white/5 rounded hover:border-red-500 transition-all"><h4 className="text-md font-semibold text-slate-200 mb-4">{n.headline}</h4></a>
+                ))}
+              </div>
+            </section>
+          </div>
         </main>
       )}
 
+      {/* OVERLAY SECTION */}
       {activeView && (
         <div className="fixed inset-0 z-[100] bg-black/95 p-12 overflow-y-auto animate-in fade-in zoom-in duration-300">
           <button onClick={() => setActiveView(null)} className="text-emerald-400 font-bold mb-10 hover:text-white">&larr; BACK</button>
