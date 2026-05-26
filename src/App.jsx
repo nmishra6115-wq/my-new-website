@@ -19,7 +19,7 @@ export default function App() {
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [jobPosts, setJobPosts] = useState([]); 
 
-  const isMaintenanceMode = false; // Set to false when live
+  const isMaintenanceMode = true; // Set to false when live
 
   useEffect(() => {
     const timer = setTimeout(() => setIsLoading(false), 2000);
