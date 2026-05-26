@@ -60,9 +60,14 @@ export default function App() {
 
           {/* DASHBOARD */}
           <div className="max-w-7xl mx-auto px-6 py-16">
-            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-6 mb-24">
-              {[ {id: 'notes', icon: '📖', label: 'Notes', color: 'registry-card'}, {id: 'jobs', icon: '💼', label: 'Jobs', color: 'jobs-card'}, {id: 'referralForm', icon: '📤', label: 'Submit', color: 'submit-card'}, {id: 'available', icon: '🔍', label: 'Available', color: 'avail-card'}, {id: 'contribute', icon: '📁', label: 'Contribute', color: 'upload-card'}, {id: 'network', icon: '🤝', label: 'Network', color: 'partner-card'} ].map(card => (
-                <div key={card.id} onClick={() => setActiveView(card.id)} className={`${card.color} custom-card p-6 border border-emerald-500/20 rounded cursor-pointer transition-all duration-300 hover:translate-y-[-5px]`}><div className="text-3xl mb-4">{card.icon}</div><h3 className="font-bold text-emerald-400 uppercase text-xs">{card.label}</h3></div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-24">
+              <div onClick={() => setActiveView('network')} className="p-8 border border-purple-500/50 bg-purple-900/10 rounded cursor-pointer hover:bg-purple-900/20 transition-all text-center">
+                <div className="text-4xl mb-4">🤝</div>
+                <h3 className="font-bold text-purple-400 uppercase tracking-widest mb-2">Featured Network</h3>
+                <p className="text-sm text-slate-300">Exclusive job openings and media from verified partners.</p>
+              </div>
+              {[ {id: 'notes', icon: '📖', label: 'Notes', color: 'registry-card'}, {id: 'jobs', icon: '💼', label: 'Jobs', color: 'jobs-card'}, {id: 'referralForm', icon: '📤', label: 'Submit', color: 'submit-card'}, {id: 'available', icon: '🔍', label: 'Available', color: 'avail-card'}, {id: 'contribute', icon: '📁', label: 'Contribute', color: 'upload-card'} ].map(card => (
+                <div key={card.id} onClick={() => setActiveView(card.id)} className={`${card.color} custom-card p-8 border border-emerald-500/20 rounded cursor-pointer transition-all duration-300 hover:translate-y-[-5px]`}><div className="text-4xl mb-6">{card.icon}</div><h3 className="font-bold text-emerald-400 uppercase">{card.label}</h3></div>
               ))}
             </div>
             
@@ -95,7 +100,25 @@ export default function App() {
             {activeView === 'contribute' && (
               <div className="max-w-xl mx-auto border border-slate-800 p-16 text-center bg-[#030712]/50 rounded">
                 {!isAuthorized ? (
-                  <div><h1 className="text-2xl font-bold mb-6 text-emerald-500 uppercase tracking-widest">Partner Access</h1><input type="password" placeholder="Enter Secure Key" className="w-full p-4 bg-black border border-emerald-500/30 rounded text-center mb-6" onChange={(e) => { if(e.target.value === "AML_SECURE_2026") setIsAuthorized(true) }} /></div>
+                  <div>
+                    <h1 className="text-2xl font-bold mb-6 text-emerald-500 uppercase tracking-widest">Partner Access</h1>
+                    <input 
+                      type="password" 
+                      placeholder="Enter Secure Key" 
+                      className="w-full p-4 bg-black border border-emerald-500/30 rounded text-center mb-6" 
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          fetch('/api/verify', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ password: e.target.value })
+                          })
+                          .then(res => res.json())
+                          .then(data => { if (data.authorized) setIsAuthorized(true); else alert("Invalid Key"); });
+                        }
+                      }} 
+                    />
+                  </div>
                 ) : (
                   <div><h1 className="text-3xl font-black mb-8 text-emerald-500">SECURE UPLOAD</h1><input type="file" onChange={(e) => setPartnerFiles([...partnerFiles, e.target.files[0].name])} className="text-white mb-8" /><button onClick={() => alert("Upload Success!")} className="w-full py-4 bg-emerald-600 text-black font-black uppercase">Submit Content</button></div>
                 )}
