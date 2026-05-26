@@ -38,7 +38,7 @@ export default function App() {
 
       {isMenuOpen && (
         <div className="md:hidden flex flex-col bg-[#030712]/95 p-6 gap-4 border-b border-emerald-500/30">
-          {['NOTES', 'JOBS', 'SUBMIT', 'AVAILABLE'].map((item) => (
+          {['NOTES', 'JOBS', 'SUBMIT REFERRAL', 'AVAILABLE REFERRAL'].map((item) => (
             <button key={item} onClick={() => { setActiveView(item === 'SUBMIT' ? 'referralForm' : item.toLowerCase()); setIsMenuOpen(false); }} className="text-lg font-black text-left">{item}</button>
           ))}
         </div>
@@ -55,7 +55,7 @@ export default function App() {
 
           <main className="flex-grow max-w-7xl mx-auto px-6 py-16">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-24">
-              {[ {id: 'notes', icon: '📖', label: 'Notes', color: 'registry-card'}, {id: 'jobs', icon: '💼', label: 'Jobs', color: 'jobs-card'}, {id: 'referralForm', icon: '📤', label: 'Submit', color: 'submit-card'}, {id: 'availability', icon: '🔍', label: 'Availability', color: 'avail-card'} ].map(card => (
+              {[ {id: 'notes', icon: '📖', label: 'Notes', color: 'registry-card'}, {id: 'jobs', icon: '💼', label: 'Jobs', color: 'jobs-card'}, {id: 'referralForm', icon: '📤', label: 'Submit Referral', color: 'submit-card'}, {id: 'Available Referral', icon: '🔍', label: 'Availability', color: 'avail-card'} ].map(card => (
                 <div key={card.id} onClick={() => setActiveView(card.id)} className={`${card.color} custom-card p-8 border border-emerald-500/20 rounded cursor-pointer transition-all duration-300 hover:translate-y-[-5px]`}><div className="text-4xl mb-6">{card.icon}</div><h3 className="font-bold text-emerald-400 uppercase">{card.label}</h3></div>
               ))}
             </div>
