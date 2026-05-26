@@ -23,20 +23,10 @@ export default function App() {
   }, []);
 
   return (
-    <div className="bg-[#030712] text-slate-100 font-mono min-h-screen flex flex-col relative overflow-hidden">
+    <div className="text-slate-100 font-mono min-h-screen flex flex-col relative overflow-hidden">
       
-      {/* BULLETPROOF BACKGROUND */}
-      <div style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        width: '100%',
-        height: '100%',
-        zIndex: -1,
-        backgroundColor: '#030712',
-        backgroundImage: 'linear-gradient(rgba(16, 185, 129, 0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(16, 185, 129, 0.1) 1px, transparent 1px)',
-        backgroundSize: '50px 50px'
-      }}></div>
+      {/* BACKGROUND CLASS ADDED HERE */}
+      <div className="cyber-bg"></div>
 
       {/* NAVIGATION */}
       <nav className="p-6 border-b border-emerald-500/30 flex items-center justify-between sticky top-0 bg-[#030712]/90 backdrop-blur-lg z-50 w-full shadow-[0_0_20px_rgba(16,185,129,0.1)]">
@@ -51,7 +41,7 @@ export default function App() {
 
       {/* MOBILE MENU */}
       {isMenuOpen && (
-        <div className="md:hidden flex flex-col bg-[#030712] p-6 gap-4 border-b border-emerald-500/30">
+        <div className="md:hidden flex flex-col bg-[#030712]/95 p-6 gap-4 border-b border-emerald-500/30">
           {['NOTES', 'JOBS', 'SUBMIT', 'AVAILABLE'].map((item) => (
             <button key={item} onClick={() => { setActiveView(item === 'SUBMIT' ? 'referralForm' : item.toLowerCase()); setIsMenuOpen(false); }} className="text-lg font-black text-left">{item}</button>
           ))}
@@ -71,7 +61,7 @@ export default function App() {
           <main className="flex-grow max-w-7xl mx-auto px-6 py-16">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-24">
               {[ {id: 'notes', icon: '📖', label: 'Notes'}, {id: 'jobs', icon: '💼', label: 'Jobs'}, {id: 'referralForm', icon: '📤', label: 'Submit'}, {id: 'availability', icon: '🔍', label: 'Availability'} ].map(card => (
-                <div key={card.id} onClick={() => setActiveView(card.id)} className="p-8 bg-slate-900 border border-emerald-500/20 rounded cursor-pointer transition-all duration-300 hover:border-emerald-500 hover:translate-x-1 hover:translate-y-[-4px] hover:shadow-[0_0_20px_rgba(16,185,129,0.4)]">
+                <div key={card.id} onClick={() => setActiveView(card.id)} className="p-8 bg-[#030712]/80 border border-emerald-500/20 rounded cursor-pointer transition-all duration-300 hover:border-emerald-500 hover:translate-x-1 hover:translate-y-[-4px] hover:shadow-[0_0_20px_rgba(16,185,129,0.4)]">
                   <div className="text-4xl mb-6">{card.icon}</div><h3 className="font-bold text-emerald-400 uppercase">{card.label}</h3>
                 </div>
               ))}
@@ -81,7 +71,7 @@ export default function App() {
               <h2 className="text-xl font-black text-red-500 mb-8 tracking-widest">● LATEST NEWS</h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {isLoading ? <><NewsSkeleton /><NewsSkeleton /><NewsSkeleton /></> : kycNews.map((n, i) => (
-                  <a key={i} href={n.link} target="_blank" rel="noopener noreferrer" className="block p-6 bg-slate-900 border border-white/5 rounded hover:border-red-500 transition-all"><h4 className="text-md font-semibold text-slate-200 mb-4">{n.headline}</h4></a>
+                  <a key={i} href={n.link} target="_blank" rel="noopener noreferrer" className="block p-6 bg-[#030712]/80 border border-white/5 rounded hover:border-red-500 transition-all"><h4 className="text-md font-semibold text-slate-200 mb-4">{n.headline}</h4></a>
                 ))}
               </div>
             </section>
@@ -95,7 +85,7 @@ export default function App() {
           <button onClick={() => setActiveView(null)} className="text-emerald-400 font-bold mb-10">&larr; BACK_TO_SYSTEM</button>
           <div className="max-w-6xl mx-auto text-white">
             {activeView === 'notes' && <div className="flex gap-12"><div className="w-1/4 space-y-2">{notesContent.map((item, idx) => <button key={idx} onClick={() => setPageIndex(idx)} className="w-full text-left p-4 rounded border border-slate-700 hover:border-emerald-500">{item.title}</button>)}</div><div className="w-3/4"><h1 className="text-4xl font-bold mb-6">{notesContent[pageIndex].title}</h1><p className="text-lg text-slate-300 whitespace-pre-line">{notesContent[pageIndex].body}</p></div></div>}
-            {activeView === 'jobs' && <div className="max-w-4xl mx-auto"><h1 className="text-4xl font-black mb-8">ACTIVE_OPENINGS</h1><div className="bg-slate-900 rounded border border-slate-800">{jobOpenings.map((job, idx) => <div key={idx} className="flex items-center justify-between p-6 border-b border-slate-800"><div><p className="text-emerald-400 font-bold text-xs">{job.company}</p><h2 className="text-lg font-semibold">{job.role}</h2></div><a href={job.link} target="_blank" className="px-6 py-2 bg-indigo-600 rounded text-sm hover:bg-indigo-500">APPLY</a></div>)}</div></div>}
+            {activeView === 'jobs' && <div className="max-w-4xl mx-auto"><h1 className="text-4xl font-black mb-8">ACTIVE_OPENINGS</h1><div className="bg-[#030712]/80 rounded border border-slate-800">{jobOpenings.map((job, idx) => <div key={idx} className="flex items-center justify-between p-6 border-b border-slate-800"><div><p className="text-emerald-400 font-bold text-xs">{job.company}</p><h2 className="text-lg font-semibold">{job.role}</h2></div><a href={job.link} target="_blank" className="px-6 py-2 bg-indigo-600 rounded text-sm hover:bg-indigo-500">APPLY</a></div>)}</div></div>}
           </div>
         </div>
       )}
