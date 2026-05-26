@@ -154,7 +154,25 @@ export default function App() {
       {activeView === 'contribute' && (
         <div className="max-w-xl mx-auto border border-slate-800 p-16 text-center">
           {!isAuthorized ? (
-            <input type="password" onKeyDown={(e) => {if(e.key==='Enter' && e.target.value==='123') setIsAuthorized(true)}} />
+            // Find this block inside your contribute section
+<input 
+  type="password" 
+  placeholder="Enter Secure Key" 
+  className="w-full p-4 bg-black border border-emerald-500/30 rounded text-center mb-6" 
+  // ADD THESE TWO LINES:
+  value={password || ""} 
+  onChange={(e) => setPassword(e.target.value)} 
+  onKeyDown={(e) => {
+    if (e.key === 'Enter') {
+      // Your verification logic
+      if(e.target.value === 'YOUR_SECRET_KEY') {
+        setIsAuthorized(true);
+      } else {
+        alert("Invalid Key");
+      }
+    }
+  }} 
+/>
           ) : (
             <input type="file" onChange={(e) => {
               if(e.target.files[0]) setPartnerFiles([...partnerFiles, {name: e.target.files[0].name, url: URL.createObjectURL(e.target.files[0])}]);
@@ -173,7 +191,19 @@ export default function App() {
             partnerFiles.map((file, i) => (
               <div key={i} className="p-6 mb-4 bg-slate-900 border border-purple-500/30 rounded flex justify-between items-center">
                 <span className="font-bold">{file.name}</span>
-                <button onClick={() => window.open(file.url, '_blank')} className="text-purple-400 font-bold">View</button>
+                <button 
+  onClick={() => {
+    console.log("Attempting to open URL:", file.url);
+    if (file.url) {
+      window.open(file.url, '_blank');
+    } else {
+      alert("Error: No URL found for this file!");
+    }
+  }} 
+  className="text-purple-400 hover:text-white font-bold transition-all"
+>
+  View
+</button>
               </div>
             ))
           )}
