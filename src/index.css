@@ -28,3 +28,9 @@ body {
     linear-gradient(90deg, rgba(16, 185, 129, 0.15) 1px, transparent 1px);
   background-size: 60px 60px;
 }
+body {
+  background-color: #030712 !important;
+  background-attachment: fixed !important;
+  margin: 0;
+  padding: 0;
+}
