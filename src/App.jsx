@@ -82,11 +82,16 @@ export default function App() {
         <main className="flex-grow max-w-7xl mx-auto px-6 py-16">
           <h2 className="text-4xl font-black text-center mb-16 text-white uppercase tracking-widest">Portal Access</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-24">
-              <div onClick={() => setActiveView('notes')} className="p-8 bg-slate-900 border border-emerald-500/20 rounded hover:border-emerald-500 transition cursor-pointer"><div className="text-4xl mb-6">📖</div><h3 className="font-bold text-emerald-400 mb-2 uppercase">Notes</h3></div>
-              <div onClick={() => setActiveView('jobs')} className="p-8 bg-slate-900 border border-indigo-500/20 rounded hover:border-indigo-500 transition cursor-pointer"><div className="text-4xl mb-6">💼</div><h3 className="font-bold text-indigo-400 mb-2 uppercase">Jobs</h3></div>
-              <div onClick={() => setActiveView('referralForm')} className="p-8 bg-slate-900 border border-white/10 rounded hover:border-white transition cursor-pointer"><div className="text-4xl mb-6">📤</div><h3 className="font-bold text-white mb-2 uppercase">Submit</h3></div>
-              
-              <div onClick={() => setActiveView('availability')} className="p-8 bg-slate-900 border border-emerald-500/20 rounded hover:border-emerald-500 transition cursor-pointer relative">
+              <div onClick={() => setActiveView('notes')} className="p-8 bg-slate-900 border border-emerald-500/20 rounded cursor-pointer transition-all duration-300 hover:border-emerald-500 hover:translate-x-1 hover:translate-y-[-4px] hover:shadow-[0_0_15px_rgba(16,185,129,0.3)]">
+                  <div className="text-4xl mb-6">📖</div><h3 className="font-bold text-emerald-400 mb-2 uppercase">Notes</h3>
+              </div>
+              <div onClick={() => setActiveView('jobs')} className="p-8 bg-slate-900 border border-indigo-500/20 rounded cursor-pointer transition-all duration-300 hover:border-indigo-500 hover:translate-x-1 hover:translate-y-[-4px] hover:shadow-[0_0_15px_rgba(99,102,241,0.3)]">
+                  <div className="text-4xl mb-6">💼</div><h3 className="font-bold text-indigo-400 mb-2 uppercase">Jobs</h3>
+              </div>
+              <div onClick={() => setActiveView('referralForm')} className="p-8 bg-slate-900 border border-white/10 rounded cursor-pointer transition-all duration-300 hover:border-white hover:translate-x-1 hover:translate-y-[-4px] hover:shadow-[0_0_15px_rgba(255,255,255,0.2)]">
+                  <div className="text-4xl mb-6">📤</div><h3 className="font-bold text-white mb-2 uppercase">Submit</h3>
+              </div>
+              <div onClick={() => setActiveView('availability')} className="p-8 bg-slate-900 border border-emerald-500/20 rounded cursor-pointer transition-all duration-300 hover:border-emerald-500 hover:translate-x-1 hover:translate-y-[-4px] hover:shadow-[0_0_15px_rgba(16,185,129,0.3)] relative">
                   <span className="absolute top-4 right-4 flex h-3 w-3">
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                     <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
