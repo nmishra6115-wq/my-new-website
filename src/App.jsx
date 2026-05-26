@@ -163,22 +163,17 @@ useEffect(() => {
                 {!isAuthorized ? (
                   <div>
                     <h1 className="text-2xl font-bold mb-6 text-emerald-500 uppercase tracking-widest">Partner Access</h1>
-                    <input 
-                      type="password" 
-                      placeholder="Enter Secure Key" 
-                      className="w-full p-4 bg-black border border-emerald-500/30 rounded text-center mb-6" 
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
-                          fetch('/api/verify', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ password: e.target.value })
-                          })
-                          .then(res => res.json())
-                          .then(data => { if (data.authorized) setIsAuthorized(true); else alert("Invalid Key"); });
-                        }
-                      }} 
-                    />
+                  <input
+  type="file"
+  onChange={async (e) => {
+    const file = e.target.files[0];
+
+    if (!file) return;
+
+    console.log(file);
+  }}
+  className="text-white mb-8"
+/>
                   </div>
                 ) : (
                   <div><h1 className="text-3xl font-black mb-8 text-emerald-500">SECURE UPLOAD</h1><input type="file" onChange={(e) => setPartnerFiles([...partnerFiles, e.target.files[0].name])} className="text-white mb-8" /><button onClick={() => alert("Upload Success!")} className="w-full py-4 bg-emerald-600 text-black font-black uppercase">Submit Content</button></div>
