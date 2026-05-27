@@ -75,7 +75,7 @@ export default function App() {
 {!activeView && (
   <section className="bg-emerald-950/10 border-b border-emerald-500/20 py-3 px-6 overflow-hidden relative">
     <div className="flex animate-marquee whitespace-nowrap">
-      <span className="text-emerald-500 font-bold text-sm uppercase mr-8">&gt; Breaking News:</span>
+      <span className="text-emerald-500 font-bold text-sm uppercase mr-8">. KPMG HIRING FOR BENGALURU LOCATION, APPLY THROUGH NETWORK JOBS. NEW REFERRAL AVAILABLE.</span>
       {kycNews.slice(0, 3).map((news, i) => (
         <span key={i} className="text-sm text-white font-medium mr-16">
           {news.title}
@@ -207,5 +207,24 @@ export default function App() {
     </div>
   );
 }
+<section className="bg-black border-t border-emerald-500/20 py-16 px-6">
+  <div className="max-w-7xl mx-auto">
+    <h2 className="text-emerald-500 font-bold mb-8 uppercase">&gt; Latest KYC News</h2>
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      {kycNews.slice(0, 3).map((news, i) => (
+        <div key={i} className="p-6 bg-slate-900 border border-white/5 rounded hover:border-emerald-500/50 transition-all">
+          <p className="text-white font-bold mb-2">{news.title}</p>
+          <p className="text-slate-500 text-xs">{news.date}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
 
+{/* FOOTER */}
+<footer className="border-t border-emerald-500/20 bg-[#030712] p-8 text-center text-slate-500 text-xs">
+  <div className="max-w-7xl mx-auto">
+    <p>© 2026 AML_DECODE. All rights reserved / Designed by @Nitesh</p>
+  </div>
+</footer>
       
