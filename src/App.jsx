@@ -114,11 +114,18 @@ export default function App() {
               </div>
             )}
             {activeView === 'network' && (
-              partnerFiles.map((f, i) => (
-                <div key={i} className="p-6 mb-4 bg-slate-900 border border-purple-500 flex justify-between">
-                  <span>{f.name}</span><button onClick={() => window.open(f.url, '_blank')} className="text-purple-400">View</button>
-                </div>
-              ))
+              <div className="max-w-4xl mx-auto">
+                <h1 className="text-3xl font-black mb-8 uppercase text-emerald-500">Network Feed</h1>
+                {partnerFiles.length === 0 ? <p className="text-slate-500">No partner uploads yet.</p> : partnerFiles.map((f, i) => (
+                  <div key={i} className="p-6 mb-4 bg-slate-900 border border-purple-500/30 rounded flex justify-between items-center hover:border-purple-500 transition-all">
+                    <div>
+                      <span className="block font-bold text-lg text-white">{f.name}</span>
+                      <span className="text-xs text-purple-400 uppercase tracking-widest">Added to network</span>
+                    </div>
+                    <button onClick={() => window.open(f.url, '_blank')} className="px-4 py-2 border border-purple-500 text-purple-400 hover:bg-purple-500 hover:text-white transition-all font-bold">DOWNLOAD</button>
+                  </div>
+                ))}
+              </div>
             )}
           </div>
         </div>
