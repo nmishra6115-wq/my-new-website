@@ -14,7 +14,7 @@ import App from './App.jsx'
 import './index.css' // <-- MUST BE AT THE BOTTOM
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
+  
     <App />
-  </React.StrictMode>,
+  
 )

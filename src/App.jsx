@@ -4,7 +4,7 @@ import { notesContent } from './content';
 import { jobOpenings } from './jobs';
 import { kycNews } from './news';
 
-// INITIALIZE CHANNEL OUTSIDE COMPONENT TO PREVENT RE-CREATION ON RENDER
+// Initialize the channel globally
 const channel = supabase.channel('schema-db-changes');
 
 const NewsSkeleton = () => (
@@ -13,6 +13,9 @@ const NewsSkeleton = () => (
     <div className="h-4 bg-slate-800 rounded w-2/3"></div>
   </div>
 );
+
+// Module-level variable to lock the subscription
+let isSubscribed = false;
 
 export default function App() {
   const [activeView, setActiveView] = useState(null);
@@ -25,7 +28,6 @@ export default function App() {
   const [isAuthorized, setIsAuthorized] = useState(false);
 
   useEffect(() => {
-    // 1. Fetch initial data
     const fetchData = async () => {
       try {
         const { data: subs } = await supabase.from('submissions').select('*');
@@ -40,8 +42,9 @@ export default function App() {
     };
     fetchData();
 
-    // 2. Setup listener ONLY IF not already joined
-    if (channel.state !== 'joined') {
+    // The lock prevents .on() from being called a second time
+    if (!isSubscribed) {
+      isSubscribed = true;
       channel
         .on(
           'postgres_changes',
@@ -52,8 +55,6 @@ export default function App() {
         )
         .subscribe();
     }
-
-    // No cleanup unsubscribe here to keep the channel persistent
   }, []);
 
   return (
@@ -114,6 +115,7 @@ export default function App() {
               ))}
             </div>
             
+            {/* LATEST NEWS */}
             <section className="border-t border-white/5 pt-16">
               <h2 className="text-xl font-black text-red-500 mb-8 tracking-widest">● LATEST NEWS</h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
