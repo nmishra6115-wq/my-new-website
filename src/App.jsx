@@ -10,12 +10,10 @@ export default function App() {
   const [pageIndex, setPageIndex] = useState(0);
   const [submissions, setSubmissions] = useState([]);
   const [partnerFiles, setPartnerFiles] = useState([]);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [isAuthorized, setIsAuthorized] = useState(false);
 
   useEffect(() => {
     let active = true;
+
     const fetchData = async () => {
       const { data: subs } = await supabase.from('submissions').select('*');
       const { data: files } = await supabase.from('partner_files').select('*');
@@ -26,7 +24,6 @@ export default function App() {
     };
     fetchData();
 
-    // FIXED: Realtime listeners defined BEFORE subscribe()
     supabase.getChannels().forEach(c => supabase.removeChannel(c));
     const channel = supabase.channel('schema-db-changes');
     
@@ -95,8 +92,14 @@ export default function App() {
         </main>
       ) : (
         <div className="fixed inset-0 z-[100] bg-black/95 p-12 overflow-y-auto">
-           <button onClick={() => setActiveView(null)} className="text-emerald-400 font-bold mb-10">&larr; BACK</button>
-           {/* Insert your activeView conditional rendering here */}
+          <button onClick={() => setActiveView(null)} className="text-emerald-400 font-bold mb-10">&larr; BACK</button>
+          <div className="max-w-4xl mx-auto text-white">
+            {activeView === 'notes' && <div><h1 className="text-4xl font-bold">{notesContent[pageIndex]?.title}</h1><p>{notesContent[pageIndex]?.body}</p></div>}
+            {activeView === 'jobs' && <div>{jobOpenings.map((j, i) => <div key={i} className="p-6 border-b">{j.role}</div>)}</div>}
+            {activeView === 'referralForm' && <div className="text-center">Referral Form Loaded</div>}
+            {activeView === 'available' && <div>{submissions.map((s, i) => <div key={i} className="p-4">{s.name}</div>)}</div>}
+            {activeView === 'network' && <div>{partnerFiles.map((f, i) => <div key={i} className="p-4">{f.name}</div>)}</div>}
+          </div>
         </div>
       )}
 
