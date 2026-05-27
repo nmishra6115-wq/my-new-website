@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { supabase } from './supabaseClient';
 import { notesContent } from './content';
 import { jobOpenings } from './jobs';
@@ -21,61 +21,62 @@ export default function App() {
   const [partnerFiles, setPartnerFiles] = useState([]);
   const [isAuthorized, setIsAuthorized] = useState(false);
 
-  useEffect(() => {
-    let isSubscribed = true;
-    let channel;
+  // Use a ref to track if we've already set up the subscription
+  const channelRef = useRef(null);
 
+  useEffect(() => {
+    // 1. Initial Data Fetch
     const fetchData = async () => {
       try {
         const { data: subs } = await supabase.from('submissions').select('*');
         const { data: files } = await supabase.from('partner_files').select('*');
-        if (isSubscribed) {
-          if (subs) setSubmissions(subs);
-          if (files) setPartnerFiles(files);
-        }
+        if (subs) setSubmissions(subs);
+        if (files) setPartnerFiles(files);
       } catch (err) {
         console.error("Error:", err);
       } finally {
-        if (isSubscribed) setIsLoading(false);
+        setIsLoading(false);
       }
     };
-
     fetchData();
 
-    channel = supabase
-      .channel('schema-db-changes')
-      .on(
-        'postgres_changes',
-        { event: 'INSERT', schema: 'public', table: 'submissions' },
-        (payload) => {
-          if (isSubscribed) {
+    // 2. Setup channel only if it doesn't exist
+    if (!channelRef.current) {
+      channelRef.current = supabase
+        .channel('schema-db-changes')
+        .on(
+          'postgres_changes',
+          { event: 'INSERT', schema: 'public', table: 'submissions' },
+          (payload) => {
             setSubmissions((prev) => [...prev, payload.new]);
           }
-        }
-      )
-      .subscribe();
+        );
+      
+      // Subscription MUST be after .on()
+      channelRef.current.subscribe();
+    }
 
+    // 3. Cleanup
     return () => {
-      isSubscribed = false;
-      if (channel) {
-        supabase.removeChannel(channel);
+      // Do NOT nullify channelRef.current here if you want it to persist across re-renders
+      // but do remove the channel if you want to force re-connection
+      if (channelRef.current) {
+        supabase.removeChannel(channelRef.current);
+        channelRef.current = null;
       }
     };
   }, []);
 
   return (
     <div className="text-slate-100 font-mono min-h-screen flex flex-col relative bg-[#030712]">
-      
       {/* NAVIGATION */}
       <nav className="p-6 border-b border-emerald-500/30 flex items-center justify-between sticky top-0 bg-[#030712]/90 backdrop-blur-lg z-50 w-full shadow-[0_0_20px_rgba(16,185,129,0.1)]">
         <h1 className="text-xl md:text-2xl font-black tracking-[0.3em] text-emerald-500 cursor-pointer uppercase hover:text-white transition-all" onClick={() => setActiveView(null)}>&gt; AML_DECODE</h1>
-        
         <div className="hidden md:flex gap-6 items-center">
           {[ { label: 'NOTES', id: 'notes' }, { label: 'JOBS', id: 'jobs' }, { label: 'SUBMIT REFERRAL', id: 'referralForm' }, { label: 'AVAILABLE REFERRAL', id: 'available' }, { label: 'HR DASHBOARD', id: 'contribute' }, { label: 'NETWORK JOBS', id: 'network' } ].map((item) => (
             <button key={item.id} onClick={() => setActiveView(item.id)} className="text-xs font-black text-emerald-400 hover:text-white transition-all uppercase tracking-widest">{item.label}</button>
           ))}
         </div>
-        
         <button className="md:hidden text-emerald-500 text-2xl z-[60]" onClick={() => setIsMenuOpen(!isMenuOpen)}>{isMenuOpen ? "✕" : "☰"}</button>
       </nav>
 
@@ -138,26 +139,7 @@ export default function App() {
             {activeView === 'notes' && <div className="flex gap-12"><div className="w-1/4 space-y-2">{notesContent.map((item, idx) => <button key={idx} onClick={() => setPageIndex(idx)} className="w-full text-left p-4 rounded border border-slate-700 hover:border-emerald-500">{item.title}</button>)}</div><div className="w-3/4"><h1 className="text-4xl font-bold mb-6">{notesContent[pageIndex]?.title}</h1><p className="text-lg text-slate-300 whitespace-pre-line">{notesContent[pageIndex]?.body}</p></div></div>}
             {activeView === 'jobs' && <div className="max-w-4xl mx-auto"><h1 className="text-4xl font-black mb-8">ACTIVE_OPENINGS</h1><div className="bg-[#030712]/80 rounded border border-slate-800">{jobOpenings.map((job, idx) => <div key={idx} className="flex items-center justify-between p-6 border-b border-slate-800"><div><p className="text-emerald-400 font-bold text-xs">{job.company}</p><h2 className="text-lg font-semibold">{job.role}</h2></div><a href={job.link} target="_blank" className="px-6 py-2 bg-indigo-600 rounded text-sm hover:bg-indigo-500">APPLY</a></div>)}</div></div>}
             {activeView === 'referralForm' && (
-              <form 
-                className="max-w-xl mx-auto space-y-4" 
-                onSubmit={async (e) => { 
-                  e.preventDefault(); 
-                  const newEntry = {
-                    name: e.target[0].value, 
-                    email: e.target[1].value, 
-                    company: e.target[2].value, 
-                    role: e.target[3].value
-                  };
-                  const { error } = await supabase.from('submissions').insert([newEntry]);
-                  if (error) { alert("Error: " + error.message); } 
-                  else { 
-                    alert("Submitted!"); 
-                    setSubmissions((prev) => [...prev, newEntry]); 
-                    e.target.reset(); 
-                    setActiveView(null); 
-                  } 
-                }}
-              >
+              <form className="max-w-xl mx-auto space-y-4" onSubmit={async (e) => { e.preventDefault(); const newEntry = { name: e.target[0].value, email: e.target[1].value, company: e.target[2].value, role: e.target[3].value }; const { error } = await supabase.from('submissions').insert([newEntry]); if (error) { alert("Error: " + error.message); } else { alert("Submitted!"); setSubmissions((prev) => [...prev, newEntry]); e.target.reset(); setActiveView(null); } }}>
                 <input type="text" placeholder="Full Name" className="w-full p-4 bg-[#030712] border border-slate-700 rounded" required />
                 <input type="email" placeholder="Email" className="w-full p-4 bg-[#030712] border border-slate-700 rounded" required />
                 <input type="text" placeholder="Company" className="w-full p-4 bg-[#030712] border border-slate-700 rounded" required />
