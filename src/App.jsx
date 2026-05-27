@@ -184,8 +184,32 @@ export default function App() {
       </div>
     ))}
   </div>
-)}            {activeView === 'contribute' && <div className="max-w-xl mx-auto border border-slate-800 p-16 text-center bg-[#030712]/50 rounded">{!isAuthorized ? <input type="password" placeholder="Enter Secure Key" className="w-full p-4 bg-black border border-emerald-500/30 rounded text-center" onKeyDown={(e) => { if (e.key === 'Enter' && e.target.value === 'my-super-secret-123') setIsAuthorized(true); }} /> : <input type="file" onChange={async (e) => { const file = e.target.files[0]; if(!file) return; const { data: uploadData } = await supabase.storage.from('partner-files').upload(`${Date.now()}_${file.name}`, file); const { data: { publicUrl } } = supabase.storage.from('partner-files').getPublicUrl(uploadData.path); await supabase.from('partner_files').insert([{ name: file.name, url: publicUrl }]); alert("Upload Success!"); }} className="text-white" />}</div>}
-            {activeView === 'network' && <div className="max-w-4xl mx-auto"><h1 className="text-3xl font-black mb-8 uppercase text-emerald-500">Network Feed</h1>{partnerFiles.length === 0 ? <p className="text-slate-500">No partner uploads yet.</p> : partnerFiles.map((file, i) => (<div key={i} className="p-6 mb-4 bg-slate-900 border border-purple-500/30 rounded flex justify-between items-center"><span className="font-bold">{file.name}</span><button onClick={() => window.open(file.url, '_blank')} className="text-purple-400 font-bold hover:text-white">View</button></div>))}</div>}
+)}     
+// Inside your HR Dashboard (the 'contribute' view)
+{activeView === 'contribute' && (
+  <div className="max-w-xl mx-auto border border-slate-800 p-16 text-center bg-[#030712]/50 rounded">
+    {!isAuthorized ? (
+      <div className="space-y-4">
+        <input type="email" id="adminEmail" placeholder="Admin Email" className="w-full p-4 bg-black border border-emerald-500/30 rounded text-center" />
+        <input type="password" id="adminPass" placeholder="Password" className="w-full p-4 bg-black border border-emerald-500/30 rounded text-center" />
+        <button 
+          onClick={async () => {
+            const email = document.getElementById('adminEmail').value;
+            const pass = document.getElementById('adminPass').value;
+            const { error } = await supabase.auth.signInWithPassword({ email, password: pass });
+            if (error) alert(error.message);
+            else setIsAuthorized(true);
+          }}
+          className="w-full py-4 bg-emerald-600 font-bold uppercase hover:bg-emerald-500"
+        >
+          Login to Upload
+        </button>
+      </div>
+    ) : (
+      <input type="file" onChange={/* ... your existing upload logic ... */} />
+    )}
+  </div>
+)}            {activeView === 'network' && <div className="max-w-4xl mx-auto"><h1 className="text-3xl font-black mb-8 uppercase text-emerald-500">Network Feed</h1>{partnerFiles.length === 0 ? <p className="text-slate-500">No partner uploads yet.</p> : partnerFiles.map((file, i) => (<div key={i} className="p-6 mb-4 bg-slate-900 border border-purple-500/30 rounded flex justify-between items-center"><span className="font-bold">{file.name}</span><button onClick={() => window.open(file.url, '_blank')} className="text-purple-400 font-bold hover:text-white">View</button></div>))}</div>}
           </div>
         </div>
       )}
