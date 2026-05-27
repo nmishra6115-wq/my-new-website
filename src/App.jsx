@@ -29,8 +29,24 @@ export default function App() {
       if (files) setPartnerFiles(files);
     };
     fetchData();
+
+    // REALTIME LISTENER
+    const channel = supabase
+      .channel('schema-db-changes')
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'submissions' },
+        (payload) => {
+          setSubmissions((prev) => [...prev, payload.new]);
+        }
+      )
+      .subscribe();
+
     const timer = setTimeout(() => setIsLoading(false), 2000);
-    return () => clearTimeout(timer);
+    return () => {
+      supabase.removeChannel(channel);
+      clearTimeout(timer);
+    };
   }, []);
 
   return (
@@ -159,7 +175,8 @@ export default function App() {
                 e.preventDefault(); 
                 const data = {name: e.target[0].value, email: e.target[1].value, company: e.target[2].value, role: e.target[3].value}; 
                 const { error } = await supabase.from('submissions').insert([data]);
-                if (!error) { setSubmissions([...submissions, data]); alert("Submitted!"); } else { alert(error.message); }
+                if (error) alert(error.message);
+                else alert("Submitted!");
               }}>
                 <input type="text" placeholder="Full Name" className="w-full p-4 bg-[#030712] border border-slate-700 rounded" required />
                 <input type="email" placeholder="Email" className="w-full p-4 bg-[#030712] border border-slate-700 rounded" required />
@@ -187,7 +204,6 @@ export default function App() {
                     const { data: uploadData } = await supabase.storage.from('partner-files').upload(`${Date.now()}_${file.name}`, file);
                     const { data: { publicUrl } } = supabase.storage.from('partner-files').getPublicUrl(uploadData.path);
                     await supabase.from('partner_files').insert([{ name: file.name, url: publicUrl }]);
-                    setPartnerFiles([...partnerFiles, { name: file.name, url: publicUrl }]);
                     alert("Upload Success!");
                   }} className="text-white mb-8" />
                 )}
