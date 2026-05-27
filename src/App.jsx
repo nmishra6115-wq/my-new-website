@@ -5,6 +5,8 @@ import { jobOpenings } from './jobs';
 import { kycNews } from './news';
 
 // Initialize the channel globally
+const [email, setEmail] = useState("");
+const [password, setPassword] = useState("");
 const channel = supabase.channel('schema-db-changes');
 
 const NewsSkeleton = () => (
@@ -185,20 +187,32 @@ export default function App() {
     ))}
   </div>
 )}     
-// Inside your HR Dashboard (the 'contribute' view)
 {activeView === 'contribute' && (
   <div className="max-w-xl mx-auto border border-slate-800 p-16 text-center bg-[#030712]/50 rounded">
     {!isAuthorized ? (
       <div className="space-y-4">
-        <input type="email" id="adminEmail" placeholder="Admin Email" className="w-full p-4 bg-black border border-emerald-500/30 rounded text-center" />
-        <input type="password" id="adminPass" placeholder="Password" className="w-full p-4 bg-black border border-emerald-500/30 rounded text-center" />
+        <input 
+          type="email" 
+          placeholder="Admin Email" 
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="w-full p-4 bg-black border border-emerald-500/30 rounded text-center" 
+        />
+        <input 
+          type="password" 
+          placeholder="Password" 
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className="w-full p-4 bg-black border border-emerald-500/30 rounded text-center" 
+        />
         <button 
           onClick={async () => {
-            const email = document.getElementById('adminEmail').value;
-            const pass = document.getElementById('adminPass').value;
-            const { error } = await supabase.auth.signInWithPassword({ email, password: pass });
-            if (error) alert(error.message);
-            else setIsAuthorized(true);
+            const { error } = await supabase.auth.signInWithPassword({ email, password });
+            if (error) {
+              alert(error.message);
+            } else {
+              setIsAuthorized(true);
+            }
           }}
           className="w-full py-4 bg-emerald-600 font-bold uppercase hover:bg-emerald-500"
         >
