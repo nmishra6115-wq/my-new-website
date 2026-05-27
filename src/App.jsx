@@ -109,19 +109,43 @@ export default function App() {
                 <button type="submit" className="w-full py-4 bg-emerald-600">SUBMIT</button>
               </form>
             )}
-            {activeView === 'contribute' && (
-              <div className="p-16 border border-slate-800 text-center">
-                {!isAuthorized ? (
-                  <div className="space-y-4">
-                    <input type="email" placeholder="Email" onChange={(e) => setEmail(e.target.value)} className="w-full p-4 bg-black border" />
-                    <input type="password" placeholder="Pass" onChange={(e) => setPassword(e.target.value)} className="w-full p-4 bg-black border" />
-                    <button onClick={async () => { const { error } = await supabase.auth.signInWithPassword({ email, password }); if (!error) setIsAuthorized(true); else alert(error.message); }} className="w-full py-4 bg-emerald-600">LOGIN</button>
-                  </div>
-                ) : (
-                  <input type="file" onChange={async (e) => { const file = e.target.files[0]; if(!file) return; const { data } = await supabase.storage.from('partner-files').upload(`${Date.now()}_${file.name}`, file); const { data: u } = supabase.storage.from('partner-files').getPublicUrl(data.path); await supabase.from('partner_files').insert([{ name: file.name, url: u.publicUrl }]); alert("Uploaded!"); }} />
-                )}
-              </div>
-            )}
+         {activeView === 'contribute' && (
+  <div className="p-16 border border-slate-800 text-center">
+    {!isAuthorized ? (
+      <div className="space-y-4">
+        <input type="email" placeholder="Email" onChange={(e) => setEmail(e.target.value)} className="w-full p-4 bg-black border" />
+        <input type="password" placeholder="Pass" onChange={(e) => setPassword(e.target.value)} className="w-full p-4 bg-black border" />
+        <button onClick={async () => { const { error } = await supabase.auth.signInWithPassword({ email, password }); if (!error) setIsAuthorized(true); else alert(error.message); }} className="w-full py-4 bg-emerald-600">LOGIN</button>
+      </div>
+    ) : (
+      <div className="space-y-6">
+        <h2 className="text-xl font-bold">HR UPLOAD PORTAL</h2>
+        <input type="file" id="fileUpload" className="hidden" onChange={async (e) => {
+          const file = e.target.files[0];
+          if(!file) return;
+          setIsLoading(true); // Show a loading state
+          
+          // 1. Upload to Storage
+          const { data, error } = await supabase.storage.from('partner-files').upload(`${Date.now()}_${file.name}`, file);
+          if (error) { alert("Storage Error: " + error.message); setIsLoading(false); return; }
+          
+          // 2. Get Public URL
+          const { data: u } = supabase.storage.from('partner-files').getPublicUrl(data.path);
+          
+          // 3. Insert into Database
+          const { error: dbError } = await supabase.from('partner_files').insert([{ name: file.name, url: u.publicUrl }]);
+          if (dbError) { alert("Database Error: " + dbError.message); } 
+          else { alert("Uploaded Successfully!"); }
+          
+          setIsLoading(false);
+        }} />
+        <label htmlFor="fileUpload" className="cursor-pointer bg-emerald-600 px-8 py-4 font-bold text-white hover:bg-emerald-500">
+          SELECT & UPLOAD FILE
+        </label>
+      </div>
+    )}
+  </div>
+)}
             {activeView === 'network' && (
               <div className="max-w-4xl mx-auto">
                 <h1 className="text-3xl font-black mb-8 uppercase text-emerald-500">Network Feed</h1>
