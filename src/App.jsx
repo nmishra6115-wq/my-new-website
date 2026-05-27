@@ -40,21 +40,20 @@ export default function App() {
     };
     fetchData();
 
-    // 2. Setup listener ONLY IF not already subscribed
-    // We check if it is already subscribed to avoid adding callbacks multiple times
-    channel
-      .on(
-        'postgres_changes',
-        { event: 'INSERT', schema: 'public', table: 'submissions' },
-        (payload) => {
-          setSubmissions((prev) => [...prev, payload.new]);
-        }
-      )
-      .subscribe();
+    // 2. Setup listener ONLY IF not already joined
+    if (channel.state !== 'joined') {
+      channel
+        .on(
+          'postgres_changes',
+          { event: 'INSERT', schema: 'public', table: 'submissions' },
+          (payload) => {
+            setSubmissions((prev) => [...prev, payload.new]);
+          }
+        )
+        .subscribe();
+    }
 
-    return () => {
-      channel.unsubscribe();
-    };
+    // No cleanup unsubscribe here to keep the channel persistent
   }, []);
 
   return (
@@ -127,14 +126,35 @@ export default function App() {
         </main>
       )}
       
+      {/* OVERLAY SECTION */}
       {activeView && (
         <div className="fixed inset-0 z-[100] bg-black/95 p-12 overflow-y-auto">
           <button onClick={() => setActiveView(null)} className="text-emerald-400 font-bold mb-10 hover:text-white">&larr; BACK</button>
           <div className="max-w-4xl mx-auto text-white">
             {activeView === 'notes' && <div className="flex gap-12"><div className="w-1/4 space-y-2">{notesContent.map((item, idx) => <button key={idx} onClick={() => setPageIndex(idx)} className="w-full text-left p-4 rounded border border-slate-700 hover:border-emerald-500">{item.title}</button>)}</div><div className="w-3/4"><h1 className="text-4xl font-bold mb-6">{notesContent[pageIndex]?.title}</h1><p className="text-lg text-slate-300 whitespace-pre-line">{notesContent[pageIndex]?.body}</p></div></div>}
             {activeView === 'jobs' && <div className="max-w-4xl mx-auto"><h1 className="text-4xl font-black mb-8">ACTIVE_OPENINGS</h1><div className="bg-[#030712]/80 rounded border border-slate-800">{jobOpenings.map((job, idx) => <div key={idx} className="flex items-center justify-between p-6 border-b border-slate-800"><div><p className="text-emerald-400 font-bold text-xs">{job.company}</p><h2 className="text-lg font-semibold">{job.role}</h2></div><a href={job.link} target="_blank" className="px-6 py-2 bg-indigo-600 rounded text-sm hover:bg-indigo-500">APPLY</a></div>)}</div></div>}
+            
             {activeView === 'referralForm' && (
-              <form className="max-w-xl mx-auto space-y-4" onSubmit={async (e) => { e.preventDefault(); const newEntry = { name: e.target[0].value, email: e.target[1].value, company: e.target[2].value, role: e.target[3].value }; const { error } = await supabase.from('submissions').insert([newEntry]); if (error) { alert("Error: " + error.message); } else { alert("Submitted!"); setSubmissions((prev) => [...prev, newEntry]); e.target.reset(); setActiveView(null); } }}>
+              <form 
+                className="max-w-xl mx-auto space-y-4" 
+                onSubmit={async (e) => { 
+                  e.preventDefault(); 
+                  const newEntry = {
+                    name: e.target[0].value, 
+                    email: e.target[1].value, 
+                    company: e.target[2].value, 
+                    role: e.target[3].value
+                  };
+                  const { error } = await supabase.from('submissions').insert([newEntry]);
+                  if (error) { alert("Error: " + error.message); } 
+                  else { 
+                    alert("Submitted!"); 
+                    setSubmissions((prev) => [...prev, newEntry]); 
+                    e.target.reset(); 
+                    setActiveView(null); 
+                  } 
+                }}
+              >
                 <input type="text" placeholder="Full Name" className="w-full p-4 bg-[#030712] border border-slate-700 rounded" required />
                 <input type="email" placeholder="Email" className="w-full p-4 bg-[#030712] border border-slate-700 rounded" required />
                 <input type="text" placeholder="Company" className="w-full p-4 bg-[#030712] border border-slate-700 rounded" required />
@@ -142,6 +162,7 @@ export default function App() {
                 <button type="submit" className="w-full py-4 bg-emerald-600 font-bold uppercase">Send Data</button>
               </form>
             )}
+
             {activeView === 'available' && <div className="max-w-4xl mx-auto"><h1 className="text-3xl font-black mb-6 uppercase tracking-widest text-emerald-500">Live Availability</h1>{submissions.map((s, i) => <div key={i} className="p-4 mb-4 border border-slate-700 bg-slate-900 rounded"><p className="font-bold">{s.name} - {s.role} at {s.company}</p></div>)}</div>}
             {activeView === 'contribute' && <div className="max-w-xl mx-auto border border-slate-800 p-16 text-center bg-[#030712]/50 rounded">{!isAuthorized ? <input type="password" placeholder="Enter Secure Key" className="w-full p-4 bg-black border border-emerald-500/30 rounded text-center" onKeyDown={(e) => { if (e.key === 'Enter' && e.target.value === 'my-super-secret-123') setIsAuthorized(true); }} /> : <input type="file" onChange={async (e) => { const file = e.target.files[0]; if(!file) return; const { data: uploadData } = await supabase.storage.from('partner-files').upload(`${Date.now()}_${file.name}`, file); const { data: { publicUrl } } = supabase.storage.from('partner-files').getPublicUrl(uploadData.path); await supabase.from('partner_files').insert([{ name: file.name, url: publicUrl }]); alert("Upload Success!"); }} className="text-white" />}</div>}
             {activeView === 'network' && <div className="max-w-4xl mx-auto"><h1 className="text-3xl font-black mb-8 uppercase text-emerald-500">Network Feed</h1>{partnerFiles.length === 0 ? <p className="text-slate-500">No partner uploads yet.</p> : partnerFiles.map((file, i) => (<div key={i} className="p-6 mb-4 bg-slate-900 border border-purple-500/30 rounded flex justify-between items-center"><span className="font-bold">{file.name}</span><button onClick={() => window.open(file.url, '_blank')} className="text-purple-400 font-bold hover:text-white">View</button></div>))}</div>}
