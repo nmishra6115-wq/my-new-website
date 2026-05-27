@@ -111,21 +111,43 @@ export default function App() {
                       <h3 className="text-xl font-bold">{sub.name}</h3>
                       <p className="text-sm text-slate-400">{sub.company} - {sub.role}</p>
                     </div>
-                    <button onClick={async () => {
-                      const email = prompt("Enter your email so they can contact you:");
-                      if (!email) return;
-                      const fileInput = document.createElement("input");
-                      fileInput.type = "file";
-                      fileInput.accept = ".pdf,.docx";
-                      fileInput.onchange = async (e) => {
-                        const file = e.target.files[0];
-                        const { data } = await supabase.storage.from('resumes').upload(`${Date.now()}_${file.name}`, file);
-                        const { data: urlData } = supabase.storage.from('resumes').getPublicUrl(data.path);
-                        await supabase.from('interests').insert([{ submission_id: sub.id, sender_email: email, resume_url: urlData.publicUrl }]);
-                        alert("Application sent privately!");
-                      };
-                      fileInput.click();
-                    }} className="px-6 py-3 bg-emerald-600 font-bold hover:bg-emerald-500 transition-all">I AM INTERESTED</button>
+                    <button 
+  onClick={() => {
+    // 1. Create input and click immediately (Sync)
+    const fileInput = document.createElement("input");
+    fileInput.type = "file";
+    fileInput.accept = ".pdf,.docx";
+    
+    // 2. Set up the logic for AFTER the user picks a file
+    fileInput.onchange = async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const email = prompt("Enter your email so they can contact you:");
+      if (!email) return;
+
+      // Now we do the async work
+      const { data, error } = await supabase.storage.from('resumes').upload(`${Date.now()}_${file.name}`, file);
+      if (error) { alert("Upload failed: " + error.message); return; }
+      
+      const { data: urlData } = supabase.storage.from('resumes').getPublicUrl(data.path);
+      
+      const { error: dbError } = await supabase.from('interests').insert([{ 
+        submission_id: sub.id, 
+        sender_email: email, 
+        resume_url: urlData.publicUrl 
+      }]);
+      
+      if (dbError) alert("Error saving interest: " + dbError.message);
+      else alert("Application sent privately!");
+    };
+    
+    fileInput.click(); // This now happens without async interference
+  }}
+  className="px-6 py-3 bg-emerald-600 font-bold hover:bg-emerald-500 transition-all"
+>
+  I AM INTERESTED
+</button>
                   </div>
                 ))}
               </div>
