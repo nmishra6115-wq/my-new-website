@@ -36,12 +36,21 @@ export default function App() {
     };
     fetchData();
 
-    // FIXED: Realtime listener setup
+    // FIXED: Realtime listener setup for BOTH tables
     supabase.getChannels().forEach(c => supabase.removeChannel(c));
     const channel = supabase.channel('schema-db-changes');
+    
+    // Listener for Submissions
     channel.on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'submissions' }, (payload) => {
       if (active) setSubmissions((prev) => [...prev, payload.new]);
-    }).subscribe();
+    });
+
+    // Listener for Partner Files
+    channel.on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'partner_files' }, (payload) => {
+      if (active) setPartnerFiles((prev) => [...prev, payload.new]);
+    });
+
+    channel.subscribe();
 
     return () => { active = false; supabase.removeChannel(channel); };
   }, []);
