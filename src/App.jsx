@@ -36,16 +36,13 @@ export default function App() {
     };
     fetchData();
 
-    // FIXED: Realtime listener setup for BOTH tables
     supabase.getChannels().forEach(c => supabase.removeChannel(c));
     const channel = supabase.channel('schema-db-changes');
     
-    // Listener for Submissions
     channel.on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'submissions' }, (payload) => {
       if (active) setSubmissions((prev) => [...prev, payload.new]);
     });
 
-    // Listener for Partner Files
     channel.on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'partner_files' }, (payload) => {
       if (active) setPartnerFiles((prev) => [...prev, payload.new]);
     });
@@ -57,7 +54,6 @@ export default function App() {
 
   return (
     <div className="text-slate-100 font-mono min-h-screen flex flex-col relative bg-[#030712]">
-      {/* NAVIGATION */}
       <nav className="p-6 border-b border-emerald-500/30 flex items-center justify-between sticky top-0 bg-[#030712]/90 backdrop-blur-lg z-50 w-full shadow-[0_0_20px_rgba(16,185,129,0.1)]">
         <h1 className="text-xl md:text-2xl font-black tracking-[0.3em] text-emerald-500 cursor-pointer uppercase" onClick={() => setActiveView(null)}>&gt; AML_DECODE</h1>
         <div className="hidden md:flex gap-6 items-center">
@@ -68,7 +64,6 @@ export default function App() {
         <button className="md:hidden text-emerald-500 text-2xl z-[60]" onClick={() => setIsMenuOpen(!isMenuOpen)}>{isMenuOpen ? "✕" : "☰"}</button>
       </nav>
 
-      {/* MOBILE MENU */}
       {isMenuOpen && (
         <div className="md:hidden absolute top-20 left-0 w-full bg-[#030712]/95 border-b border-emerald-500/30 p-6 flex flex-col gap-4 z-50">
           {[ { label: 'NOTES', id: 'notes' }, { label: 'JOBS', id: 'jobs' }, { label: 'SUBMIT REFERRAL', id: 'referralForm' }, { label: 'AVAILABLE REFERRAL', id: 'available' }, { label: 'HR DASHBOARD', id: 'contribute' }, { label: 'NETWORK JOBS', id: 'network' } ].map((item) => (
@@ -77,7 +72,6 @@ export default function App() {
         </div>
       )}
 
-      {/* MAIN VIEW */}
       {!activeView && (
         <main className="flex-grow">
           <section className="w-full relative bg-black">
@@ -96,7 +90,6 @@ export default function App() {
         </main>
       )}
 
-      {/* OVERLAY VIEWS */}
       {activeView && (
         <div className="fixed inset-0 z-[100] bg-black/95 p-12 overflow-y-auto">
           <button onClick={() => setActiveView(null)} className="text-emerald-400 font-bold mb-10">&larr; BACK</button>
@@ -109,43 +102,62 @@ export default function App() {
                 <button type="submit" className="w-full py-4 bg-emerald-600">SUBMIT</button>
               </form>
             )}
-         {activeView === 'contribute' && (
-  <div className="p-16 border border-slate-800 text-center">
-    {!isAuthorized ? (
-      <div className="space-y-4">
-        <input type="email" placeholder="Email" onChange={(e) => setEmail(e.target.value)} className="w-full p-4 bg-black border" />
-        <input type="password" placeholder="Pass" onChange={(e) => setPassword(e.target.value)} className="w-full p-4 bg-black border" />
-        <button onClick={async () => { const { error } = await supabase.auth.signInWithPassword({ email, password }); if (!error) setIsAuthorized(true); else alert(error.message); }} className="w-full py-4 bg-emerald-600">LOGIN</button>
-      </div>
-    ) : (
-      <div className="space-y-6">
-        <h2 className="text-xl font-bold">HR UPLOAD PORTAL</h2>
-        <input type="file" id="fileUpload" className="hidden" onChange={async (e) => {
-          const file = e.target.files[0];
-          if(!file) return;
-          setIsLoading(true); // Show a loading state
-          
-          // 1. Upload to Storage
-          const { data, error } = await supabase.storage.from('partner-files').upload(`${Date.now()}_${file.name}`, file);
-          if (error) { alert("Storage Error: " + error.message); setIsLoading(false); return; }
-          
-          // 2. Get Public URL
-          const { data: u } = supabase.storage.from('partner-files').getPublicUrl(data.path);
-          
-          // 3. Insert into Database
-          const { error: dbError } = await supabase.from('partner_files').insert([{ name: file.name, url: u.publicUrl }]);
-          if (dbError) { alert("Database Error: " + dbError.message); } 
-          else { alert("Uploaded Successfully!"); }
-          
-          setIsLoading(false);
-        }} />
-        <label htmlFor="fileUpload" className="cursor-pointer bg-emerald-600 px-8 py-4 font-bold text-white hover:bg-emerald-500">
-          SELECT & UPLOAD FILE
-        </label>
-      </div>
-    )}
-  </div>
-)}
+            {activeView === 'available' && (
+              <div className="max-w-4xl mx-auto">
+                <h1 className="text-3xl font-black mb-8 uppercase text-emerald-500">Available Referrals</h1>
+                {submissions.map((sub, i) => (
+                  <div key={i} className="p-6 mb-4 bg-slate-900 border border-emerald-500/30 rounded flex justify-between items-center">
+                    <div>
+                      <h3 className="text-xl font-bold">{sub.name}</h3>
+                      <p className="text-sm text-slate-400">{sub.company} - {sub.role}</p>
+                    </div>
+                    <button onClick={async () => {
+                      const email = prompt("Enter your email so they can contact you:");
+                      if (!email) return;
+                      const fileInput = document.createElement("input");
+                      fileInput.type = "file";
+                      fileInput.accept = ".pdf,.docx";
+                      fileInput.onchange = async (e) => {
+                        const file = e.target.files[0];
+                        const { data } = await supabase.storage.from('resumes').upload(`${Date.now()}_${file.name}`, file);
+                        const { data: urlData } = supabase.storage.from('resumes').getPublicUrl(data.path);
+                        await supabase.from('interests').insert([{ submission_id: sub.id, sender_email: email, resume_url: urlData.publicUrl }]);
+                        alert("Application sent privately!");
+                      };
+                      fileInput.click();
+                    }} className="px-6 py-3 bg-emerald-600 font-bold hover:bg-emerald-500 transition-all">I AM INTERESTED</button>
+                  </div>
+                ))}
+              </div>
+            )}
+            {activeView === 'contribute' && (
+              <div className="p-16 border border-slate-800 text-center">
+                {!isAuthorized ? (
+                  <div className="space-y-4">
+                    <input type="email" placeholder="Email" onChange={(e) => setEmail(e.target.value)} className="w-full p-4 bg-black border" />
+                    <input type="password" placeholder="Pass" onChange={(e) => setPassword(e.target.value)} className="w-full p-4 bg-black border" />
+                    <button onClick={async () => { const { error } = await supabase.auth.signInWithPassword({ email, password }); if (!error) setIsAuthorized(true); else alert(error.message); }} className="w-full py-4 bg-emerald-600">LOGIN</button>
+                  </div>
+                ) : (
+                  <div className="space-y-6">
+                    <h2 className="text-xl font-bold">HR UPLOAD PORTAL</h2>
+                    <input type="file" id="fileUpload" className="hidden" onChange={async (e) => {
+                      const file = e.target.files[0];
+                      if(!file) return;
+                      setIsLoading(true);
+                      const { data, error } = await supabase.storage.from('partner-files').upload(`${Date.now()}_${file.name}`, file);
+                      if (error) { alert("Storage Error: " + error.message); setIsLoading(false); return; }
+                      const { data: u } = supabase.storage.from('partner-files').getPublicUrl(data.path);
+                      const { error: dbError } = await supabase.from('partner_files').insert([{ name: file.name, url: u.publicUrl }]);
+                      if (dbError) { alert("Database Error: " + dbError.message); } 
+                      else { alert("Uploaded Successfully!"); }
+                      setIsLoading(false);
+                    }} />
+                    <label htmlFor="fileUpload" className="cursor-pointer bg-emerald-600 px-8 py-4 font-bold text-white hover:bg-emerald-500">SELECT & UPLOAD FILE</label>
+                  </div>
+                )}
+              </div>
+            )}
             {activeView === 'network' && (
               <div className="max-w-4xl mx-auto">
                 <h1 className="text-3xl font-black mb-8 uppercase text-emerald-500">Network Feed</h1>
