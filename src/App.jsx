@@ -165,8 +165,25 @@ export default function App() {
               </form>
             )}
 
-            {activeView === 'available' && <div className="max-w-4xl mx-auto"><h1 className="text-3xl font-black mb-6 uppercase tracking-widest text-emerald-500">Live Availability</h1>{submissions.map((s, i) => <div key={i} className="p-4 mb-4 border border-slate-700 bg-slate-900 rounded"><p className="font-bold">{s.name} - {s.role} at {s.company}</p></div>)}</div>}
-            {activeView === 'contribute' && <div className="max-w-xl mx-auto border border-slate-800 p-16 text-center bg-[#030712]/50 rounded">{!isAuthorized ? <input type="password" placeholder="Enter Secure Key" className="w-full p-4 bg-black border border-emerald-500/30 rounded text-center" onKeyDown={(e) => { if (e.key === 'Enter' && e.target.value === 'my-super-secret-123') setIsAuthorized(true); }} /> : <input type="file" onChange={async (e) => { const file = e.target.files[0]; if(!file) return; const { data: uploadData } = await supabase.storage.from('partner-files').upload(`${Date.now()}_${file.name}`, file); const { data: { publicUrl } } = supabase.storage.from('partner-files').getPublicUrl(uploadData.path); await supabase.from('partner_files').insert([{ name: file.name, url: publicUrl }]); alert("Upload Success!"); }} className="text-white" />}</div>}
+{activeView === 'available' && (
+  <div className="max-w-4xl mx-auto">
+    <h1 className="text-3xl font-black mb-6 uppercase tracking-widest text-emerald-500">Live Availability</h1>
+    {submissions.map((s, i) => (
+      <div key={i} className="p-6 mb-4 border border-slate-700 bg-slate-900 rounded flex items-center justify-between">
+        <div>
+          <p className="font-bold text-lg">{s.name}</p>
+          <p className="text-emerald-400">{s.role} at {s.company}</p>
+        </div>
+        <a 
+          href={`mailto:your-email@example.com?subject=Interested in Referral: ${s.role} at ${s.company}&body=Hi Nitesh, I am interested in the ${s.role} role at ${s.company} you posted about.`}
+          className="px-6 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded transition-all"
+        >
+          I AM INTERESTED
+        </a>
+      </div>
+    ))}
+  </div>
+)}            {activeView === 'contribute' && <div className="max-w-xl mx-auto border border-slate-800 p-16 text-center bg-[#030712]/50 rounded">{!isAuthorized ? <input type="password" placeholder="Enter Secure Key" className="w-full p-4 bg-black border border-emerald-500/30 rounded text-center" onKeyDown={(e) => { if (e.key === 'Enter' && e.target.value === 'my-super-secret-123') setIsAuthorized(true); }} /> : <input type="file" onChange={async (e) => { const file = e.target.files[0]; if(!file) return; const { data: uploadData } = await supabase.storage.from('partner-files').upload(`${Date.now()}_${file.name}`, file); const { data: { publicUrl } } = supabase.storage.from('partner-files').getPublicUrl(uploadData.path); await supabase.from('partner_files').insert([{ name: file.name, url: publicUrl }]); alert("Upload Success!"); }} className="text-white" />}</div>}
             {activeView === 'network' && <div className="max-w-4xl mx-auto"><h1 className="text-3xl font-black mb-8 uppercase text-emerald-500">Network Feed</h1>{partnerFiles.length === 0 ? <p className="text-slate-500">No partner uploads yet.</p> : partnerFiles.map((file, i) => (<div key={i} className="p-6 mb-4 bg-slate-900 border border-purple-500/30 rounded flex justify-between items-center"><span className="font-bold">{file.name}</span><button onClick={() => window.open(file.url, '_blank')} className="text-purple-400 font-bold hover:text-white">View</button></div>))}</div>}
           </div>
         </div>
