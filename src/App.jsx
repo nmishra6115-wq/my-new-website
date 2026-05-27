@@ -37,7 +37,7 @@ export default function App() {
 
     fetchData();
 
-    // REALTIME LISTENER
+    // SETUP the listener
     const channel = supabase
       .channel('schema-db-changes')
       .on(
@@ -46,8 +46,10 @@ export default function App() {
         (payload) => {
           setSubmissions((prev) => [...prev, payload.new]);
         }
-      )
-      .subscribe();
+      );
+
+    // SUBSCRIBE after setting up the listener
+    channel.subscribe();
 
     return () => {
       supabase.removeChannel(channel);
@@ -69,8 +71,6 @@ export default function App() {
         
         <button className="md:hidden text-emerald-500 text-2xl z-[60]" onClick={() => setIsMenuOpen(!isMenuOpen)}>{isMenuOpen ? "✕" : "☰"}</button>
       </nav>
-
-      {/* ... (Rest of your UI code remains exactly as you had it) ... */}
       
       {/* ADVERTISEMENT MARQUEE */}
       <div className="w-full bg-emerald-950/20 border-y border-emerald-500/20 py-3 overflow-hidden">
@@ -117,7 +117,13 @@ export default function App() {
         </main>
       )}
       
-      {/* ... (Keep the rest of your overlay sections as they were) ... */}
+      {/* OVERLAY SECTION (Keep all your existing activeView content here) */}
+      {activeView && (
+        <div className="fixed inset-0 z-[100] bg-black/95 p-12 overflow-y-auto">
+          <button onClick={() => setActiveView(null)} className="text-emerald-400 font-bold mb-10">&larr; BACK</button>
+          {/* ... Add your activeView content logic back here ... */}
+        </div>
+      )}
       
       <footer className="py-10 text-center text-slate-500 border-t border-white/5 uppercase text-xs tracking-widest">© 2026 AML_DECODE / Designed by @Nitesh</footer>
     </div>
