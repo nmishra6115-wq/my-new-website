@@ -37,6 +37,7 @@ export default function App() {
 
     fetchData();
 
+    // SETUP listener safely
     const channel = supabase
       .channel('schema-db-changes')
       .on(
@@ -45,9 +46,8 @@ export default function App() {
         (payload) => {
           setSubmissions((prev) => [...prev, payload.new]);
         }
-      );
-
-    channel.subscribe();
+      )
+      .subscribe();
 
     return () => {
       supabase.removeChannel(channel);
