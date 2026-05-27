@@ -26,7 +26,7 @@ export default function App() {
   useEffect(() => {
     let active = true;
 
-    // 1. Fetch initial data
+    // 1. Initial Data Fetch
     const fetchData = async () => {
       try {
         const { data: subs } = await supabase.from('submissions').select('*');
@@ -40,9 +40,11 @@ export default function App() {
     };
     fetchData();
 
-    // 2. Safely initialize Realtime listener
+    // 2. Cleanup existing channels to prevent "callback after subscribe" error
+    supabase.getChannels().forEach(c => supabase.removeChannel(c));
+
+    // 3. Setup Realtime Listener
     const channel = supabase.channel('schema-db-changes');
-    
     channel
       .on(
         'postgres_changes',
@@ -53,29 +55,27 @@ export default function App() {
       )
       .subscribe();
 
-    // 3. Cleanup to prevent duplicate subscriptions
     return () => {
       active = false;
       supabase.removeChannel(channel);
     };
-  }, []); // Empty array ensures this runs exactly once on mount
+  }, []); 
 
   return (
     <div className="text-slate-100 font-mono min-h-screen flex flex-col relative bg-[#030712]">
-      
       {/* NAVIGATION */}
-      <nav className="p-6 border-b border-emerald-500/30 flex items-center justify-between sticky top-0 bg-[#030712]/90 backdrop-blur-lg z-50 w-full shadow-[0_0_20px_rgba(16,185,129,0.1)]">
-        <h1 className="text-xl md:text-2xl font-black tracking-[0.3em] text-emerald-500 cursor-pointer uppercase hover:text-white transition-all" onClick={() => setActiveView(null)}>&gt; AML_DECODE</h1>
+      <nav className="p-6 border-b border-emerald-500/30 flex items-center justify-between sticky top-0 bg-[#030712]/90 backdrop-blur-lg z-50 w-full">
+        <h1 className="text-xl md:text-2xl font-black tracking-[0.3em] text-emerald-500 cursor-pointer uppercase" onClick={() => setActiveView(null)}>&gt; AML_DECODE</h1>
         <button className="md:hidden text-emerald-500 text-2xl z-[60]" onClick={() => setIsMenuOpen(!isMenuOpen)}>{isMenuOpen ? "✕" : "☰"}</button>
       </nav>
 
-      {/* DASHBOARD CONTENT */}
+      {/* DASHBOARD */}
       {!activeView && (
         <main className="flex-grow">
           <div className="max-w-7xl mx-auto px-6 py-16">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-24">
-              <div onClick={() => setActiveView('network')} className="p-8 border border-purple-500/50 bg-purple-900/10 rounded cursor-pointer hover:bg-purple-900/20 transition-all text-center">
-                <h3 className="font-bold text-purple-400 uppercase tracking-widest mb-2">Featured Network</h3>
+              <div onClick={() => setActiveView('network')} className="p-8 border border-purple-500/50 bg-purple-900/10 rounded cursor-pointer hover:bg-purple-900/20 text-center">
+                <h3 className="font-bold text-purple-400 uppercase tracking-widest">Featured Network</h3>
               </div>
               {[ {id: 'referralForm', label: 'Submit Referral'}, {id: 'available', label: 'Available Referral'}, {id: 'contribute', label: 'HR Dashboard'}, {id: 'network', label: 'Network Jobs'} ].map(card => (
                 <div key={card.id} onClick={() => setActiveView(card.id)} className="p-8 border border-emerald-500/20 rounded cursor-pointer transition-all hover:translate-y-[-5px]">
@@ -87,11 +87,10 @@ export default function App() {
         </main>
       )}
       
-      {/* OVERLAYS */}
+      {/* OVERLAY */}
       {activeView && (
         <div className="fixed inset-0 z-[100] bg-black/95 p-12 overflow-y-auto">
-          <button onClick={() => setActiveView(null)} className="text-emerald-400 font-bold mb-10 hover:text-white">&larr; BACK</button>
-          
+          <button onClick={() => setActiveView(null)} className="text-emerald-400 font-bold mb-10">&larr; BACK</button>
           <div className="max-w-4xl mx-auto text-white">
             {activeView === 'referralForm' && (
               <form className="max-w-xl mx-auto space-y-4" onSubmit={async (e) => { 
