@@ -1,13 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { supabase } from './supabaseClient';
 import { notesContent } from './content';
 import { jobOpenings } from './jobs';
 import { kycNews } from './news';
-
-// Initialize the channel globally
-const [email, setEmail] = useState("");
-const [password, setPassword] = useState("");
-const channel = supabase.channel('schema-db-changes');
 
 const NewsSkeleton = () => (
   <div className="block p-6 bg-slate-900 border border-white/5 rounded animate-pulse">
@@ -16,10 +11,9 @@ const NewsSkeleton = () => (
   </div>
 );
 
-// Module-level variable to lock the subscription
-let isSubscribed = false;
-
 export default function App() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [activeView, setActiveView] = useState(null);
   const [pageIndex, setPageIndex] = useState(0);
   const [isMuted, setIsMuted] = useState(true);
@@ -28,6 +22,8 @@ export default function App() {
   const [submissions, setSubmissions] = useState([]);
   const [partnerFiles, setPartnerFiles] = useState([]);
   const [isAuthorized, setIsAuthorized] = useState(false);
+
+  const channel = useMemo(() => supabase.channel('schema-db-changes'), []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -44,20 +40,20 @@ export default function App() {
     };
     fetchData();
 
-    // The lock prevents .on() from being called a second time
-    if (!isSubscribed) {
-      isSubscribed = true;
-      channel
-        .on(
-          'postgres_changes',
-          { event: 'INSERT', schema: 'public', table: 'submissions' },
-          (payload) => {
-            setSubmissions((prev) => [...prev, payload.new]);
-          }
-        )
-        .subscribe();
-    }
-  }, []);
+    const subscription = channel
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'submissions' },
+        (payload) => {
+          setSubmissions((prev) => [...prev, payload.new]);
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(subscription);
+    };
+  }, [channel]);
 
   return (
     <div className="text-slate-100 font-mono min-h-screen flex flex-col relative bg-[#030712]">
@@ -167,63 +163,85 @@ export default function App() {
               </form>
             )}
 
-{activeView === 'available' && (
-  <div className="max-w-4xl mx-auto">
-    <h1 className="text-3xl font-black mb-6 uppercase tracking-widest text-emerald-500">Live Availability</h1>
-    {submissions.map((s, i) => (
-      <div key={i} className="p-6 mb-4 border border-slate-700 bg-slate-900 rounded flex items-center justify-between">
-        <div>
-          <p className="font-bold text-lg">{s.name}</p>
-          <p className="text-emerald-400">{s.role} at {s.company}</p>
-        </div>
-        <a 
-          // We use s.email here so it targets the person who submitted the data
-          href={`mailto:${s.email}?subject=Interested in Referral: ${s.role} at ${s.company}&body=Hi ${s.name}, I am interested in the ${s.role} role at ${s.company} you posted about. Please let me know the next steps.`}
-          className="px-6 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded transition-all"
-        >
-          I AM INTERESTED
-        </a>
-      </div>
-    ))}
-  </div>
-)}     
-{activeView === 'contribute' && (
-  <div className="max-w-xl mx-auto border border-slate-800 p-16 text-center bg-[#030712]/50 rounded">
-    {!isAuthorized ? (
-      <div className="space-y-4">
-        <input 
-          type="email" 
-          placeholder="Admin Email" 
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="w-full p-4 bg-black border border-emerald-500/30 rounded text-center" 
-        />
-        <input 
-          type="password" 
-          placeholder="Password" 
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="w-full p-4 bg-black border border-emerald-500/30 rounded text-center" 
-        />
-        <button 
-          onClick={async () => {
-            const { error } = await supabase.auth.signInWithPassword({ email, password });
-            if (error) {
-              alert(error.message);
-            } else {
-              setIsAuthorized(true);
-            }
-          }}
-          className="w-full py-4 bg-emerald-600 font-bold uppercase hover:bg-emerald-500"
-        >
-          Login to Upload
-        </button>
-      </div>
-    ) : (
-      <input type="file" onChange={/* ... your existing upload logic ... */} />
-    )}
-  </div>
-)}            {activeView === 'network' && <div className="max-w-4xl mx-auto"><h1 className="text-3xl font-black mb-8 uppercase text-emerald-500">Network Feed</h1>{partnerFiles.length === 0 ? <p className="text-slate-500">No partner uploads yet.</p> : partnerFiles.map((file, i) => (<div key={i} className="p-6 mb-4 bg-slate-900 border border-purple-500/30 rounded flex justify-between items-center"><span className="font-bold">{file.name}</span><button onClick={() => window.open(file.url, '_blank')} className="text-purple-400 font-bold hover:text-white">View</button></div>))}</div>}
+            {activeView === 'available' && (
+              <div className="max-w-4xl mx-auto">
+                <h1 className="text-3xl font-black mb-6 uppercase tracking-widest text-emerald-500">Live Availability</h1>
+                {submissions.map((s, i) => (
+                  <div key={i} className="p-6 mb-4 border border-slate-700 bg-slate-900 rounded flex items-center justify-between">
+                    <div>
+                      <p className="font-bold text-lg">{s.name}</p>
+                      <p className="text-emerald-400">{s.role} at {s.company}</p>
+                    </div>
+                    <a 
+                      href={`mailto:nitesh.mishra.work@gmail.com?subject=Interested in Referral: ${s.role} at ${s.company}&body=Hi Nitesh, I am interested in the referral for ${s.role} at ${s.company} (Submitted by: ${s.name}). Please connect me with them.`}
+                      className="px-6 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded transition-all"
+                    >
+                      I AM INTERESTED
+                    </a>
+                  </div>
+                ))}
+              </div>
+            )} 
+            
+            {activeView === 'contribute' && (
+              <div className="max-w-xl mx-auto border border-slate-800 p-16 text-center bg-[#030712]/50 rounded">
+                {!isAuthorized ? (
+                  <div className="space-y-4">
+                    <input 
+                      type="email" 
+                      placeholder="Admin Email" 
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className="w-full p-4 bg-black border border-emerald-500/30 rounded text-center" 
+                    />
+                    <input 
+                      type="password" 
+                      placeholder="Password" 
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className="w-full p-4 bg-black border border-emerald-500/30 rounded text-center" 
+                    />
+                    <button 
+                      onClick={async () => {
+                        const { error } = await supabase.auth.signInWithPassword({ email, password });
+                        if (error) {
+                          alert(error.message);
+                        } else {
+                          setIsAuthorized(true);
+                        }
+                      }}
+                      className="w-full py-4 bg-emerald-600 font-bold uppercase hover:bg-emerald-500"
+                    >
+                      Login to Upload
+                    </button>
+                  </div>
+                ) : (
+                  <input type="file" onChange={async (e) => {
+                    const file = e.target.files[0];
+                    if(!file) return;
+                    const { data, error } = await supabase.storage.from('partner-files').upload(`${Date.now()}_${file.name}`, file);
+                    if (error) alert(error.message);
+                    else {
+                      const { data: publicUrlData } = supabase.storage.from('partner-files').getPublicUrl(data.path);
+                      await supabase.from('partner_files').insert([{ name: file.name, url: publicUrlData.publicUrl }]);
+                      alert("Uploaded!");
+                    }
+                  }} />
+                )}
+              </div>
+            )} 
+
+            {activeView === 'network' && (
+              <div className="max-w-4xl mx-auto">
+                <h1 className="text-3xl font-black mb-8 uppercase text-emerald-500">Network Feed</h1>
+                {partnerFiles.length === 0 ? <p className="text-slate-500">No partner uploads yet.</p> : partnerFiles.map((file, i) => (
+                  <div key={i} className="p-6 mb-4 bg-slate-900 border border-purple-500/30 rounded flex justify-between items-center">
+                    <span className="font-bold">{file.name}</span>
+                    <button onClick={() => window.open(file.url, '_blank')} className="text-purple-400 font-bold hover:text-white">View</button>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       )}
