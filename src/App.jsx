@@ -22,17 +22,28 @@ export default function App() {
   const [isAuthorized, setIsAuthorized] = useState(false);
 
   useEffect(() => {
-   const fetchData = async () => {
-    // This line tells your app: "Go to the 'submissions' table and get all columns (*)"
-    const { data: subs, error } = await supabase.from('submissions').select('*');
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        console.log("Fetching data from Supabase...");
+        const { data: subs, error } = await supabase.from('submissions').select('*');
+        
+        if (error) {
+          console.error("Supabase Error:", error.message);
+          alert("Database Error: " + error.message);
+        } else {
+          console.log("Data successfully fetched:", subs);
+          setSubmissions(subs || []);
+        }
+      } catch (err) {
+        console.error("Unexpected error:", err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
     
-    if (error) {
-      console.error("Error fetching data:", error);
-    } else if (subs) {
-      setSubmissions(subs);
-    }
-  };
     fetchData();
+  }, []);
 
     // REALTIME LISTENER
     const channel = supabase
