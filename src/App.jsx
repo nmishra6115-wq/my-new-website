@@ -111,52 +111,35 @@ export default function App() {
                       <h3 className="text-xl font-bold">{sub.name}</h3>
                       <p className="text-sm text-slate-400">{sub.company} - {sub.role}</p>
                     </div>
-             <button 
-  onClick={() => {
-    console.log("Button clicked!"); // Check F12 Console if this appears
-    
-    // Create the input element from scratch
-    const input = document.createElement("input");
-    input.type = "file";
-    input.accept = ".pdf,.docx";
-
-    // Define what happens when a file is picked
-    input.onchange = async (e) => {
-      const file = e.target.files[0];
-      if (!file) return;
-
-      const email = prompt("Enter your email so they can contact you:");
-      if (!email) return;
-
-      // Start upload
-      alert("Uploading...");
-      const { data, error } = await supabase.storage.from('resumes').upload(`${Date.now()}_${file.name}`, file);
-      
-      if (error) {
-        alert("Upload error: " + error.message);
-        return;
-      }
-
-      const { data: urlData } = supabase.storage.from('resumes').getPublicUrl(data.path);
-      
-      const { error: dbError } = await supabase.from('interests').insert([{ 
-        submission_id: sub.id, 
-        sender_email: email, 
-        resume_url: urlData.publicUrl 
-      }]);
-
-      if (dbError) alert("Database error: " + dbError.message);
-      else alert("Application sent!");
-    };
-
-    // Trigger the click
-    input.click();
-  }}
-  className="px-6 py-3 bg-emerald-600 font-bold hover:bg-emerald-500 transition-all"
->
-  I AM INTERESTED
-</button>
-  
+                    <button 
+                      onClick={() => {
+                        const userEmail = prompt("Please enter your email so the referrer can contact you:");
+                        if (userEmail) {
+                          const input = document.createElement("input");
+                          input.type = "file";
+                          input.accept = ".pdf,.docx";
+                          input.onchange = async (e) => {
+                            const file = e.target.files[0];
+                            if (!file) return;
+                            alert("Uploading your resume...");
+                            const { data, error } = await supabase.storage.from('resumes').upload(`${Date.now()}_${file.name}`, file);
+                            if (error) { alert("Upload error: " + error.message); return; }
+                            const { data: urlData } = supabase.storage.from('resumes').getPublicUrl(data.path);
+                            const { error: dbError } = await supabase.from('interests').insert([{ 
+                              submission_id: sub.id, 
+                              sender_email: userEmail, 
+                              resume_url: urlData.publicUrl 
+                            }]);
+                            if (dbError) alert("Database error: " + dbError.message);
+                            else alert("Application sent successfully!");
+                          };
+                          input.click();
+                        }
+                      }}
+                      className="px-6 py-3 bg-emerald-600 font-bold hover:bg-emerald-500 transition-all"
+                    >
+                      I AM INTERESTED
+                    </button>
                   </div>
                 ))}
               </div>
