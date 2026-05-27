@@ -194,3 +194,32 @@ export default function App() {
     </div>
   );
 }
+{/* --- NEWS SECTION (Added below the Navbar) --- */}
+      {!activeView && (
+        <section className="bg-black border-b border-emerald-500/20 p-6">
+          <div className="max-w-7xl mx-auto">
+            <h2 className="text-emerald-500 font-bold mb-4 uppercase">&gt; Latest KYC News</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {kycNews.slice(0, 3).map((news, i) => (
+                <div key={i} className="p-4 bg-slate-900 border border-white/5 rounded">
+                  <p className="text-white font-bold">{news.title}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+      {/* --- FOOTER (Added at the bottom) --- */}
+      <footer className="mt-auto border-t border-emerald-500/20 bg-[#030712] p-8">
+        <div className="max-w-7xl mx-auto text-center text-slate-500 text-sm">
+          <p>© 2026 AML_DECODE. All rights reserved.</p>
+          <p>System Status: Active | Compliance Ready</p>
+        </div>
+      </footer>
+
+      {activeView && (
+        <div className="fixed inset-0 z-[100] bg-black/95 p-12 overflow-y-auto">
+          {/* ... your activeView content ... */}
+        </div>
+      )}
+    
