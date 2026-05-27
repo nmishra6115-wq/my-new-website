@@ -18,6 +18,7 @@ export default function App() {
 
   useEffect(() => {
     let active = true;
+    
     const fetchData = async () => {
       const { data: subs } = await supabase.from('submissions').select('*');
       const { data: files } = await supabase.from('partner_files').select('*');
@@ -29,9 +30,18 @@ export default function App() {
     };
     fetchData();
 
+    supabase.getChannels().forEach(c => supabase.removeChannel(c));
     const channel = supabase.channel('schema-db-changes');
-    channel.on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'submissions' }, (payload) => { if (active) setSubmissions((prev) => [...prev, payload.new]); });
-    channel.on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'partner_files' }, (payload) => { if (active) setPartnerFiles((prev) => [...prev, payload.new]); });
+    
+    // Listeners defined BEFORE subscribe()
+    channel.on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'submissions' }, (payload) => {
+      if (active) setSubmissions((prev) => [...prev, payload.new]);
+    });
+
+    channel.on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'partner_files' }, (payload) => {
+      if (active) setPartnerFiles((prev) => [...prev, payload.new]);
+    });
+
     channel.subscribe();
 
     return () => { active = false; supabase.removeChannel(channel); };
@@ -42,10 +52,10 @@ export default function App() {
       {/* NAVBAR */}
       <nav className="p-6 border-b border-emerald-500/30 flex items-center justify-between sticky top-0 bg-[#030712]/90 backdrop-blur-lg z-50 w-full">
         <h1 className="text-xl font-black tracking-[0.3em] text-emerald-500 cursor-pointer uppercase" onClick={() => setActiveView(null)}>&gt; AML_DECODE</h1>
-        <button className="md:hidden text-emerald-500 text-2xl" onClick={() => setIsMenuOpen(!isMenuOpen)}>{isMenuOpen ? "✕" : "☰"}</button>
+        <button className="md:hidden text-emerald-500 text-2xl z-[60]" onClick={() => setIsMenuOpen(!isMenuOpen)}>{isMenuOpen ? "✕" : "☰"}</button>
       </nav>
 
-      {/* NEWS SECTION - Only shows when no view is active */}
+      {/* NEWS SECTION - Only visible on home */}
       {!activeView && (
         <section className="bg-black border-b border-emerald-500/20 p-6">
           <div className="max-w-7xl mx-auto">
@@ -65,19 +75,20 @@ export default function App() {
       {!activeView && (
         <main className="flex-grow">
           <section className="w-full relative bg-black"><video className="w-full h-[500px] object-cover" autoPlay muted={isMuted} loop playsInline><source src="/intro.mp4" type="video/mp4" /></video></section>
-          {/* ... Add your grid cards here ... */}
         </main>
       )}
 
       {/* ACTIVE VIEW MODAL */}
       {activeView && (
         <div className="fixed inset-0 z-[100] bg-black/95 p-12 overflow-y-auto">
-           <button onClick={() => setActiveView(null)} className="text-emerald-400 font-bold mb-10">&larr; BACK</button>
-           {/* Your existing activeView logic here */}
+          <button onClick={() => setActiveView(null)} className="text-emerald-400 font-bold mb-10">&larr; BACK</button>
+          <div className="max-w-4xl mx-auto text-white">
+            {/* Your activeView logic (referralForm, jobs, etc.) stays here */}
+          </div>
         </div>
       )}
 
-      {/* FOOTER - Always visible */}
+      {/* FOOTER */}
       <footer className="mt-auto border-t border-emerald-500/20 bg-[#030712] p-8">
         <div className="max-w-7xl mx-auto text-center text-slate-500 text-sm">
           <p>© 2026 AML_DECODE. All rights reserved.</p>
