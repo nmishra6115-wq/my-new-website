@@ -40,6 +40,7 @@ export default function App() {
     };
     fetchData();
 
+    // Define listener BEFORE subscribing
     const subscription = channel
       .on(
         'postgres_changes',
