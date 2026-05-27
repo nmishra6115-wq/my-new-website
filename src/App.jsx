@@ -111,25 +111,32 @@ export default function App() {
                       <h3 className="text-xl font-bold">{sub.name}</h3>
                       <p className="text-sm text-slate-400">{sub.company} - {sub.role}</p>
                     </div>
-                    <button 
+             <button 
   onClick={() => {
-    // 1. Create input and click immediately (Sync)
-    const fileInput = document.createElement("input");
-    fileInput.type = "file";
-    fileInput.accept = ".pdf,.docx";
+    console.log("Button clicked!"); // Check F12 Console if this appears
     
-    // 2. Set up the logic for AFTER the user picks a file
-    fileInput.onchange = async (e) => {
+    // Create the input element from scratch
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = ".pdf,.docx";
+
+    // Define what happens when a file is picked
+    input.onchange = async (e) => {
       const file = e.target.files[0];
       if (!file) return;
 
       const email = prompt("Enter your email so they can contact you:");
       if (!email) return;
 
-      // Now we do the async work
+      // Start upload
+      alert("Uploading...");
       const { data, error } = await supabase.storage.from('resumes').upload(`${Date.now()}_${file.name}`, file);
-      if (error) { alert("Upload failed: " + error.message); return; }
       
+      if (error) {
+        alert("Upload error: " + error.message);
+        return;
+      }
+
       const { data: urlData } = supabase.storage.from('resumes').getPublicUrl(data.path);
       
       const { error: dbError } = await supabase.from('interests').insert([{ 
@@ -137,17 +144,19 @@ export default function App() {
         sender_email: email, 
         resume_url: urlData.publicUrl 
       }]);
-      
-      if (dbError) alert("Error saving interest: " + dbError.message);
-      else alert("Application sent privately!");
+
+      if (dbError) alert("Database error: " + dbError.message);
+      else alert("Application sent!");
     };
-    
-    fileInput.click(); // This now happens without async interference
+
+    // Trigger the click
+    input.click();
   }}
   className="px-6 py-3 bg-emerald-600 font-bold hover:bg-emerald-500 transition-all"
 >
   I AM INTERESTED
 </button>
+  
                   </div>
                 ))}
               </div>
