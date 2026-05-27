@@ -175,7 +175,8 @@ export default function App() {
           <p className="text-emerald-400">{s.role} at {s.company}</p>
         </div>
         <a 
-          href={`mailto:your-email@example.com?subject=Interested in Referral: ${s.role} at ${s.company}&body=Hi Nitesh, I am interested in the ${s.role} role at ${s.company} you posted about.`}
+          // We use s.email here so it targets the person who submitted the data
+          href={`mailto:${s.email}?subject=Interested in Referral: ${s.role} at ${s.company}&body=Hi ${s.name}, I am interested in the ${s.role} role at ${s.company} you posted about. Please let me know the next steps.`}
           className="px-6 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded transition-all"
         >
           I AM INTERESTED
