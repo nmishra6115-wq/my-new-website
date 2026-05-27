@@ -103,48 +103,50 @@ export default function App() {
               </form>
             )}
             {activeView === 'available' && (
-              <div className="max-w-4xl mx-auto">
-                <h1 className="text-3xl font-black mb-8 uppercase text-emerald-500">Available Referrals</h1>
-                {submissions.map((sub, i) => (
-                  <div key={i} className="p-6 mb-4 bg-slate-900 border border-emerald-500/30 rounded flex justify-between items-center">
-                    <div>
-                      <h3 className="text-xl font-bold">{sub.name}</h3>
-                      <p className="text-sm text-slate-400">{sub.company} - {sub.role}</p>
-                    </div>
-                    <button 
-                      onClick={() => {
-                        const userEmail = prompt("Please enter your email so the referrer can contact you:");
-                        if (userEmail) {
-                          const input = document.createElement("input");
-                          input.type = "file";
-                          input.accept = ".pdf,.docx";
-                          input.onchange = async (e) => {
-                            const file = e.target.files[0];
-                            if (!file) return;
-                            alert("Uploading your resume...");
-                            const { data, error } = await supabase.storage.from('resumes').upload(`${Date.now()}_${file.name}`, file);
-                            if (error) { alert("Upload error: " + error.message); return; }
-                            const { data: urlData } = supabase.storage.from('resumes').getPublicUrl(data.path);
-                            const { error: dbError } = await supabase.from('interests').insert([{ 
-                              submission_id: sub.id, 
-                              sender_email: userEmail, 
-                              resume_url: urlData.publicUrl 
-                            }]);
-                            if (dbError) alert("Database error: " + dbError.message);
-                            else alert("Application sent successfully!");
-                          };
-                          input.click();
-                        }
-                      }}
-                      className="px-6 py-3 bg-emerald-600 font-bold hover:bg-emerald-500 transition-all"
-                    >
-                      I AM INTERESTED
-                    </button>
-                  </div>
-                ))}
-              </div>
-            )}
-            {activeView === 'contribute' && (
+  <div className="max-w-4xl mx-auto">
+    <h1 className="text-3xl font-black mb-8 uppercase text-emerald-500">Available Referrals</h1>
+    {submissions.map((sub, i) => (
+      <div key={i} className="p-6 mb-4 bg-slate-900 border border-emerald-500/30 rounded flex justify-between items-center">
+        <div>
+          <h3 className="text-xl font-bold">{sub.name}</h3>
+          <p className="text-sm text-slate-400">{sub.company} - {sub.role}</p>
+        </div>
+
+        {/* This is the new, clear upload area */}
+        <label className="cursor-pointer bg-emerald-600 px-6 py-3 font-bold hover:bg-emerald-500 transition-all text-white">
+          <span>APPLY WITH RESUME</span>
+          <input 
+            type="file" 
+            className="hidden" 
+            accept=".pdf,.docx"
+            onChange={async (e) => {
+              const file = e.target.files[0];
+              if (!file) return;
+
+              const userEmail = prompt("Enter your email so they can contact you:");
+              if (!userEmail) return;
+
+              alert("Uploading " + file.name + "...");
+              const { data, error } = await supabase.storage.from('resumes').upload(`${Date.now()}_${file.name}`, file);
+              
+              if (error) { alert("Upload error: " + error.message); return; }
+
+              const { data: urlData } = supabase.storage.from('resumes').getPublicUrl(data.path);
+              
+              await supabase.from('interests').insert([{ 
+                submission_id: sub.id, 
+                sender_email: userEmail, 
+                resume_url: urlData.publicUrl 
+              }]);
+              alert("Application sent successfully!");
+            }} 
+          />
+        </label>
+      </div>
+    ))}
+  </div>
+)}
+        {activeView === 'contribute' && (
               <div className="p-16 border border-slate-800 text-center">
                 {!isAuthorized ? (
                   <div className="space-y-4">
