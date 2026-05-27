@@ -22,6 +22,9 @@ export default function App() {
   const [isAuthorized, setIsAuthorized] = useState(false);
 
   useEffect(() => {
+    // FIX: Remove any existing channels before creating a new one
+    supabase.removeAllChannels();
+
     const fetchData = async () => {
       try {
         const { data: subs } = await supabase.from('submissions').select('*');
@@ -46,10 +49,8 @@ export default function App() {
         (payload) => {
           setSubmissions((prev) => [...prev, payload.new]);
         }
-      );
-
-    // SUBSCRIBE after setting up the listener
-    channel.subscribe();
+      )
+      .subscribe();
 
     return () => {
       supabase.removeChannel(channel);
@@ -117,11 +118,9 @@ export default function App() {
         </main>
       )}
       
-      {/* OVERLAY SECTION (Keep all your existing activeView content here) */}
       {activeView && (
         <div className="fixed inset-0 z-[100] bg-black/95 p-12 overflow-y-auto">
           <button onClick={() => setActiveView(null)} className="text-emerald-400 font-bold mb-10">&larr; BACK</button>
-          {/* ... Add your activeView content logic back here ... */}
         </div>
       )}
       
