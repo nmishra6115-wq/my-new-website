@@ -7,13 +7,15 @@ import { kycNews } from './news';
 export default function App() {
   const [activeView, setActiveView] = useState(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [pageIndex, setPageIndex] = useState(0);
   const [submissions, setSubmissions] = useState([]);
   const [partnerFiles, setPartnerFiles] = useState([]);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [isAuthorized, setIsAuthorized] = useState(false);
 
   useEffect(() => {
     let active = true;
-
-    // Fetch initial data
     const fetchData = async () => {
       const { data: subs } = await supabase.from('submissions').select('*');
       const { data: files } = await supabase.from('partner_files').select('*');
@@ -24,7 +26,7 @@ export default function App() {
     };
     fetchData();
 
-    // Setup Realtime with correct order: Listeners FIRST, Subscribe LAST
+    // FIXED: Realtime listeners defined BEFORE subscribe()
     supabase.getChannels().forEach(c => supabase.removeChannel(c));
     const channel = supabase.channel('schema-db-changes');
     
@@ -36,7 +38,6 @@ export default function App() {
     });
 
     channel.subscribe();
-
     return () => { active = false; supabase.removeChannel(channel); };
   }, []);
 
@@ -62,15 +63,13 @@ export default function App() {
         </div>
       )}
 
-      {/* MAIN CONTENT AREA */}
+      {/* MAIN CONTENT */}
       {!activeView ? (
         <main className="flex-grow">
-          {/* VIDEO */}
           <section className="w-full bg-black">
             <video className="w-full h-[300px] md:h-[500px] object-cover" autoPlay muted loop playsInline><source src="/intro.mp4" type="video/mp4" /></video>
           </section>
           
-          {/* CARDS */}
           <div className="max-w-7xl mx-auto px-6 py-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {[ {id: 'network', icon: '🤝', label: 'Network'}, {id: 'notes', icon: '📖', label: 'Notes'}, {id: 'jobs', icon: '💼', label: 'Jobs'}, {id: 'referralForm', icon: '📤', label: 'Referral'}, {id: 'available', icon: '🔍', label: 'Available'}, {id: 'contribute', icon: '📁', label: 'HR Portal'} ].map(card => (
               <div key={card.id} onClick={() => setActiveView(card.id)} className="p-8 border border-emerald-500/20 rounded cursor-pointer hover:bg-emerald-950/20 transition-all">
@@ -80,7 +79,6 @@ export default function App() {
             ))}
           </div>
 
-          {/* NEWS SECTION */}
           <section className="bg-black p-16 border-t border-emerald-500/20">
             <div className="max-w-7xl mx-auto">
               <h2 className="text-emerald-500 font-bold mb-8 uppercase">&gt; Latest KYC News</h2>
@@ -98,11 +96,10 @@ export default function App() {
       ) : (
         <div className="fixed inset-0 z-[100] bg-black/95 p-12 overflow-y-auto">
            <button onClick={() => setActiveView(null)} className="text-emerald-400 font-bold mb-10">&larr; BACK</button>
-           {/* Place your existing activeView logic here */}
+           {/* Insert your activeView conditional rendering here */}
         </div>
       )}
 
-      {/* FOOTER */}
       <footer className="mt-auto border-t border-emerald-500/20 bg-[#030712] p-8 text-center text-slate-500 text-xs">
         <p>© 2026 AML_DECODE. All rights reserved.</p>
       </footer>
