@@ -71,6 +71,19 @@ export default function App() {
           ))}
         </div>
       )}
+    {/* ADVERTISEMENT / NEWS SECTION */}
+{!activeView && (
+  <section className="bg-emerald-950/10 border-b border-emerald-500/20 py-3 px-6 overflow-hidden relative">
+    <div className="flex animate-marquee whitespace-nowrap">
+      <span className="text-emerald-500 font-bold text-sm uppercase mr-8">&gt; Breaking News:</span>
+      {kycNews.slice(0, 3).map((news, i) => (
+        <span key={i} className="text-sm text-white font-medium mr-16">
+          {news.title}
+        </span>
+      ))}
+    </div>
+  </section>
+)}
 
       {!activeView && (
         <main className="flex-grow">
