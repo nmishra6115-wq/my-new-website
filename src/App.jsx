@@ -20,6 +20,9 @@ export default function App() {
   const [submissions, setSubmissions] = useState([]);
   const [partnerFiles, setPartnerFiles] = useState([]);
   const [isAuthorized, setIsAuthorized] = useState(false);
+  
+  // Use a ref to track the channel instance across renders
+  const channelRef = React.useRef(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -37,20 +40,25 @@ export default function App() {
 
     fetchData();
 
-    // SETUP listener safely
-    const channel = supabase
-      .channel('schema-db-changes')
-      .on(
-        'postgres_changes',
-        { event: 'INSERT', schema: 'public', table: 'submissions' },
-        (payload) => {
-          setSubmissions((prev) => [...prev, payload.new]);
-        }
-      )
-      .subscribe();
+    // Setup channel safely
+    if (!channelRef.current) {
+      channelRef.current = supabase
+        .channel('schema-db-changes')
+        .on(
+          'postgres_changes',
+          { event: 'INSERT', schema: 'public', table: 'submissions' },
+          (payload) => {
+            setSubmissions((prev) => [...prev, payload.new]);
+          }
+        )
+        .subscribe();
+    }
 
     return () => {
-      supabase.removeChannel(channel);
+      if (channelRef.current) {
+        supabase.removeChannel(channelRef.current);
+        channelRef.current = null;
+      }
     };
   }, []);
 
