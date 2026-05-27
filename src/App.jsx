@@ -20,12 +20,11 @@ export default function App() {
   const [submissions, setSubmissions] = useState([]);
   const [partnerFiles, setPartnerFiles] = useState([]);
   const [isAuthorized, setIsAuthorized] = useState(false);
-
-  // Use a ref to track if we've already set up the subscription
+  
+  // This ref prevents multiple subscriptions during re-renders
   const channelRef = useRef(null);
 
   useEffect(() => {
-    // 1. Initial Data Fetch
     const fetchData = async () => {
       try {
         const { data: subs } = await supabase.from('submissions').select('*');
@@ -38,9 +37,10 @@ export default function App() {
         setIsLoading(false);
       }
     };
+
     fetchData();
 
-    // 2. Setup channel only if it doesn't exist
+    // Setup listener only if not already subscribed
     if (!channelRef.current) {
       channelRef.current = supabase
         .channel('schema-db-changes')
@@ -50,16 +50,12 @@ export default function App() {
           (payload) => {
             setSubmissions((prev) => [...prev, payload.new]);
           }
-        );
-      
-      // Subscription MUST be after .on()
-      channelRef.current.subscribe();
+        )
+        .subscribe();
     }
 
-    // 3. Cleanup
     return () => {
-      // Do NOT nullify channelRef.current here if you want it to persist across re-renders
-      // but do remove the channel if you want to force re-connection
+      // Clean up when component unmounts
       if (channelRef.current) {
         supabase.removeChannel(channelRef.current);
         channelRef.current = null;
@@ -69,14 +65,17 @@ export default function App() {
 
   return (
     <div className="text-slate-100 font-mono min-h-screen flex flex-col relative bg-[#030712]">
+      
       {/* NAVIGATION */}
       <nav className="p-6 border-b border-emerald-500/30 flex items-center justify-between sticky top-0 bg-[#030712]/90 backdrop-blur-lg z-50 w-full shadow-[0_0_20px_rgba(16,185,129,0.1)]">
         <h1 className="text-xl md:text-2xl font-black tracking-[0.3em] text-emerald-500 cursor-pointer uppercase hover:text-white transition-all" onClick={() => setActiveView(null)}>&gt; AML_DECODE</h1>
+        
         <div className="hidden md:flex gap-6 items-center">
           {[ { label: 'NOTES', id: 'notes' }, { label: 'JOBS', id: 'jobs' }, { label: 'SUBMIT REFERRAL', id: 'referralForm' }, { label: 'AVAILABLE REFERRAL', id: 'available' }, { label: 'HR DASHBOARD', id: 'contribute' }, { label: 'NETWORK JOBS', id: 'network' } ].map((item) => (
             <button key={item.id} onClick={() => setActiveView(item.id)} className="text-xs font-black text-emerald-400 hover:text-white transition-all uppercase tracking-widest">{item.label}</button>
           ))}
         </div>
+        
         <button className="md:hidden text-emerald-500 text-2xl z-[60]" onClick={() => setIsMenuOpen(!isMenuOpen)}>{isMenuOpen ? "✕" : "☰"}</button>
       </nav>
 
@@ -100,6 +99,7 @@ export default function App() {
       
       {!activeView && (
         <main className="flex-grow">
+          {/* VIDEO SECTION */}
           <section className="w-full relative bg-black">
              <video className="w-full h-[500px] object-cover" autoPlay muted={isMuted} loop playsInline key={isMuted ? 'muted' : 'unmuted'}>
                <source src="/intro.mp4" type="video/mp4" />
@@ -109,6 +109,7 @@ export default function App() {
              </button>
           </section>
 
+          {/* DASHBOARD */}
           <div className="max-w-7xl mx-auto px-6 py-16">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-24">
               <div onClick={() => setActiveView('network')} className="p-8 border border-purple-500/50 bg-purple-900/10 rounded cursor-pointer hover:bg-purple-900/20 transition-all text-center">
@@ -120,6 +121,7 @@ export default function App() {
               ))}
             </div>
             
+            {/* LATEST NEWS */}
             <section className="border-t border-white/5 pt-16">
               <h2 className="text-xl font-black text-red-500 mb-8 tracking-widest">● LATEST NEWS</h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -132,14 +134,35 @@ export default function App() {
         </main>
       )}
       
+      {/* OVERLAY SECTION */}
       {activeView && (
         <div className="fixed inset-0 z-[100] bg-black/95 p-12 overflow-y-auto">
           <button onClick={() => setActiveView(null)} className="text-emerald-400 font-bold mb-10 hover:text-white">&larr; BACK</button>
           <div className="max-w-4xl mx-auto text-white">
             {activeView === 'notes' && <div className="flex gap-12"><div className="w-1/4 space-y-2">{notesContent.map((item, idx) => <button key={idx} onClick={() => setPageIndex(idx)} className="w-full text-left p-4 rounded border border-slate-700 hover:border-emerald-500">{item.title}</button>)}</div><div className="w-3/4"><h1 className="text-4xl font-bold mb-6">{notesContent[pageIndex]?.title}</h1><p className="text-lg text-slate-300 whitespace-pre-line">{notesContent[pageIndex]?.body}</p></div></div>}
             {activeView === 'jobs' && <div className="max-w-4xl mx-auto"><h1 className="text-4xl font-black mb-8">ACTIVE_OPENINGS</h1><div className="bg-[#030712]/80 rounded border border-slate-800">{jobOpenings.map((job, idx) => <div key={idx} className="flex items-center justify-between p-6 border-b border-slate-800"><div><p className="text-emerald-400 font-bold text-xs">{job.company}</p><h2 className="text-lg font-semibold">{job.role}</h2></div><a href={job.link} target="_blank" className="px-6 py-2 bg-indigo-600 rounded text-sm hover:bg-indigo-500">APPLY</a></div>)}</div></div>}
+            
             {activeView === 'referralForm' && (
-              <form className="max-w-xl mx-auto space-y-4" onSubmit={async (e) => { e.preventDefault(); const newEntry = { name: e.target[0].value, email: e.target[1].value, company: e.target[2].value, role: e.target[3].value }; const { error } = await supabase.from('submissions').insert([newEntry]); if (error) { alert("Error: " + error.message); } else { alert("Submitted!"); setSubmissions((prev) => [...prev, newEntry]); e.target.reset(); setActiveView(null); } }}>
+              <form 
+                className="max-w-xl mx-auto space-y-4" 
+                onSubmit={async (e) => { 
+                  e.preventDefault(); 
+                  const newEntry = {
+                    name: e.target[0].value, 
+                    email: e.target[1].value, 
+                    company: e.target[2].value, 
+                    role: e.target[3].value
+                  };
+                  const { error } = await supabase.from('submissions').insert([newEntry]);
+                  if (error) { alert("Error: " + error.message); } 
+                  else { 
+                    alert("Submitted!"); 
+                    setSubmissions((prev) => [...prev, newEntry]); 
+                    e.target.reset(); 
+                    setActiveView(null); 
+                  } 
+                }}
+              >
                 <input type="text" placeholder="Full Name" className="w-full p-4 bg-[#030712] border border-slate-700 rounded" required />
                 <input type="email" placeholder="Email" className="w-full p-4 bg-[#030712] border border-slate-700 rounded" required />
                 <input type="text" placeholder="Company" className="w-full p-4 bg-[#030712] border border-slate-700 rounded" required />
@@ -147,6 +170,7 @@ export default function App() {
                 <button type="submit" className="w-full py-4 bg-emerald-600 font-bold uppercase">Send Data</button>
               </form>
             )}
+
             {activeView === 'available' && <div className="max-w-4xl mx-auto"><h1 className="text-3xl font-black mb-6 uppercase tracking-widest text-emerald-500">Live Availability</h1>{submissions.map((s, i) => <div key={i} className="p-4 mb-4 border border-slate-700 bg-slate-900 rounded"><p className="font-bold">{s.name} - {s.role} at {s.company}</p></div>)}</div>}
             {activeView === 'contribute' && <div className="max-w-xl mx-auto border border-slate-800 p-16 text-center bg-[#030712]/50 rounded">{!isAuthorized ? <input type="password" placeholder="Enter Secure Key" className="w-full p-4 bg-black border border-emerald-500/30 rounded text-center" onKeyDown={(e) => { if (e.key === 'Enter' && e.target.value === 'my-super-secret-123') setIsAuthorized(true); }} /> : <input type="file" onChange={async (e) => { const file = e.target.files[0]; if(!file) return; const { data: uploadData } = await supabase.storage.from('partner-files').upload(`${Date.now()}_${file.name}`, file); const { data: { publicUrl } } = supabase.storage.from('partner-files').getPublicUrl(uploadData.path); await supabase.from('partner_files').insert([{ name: file.name, url: publicUrl }]); alert("Upload Success!"); }} className="text-white" />}</div>}
             {activeView === 'network' && <div className="max-w-4xl mx-auto"><h1 className="text-3xl font-black mb-8 uppercase text-emerald-500">Network Feed</h1>{partnerFiles.length === 0 ? <p className="text-slate-500">No partner uploads yet.</p> : partnerFiles.map((file, i) => (<div key={i} className="p-6 mb-4 bg-slate-900 border border-purple-500/30 rounded flex justify-between items-center"><span className="font-bold">{file.name}</span><button onClick={() => window.open(file.url, '_blank')} className="text-purple-400 font-bold hover:text-white">View</button></div>))}</div>}
