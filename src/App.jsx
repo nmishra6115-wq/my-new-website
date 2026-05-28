@@ -219,6 +219,14 @@ export default function App() {
                 ))}
               </div>
             )}
+            {activeView === 'privacy' && (
+  <div className="max-w-3xl mx-auto p-8 bg-slate-900 border border-slate-800 rounded">
+    <h1 className="text-2xl font-bold mb-6 text-emerald-400">{privacyPolicy.title}</h1>
+    <p className="whitespace-pre-wrap text-slate-300 leading-relaxed">
+      {privacyPolicy.body}
+    </p>
+  </div>
+)}
           </div>
         </div>
       )}
@@ -284,8 +292,7 @@ export default function App() {
       {/* Legal Links */}
       <div className="flex flex-wrap justify-end gap-4 text-xs text-slate-400 mt-4">
         <span>© 2026 AML_DECODE / Designed by @ Nitesh</span>
-        <a href="#" className="hover:text-white">Privacy</a>
-        <a href="#" className="hover:text-white">Terms</a>
+<a href="#" onClick={() => setActiveView('privacy')} className="hover:text-white">Privacy</a>        <a href="#" className="hover:text-white">Terms</a>
         <a href="#" className="hover:text-white">Consent Choices</a>
         <a href="#" className="hover:text-white">Cookie Policy</a>
         <a href="#" className="hover:text-white">Sitemap</a>

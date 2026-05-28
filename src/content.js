@@ -1640,3 +1640,13 @@ This looks at the individual or the organization itself.
 
   
 ];
+export const privacyPolicy = {
+  title: "Privacy Policy",
+  body: `Last Updated: May 2026
+
+1. Data Collection: We collect information you provide, such as names, emails, and professional roles, specifically for referral and AML/KYC compliance purposes.
+2. File Security: All resumes and partner documents are stored securely using Supabase Storage. Access is restricted to authorized personnel.
+3. Usage: We use your data solely for the purpose of facilitating professional connections and maintaining compliance standards within the AML/KYC sector.
+4. Your Rights: You have the right to request the deletion of your personal data or uploaded documents at any time.
+5. Contact: For privacy concerns, please contact the site administrator.`
+};
