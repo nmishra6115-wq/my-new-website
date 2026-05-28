@@ -270,13 +270,13 @@ export default function App() {
       {/* Social Media Section */}
 <div className="flex gap-3 mt-4">
   {[
-    { name: 'facebook', color: 'hover:bg-blue-600' },
-    { name: 'x', color: 'hover:bg-black' },
-    { name: 'linkedin', color: 'hover:bg-blue-700' },
-    { name: 'instagram', color: 'hover:bg-pink-600' },
-    { name: 'tiktok', color: 'hover:bg-black' },
-    { name: 'youtube', color: 'hover:bg-red-600' },
-    { name: 'telegram', color: 'hover:bg-sky-500' }
+   { name: 'facebook', color: 'bg-blue-600' },
+    { name: 'x', color: 'bg-black' },
+    { name: 'linkedin', color: 'bg-blue-700' },
+    { name: 'instagram', color: 'bg-pink-600' },
+    { name: 'tiktok', color: 'bg-black' },
+    { name: 'youtube', color: 'bg-red-600' },
+    { name: 'telegram', color: 'bg-sky-500' }
   ].map((social) => (
     <div 
       key={social.name} 
