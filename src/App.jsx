@@ -259,9 +259,16 @@ export default function App() {
     
     {/* Left Column: Brand & Support */}
     <div className="space-y-6">
-      <div className="text-2xl font-black bold tracking-widest text-emerald-400">
-        AML_DECODE
-      </div>
+      <div className="mb-8">
+  <img 
+    src="/logo.png" 
+    alt="AML_DECODE Logo" 
+    className="h-10 w-auto mb-4 object-contain" 
+  />
+  <p className="text-sm leading-relaxed">
+    AML_DECODE is a specialized platform dedicated to the AML and KYC sector. We provide industry insights, professional networking, and compliance infrastructure resources to empower professionals in the fight against financial crime.
+  </p>
+</div>
       <div className="flex flex-col gap-2 text-sm text-slate-300">
         <a href="#" className="hover:text-emerald-400 transition-colors">? FAQs</a>
         <a href="#" className="hover:text-emerald-400 transition-colors">? Customer Support</a>
@@ -302,12 +309,10 @@ export default function App() {
       <div className="flex flex-wrap justify-end gap-4 text-xs text-slate-400 mt-4">
         {/* ... Inside your Footer component ... */}
 <div className="mt-8 pt-8 border-t border-white/10 text-slate-400 text-sm">
-  <p className="max-w-2xl mb-4">
-    <strong>About AML_DECODE:</strong> AML_DECODE is a specialized platform dedicated to the AML and KYC sector. We provide AML/KYC Notes, professional networking, and Truseted Requiter Jobs to empower professionals in the fight against financial crime.
-  </p>
+ 
   <div className="flex flex-wrap gap-4 text-xs">
     <span>© 2026 AML_DECODE / Designed by @ Nitesh</span>
-    <a href="#" onClick={() => setActiveView('privacy')} className="hover:text-white">Privacy</a>
+    <a href="#" onClick={() => setActiveView('privacy')} className="hover:text-white"></a>
     {/* ... other links ... */}
   </div>
 </div>
