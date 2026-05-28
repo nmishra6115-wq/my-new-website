@@ -25,34 +25,48 @@ export default function App() {
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [newsList, setNewsList] = useState([]); // This stores your database news
 
- // 2. SINGLE EFFECT FOR ALL DATA FETCHING
-  useEffect(() => {
-    let active = true;
+useEffect(() => {
+  let active = true;
 
-    const fetchData = async () => {
-      const { data: subs } = await supabase.from('submissions').select('*');
-      const { data: files } = await supabase.from('partner_files').select('*');
-      const { data: news } = await supabase.from('news').select('*').order('date', { ascending: false });
+  const fetchData = async () => {
+    const { data: subs } = await supabase.from('submissions').select('*');
+    const { data: files } = await supabase.from('partner_files').select('*');
+    const { data: news } = await supabase.from('news').select('*').order('date', { ascending: false });
 
-      if (active) {
-        if (subs) setSubmissions(subs);
-        if (files) setPartnerFiles(files);
-        if (news) setNewsList(news);
-        setIsLoading(false);
-      }
-    };
-    
-    fetchData();
+    if (active) {
+      if (subs) setSubmissions(subs);
+      if (files) setPartnerFiles(files);
+      if (news) setNewsList(news);
+      setIsLoading(false);
+    }
+  };
+  
+  fetchData();
 
-    // Realtime setup
-    const channel = supabase.channel('schema-db-changes');
-    channel.on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'submissions' }, (payload) => {
-      if (active) setSubmissions((prev) => [...prev, payload.new]);
-    });
-    channel.subscribe();
+  // 1. Clean up existing channels to prevent duplication
+  supabase.getChannels().forEach(c => supabase.removeChannel(c));
 
-    return () => { active = false; supabase.removeChannel(channel); };
-  }, []);
+  // 2. Create the channel
+  const channel = supabase.channel('schema-db-changes');
+  
+  // 3. ADD ALL LISTENERS FIRST
+  channel.on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'submissions' }, (payload) => {
+    if (active) setSubmissions((prev) => [...prev, payload.new]);
+  });
+
+  channel.on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'partner_files' }, (payload) => {
+    if (active) setPartnerFiles((prev) => [...prev, payload.new]);
+  });
+
+  // 4. SUBSCRIBE LAST
+  channel.subscribe();
+
+  return () => { 
+    active = false; 
+    supabase.removeChannel(channel); 
+  };
+}, []);
+  
    
   return (
     <div className="text-slate-100 font-mono min-h-screen flex flex-col relative bg-[#030712]">
