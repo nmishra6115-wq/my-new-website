@@ -316,9 +316,10 @@ export default function App() {
     {/* ... other links ... */}
   </div>
 </div>
-<a href="#" onClick={() => setActiveView('privacy')} className="hover:text-white">Privacy</a>        
-        <a href="#" onClick={() => setActiveView('terms')} className="hover:text-white">Terms of Service</a>
-       
+<div className="flex justify-center items-center gap-6 mt-4 text-xs">
+  <a href="#" onClick={() => setActiveView('privacy')} className="hover:text-white transition-colors">Privacy</a>
+  <a href="#" onClick={() => setActiveView('terms')} className="hover:text-white transition-colors">Terms of Service</a>
+</div>
       </div>
     </div>
   </div>
