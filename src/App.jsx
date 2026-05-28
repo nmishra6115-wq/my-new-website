@@ -1,3 +1,4 @@
+import React, { useState, useEffect, useRef } from 'react'; // Add useRef here
 import React, { useState, useEffect } from 'react';
 import { supabase } from './supabaseClient';
 import { notesContent } from './content';
@@ -24,7 +25,7 @@ export default function App() {
   const [partnerFiles, setPartnerFiles] = useState([]);
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [newsList, setNewsList] = useState([]); // This stores your database news
-
+const contentRef = useRef(null);
 useEffect(() => {
   let active = true;
 
@@ -153,27 +154,36 @@ channel.on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'news
         <div className="fixed inset-0 z-[100] bg-black/95 p-12 overflow-y-auto">
           <button onClick={() => setActiveView(null)} className="text-emerald-400 font-bold mb-10">&larr; BACK</button>
           <div className="max-w-4xl mx-auto text-white">
-            {activeView === 'notes' && (
+   {activeView === 'notes' && (
   <div className="flex flex-row gap-4 p-2">
-    {/* Reduced width for buttons so text gets more space */}
+    {/* Left Button List */}
     <div className="w-1/3 md:w-1/4 space-y-2 shrink-0">
       {notesContent.map((item, idx) => (
-       <button 
-    key={idx} 
-    onClick={() => setPageIndex(idx)} 
-    className={`w-full text-[10px] md:text-sm text-left p-2 md:p-4 rounded border transition-colors truncate ${
-      pageIndex === idx 
-        ? "bg-emerald-600 border-emerald-500 text-white" 
-        : "bg-transparent border-slate-700 text-slate-300 hover:border-emerald-500"
-    }`}
-  >
-    {item.title}
-  </button>
+        <button 
+          key={idx} 
+          onClick={() => {
+            setPageIndex(idx);
+            // This is the new logic to scroll the content area to the top
+            if (contentRef.current) {
+              contentRef.current.scrollTop = 0;
+            }
+          }} 
+          className={`w-full text-[10px] md:text-sm text-left p-2 md:p-4 rounded border transition-colors truncate ${
+            pageIndex === idx 
+              ? "bg-emerald-600 border-emerald-500 text-white" 
+              : "bg-transparent border-slate-700 text-slate-300 hover:border-emerald-500"
+          }`}
+        >
+          {item.title}
+        </button>
       ))}
     </div>
     
-    {/* Content Area */}
-    <div className="w-2/3 md:w-3/4 pl-2">
+    {/* Right Content Area - Add the ref here */}
+    <div 
+      ref={contentRef} 
+      className="w-2/3 md:w-3/4 pl-2 overflow-y-auto max-h-[80vh]"
+    >
       <h1 className="text-xl md:text-4xl font-bold mb-4">{notesContent[pageIndex]?.title}</h1>
       <p className="whitespace-pre-wrap leading-relaxed text-slate-300 text-sm md:text-base">
         {notesContent[pageIndex]?.body}
