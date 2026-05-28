@@ -301,8 +301,8 @@ export default function App() {
       {/* Legal Links */}
       <div className="flex flex-wrap justify-end gap-4 text-xs text-slate-400 mt-4">
         <span>© 2026 AML_DECODE / Designed by @ Nitesh</span>
-<a href="#" onClick={() => setActiveView('privacy')} className="hover:text-white">Privacy</a>        <a href="#" className="hover:text-white">Terms</a>
-        <a href="#" onClick={() => setActiveView('terms')} className="hover:text-white">Terms</a>
+<a href="#" onClick={() => setActiveView('privacy')} className="hover:text-white">Privacy</a>        
+        <a href="#" onClick={() => setActiveView('terms')} className="hover:text-white">Terms of Service</a>
        
       </div>
     </div>
