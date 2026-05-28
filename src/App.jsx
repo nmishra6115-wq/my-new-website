@@ -158,13 +158,17 @@ channel.on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'news
     {/* Reduced width for buttons so text gets more space */}
     <div className="w-1/3 md:w-1/4 space-y-2 shrink-0">
       {notesContent.map((item, idx) => (
-        <button 
-          key={idx} 
-          onClick={() => setPageIndex(idx)} 
-          className="w-full text-[10px] md:text-sm text-left p-2 md:p-4 rounded border border-slate-700 hover:border-emerald-500 transition-colors truncate"
-        >
-          {item.title}
-        </button>
+       <button 
+    key={idx} 
+    onClick={() => setPageIndex(idx)} 
+    className={`w-full text-[10px] md:text-sm text-left p-2 md:p-4 rounded border transition-colors truncate ${
+      pageIndex === idx 
+        ? "bg-emerald-600 border-emerald-500 text-white" 
+        : "bg-transparent border-slate-700 text-slate-300 hover:border-emerald-500"
+    }`}
+  >
+    {item.title}
+  </button>
       ))}
     </div>
     
