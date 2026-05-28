@@ -57,7 +57,7 @@ export default function App() {
 <img 
       src="/logo.png" 
       alt="AML_DECODE Logo" 
-      className="h-10 w-auto" // Adjust height as needed
+      className="h-16 w-auto" // Adjust height as needed
     />        <div className="hidden md:flex gap-6 items-center">
     {[ 
       { label: 'NOTES', id: 'notes' }, 
