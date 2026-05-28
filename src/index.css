@@ -68,3 +68,39 @@ body { background-color: #030712 !important; background-attachment: fixed !impor
     width: 100%; /* Makes both sections take the full screen width */
   }
 }
+.button-class {
+  /* Ensure the button can grow if the text is long */
+  min-height: 50px; 
+  padding: 10px;
+  
+  /* This ensures the text wraps inside the button */
+  white-space: normal;
+  word-wrap: break-word;
+  
+  /* Prevents text from pushing outside the borders */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+.content-container {
+  /* Adds space around the text so it doesn't touch the screen edges */
+  padding: 20px;
+  
+  /* Adds space between lines of text to make it readable */
+  line-height: 1.6;
+  
+  /* Ensures the container width is handled correctly */
+  width: 100%;
+}
+/* Container holding the buttons and the content */
+.parent-container {
+  display: flex;
+  flex-direction: row; /* Side-by-side on desktop */
+}
+
+@media (max-width: 768px) {
+  .parent-container {
+    flex-direction: column; /* Stack on top of each other on mobile */
+  }
+}
