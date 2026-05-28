@@ -28,18 +28,26 @@ export default function App() {
 useEffect(() => {
   let active = true;
 
-  const fetchData = async () => {
-    const { data: subs } = await supabase.from('submissions').select('*');
-    const { data: files } = await supabase.from('partner_files').select('*');
-    const { data: news } = await supabase.from('news').select('*').order('date', { ascending: false });
+ const fetchData = async () => {
+  // Correctly destructure BOTH data and error
+  const { data: subs, error: subsError } = await supabase.from('submissions').select('*');
+  const { data: files, error: filesError } = await supabase.from('partner_files').select('*');
+  const { data: news, error: newsError } = await supabase.from('news').select('*').order('date', { ascending: false });
 
-    if (active) {
-      if (subs) setSubmissions(subs);
-      if (files) setPartnerFiles(files);
-      if (news) setNewsList(news);
-      setIsLoading(false);
+  if (active) {
+    if (subs) setSubmissions(subs);
+    if (files) setPartnerFiles(files);
+    
+    // Check if news was fetched successfully
+    if (news) {
+      setNewsList(news);
+    } else if (newsError) {
+      console.error("News fetch error:", newsError.message);
     }
-  };
+    
+    setIsLoading(false);
+  }
+};
   
   fetchData();
 
