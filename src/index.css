@@ -58,3 +58,13 @@ body { background-color: #030712 !important; background-attachment: fixed !impor
 .animate-slow-scroll {
   animation: scroll-left 20s linear infinite;
 }
+/* This targets mobile screens */
+@media (max-width: 768px) {
+  .your-parent-container-class {
+    flex-direction: column; /* This stacks the buttons on top of the content */
+  }
+
+  .button-list-column, .content-column {
+    width: 100%; /* Makes both sections take the full screen width */
+  }
+}
