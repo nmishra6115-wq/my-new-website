@@ -236,9 +236,50 @@ export default function App() {
         </div>
       </section>
 
-      <footer className="border-t border-emerald-500/20 bg-[#030712] p-8 text-center text-slate-500 text-xs">
-        <p>© 2026 AML_DECODE. All rights reserved / Designed by @Nitesh</p>
-      </footer>
+     <footer className="bg-[#0b1c2e] text-white p-12 mt-10">
+  <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
+    
+    {/* Left Column: Brand & Support */}
+    <div className="space-y-6">
+      <div className="text-2xl font-black italic tracking-widest text-emerald-400">
+        AML_DECODE
+      </div>
+      <div className="flex flex-col gap-2 text-sm text-slate-300">
+        <a href="#" className="hover:text-emerald-400 transition-colors">? FAQs</a>
+        <a href="#" className="hover:text-emerald-400 transition-colors">? Customer Support</a>
+      </div>
+      {/* Social Media Placeholders */}
+      <div className="flex gap-3 mt-4">
+        {['facebook', 'x', 'linkedin', 'instagram', 'tiktok', 'youtube', 'telegram'].map((social) => (
+          <div key={social} className="w-9 h-9 bg-white/10 rounded flex items-center justify-center hover:bg-emerald-600 transition-all cursor-pointer">
+            <span className="text-[10px] uppercase font-bold">{social.charAt(0)}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    {/* Right Column: Trust & Apps */}
+    <div className="flex flex-col md:items-end gap-6">
+      <div className="text-right">
+        <p className="text-sm font-bold tracking-wide">Rated Excellent ★★★★☆ Trustpilot</p>
+      </div>
+      <div className="flex gap-4">
+        <button className="bg-white text-black px-5 py-2 rounded-lg text-xs font-bold hover:bg-slate-200 transition-all">Download on App Store</button>
+        <button className="bg-white text-black px-5 py-2 rounded-lg text-xs font-bold hover:bg-slate-200 transition-all">Get it on Google Play</button>
+      </div>
+      
+      {/* Legal Links */}
+      <div className="flex flex-wrap justify-end gap-4 text-xs text-slate-400 mt-4">
+        <span>© 2026 AML_DECODE</span>
+        <a href="#" className="hover:text-white">Privacy</a>
+        <a href="#" className="hover:text-white">Terms</a>
+        <a href="#" className="hover:text-white">Consent Choices</a>
+        <a href="#" className="hover:text-white">Cookie Policy</a>
+        <a href="#" className="hover:text-white">Sitemap</a>
+      </div>
+    </div>
+  </div>
+</footer>
     </div>
   );
 }
