@@ -54,8 +54,11 @@ export default function App() {
   return (
     <div className="text-slate-100 font-mono min-h-screen flex flex-col relative bg-[#030712]">
       <nav className="p-6 border-b border-emerald-500/30 flex items-center justify-between sticky top-0 bg-[#030712]/90 backdrop-blur-lg z-50 w-full shadow-[0_0_20px_rgba(16,185,129,0.1)]">
-        <h1 className="text-xl md:text-2xl font-black tracking-[0.3em] text-emerald-500 cursor-pointer uppercase" onClick={() => setActiveView(null)}>&gt; AML_DECODE</h1>
-        <div className="hidden md:flex gap-6 items-center">
+<img 
+      src="/logo.png" 
+      alt="AML_DECODE Logo" 
+      className="h-10 w-auto" // Adjust height as needed
+    />        <div className="hidden md:flex gap-6 items-center">
     {[ 
       { label: 'NOTES', id: 'notes' }, 
       { label: 'JOBS', id: 'jobs' }, 
@@ -73,11 +76,7 @@ export default function App() {
       </button>
     ))}
   </div>
-  <img 
-      src="/logo.png" 
-      alt="AML_DECODE Logo" 
-      className="h-10 w-auto" // Adjust height as needed
-    />
+  
         <button className="md:hidden text-emerald-500 text-2xl z-[60]" onClick={() => setIsMenuOpen(!isMenuOpen)}>{isMenuOpen ? "✕" : "☰"}</button>
       </nav>
 
