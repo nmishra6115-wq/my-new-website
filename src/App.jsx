@@ -57,7 +57,9 @@ useEffect(() => {
   channel.on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'partner_files' }, (payload) => {
     if (active) setPartnerFiles((prev) => [...prev, payload.new]);
   });
-
+channel.on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'news' }, (payload) => {
+  setNewsList((prev) => [payload.new, ...prev]);
+});
   // 4. SUBSCRIBE LAST
   channel.subscribe();
 
