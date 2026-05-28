@@ -241,7 +241,7 @@ export default function App() {
     
     {/* Left Column: Brand & Support */}
     <div className="space-y-6">
-      <div className="text-2xl font-black italic tracking-widest text-emerald-400">
+      <div className="text-2xl font-black bold tracking-widest text-emerald-400">
         AML_DECODE
       </div>
       <div className="flex flex-col gap-2 text-sm text-slate-300">
@@ -249,28 +249,40 @@ export default function App() {
         <a href="#" className="hover:text-emerald-400 transition-colors">? Customer Support</a>
       </div>
       {/* Social Media Placeholders */}
-      <div className="flex gap-3 mt-4">
-        {['facebook', 'x', 'linkedin', 'instagram', 'tiktok', 'youtube', 'telegram'].map((social) => (
-          <div key={social} className="w-9 h-9 bg-white/10 rounded flex items-center justify-center hover:bg-emerald-600 transition-all cursor-pointer">
-            <span className="text-[10px] uppercase font-bold">{social.charAt(0)}</span>
-          </div>
-        ))}
-      </div>
+      {/* Social Media Section */}
+<div className="flex gap-3 mt-4">
+  {[
+    { name: 'facebook', color: 'hover:bg-blue-600' },
+    { name: 'x', color: 'hover:bg-black' },
+    { name: 'linkedin', color: 'hover:bg-blue-700' },
+    { name: 'instagram', color: 'hover:bg-pink-600' },
+    { name: 'tiktok', color: 'hover:bg-black' },
+    { name: 'youtube', color: 'hover:bg-red-600' },
+    { name: 'telegram', color: 'hover:bg-sky-500' }
+  ].map((social) => (
+    <div 
+      key={social.name} 
+      className={`w-9 h-9 bg-white/10 rounded flex items-center justify-center transition-all cursor-pointer ${social.color}`}
+    >
+      <span className="text-[10px] uppercase font-bold text-white">
+        {social.name.charAt(0)}
+      </span>
+    </div>
+  ))}
+</div>
     </div>
 
     {/* Right Column: Trust & Apps */}
     <div className="flex flex-col md:items-end gap-6">
       <div className="text-right">
-        <p className="text-sm font-bold tracking-wide">Rated Excellent ★★★★☆ Trustpilot</p>
       </div>
       <div className="flex gap-4">
-        <button className="bg-white text-black px-5 py-2 rounded-lg text-xs font-bold hover:bg-slate-200 transition-all">Download on App Store</button>
-        <button className="bg-white text-black px-5 py-2 rounded-lg text-xs font-bold hover:bg-slate-200 transition-all">Get it on Google Play</button>
+      
       </div>
       
       {/* Legal Links */}
       <div className="flex flex-wrap justify-end gap-4 text-xs text-slate-400 mt-4">
-        <span>© 2026 AML_DECODE</span>
+        <span>© 2026 AML_DECODE / Designed by @ Nitesh</span>
         <a href="#" className="hover:text-white">Privacy</a>
         <a href="#" className="hover:text-white">Terms</a>
         <a href="#" className="hover:text-white">Consent Choices</a>
