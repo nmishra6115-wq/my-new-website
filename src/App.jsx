@@ -266,7 +266,7 @@ export default function App() {
     className="h-10 w-auto mb-4 object-contain" 
   />
   <p className="text-sm leading-relaxed">
-    AML_DECODE is a specialized platform dedicated to the AML and KYC sector. We provide industry insights, professional networking, and compliance infrastructure resources to empower professionals in the fight against financial crime.
+    AML_DECODE is a specialized platform dedicated to the AML and KYC sector. We provide curated notes for interview preparation, professional networking and jobs resources to empower professionals in the fight against financial crime.
   </p>
 </div>
       <div className="flex flex-col gap-2 text-sm text-slate-300">
