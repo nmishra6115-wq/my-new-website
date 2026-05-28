@@ -73,6 +73,11 @@ export default function App() {
       </button>
     ))}
   </div>
+  <img 
+      src="/logo.png" 
+      alt="AML_DECODE Logo" 
+      className="h-10 w-auto" // Adjust height as needed
+    />
         <button className="md:hidden text-emerald-500 text-2xl z-[60]" onClick={() => setIsMenuOpen(!isMenuOpen)}>{isMenuOpen ? "✕" : "☰"}</button>
       </nav>
 
