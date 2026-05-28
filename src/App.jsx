@@ -58,36 +58,43 @@ export default function App() {
         <button className="md:hidden text-emerald-500 text-2xl z-[60]" onClick={() => setIsMenuOpen(!isMenuOpen)}>{isMenuOpen ? "✕" : "☰"}</button>
       </nav>
 
-      <main className="flex-grow">
-        {!activeView && (
-          <>
-            <section className="w-full relative bg-black">
-              <video className="w-full h-[500px] object-cover" autoPlay muted={isMuted} loop playsInline>
-                <source src="/intro.mp4" type="video/mp4" />
-              </video>
-              <button onClick={() => setIsMuted(!isMuted)} className="absolute bottom-8 right-8 z-20 bg-emerald-600/80 hover:bg-emerald-500 text-white px-6 py-2 rounded-full font-bold backdrop-blur-sm transition-all">
-                {isMuted ? "UNMUTE" : "MUTE"}
-              </button>
-            </section>
-            <div className="max-w-7xl mx-auto px-6 py-16">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {[ {id: 'network', icon: '🤝', label: 'Featured Network'}, {id: 'notes', icon: '📖', label: 'Notes'}, {id: 'jobs', icon: '💼', label: 'Jobs'}, {id: 'referralForm', icon: '📤', label: 'Submit Referral'}, {id: 'available', icon: '🔍', label: 'Available Referral'}, {id: 'contribute', icon: '📁', label: 'HR Dashboard'} ].map(card => (
-                  <div key={card.id} onClick={() => setActiveView(card.id)} className="p-8 border border-emerald-500/20 rounded cursor-pointer hover:translate-y-[-5px] transition-all">
-                    <div className="text-4xl mb-6">{card.icon}</div>
-                    <h3 className="font-bold text-emerald-400 uppercase">{card.label}</h3>
-                  </div>
-                ))}
-              </div>
+      {isMenuOpen && (
+        <div className="md:hidden fixed inset-0 top-[80px] z-[999] bg-[#030712] p-6 flex flex-col gap-6" onClick={() => setIsMenuOpen(false)}>
+          {[{label: 'NOTES', id: 'notes'}, {label: 'JOBS', id: 'jobs'}, {label: 'SUBMIT REFERRAL', id: 'referralForm'}, {label: 'AVAILABLE REFERRAL', id: 'available'}, {label: 'HR DASHBOARD', id: 'contribute'}, {label: 'NETWORK JOBS', id: 'network'}].map((item) => (
+            <button key={item.id} onClick={() => { setActiveView(item.id); setIsMenuOpen(false); }} className="text-xl font-black text-left text-emerald-400 uppercase border-b border-emerald-500/10 pb-4">
+              {item.label}
+            </button>
+          ))}
+        </div>
+      )}
+
+      {!activeView && (
+        <main className="flex-grow">
+          <section className="w-full relative bg-black">
+            <video className="w-full h-[500px] object-cover" autoPlay muted={isMuted} loop playsInline>
+              <source src="/intro.mp4" type="video/mp4" />
+            </video>
+            <button onClick={() => setIsMuted(!isMuted)} className="absolute bottom-8 right-8 z-20 bg-emerald-600/80 hover:bg-emerald-500 text-white px-6 py-2 rounded-full font-bold backdrop-blur-sm transition-all">
+              {isMuted ? "UNMUTE" : "MUTE"}
+            </button>
+          </section>
+          <div className="max-w-7xl mx-auto px-6 py-16">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {[ {id: 'network', icon: '🤝', label: 'Featured Network'}, {id: 'notes', icon: '📖', label: 'Notes'}, {id: 'jobs', icon: '💼', label: 'Jobs'}, {id: 'referralForm', icon: '📤', label: 'Submit Referral'}, {id: 'available', icon: '🔍', label: 'Available Referral'}, {id: 'contribute', icon: '📁', label: 'HR Dashboard'} ].map(card => (
+                <div key={card.id} onClick={() => setActiveView(card.id)} className="p-8 border border-emerald-500/20 rounded cursor-pointer hover:translate-y-[-5px] transition-all">
+                  <div className="text-4xl mb-6">{card.icon}</div>
+                  <h3 className="font-bold text-emerald-400 uppercase">{card.label}</h3>
+                </div>
+              ))}
             </div>
-          </>
-        )}
-      </main>
+          </div>
+        </main>
+      )}
 
       {activeView && (
         <div className="fixed inset-0 z-[100] bg-black/95 p-12 overflow-y-auto">
           <button onClick={() => setActiveView(null)} className="text-emerald-400 font-bold mb-10">&larr; BACK</button>
           <div className="max-w-4xl mx-auto text-white">
-            
             {activeView === 'notes' && (
               <div className="flex flex-col md:flex-row gap-4 p-2">
                 <div className="w-full md:w-1/4 space-y-2 shrink-0">
@@ -104,7 +111,6 @@ export default function App() {
                 </div>
               </div>
             )}
-            
             {activeView === 'jobs' && <div className="bg-[#030712]/80 rounded border border-slate-800">{jobOpenings.map((job, idx) => <div key={idx} className="p-6 border-b border-slate-800 flex justify-between"><div><p className="text-emerald-400">{job.company}</p><h2>{job.role}</h2></div><a href={job.link} target="_blank" className="bg-indigo-600 px-6 py-2">APPLY</a></div>)}</div>}
             {activeView === 'referralForm' && (
               <form className="space-y-4" onSubmit={async (e) => { e.preventDefault(); const { error } = await supabase.from('submissions').insert([{ name: e.target[0].value, email: e.target[1].value, company: e.target[2].value, role: e.target[3].value }]); if (!error) { alert("Submitted!"); setActiveView(null); }}}>
