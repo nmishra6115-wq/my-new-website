@@ -154,43 +154,42 @@ channel.on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'news
         <div className="fixed inset-0 z-[100] bg-black/95 p-12 overflow-y-auto">
           <button onClick={() => setActiveView(null)} className="text-emerald-400 font-bold mb-10">&larr; BACK</button>
           <div className="max-w-4xl mx-auto text-white">
-   {activeView === 'notes' && (
-  <div className="flex flex-row gap-4 p-2">
-    {/* Left Button List */}
-    <div className="w-1/3 md:w-1/4 space-y-2 shrink-0">
-      {notesContent.map((item, idx) => (
-        <button 
-          key={idx} 
-          onClick={() => {
-            setPageIndex(idx);
-            // This is the new logic to scroll the content area to the top
-            if (contentRef.current) {
-              contentRef.current.scrollTop = 0;
-            }
-          }} 
-          className={`w-full text-[10px] md:text-sm text-left p-2 md:p-4 rounded border transition-colors truncate ${
-            pageIndex === idx 
-              ? "bg-emerald-600 border-emerald-500 text-white" 
-              : "bg-transparent border-slate-700 text-slate-300 hover:border-emerald-500"
-          }`}
-        >
-          {item.title}
-        </button>
-      ))}
-    </div>
-    
-    {/* Right Content Area - Add the ref here */}
-    <div 
-      ref={contentRef} 
-      className="w-2/3 md:w-3/4 pl-2 overflow-y-auto max-h-[80vh]"
-    >
-      <h1 className="text-xl md:text-4xl font-bold mb-4">{notesContent[pageIndex]?.title}</h1>
-      <p className="whitespace-pre-wrap leading-relaxed text-slate-300 text-sm md:text-base">
-        {notesContent[pageIndex]?.body}
-      </p>
-    </div>
-  </div>
-)}
+  {activeView === 'notes' && (
+        <div className="flex flex-col md:flex-row gap-4 p-2">
+          {/* Left Button List */}
+          <div className="w-full md:w-1/4 space-y-2 shrink-0">
+            {notesContent.map((item, idx) => (
+              <button 
+                key={idx} 
+                onClick={() => {
+                  setPageIndex(idx);
+                  if (contentRef.current) {
+                    contentRef.current.scrollTop = 0;
+                  }
+                }} 
+                className={`w-full text-sm text-left p-4 rounded border transition-colors truncate ${
+                  pageIndex === idx 
+                    ? "bg-emerald-600 border-emerald-500 text-white" 
+                    : "bg-transparent border-slate-700 text-slate-300 hover:border-emerald-500"
+                }`}
+              >
+                {item.title}
+              </button>
+            ))}
+          </div>
+          
+          {/* Right Content Area */}
+          <div 
+            ref={contentRef} 
+            className="w-full md:w-3/4 pl-0 md:pl-2 overflow-y-auto max-h-[80vh]"
+          >
+            <h1 className="text-2xl md:text-4xl font-bold mb-4">{notesContent[pageIndex]?.title}</h1>
+            <p className="whitespace-pre-wrap leading-relaxed text-slate-300 text-sm md:text-base">
+              {notesContent[pageIndex]?.body}
+            </p>
+          </div>
+        </div>
+      )}
             {activeView === 'jobs' && <div className="bg-[#030712]/80 rounded border border-slate-800">{jobOpenings.map((job, idx) => <div key={idx} className="p-6 border-b border-slate-800 flex justify-between"><div><p className="text-emerald-400">{job.company}</p><h2>{job.role}</h2></div><a href={job.link} target="_blank" className="bg-indigo-600 px-6 py-2">APPLY</a></div>)}</div>}
             {activeView === 'referralForm' && (
               <form className="space-y-4" onSubmit={async (e) => { e.preventDefault(); const { error } = await supabase.from('submissions').insert([{ name: e.target[0].value, email: e.target[1].value, company: e.target[2].value, role: e.target[3].value }]); if (!error) { alert("Submitted!"); setActiveView(null); }}}>
