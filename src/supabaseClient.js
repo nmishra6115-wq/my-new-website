@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
+console.log("Supabase URL in use:", supabase.supabaseUrl);
 
 const supabaseUrl = 'https://qbketxxorhcaqpglgmaw.supabase.co';
 // Replace the string below with your REAL key from the dashboard
