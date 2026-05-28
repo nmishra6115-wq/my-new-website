@@ -300,7 +300,17 @@ export default function App() {
       
       {/* Legal Links */}
       <div className="flex flex-wrap justify-end gap-4 text-xs text-slate-400 mt-4">
-        <span>© 2026 AML_DECODE / Designed by @ Nitesh</span>
+        {/* ... Inside your Footer component ... */}
+<div className="mt-8 pt-8 border-t border-white/10 text-slate-400 text-sm">
+  <p className="max-w-2xl mb-4">
+    <strong>About AML_DECODE:</strong> AML_DECODE is a specialized platform dedicated to the AML and KYC sector. We provide AML/KYC Notes, professional networking, and Truseted Requiter Jobs to empower professionals in the fight against financial crime.
+  </p>
+  <div className="flex flex-wrap gap-4 text-xs">
+    <span>© 2026 AML_DECODE / Designed by @ Nitesh</span>
+    <a href="#" onClick={() => setActiveView('privacy')} className="hover:text-white">Privacy</a>
+    {/* ... other links ... */}
+  </div>
+</div>
 <a href="#" onClick={() => setActiveView('privacy')} className="hover:text-white">Privacy</a>        
         <a href="#" onClick={() => setActiveView('terms')} className="hover:text-white">Terms of Service</a>
        
