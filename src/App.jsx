@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { supabase } from './supabaseClient';
 // Update this line in App.jsx
-import { notesContent, privacyPolicy, termsOfService } from './content';
+import { notesContent, privacyPolicy, termsOfService, faqData } from './content';
 import { jobOpenings } from './jobs';
 import { kycNews } from './news';
 
@@ -236,6 +236,22 @@ export default function App() {
     </p>
   </div>
 )}
+{activeView === 'faq' && (
+  <div className="max-w-3xl mx-auto p-8 bg-slate-900 border border-slate-800 rounded">
+    <h1 className="text-2xl font-bold mb-8 text-emerald-400">Frequently Asked Questions</h1>
+    {faqData.map((item, index) => (
+      <details key={index} className="mb-6 border-b border-slate-700 pb-4">
+        <summary className="font-semibold text-white cursor-pointer hover:text-emerald-400 list-none">
+          {item.question}
+        </summary>
+        <p className="mt-3 text-slate-300 leading-relaxed text-sm">
+          {item.answer}
+        </p>
+      </details>
+    ))}
+  </div>
+)}
+
           </div>
         </div>
       )}
@@ -270,8 +286,8 @@ export default function App() {
   </p>
 </div>
       <div className="flex flex-col gap-2 text-sm text-slate-300">
-        <a href="#" className="hover:text-emerald-400 transition-colors">? FAQs</a>
-        <a href="#" className="hover:text-emerald-400 transition-colors">? Customer Support</a>
+{/* Update your footer links in App.jsx */}
+<a href="#" onClick={() => setActiveView('faq')} className="hover:text-white transition-colors">FAQ</a>        <a href="#" className="hover:text-emerald-400 transition-colors">? Contact Us</a>
       </div>
       {/* Social Media Placeholders */}
       {/* Social Media Section */}

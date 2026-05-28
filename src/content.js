@@ -1661,3 +1661,45 @@ export const termsOfService = {
 5. Intellectual Property: The design, logo, and custom content of AML_DECODE are the property of the site owner. Unauthorized use is prohibited.
 6. Termination: We reserve the right to suspend or terminate access to the HR Dashboard or other features if a user violates these terms or engages in fraudulent activity.`
 };
+export const faqData = [
+  {
+    category: "About the Platform",
+    question: "What is AML_DECODE?",
+    answer: "AML_DECODE is a specialized professional platform dedicated to the AML (Anti-Money Laundering) and KYC (Know Your Customer) sectors. We serve as a central hub for industry insights, career networking, and compliance infrastructure resources."
+  },
+  {
+    category: "About the Platform",
+    question: "Is this a regulatory or legal entity?",
+    answer: "No. We are an independent platform. All information provided is for educational, networking, and professional growth purposes only and does not constitute official legal or regulatory advice."
+  },
+  {
+    category: "About the Platform",
+    question: "Who is this platform for?",
+    answer: "Our platform is designed for KYC/AML analysts, compliance officers, transaction monitoring specialists, and professionals striving to advance their careers in the financial crime mitigation space."
+  },
+  {
+    category: "Data Security & Privacy",
+    question: "How is my personal information (e.g., resumes) stored?",
+    answer: "We prioritize data integrity. All professional documents and user information are stored using secure, industry-standard cloud infrastructure (Supabase). Access is restricted strictly to authorized personnel and verified partners."
+  },
+  {
+    category: "Data Security & Privacy",
+    question: "Who has access to my documents?",
+    answer: "Your documents are only accessible to authorized internal administrators and, upon your explicit referral request, to verified hiring partners for recruitment purposes."
+  },
+  {
+    category: "Data Security & Privacy",
+    question: "Can I request to have my data deleted?",
+    answer: "Yes. You have the right to request the permanent deletion of your personal data and uploaded documents at any time. Please contact our support team to initiate this process."
+  },
+  {
+    category: "Careers & Referrals",
+    question: "Does AML_DECODE guarantee job placement?",
+    answer: "No. We facilitate professional connections and referrals within our network. Final hiring decisions, interviews, and offer letters are determined solely by the respective employers."
+  },
+  {
+    category: "Careers & Referrals",
+    question: "What is the referral process?",
+    answer: "Once you submit your details or resume, our team reviews your profile against current compliance requirements. If you are a fit, your profile is added to our internal database and shared with our hiring partners for potential opportunities."
+  }
+];
