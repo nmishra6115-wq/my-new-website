@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { supabase } from './supabaseClient';
-import { notesContent } from './content';
+import { notesContent, privacyPolicy } from './content';
 import { jobOpenings } from './jobs';
 import { kycNews } from './news';
 
