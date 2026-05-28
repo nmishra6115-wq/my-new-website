@@ -32,8 +32,14 @@ useEffect(() => {
   // Correctly destructure BOTH data and error
   const { data: subs, error: subsError } = await supabase.from('submissions').select('*');
   const { data: files, error: filesError } = await supabase.from('partner_files').select('*');
-  const { data: news, error: newsError } = await supabase.from('news').select('*').order('date', { ascending: false });
+const { data: news, error: newsError } = await supabase
+    .from('news')
+    .select('*');
 
+  // DEBUGGING: This will tell us if it's a connection issue or a data issue
+  console.log("DEBUG: Database request complete.");
+  console.log("DEBUG: Data received:", news);
+  console.log("DEBUG: Error received:", newsError);
   if (active) {
     if (subs) setSubmissions(subs);
     if (files) setPartnerFiles(files);
