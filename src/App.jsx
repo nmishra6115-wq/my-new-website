@@ -87,6 +87,7 @@ export default function App() {
         <div className="fixed inset-0 z-[100] bg-black/95 p-12 overflow-y-auto">
           <button onClick={() => setActiveView(null)} className="text-emerald-400 font-bold mb-10">&larr; BACK</button>
           <div className="max-w-4xl mx-auto text-white">
+            
             {activeView === 'notes' && (
               <div className="flex flex-col md:flex-row gap-4 p-2">
                 <div className="w-full md:w-1/4 space-y-2 shrink-0">
@@ -103,6 +104,7 @@ export default function App() {
                 </div>
               </div>
             )}
+            
             {activeView === 'jobs' && <div className="bg-[#030712]/80 rounded border border-slate-800">{jobOpenings.map((job, idx) => <div key={idx} className="p-6 border-b border-slate-800 flex justify-between"><div><p className="text-emerald-400">{job.company}</p><h2>{job.role}</h2></div><a href={job.link} target="_blank" className="bg-indigo-600 px-6 py-2">APPLY</a></div>)}</div>}
             {activeView === 'referralForm' && (
               <form className="space-y-4" onSubmit={async (e) => { e.preventDefault(); const { error } = await supabase.from('submissions').insert([{ name: e.target[0].value, email: e.target[1].value, company: e.target[2].value, role: e.target[3].value }]); if (!error) { alert("Submitted!"); setActiveView(null); }}}>
