@@ -32,7 +32,7 @@ useEffect(() => {
     const { data: subs } = await supabase.from('submissions').select('*');
     const { data: files } = await supabase.from('partner_files').select('*');
     const { data: news } = await supabase.from('news').select('*').order('date', { ascending: false });
-
+console.log("Supabase News Response:", { data: news, error });
     if (active) {
       if (subs) setSubmissions(subs);
       if (files) setPartnerFiles(files);
