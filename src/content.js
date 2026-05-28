@@ -1703,3 +1703,11 @@ export const faqData = [
     answer: "Once you submit your details or resume, our team reviews your profile against current compliance requirements. If you are a fit, your profile is added to our internal database and shared with our hiring partners for potential opportunities."
   }
 ];
+export const contactContent = {
+  title: "Contact Us",
+  body: `We’re here to help. Whether you have questions about your referral, need assistance with your profile, or have inquiries regarding AML/KYC compliance, feel free to reach out.
+
+Email: support@amldecode.com
+
+For data deletion requests, please include "Data Deletion Request" in the subject line of your email. Our team typically responds within 2-3 business days.`
+};

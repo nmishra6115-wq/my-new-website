@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { supabase } from './supabaseClient';
 // Update this line in App.jsx
-import { notesContent, privacyPolicy, termsOfService, faqData } from './content';
-import { jobOpenings } from './jobs';
+import { notesContent, privacyPolicy, termsOfService, faqData, contactContent } from './content';import { jobOpenings } from './jobs';
 import { kycNews } from './news';
 
 const NewsSkeleton = () => (
@@ -251,6 +250,14 @@ export default function App() {
     ))}
   </div>
 )}
+{activeView === 'contact' && (
+  <div className="max-w-3xl mx-auto p-8 bg-slate-900 border border-slate-800 rounded">
+    <h1 className="text-2xl font-bold mb-6 text-emerald-400">{contactContent.title}</h1>
+    <p className="whitespace-pre-wrap text-slate-300 leading-relaxed">
+      {contactContent.body}
+    </p>
+  </div>
+)}
 
           </div>
         </div>
@@ -288,8 +295,8 @@ export default function App() {
       <div className="flex flex-col gap-2 text-sm text-slate-300">
 {/* Update your footer links in App.jsx */}
 <a href="#" onClick={() => setActiveView('faq')} className="hover:text-white transition-colors">FAQ</a>        
-<a href="#" className="hover:text-emerald-400 transition-colors">Contact Us</a>
-      </div>
+{/* Add this inside your footer legal links */}
+<a href="#" onClick={() => setActiveView('contact')} className="hover:text-white transition-colors">Contact Us</a>      </div>
       {/* Social Media Placeholders */}
       {/* Social Media Section */}
 <div className="flex gap-3 mt-4">
