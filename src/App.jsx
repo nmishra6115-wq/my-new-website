@@ -150,11 +150,13 @@ channel.on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'news
         </main>
       )}
 
-      {activeView && (
-        <div className="fixed inset-0 z-[100] bg-black/95 p-12 overflow-y-auto">
-          <button onClick={() => setActiveView(null)} className="text-emerald-400 font-bold mb-10">&larr; BACK</button>
-          <div className="max-w-4xl mx-auto text-white">
-  {activeView === 'notes' && (
+{activeView && (
+  <div className="fixed inset-0 z-[100] bg-black/95 p-12 overflow-y-auto">
+    <button onClick={() => setActiveView(null)} className="text-emerald-400 font-bold mb-10">&larr; BACK</button>
+    <div className="max-w-4xl mx-auto text-white">
+      
+      {/* NOTES VIEW - FIXED AND CLEAN */}
+      {activeView === 'notes' && (
         <div className="flex flex-col md:flex-row gap-4 p-2">
           {/* Left Button List */}
           <div className="w-full md:w-1/4 space-y-2 shrink-0">
@@ -190,102 +192,89 @@ channel.on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'news
           </div>
         </div>
       )}
-            {activeView === 'jobs' && <div className="bg-[#030712]/80 rounded border border-slate-800">{jobOpenings.map((job, idx) => <div key={idx} className="p-6 border-b border-slate-800 flex justify-between"><div><p className="text-emerald-400">{job.company}</p><h2>{job.role}</h2></div><a href={job.link} target="_blank" className="bg-indigo-600 px-6 py-2">APPLY</a></div>)}</div>}
-            {activeView === 'referralForm' && (
-              <form className="space-y-4" onSubmit={async (e) => { e.preventDefault(); const { error } = await supabase.from('submissions').insert([{ name: e.target[0].value, email: e.target[1].value, company: e.target[2].value, role: e.target[3].value }]); if (!error) { alert("Submitted!"); setActiveView(null); }}}>
-                <input className="w-full p-4 bg-black border" placeholder="Name" required /><input className="w-full p-4 bg-black border" placeholder="Email" required /><input className="w-full p-4 bg-black border" placeholder="Company" required /><input className="w-full p-4 bg-black border" placeholder="Role" required />
-                <button type="submit" className="w-full py-4 bg-emerald-600">SUBMIT</button>
-              </form>
-            )}
-            {activeView === 'available' && (
-  <div className="max-w-4xl mx-auto">
-    <h1 className="text-3xl font-black mb-8 uppercase text-emerald-500">Available Referrals</h1>
-    {submissions.map((sub, i) => (
-      <div key={i} className="p-6 mb-4 bg-slate-900 border border-emerald-500/30 rounded flex justify-between items-center">
-        <div>
-          <h3 className="text-xl font-bold">{sub.name}</h3>
-          <p className="text-sm text-slate-400">{sub.company} - {sub.role}</p>
-        </div>
 
-        {/* This is the new, clear upload area */}
-        <label className="cursor-pointer bg-emerald-600 px-6 py-3 font-bold hover:bg-emerald-500 transition-all text-white">
-          <span>APPLY WITH RESUME</span>
-          <input 
-            type="file" 
-            className="hidden" 
-            accept=".pdf,.docx"
-            onChange={async (e) => {
-              const file = e.target.files[0];
-              if (!file) return;
+      {/* OTHER VIEWS */}
+      {activeView === 'jobs' && <div className="bg-[#030712]/80 rounded border border-slate-800">{jobOpenings.map((job, idx) => <div key={idx} className="p-6 border-b border-slate-800 flex justify-between"><div><p className="text-emerald-400">{job.company}</p><h2>{job.role}</h2></div><a href={job.link} target="_blank" className="bg-indigo-600 px-6 py-2">APPLY</a></div>)}</div>}
+      
+      {activeView === 'referralForm' && (
+        <form className="space-y-4" onSubmit={async (e) => { e.preventDefault(); const { error } = await supabase.from('submissions').insert([{ name: e.target[0].value, email: e.target[1].value, company: e.target[2].value, role: e.target[3].value }]); if (!error) { alert("Submitted!"); setActiveView(null); }}}>
+          <input className="w-full p-4 bg-black border" placeholder="Name" required /><input className="w-full p-4 bg-black border" placeholder="Email" required /><input className="w-full p-4 bg-black border" placeholder="Company" required /><input className="w-full p-4 bg-black border" placeholder="Role" required />
+          <button type="submit" className="w-full py-4 bg-emerald-600">SUBMIT</button>
+        </form>
+      )}
 
-              const userEmail = prompt("Enter your email so they can contact you:");
-              if (!userEmail) return;
-
-              alert("Uploading " + file.name + "...");
-              const { data, error } = await supabase.storage.from('resumes').upload(`${Date.now()}_${file.name}`, file);
-              
-              if (error) { alert("Upload error: " + error.message); return; }
-
-              const { data: urlData } = supabase.storage.from('resumes').getPublicUrl(data.path);
-              
-              await supabase.from('interests').insert([{ 
-                submission_id: sub.id, 
-                sender_email: userEmail, 
-                resume_url: urlData.publicUrl 
-              }]);
-              alert("Application sent successfully!");
-            }} 
-          />
-        </label>
-      </div>
-    ))}
-  </div>
-)}
-        {activeView === 'contribute' && (
-              <div className="p-16 border border-slate-800 text-center">
-                {!isAuthorized ? (
-                  <div className="space-y-4">
-                    <input type="email" placeholder="Email" onChange={(e) => setEmail(e.target.value)} className="w-full p-4 bg-black border" />
-                    <input type="password" placeholder="Pass" onChange={(e) => setPassword(e.target.value)} className="w-full p-4 bg-black border" />
-                    <button onClick={async () => { const { error } = await supabase.auth.signInWithPassword({ email, password }); if (!error) setIsAuthorized(true); else alert(error.message); }} className="w-full py-4 bg-emerald-600">LOGIN</button>
-                  </div>
-                ) : (
-                  <div className="space-y-6">
-                    <h2 className="text-xl font-bold">HR UPLOAD PORTAL</h2>
-                    <input type="file" id="fileUpload" className="hidden" onChange={async (e) => {
-                      const file = e.target.files[0];
-                      if(!file) return;
-                      setIsLoading(true);
-                      const { data, error } = await supabase.storage.from('partner-files').upload(`${Date.now()}_${file.name}`, file);
-                      if (error) { alert("Storage Error: " + error.message); setIsLoading(false); return; }
-                      const { data: u } = supabase.storage.from('partner-files').getPublicUrl(data.path);
-                      const { error: dbError } = await supabase.from('partner_files').insert([{ name: file.name, url: u.publicUrl }]);
-                      if (dbError) { alert("Database Error: " + dbError.message); } 
-                      else { alert("Uploaded Successfully!"); }
-                      setIsLoading(false);
-                    }} />
-                    <label htmlFor="fileUpload" className="cursor-pointer bg-emerald-600 px-8 py-4 font-bold text-white hover:bg-emerald-500">SELECT & UPLOAD FILE</label>
-                  </div>
-                )}
+      {activeView === 'available' && (
+        <div className="max-w-4xl mx-auto">
+          <h1 className="text-3xl font-black mb-8 uppercase text-emerald-500">Available Referrals</h1>
+          {submissions.map((sub, i) => (
+            <div key={i} className="p-6 mb-4 bg-slate-900 border border-emerald-500/30 rounded flex justify-between items-center">
+              <div>
+                <h3 className="text-xl font-bold">{sub.name}</h3>
+                <p className="text-sm text-slate-400">{sub.company} - {sub.role}</p>
               </div>
-            )}
-            {activeView === 'network' && (
-              <div className="max-w-4xl mx-auto">
-                <h1 className="text-3xl font-black mb-8 uppercase text-emerald-500">Network Feed</h1>
-                {partnerFiles.length === 0 ? <p className="text-slate-500">No partner uploads yet.</p> : partnerFiles.map((f, i) => (
-                  <div key={i} className="p-6 mb-4 bg-slate-900 border border-purple-500/30 rounded flex justify-between items-center hover:border-purple-500 transition-all">
-                    <div>
-                      <span className="block font-bold text-lg text-white">{f.name}</span>
-                      <span className="text-xs text-purple-400 uppercase tracking-widest">Added to network</span>
-                    </div>
-                    <button onClick={() => window.open(f.url, '_blank')} className="px-4 py-2 border border-purple-500 text-purple-400 hover:bg-purple-500 hover:text-white transition-all font-bold">DOWNLOAD</button>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
+              <label className="cursor-pointer bg-emerald-600 px-6 py-3 font-bold hover:bg-emerald-500 transition-all text-white">
+                <span>APPLY WITH RESUME</span>
+                <input type="file" className="hidden" accept=".pdf,.docx" onChange={async (e) => {
+                  const file = e.target.files[0];
+                  if (!file) return;
+                  const userEmail = prompt("Enter your email:");
+                  if (!userEmail) return;
+                  const { data, error } = await supabase.storage.from('resumes').upload(`${Date.now()}_${file.name}`, file);
+                  if (error) { alert("Upload error: " + error.message); return; }
+                  const { data: urlData } = supabase.storage.from('resumes').getPublicUrl(data.path);
+                  await supabase.from('interests').insert([{ submission_id: sub.id, sender_email: userEmail, resume_url: urlData.publicUrl }]);
+                  alert("Application sent successfully!");
+                }} />
+              </label>
+            </div>
+          ))}
         </div>
       )}
+
+      {activeView === 'contribute' && (
+        <div className="p-16 border border-slate-800 text-center">
+          {!isAuthorized ? (
+            <div className="space-y-4">
+              <input type="email" placeholder="Email" onChange={(e) => setEmail(e.target.value)} className="w-full p-4 bg-black border" />
+              <input type="password" placeholder="Pass" onChange={(e) => setPassword(e.target.value)} className="w-full p-4 bg-black border" />
+              <button onClick={async () => { const { error } = await supabase.auth.signInWithPassword({ email, password }); if (!error) setIsAuthorized(true); else alert(error.message); }} className="w-full py-4 bg-emerald-600">LOGIN</button>
+            </div>
+          ) : (
+            <div className="space-y-6">
+              <h2 className="text-xl font-bold">HR UPLOAD PORTAL</h2>
+              <input type="file" id="fileUpload" className="hidden" onChange={async (e) => {
+                const file = e.target.files[0];
+                if(!file) return;
+                setIsLoading(true);
+                const { data, error } = await supabase.storage.from('partner-files').upload(`${Date.now()}_${file.name}`, file);
+                if (error) { alert("Storage Error: " + error.message); setIsLoading(false); return; }
+                const { data: u } = supabase.storage.from('partner-files').getPublicUrl(data.path);
+                const { error: dbError } = await supabase.from('partner_files').insert([{ name: file.name, url: u.publicUrl }]);
+                if (dbError) alert("Database Error: " + dbError.message); else alert("Uploaded Successfully!");
+                setIsLoading(false);
+              }} />
+              <label htmlFor="fileUpload" className="cursor-pointer bg-emerald-600 px-8 py-4 font-bold text-white hover:bg-emerald-500">SELECT & UPLOAD FILE</label>
+            </div>
+          )}
+        </div>
+      )}
+
+      {activeView === 'network' && (
+        <div className="max-w-4xl mx-auto">
+          <h1 className="text-3xl font-black mb-8 uppercase text-emerald-500">Network Feed</h1>
+          {partnerFiles.length === 0 ? <p className="text-slate-500">No partner uploads yet.</p> : partnerFiles.map((f, i) => (
+            <div key={i} className="p-6 mb-4 bg-slate-900 border border-purple-500/30 rounded flex justify-between items-center">
+              <div>
+                <span className="block font-bold text-lg text-white">{f.name}</span>
+              </div>
+              <button onClick={() => window.open(f.url, '_blank')} className="px-4 py-2 border border-purple-500 text-purple-400 hover:bg-purple-500 hover:text-white transition-all font-bold">DOWNLOAD</button>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  </div>
+)}
   {/* NEWS SECTION (Below Cards) */}
       <section className="bg-black border-t border-emerald-500/20 py-16 px-6">
         <div className="max-w-7xl mx-auto">
