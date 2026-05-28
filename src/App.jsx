@@ -240,11 +240,18 @@ useEffect(() => {
           <h2 className="text-emerald-500 font-bold mb-8 uppercase">&gt; Latest KYC News</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {newsList.slice(0, 3).map((news, i) => (
-              <div key={i} className="p-6 bg-slate-900 border border-white/5 rounded">
-                <p className="text-white font-bold mb-2">{news.title}</p>
-              </div>
-            ))}
-          </div>
+             <a 
+      key={i} 
+      href={news.link} 
+      target="_blank" 
+      rel="noopener noreferrer" 
+      className="p-6 bg-slate-900 border border-white/5 rounded hover:border-emerald-500/50 transition-all block"
+    >
+      <p className="text-white font-bold mb-2">{news.title}</p>
+      {news.link && <span className="text-emerald-500 text-xs font-bold">READ MORE →</span>}
+    </a>
+  ))}
+</div>
         </div>
       </section>
 
