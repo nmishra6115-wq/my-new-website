@@ -311,6 +311,8 @@ export default function App() {
 <div className="mt-8 pt-8 border-t border-white/10 text-slate-400 text-sm">
  
   <div className="flex flex-wrap gap-4 text-xs">
+    <a href="#" onClick={() => setActiveView('privacy')} className="hover:text-white transition-colors">Privacy</a>
+  <a href="#" onClick={() => setActiveView('terms')} className="hover:text-white transition-colors">Terms of Service</a>
     <span>© 2026 AML_DECODE / Designed by @ Nitesh</span>
     <a href="#" onClick={() => setActiveView('privacy')} className="hover:text-white"></a>
     {/* ... other links ... */}
