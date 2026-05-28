@@ -1650,3 +1650,14 @@ export const privacyPolicy = {
 4. Your Rights: You have the right to request the deletion of your personal data or uploaded documents at any time.
 5. Contact: For privacy concerns, please contact the site administrator.`
 };
+export const termsOfService = {
+  title: "Terms of Service",
+  body: `Last Updated: May 2026
+
+1. Acceptance of Terms: By accessing AML_DECODE, you agree to these terms. If you do not agree, please discontinue use of this site.
+2. User Conduct: You agree to use this platform only for lawful purposes. You shall not submit false information, spam, or malicious content, particularly regarding AML/KYC documentation or referral applications.
+3. Professional Referral Disclaimer: AML_DECODE acts as a platform to facilitate professional connections. We do not guarantee employment or specific hiring outcomes. All hiring decisions are made independently by the respective employers.
+4. Content Accuracy: While we strive to provide accurate information regarding KYC and AML news, we are not a legal or regulatory body. Content provided is for educational and networking purposes only and does not constitute professional advice.
+5. Intellectual Property: The design, logo, and custom content of AML_DECODE are the property of the site owner. Unauthorized use is prohibited.
+6. Termination: We reserve the right to suspend or terminate access to the HR Dashboard or other features if a user violates these terms or engages in fraudulent activity.`
+};

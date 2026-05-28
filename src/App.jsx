@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { supabase } from './supabaseClient';
-import { notesContent, privacyPolicy } from './content';
+// Update this line in App.jsx
+import { notesContent, privacyPolicy, termsOfService } from './content';
 import { jobOpenings } from './jobs';
 import { kycNews } from './news';
 
@@ -227,6 +228,14 @@ export default function App() {
     </p>
   </div>
 )}
+{activeView === 'terms' && (
+  <div className="max-w-3xl mx-auto p-8 bg-slate-900 border border-slate-800 rounded">
+    <h1 className="text-2xl font-bold mb-6 text-emerald-400">{termsOfService.title}</h1>
+    <p className="whitespace-pre-wrap text-slate-300 leading-relaxed">
+      {termsOfService.body}
+    </p>
+  </div>
+)}
           </div>
         </div>
       )}
@@ -293,9 +302,8 @@ export default function App() {
       <div className="flex flex-wrap justify-end gap-4 text-xs text-slate-400 mt-4">
         <span>© 2026 AML_DECODE / Designed by @ Nitesh</span>
 <a href="#" onClick={() => setActiveView('privacy')} className="hover:text-white">Privacy</a>        <a href="#" className="hover:text-white">Terms</a>
-        <a href="#" className="hover:text-white">Consent Choices</a>
-        <a href="#" className="hover:text-white">Cookie Policy</a>
-        <a href="#" className="hover:text-white">Sitemap</a>
+        <a href="#" onClick={() => setActiveView('terms')} className="hover:text-white">Terms</a>
+       
       </div>
     </div>
   </div>
