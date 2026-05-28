@@ -287,7 +287,8 @@ export default function App() {
 </div>
       <div className="flex flex-col gap-2 text-sm text-slate-300">
 {/* Update your footer links in App.jsx */}
-<a href="#" onClick={() => setActiveView('faq')} className="hover:text-white transition-colors">FAQ</a>        <a href="#" className="hover:text-emerald-400 transition-colors">? Contact Us</a>
+<a href="#" onClick={() => setActiveView('faq')} className="hover:text-white transition-colors">FAQ</a>        
+<a href="#" className="hover:text-emerald-400 transition-colors">Contact Us</a>
       </div>
       {/* Social Media Placeholders */}
       {/* Social Media Section */}
