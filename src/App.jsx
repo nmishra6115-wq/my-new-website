@@ -280,7 +280,7 @@ export default function App() {
   ].map((social) => (
     <div 
       key={social.name} 
-      className={`w-9 h-9 bg-white/10 rounded flex items-center justify-center transition-all cursor-pointer ${social.color}`}
+      className={`w-9 h-9 rounded flex items-center justify-center transition-all cursor-pointer ${social.color}`}
     >
       <span className="text-[10px] uppercase font-bold text-white">
         {social.name.charAt(0)}
