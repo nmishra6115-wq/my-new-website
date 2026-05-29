@@ -180,7 +180,7 @@ export default function App() {
           <div className="space-y-6">
             <div className="mb-8">
               <img src="/logo.png" alt="Logo" className="h-10 w-auto mb-4 object-contain" />
-              <p className="text-sm leading-relaxed">AML_DECODE is a specialized platform dedicated to the AML and KYC sector.</p>
+              <p className="text-sm leading-relaxed">AMLDecode is your go-to platform for AML, KYC, EDD, and Transaction Monitoring learning. We provide interview preparation notes, industry insights, and latest job opportunities to help professionals grow their careers in financial crime compliance.</p>
             </div>
             <div className="flex flex-col gap-2 text-sm text-slate-300">
               <button onClick={() => setActiveView('faq')} className="hover:text-white transition-colors text-left">FAQ</button>
