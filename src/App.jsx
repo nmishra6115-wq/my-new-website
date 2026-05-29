@@ -197,11 +197,10 @@ async function testConnection() {
               </div>
             )}
             {/* ADD THIS NEW QUIZ SECTION HERE */}
-           {activeView === 'quiz' && (
+   {activeView === 'quiz' && (
   <div className="max-w-4xl mx-auto p-8 text-white">
     <h1 className="text-3xl font-bold text-emerald-400 mb-8">AML/KYC Quiz</h1>
     
-    {/* LOADING STATE */}
     {isLoading ? (
       <p>Loading questions...</p>
     ) : testData.length === 0 ? (
@@ -211,20 +210,31 @@ async function testConnection() {
         <div key={index} className="mb-8 p-6 bg-slate-900 border border-slate-700 rounded">
           <h2 className="text-xl font-bold mb-4">{item.question}</h2>
           <div className="space-y-3">
-            {/* Safe mapping of options */}
-         {Array.isArray(item.options) || typeof item.options === 'string' ? (
-  (typeof item.options === 'string' ? JSON.parse(item.options) : item.options).map((option, i) => (
-    <button 
-      key={i} 
-      className="block w-full text-left p-4 bg-black border border-slate-600 hover:border-emerald-500 rounded transition-all"
-      onClick={() => alert(option === item.correct_answer ? "Correct!" : "Incorrect, try again!")}
-    >
-      {option}
-    </button>
-  ))
-) : (
-  <p className="text-red-500">Error: Options format is invalid.</p>
-)}
+            
+            {/* --- THIS IS THE BULLETPROOF BLOCK --- */}
+            {(() => {
+              try {
+                const optionsArray = typeof item.options === 'string' 
+                  ? JSON.parse(item.options) 
+                  : item.options;
+
+                if (!Array.isArray(optionsArray)) throw new Error("Not an array");
+
+                return optionsArray.map((option, i) => (
+                  <button 
+                    key={i} 
+                    className="block w-full text-left p-4 bg-black border border-slate-600 hover:border-emerald-500 rounded transition-all"
+                    onClick={() => alert(option === item.correct_answer ? "Correct!" : "Incorrect, try again!")}
+                  >
+                    {option}
+                  </button>
+                ));
+              } catch (e) {
+                return <p className="text-red-500 p-4">Error: Could not display options for this question. Data format issue.</p>;
+              }
+            })()}
+            {/* --- END OF BLOCK --- */}
+
           </div>
         </div>
       ))
