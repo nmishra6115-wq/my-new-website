@@ -212,19 +212,19 @@ async function testConnection() {
           <h2 className="text-xl font-bold mb-4">{item.question}</h2>
           <div className="space-y-3">
             {/* Safe mapping of options */}
-            {Array.isArray(item.options) ? (
-              item.options.map((option, i) => (
-                <button 
-                  key={i} 
-                  className="block w-full text-left p-4 bg-black border border-slate-600 hover:border-emerald-500 rounded transition-all"
-                  onClick={() => alert(option === item.correct_answer ? "Correct!" : "Incorrect, try again!")}
-                >
-                  {option}
-                </button>
-              ))
-            ) : (
-              <p className="text-red-500">Error: Options format is invalid.</p>
-            )}
+         {Array.isArray(item.options) || typeof item.options === 'string' ? (
+  (typeof item.options === 'string' ? JSON.parse(item.options) : item.options).map((option, i) => (
+    <button 
+      key={i} 
+      className="block w-full text-left p-4 bg-black border border-slate-600 hover:border-emerald-500 rounded transition-all"
+      onClick={() => alert(option === item.correct_answer ? "Correct!" : "Incorrect, try again!")}
+    >
+      {option}
+    </button>
+  ))
+) : (
+  <p className="text-red-500">Error: Options format is invalid.</p>
+)}
           </div>
         </div>
       ))
