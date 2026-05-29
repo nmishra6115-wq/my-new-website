@@ -52,15 +52,24 @@ export default function App() {
   const [score, setScore] = useState(0);
   const contentRef = useRef(null);
 
+  // --- REPLACE YOUR OLD useEffect WITH THIS EXACT BLOCK ---
   useEffect(() => {
     const fetchData = async () => {
+      // Fetching data
       const { data: subs } = await supabase.from('submissions').select('*');
       const { data: files } = await supabase.from('partner_files').select('*');
-      const { data: news } = await supabase.from('news').select('*');
+      const { data: news, error: newsError } = await supabase.from('news').select('*');
       const { data: quiz } = await supabase.from('quiz_questions').select('*');
+      
       if (subs) setSubmissions(subs);
       if (files) setPartnerFiles(files);
-      if (news) setNewsList(news);
+      
+      // LOG ERROR IF SUPABASE FAILS
+      if (newsError) console.error("Supabase News Error:", newsError);
+      
+      // Fallback: If Supabase news is empty/null, use your local kycNews import
+      setNewsList(news && news.length > 0 ? news : kycNews);
+      
       if (quiz) setTestData(quiz);
       setIsLoading(false);
     };
