@@ -197,13 +197,15 @@ export default function App() {
             <div className="flex flex-col gap-2 text-sm text-slate-300">
               <button onClick={() => setActiveView('faq')} className="hover:text-white transition-colors text-left">FAQ</button>
               <button onClick={() => setActiveView('contact')} className="hover:text-white transition-colors text-left">Contact Us</button>
+
+               <button onClick={() => setActiveView('privacy')} className="hover:text-white transition-colors">Privacy</button>
+              <button onClick={() => setActiveView('terms')} className="hover:text-white transition-colors">Terms of Service</button>
+              <span>© 2026 AML_DECODE / Designed by @ Nitesh</span>
             </div>
           </div>
           <div className="flex flex-col md:items-end gap-6">
             <div className="flex flex-wrap justify-end gap-4 text-xs text-slate-400 mt-4">
-              <button onClick={() => setActiveView('privacy')} className="hover:text-white transition-colors">Privacy</button>
-              <button onClick={() => setActiveView('terms')} className="hover:text-white transition-colors">Terms of Service</button>
-              <span>© 2026 AML_DECODE / Designed by @ Nitesh</span>
+             
             </div>
           </div>
         </div>
