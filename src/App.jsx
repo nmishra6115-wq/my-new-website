@@ -178,9 +178,26 @@ export default function App() {
             {activeView === 'contribute' && <div className="p-16 border border-slate-800 text-center">{!isAuthorized ? <div className="space-y-4"><input type="email" placeholder="Email" onChange={(e) => setEmail(e.target.value)} className="w-full p-4 bg-black border" /><input type="password" placeholder="Pass" onChange={(e) => setPassword(e.target.value)} className="w-full p-4 bg-black border" /><button onClick={async () => { const { error } = await supabase.auth.signInWithPassword({ email, password }); if (!error) setIsAuthorized(true); else alert(error.message); }} className="w-full py-4 bg-emerald-600">LOGIN</button></div> : <p>HR Portal Active</p>}</div>}
             {activeView === 'network' && <div className="max-w-4xl mx-auto">{partnerFiles.map((f, i) => <div key={i} className="p-6 mb-4 bg-slate-900 border border-purple-500/30 rounded flex justify-between items-center"><div><span className="block font-bold text-lg text-white">{f.name}</span></div><button onClick={() => window.open(f.url, '_blank')} className="px-4 py-2 border border-purple-500 text-purple-400 hover:bg-purple-500 hover:text-white transition-all font-bold">DOWNLOAD</button></div>)}</div>}
             {activeView === 'quiz' && <div className="max-w-4xl mx-auto p-8"><div className="flex justify-between items-center mb-8"><h1 className="text-3xl font-bold text-emerald-400">AML/KYC Quiz<p>Will be added soon...</p></h1><div className="bg-slate-800 p-4 rounded border border-emerald-500 font-bold">SCORE: {score}</div></div>{isLoading ? <p>Loading...</p> : testData.map((item, index) => <QuizItem key={index} item={item} onCorrect={() => setScore(s => s + 1)} />)}</div>}
-            {activeView === 'privacy' && <div className="p-8 bg-slate-900 border border-slate-800 rounded"><h1>{privacyPolicy.title}</h1><p>{privacyPolicy.body}</p></div>}
-            {activeView === 'terms' && <div className="p-8 bg-slate-900 border border-slate-800 rounded"><h1>{termsOfService.title}</h1><p>{termsOfService.body}</p></div>}
-            {activeView === 'faq' && <div className="p-8 bg-slate-900 border border-slate-800 rounded">{faqData.map((item, i) => <details key={i} className="mb-6"><summary className="cursor-pointer font-bold">{item.question}</summary><p>{item.answer}</p></details>)}</div>}
+{activeView === 'privacy' && (
+  <div className="p-8 bg-slate-900 border border-slate-800 rounded">
+    <h1 className="text-2xl font-bold mb-6">{privacyPolicy.title}</h1>
+    
+    {/* ADDED 'leading-relaxed' AND 'space-y-4' FOR SPACING */}
+    <div className="text-slate-300 leading-relaxed space-y-4">
+      {privacyPolicy.body}
+    </div>
+  </div>
+)}           
+{activeView === 'terms' && (
+  <div className="p-8 bg-slate-900 border border-slate-800 rounded">
+    <h1 className="text-2xl font-bold mb-6">{termsOfService.title}</h1>
+    
+    {/* ADDED 'leading-relaxed' AND 'space-y-4' FOR SPACING */}
+    <div className="text-slate-300 leading-relaxed space-y-4">
+      {termsOfService.body}
+    </div>
+  </div>
+)}            {activeView === 'faq' && <div className="p-8 bg-slate-900 border border-slate-800 rounded">{faqData.map((item, i) => <details key={i} className="mb-6"><summary className="cursor-pointer font-bold">{item.question}</summary><p>{item.answer}</p></details>)}</div>}
             {activeView === 'contact' && <div className="p-8 bg-slate-900 border border-slate-800 rounded"><h1>{contactContent.title}</h1><p>{contactContent.body}</p></div>}
           </div>
         </div>
