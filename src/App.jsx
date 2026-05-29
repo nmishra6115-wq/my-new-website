@@ -37,17 +37,22 @@ export default function App() {
 async function testConnection() {
   console.log("1. Starting fetch...");
   
-  // We are adding the .schema('public') call to be explicit
+  // Explicitly using the schema and table
   const { data, error } = await supabase
-    .schema('public')
     .from('quiz_questions')
-    .select('*');
+    .select('*', { count: 'exact' }); // Adding a selector to force a refresh
   
   if (error) {
     console.error("2. ERROR FOUND:", error);
   } else {
     console.log("2. SUCCESS. Data received:", data);
     console.log("3. Array length:", data.length);
+    
+    // If data is still [], let's verify if it's actually accessing the correct project
+    if (data.length === 0) {
+      console.warn("CRITICAL: Fetch returned empty. Verify your supabaseUrl matches the URL used in your successful browser test.");
+    }
+    
     setTestData(data); 
   }
 }
