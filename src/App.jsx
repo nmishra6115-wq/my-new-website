@@ -18,6 +18,8 @@ export default function App() {
   const [newsList, setNewsList] = useState([]);
   const [testData, setTestData] = useState(null);
   const contentRef = useRef(null);
+  const [score, setScore] = React.useState(0);
+const [answeredCount, setAnsweredCount] = React.useState(0);
 
   useEffect(() => {
     let active = true;
@@ -199,46 +201,56 @@ async function testConnection() {
             {/* ADD THIS NEW QUIZ SECTION HERE */}
    {activeView === 'quiz' && (
   <div className="max-w-4xl mx-auto p-8 text-white">
-    <h1 className="text-3xl font-bold text-emerald-400 mb-8">AML/KYC Quiz</h1>
+    <div className="flex justify-between items-center mb-8">
+      <h1 className="text-3xl font-bold text-emerald-400">AML/KYC Quiz</h1>
+      <div className="bg-slate-800 p-4 rounded border border-emerald-500">
+        <span className="text-emerald-400 font-bold">SCORE: {score} / {testData.length}</span>
+      </div>
+    </div>
     
-    {isLoading ? (
-      <p>Loading questions...</p>
-    ) : testData.length === 0 ? (
-      <p>No questions found in the database.</p>
-    ) : (
-      testData.map((item, index) => (
+    {testData.map((item, index) => {
+      const [selected, setSelected] = React.useState(null);
+      const [isLocked, setIsLocked] = React.useState(false);
+
+      const handleAnswer = (option) => {
+        if (isLocked) return; // Prevent changing answer
+        
+        setSelected(option);
+        setIsLocked(true);
+        setAnsweredCount(prev => prev + 1);
+        
+        if (option === item.correct_answer) {
+          setScore(prev => prev + 1);
+        }
+      };
+
+      return (
         <div key={index} className="mb-8 p-6 bg-slate-900 border border-slate-700 rounded">
           <h2 className="text-xl font-bold mb-4">{item.question}</h2>
           <div className="space-y-3">
-            
-            {/* --- THIS IS THE BULLETPROOF BLOCK --- */}
             {(() => {
               try {
-                const optionsArray = typeof item.options === 'string' 
-                  ? JSON.parse(item.options) 
-                  : item.options;
-
-                if (!Array.isArray(optionsArray)) throw new Error("Not an array");
-
+                const optionsArray = typeof item.options === 'string' ? JSON.parse(item.options) : item.options;
                 return optionsArray.map((option, i) => (
                   <button 
                     key={i} 
-                    className="block w-full text-left p-4 bg-black border border-slate-600 hover:border-emerald-500 rounded transition-all"
-                    onClick={() => alert(option === item.correct_answer ? "Correct!" : "Incorrect, try again!")}
+                    disabled={isLocked}
+                    className={`block w-full text-left p-4 bg-black border rounded transition-all ${
+                      selected === option 
+                        ? (option === item.correct_answer ? "border-green-500 bg-green-900/20" : "border-red-500 bg-red-900/20") 
+                        : "border-slate-600 hover:border-emerald-500"
+                    }`}
+                    onClick={() => handleAnswer(option)}
                   >
                     {option}
                   </button>
                 ));
-              } catch (e) {
-                return <p className="text-red-500 p-4">Error: Could not display options for this question. Data format issue.</p>;
-              }
+              } catch (e) { return <p className="text-red-500">Error: Format issue.</p>; }
             })()}
-            {/* --- END OF BLOCK --- */}
-
           </div>
         </div>
-      ))
-    )}
+      );
+    })}
   </div>
 )}
             {activeView === 'privacy' && <div className="max-w-3xl mx-auto p-8 bg-slate-900 border border-slate-800 rounded"><h1 className="text-2xl font-bold mb-6 text-emerald-400">{privacyPolicy.title}</h1><p className="whitespace-pre-wrap text-slate-300 leading-relaxed">{privacyPolicy.body}</p></div>}
