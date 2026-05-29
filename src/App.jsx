@@ -34,15 +34,21 @@ export default function App() {
     };
     fetchData();
 
-    async function testConnection() {
-      const { data, error } = await supabase.from('quiz_questions').select('*');
-      if (error) {
-        console.log("Connection Error:", error.message);
-      } else {
-        console.log("Connection Successful! Data:", data);
-        setTestData(data); 
-      }
-    }
+   async function testConnection() {
+  console.log("Attempting to fetch quiz_questions...");
+  const { data, error } = await supabase
+    .from('quiz_questions')
+    .select('*');
+  
+  if (error) {
+    console.error("DEBUG ERROR:", error);
+  } else if (!data || data.length === 0) {
+    console.warn("DEBUG: Query successful, but no rows returned.");
+  } else {
+    console.log("DEBUG: Data fetched successfully!", data);
+    setTestData(data);
+  }
+}
     testConnection();
   }, []);
 
