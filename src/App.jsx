@@ -34,20 +34,23 @@ export default function App() {
     };
     fetchData();
 
-// Add this inside your component to check the raw response
-useEffect(() => {
-  async function checkRawResponse() {
-    const response = await fetch('https://qbketxxorhcaqpglgmaw.supabase.co/rest/v1/quiz_questions?select=*', {
-      headers: {
-        'apikey': 'YOUR_ANON_KEY',
-        'Authorization': 'Bearer YOUR_ANON_KEY'
-      }
-    });
-    const result = await response.json();
-    console.log("Raw API Response:", result);
+async function testConnection() {
+  console.log("1. Starting fetch...");
+  
+  // We are adding the .schema('public') call to be explicit
+  const { data, error } = await supabase
+    .schema('public')
+    .from('quiz_questions')
+    .select('*');
+  
+  if (error) {
+    console.error("2. ERROR FOUND:", error);
+  } else {
+    console.log("2. SUCCESS. Data received:", data);
+    console.log("3. Array length:", data.length);
+    setTestData(data); 
   }
-  checkRawResponse();
-}, []);
+}
     testConnection();
   }, []);
 
