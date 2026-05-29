@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { supabase } from './supabaseClient';
+
 // Update this line in App.jsx
 import { notesContent, privacyPolicy, termsOfService, faqData, contactContent } from './content';import { jobOpenings } from './jobs';
 import { kycNews } from './news';
@@ -24,7 +25,8 @@ export default function App() {
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [newsList, setNewsList] = useState([]);
   const contentRef = useRef(null);
-
+const [testData, setTestData] = useState(null);
+  const [activeView, setActiveView] = useState(null);
   useEffect(() => {
     let active = true;
     const fetchData = async () => {
@@ -50,7 +52,22 @@ export default function App() {
 
     return () => { active = false; supabase.removeChannel(channel); };
   }, []);
-
+useEffect(() => {
+    async function testConnection() {
+      const { data, error } = await supabase
+        .from('quiz_questions')
+        .select('*');
+      
+      if (error) {
+        console.log("Connection Error:", error.message);
+      } else {
+        console.log("Connection Successful! Data:", data);
+        setTestData(data);
+      }
+    }
+    
+    testConnection();
+  }, []);
   return (
     <div className="text-slate-100 font-mono min-h-screen flex flex-col relative bg-[#030712]">
       <nav className="p-6 border-b border-emerald-500/30 flex items-center justify-between sticky top-0 bg-[#030712]/90 backdrop-blur-lg z-50 w-full shadow-[0_0_20px_rgba(16,185,129,0.1)]">
