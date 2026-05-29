@@ -34,33 +34,20 @@ export default function App() {
     };
     fetchData();
 
-async function testConnection() {
-  console.log("1. Starting fetch...");
-  
-  // Using explicit schema reference
-  const { data, error } = await supabase
-    .from('quiz_questions')
-    .select('*');
-  
-  if (error) {
-    console.error("2. ERROR FOUND:", error);
-  } else if (!data || data.length === 0) {
-    console.warn("2. SUCCESS: Query returned empty. Checking if table is mapped correctly...");
-    // Fallback: Attempting to fetch by forcing schema just in case
-    const { data: fallbackData, error: fallbackError } = await supabase
-      .schema('public')
-      .from('quiz_questions')
-      .select('*');
-    
-    if (fallbackData) {
-      console.log("3. FALLBACK SUCCESS: Data found!", fallbackData);
-      setTestData(fallbackData);
-    }
-  } else {
-    console.log("2. SUCCESS. Data received:", data);
-    setTestData(data);
+// Add this inside your component to check the raw response
+useEffect(() => {
+  async function checkRawResponse() {
+    const response = await fetch('https://qbketxxorhcaqpglgmaw.supabase.co/rest/v1/quiz_questions?select=*', {
+      headers: {
+        'apikey': 'YOUR_ANON_KEY',
+        'Authorization': 'Bearer YOUR_ANON_KEY'
+      }
+    });
+    const result = await response.json();
+    console.log("Raw API Response:", result);
   }
-}
+  checkRawResponse();
+}, []);
     testConnection();
   }, []);
 
