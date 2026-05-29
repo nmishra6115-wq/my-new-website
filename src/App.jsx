@@ -34,19 +34,20 @@ export default function App() {
     };
     fetchData();
 
-   async function testConnection() {
-  console.log("Attempting to fetch quiz_questions...");
+async function testConnection() {
+  console.log("1. Starting fetch...");
+  
+  // We will try to fetch without any filters
   const { data, error } = await supabase
     .from('quiz_questions')
     .select('*');
   
   if (error) {
-    console.error("DEBUG ERROR:", error);
-  } else if (!data || data.length === 0) {
-    console.warn("DEBUG: Query successful, but no rows returned.");
+    console.error("2. ERROR FOUND:", error);
   } else {
-    console.log("DEBUG: Data fetched successfully!", data);
-    setTestData(data);
+    console.log("2. SUCCESS. Data received:", data);
+    console.log("3. Array length:", data.length);
+    setTestData(data); 
   }
 }
     testConnection();
