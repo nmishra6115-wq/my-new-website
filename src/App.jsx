@@ -37,8 +37,9 @@ export default function App() {
 async function testConnection() {
   console.log("1. Starting fetch...");
   
-  // We will try to fetch without any filters
+  // We are adding the .schema('public') call to be explicit
   const { data, error } = await supabase
+    .schema('public')
     .from('quiz_questions')
     .select('*');
   
