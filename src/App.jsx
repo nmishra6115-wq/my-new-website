@@ -188,27 +188,52 @@ export default function App() {
 
       {/* FOOTER */}
       <footer className="bg-[#0b1c2e] text-white p-12 mt-10">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
-          <div className="space-y-6">
-            <div className="mb-8">
-              <img src="/logo.png" alt="Logo" className="h-10 w-auto mb-4 object-contain" />
-              <p className="text-sm leading-relaxed">AMLDecode is your go-to platform for AML, KYC, EDD, and Transaction Monitoring learning. We provide interview preparation notes, industry insights, and latest job opportunities to help professionals grow their careers in financial crime compliance.</p>
-            </div>
-            <div className="flex flex-col gap-2 text-sm text-slate-300">
-              <button onClick={() => setActiveView('faq')} className="hover:text-white transition-colors text-left">FAQ</button>
-              <button onClick={() => setActiveView('contact')} className="hover:text-white transition-colors text-left">Contact Us</button>
-              <button onClick={() => setActiveView('privacy')} className="hover:text-white transition-colors">Privacy</button>
-              <button onClick={() => setActiveView('terms')} className="hover:text-white transition-colors">Terms of Service</button>
-              
-            </div>
-          </div>
-          <div className="flex flex-col md:items-end gap-6">
-            <div className="flex flex-wrap justify-end gap-4 text-xs text-slate-400 mt-4">
-             <span>© 2026 AML_DECODE / Designed by @ Nitesh</span>
-            </div>
-          </div>
-        </div>
-      </footer>
+  <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
+    {/* LEFT COLUMN: Logo, About, and Primary Links */}
+    <div className="space-y-6">
+      <div className="mb-8">
+        <img src="/logo.png" alt="Logo" className="h-10 w-auto mb-4 object-contain" />
+        <p className="text-sm leading-relaxed">
+          AMLDecode is your go-to platform for AML, KYC, EDD, and Transaction Monitoring learning. 
+          We provide interview preparation notes, industry insights, and latest job opportunities 
+          to help professionals grow their careers in financial crime compliance.
+        </p>
+      </div>
+      
+      {/* GROUP 1: FAQ and Contact */}
+      <div className="flex flex-col gap-2 text-sm text-slate-300">
+        <button onClick={() => setActiveView('faq')} className="hover:text-white transition-colors text-left">FAQ</button>
+        <button onClick={() => setActiveView('contact')} className="hover:text-white transition-colors text-left">Contact Us</button>
+      </div>
+    </div>
+
+    {/* RIGHT COLUMN: Privacy and Terms */}
+    <div className="flex flex-col md:items-end gap-2 text-sm text-slate-300">
+      <button onClick={() => setActiveView('privacy')} className="hover:text-white transition-colors text-left">Privacy Policy</button>
+      <button onClick={() => setActiveView('terms')} className="hover:text-white transition-colors text-left">Terms of Service</button>
+    </div>
+  </div>
+
+  {/* BOTTOM SECTION: Copyright and Social Media */}
+  <div className="text-center mt-12 text-xs text-slate-400 border-t border-slate-700/50 pt-8">
+    <div className="mb-4">
+      <span>© 2026 AML_DECODE / Designed by @ Nitesh</span>
+    </div>
+
+    {/* Social Media Section */}
+    <div className="flex justify-center gap-6 mt-2">
+      <a href="https://linkedin.com/in/yourprofile" target="_blank" rel="noopener noreferrer" className="hover:text-emerald-400 transition-colors">
+        LinkedIn
+      </a>
+      <a href="https://twitter.com/yourhandle" target="_blank" rel="noopener noreferrer" className="hover:text-emerald-400 transition-colors">
+        Twitter
+      </a>
+      <a href="https://instagram.com/yourhandle" target="_blank" rel="noopener noreferrer" className="hover:text-emerald-400 transition-colors">
+        Instagram
+      </a>
+    </div>
+  </div>
+</footer>
     </div>
   );
 }
