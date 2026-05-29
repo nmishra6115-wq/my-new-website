@@ -1,21 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { supabase } from './supabaseClient';
-
-// Update this line in App.jsx
-import { notesContent, privacyPolicy, termsOfService, faqData, contactContent } from './content';import { jobOpenings } from './jobs';
+import { notesContent, privacyPolicy, termsOfService, faqData, contactContent } from './content';
+import { jobOpenings } from './jobs';
 import { kycNews } from './news';
-
-const NewsSkeleton = () => (
-  <div className="block p-6 bg-slate-900 border border-white/5 rounded animate-pulse">
-    <div className="h-4 bg-slate-800 rounded w-full mb-4"></div>
-    <div className="h-4 bg-slate-800 rounded w-2/3"></div>
-  </div>
-);
+const [testData, setTestData] = useState(null); 
+const [activeView, setActiveView] = useState(null);
 
 export default function App() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [activeView, setActiveView] = useState(null);
+  const [activeView, setActiveView] = useState(null); // SINGLE DECLARATION
   const [pageIndex, setPageIndex] = useState(0);
   const [isMuted, setIsMuted] = useState(true);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -24,6 +18,7 @@ export default function App() {
   const [partnerFiles, setPartnerFiles] = useState([]);
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [newsList, setNewsList] = useState([]);
+  const [testData, setTestData] = useState(null);
   const contentRef = useRef(null);
 
   useEffect(() => {
@@ -31,27 +26,17 @@ export default function App() {
     const fetchData = async () => {
       const { data: subs } = await supabase.from('submissions').select('*');
       const { data: files } = await supabase.from('partner_files').select('*');
-      const { data: news, error: newsError } = await supabase.from('news').select('*');
+      const { data: news } = await supabase.from('news').select('*');
       if (active) {
         if (subs) setSubmissions(subs);
         if (files) setPartnerFiles(files);
         if (news) setNewsList(news);
-        else if (newsError) console.error("News fetch error:", newsError.message);
         setIsLoading(false);
       }
     };
     fetchData();
 
-    supabase.getChannels().forEach(c => supabase.removeChannel(c));
-    const channel = supabase.channel('schema-db-changes');
-    channel.on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'submissions' }, (payload) => { if (active) setSubmissions((prev) => [...prev, payload.new]); });
-    channel.on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'partner_files' }, (payload) => { if (active) setPartnerFiles((prev) => [...prev, payload.new]); });
-    channel.on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'news' }, (payload) => { setNewsList((prev) => [payload.new, ...prev]); });
-    channel.subscribe();
-
-    return () => { active = false; supabase.removeChannel(channel); };
-  }, []);
-useEffect(() => {
+    // Quiz Test Connection
     async function testConnection() {
       const { data, error } = await supabase
         .from('quiz_questions')
@@ -61,7 +46,8 @@ useEffect(() => {
         console.log("Connection Error:", error.message);
       } else {
         console.log("Connection Successful! Data:", data);
-        setTestData(data);
+        // Ensure this is inside the function and state is defined above
+        setTestData(data); 
       }
     }
     
