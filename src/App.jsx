@@ -37,23 +37,28 @@ export default function App() {
 async function testConnection() {
   console.log("1. Starting fetch...");
   
-  // Explicitly using the schema and table
+  // Using explicit schema reference
   const { data, error } = await supabase
     .from('quiz_questions')
-    .select('*', { count: 'exact' }); // Adding a selector to force a refresh
+    .select('*');
   
   if (error) {
     console.error("2. ERROR FOUND:", error);
+  } else if (!data || data.length === 0) {
+    console.warn("2. SUCCESS: Query returned empty. Checking if table is mapped correctly...");
+    // Fallback: Attempting to fetch by forcing schema just in case
+    const { data: fallbackData, error: fallbackError } = await supabase
+      .schema('public')
+      .from('quiz_questions')
+      .select('*');
+    
+    if (fallbackData) {
+      console.log("3. FALLBACK SUCCESS: Data found!", fallbackData);
+      setTestData(fallbackData);
+    }
   } else {
     console.log("2. SUCCESS. Data received:", data);
-    console.log("3. Array length:", data.length);
-    
-    // If data is still [], let's verify if it's actually accessing the correct project
-    if (data.length === 0) {
-      console.warn("CRITICAL: Fetch returned empty. Verify your supabaseUrl matches the URL used in your successful browser test.");
-    }
-    
-    setTestData(data); 
+    setTestData(data);
   }
 }
     testConnection();
