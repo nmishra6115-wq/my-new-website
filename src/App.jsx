@@ -3,13 +3,11 @@ import { supabase } from './supabaseClient';
 import { notesContent, privacyPolicy, termsOfService, faqData, contactContent } from './content';
 import { jobOpenings } from './jobs';
 import { kycNews } from './news';
-const [testData, setTestData] = useState(null); 
-const [activeView, setActiveView] = useState(null);
 
 export default function App() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [activeView, setActiveView] = useState(null); // SINGLE DECLARATION
+  const [activeView, setActiveView] = useState(null);
   const [pageIndex, setPageIndex] = useState(0);
   const [isMuted, setIsMuted] = useState(true);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -36,52 +34,39 @@ export default function App() {
     };
     fetchData();
 
-    // Quiz Test Connection
     async function testConnection() {
-      const { data, error } = await supabase
-        .from('quiz_questions')
-        .select('*');
-      
+      const { data, error } = await supabase.from('quiz_questions').select('*');
       if (error) {
         console.log("Connection Error:", error.message);
       } else {
         console.log("Connection Successful! Data:", data);
-        // Ensure this is inside the function and state is defined above
         setTestData(data); 
       }
     }
-    
     testConnection();
   }, []);
+
   return (
     <div className="text-slate-100 font-mono min-h-screen flex flex-col relative bg-[#030712]">
       <nav className="p-6 border-b border-emerald-500/30 flex items-center justify-between sticky top-0 bg-[#030712]/90 backdrop-blur-lg z-50 w-full shadow-[0_0_20px_rgba(16,185,129,0.1)]">
-<div onClick={() => setActiveView(null)} className="cursor-pointer h-16 flex items-center">
-  <img 
-    src="/logo.png" 
-    alt="AML_DECODE Logo" 
-    className="h-full w-auto object-contain" 
-  />
-</div>      <div className="hidden md:flex gap-6 items-center">
-    {[ 
-      { label: 'NOTES', id: 'notes' }, 
-      { label: 'JOBS', id: 'jobs' }, 
-      { label: 'SUBMIT REFERRAL', id: 'referralForm' }, 
-      { label: 'AVAILABLE REFERRAL', id: 'available' }, 
-      { label: 'HR DASHBOARD', id: 'contribute' }, 
-      { label: 'NETWORK JOBS', id: 'network' } 
-    ].map((item) => (
-      <button 
-        key={item.id} 
-        onClick={() => setActiveView(item.id)} 
-        className="text-xs font-black text-emerald-400 hover:text-white transition-all uppercase"
-      >
-        {item.label}
-      </button>
-    ))}
-  </div>
-  
-        <button className="md:hidden text-emerald-500 text-2xl z-[60]" onClick={() => setIsMenuOpen(!isMenuOpen)}>{isMenuOpen ? "✕" : "☰"}</button>
+        <div onClick={() => setActiveView(null)} className="cursor-pointer h-16 flex items-center shrink-0">
+          <img src="/logo.png" alt="AML_DECODE Logo" className="h-full w-auto object-contain" />
+        </div>
+        <div className="hidden md:flex gap-6 items-center overflow-x-auto">
+          {[ 
+            { label: 'NOTES', id: 'notes' }, 
+            { label: 'JOBS', id: 'jobs' }, 
+            { label: 'SUBMIT REFERRAL', id: 'referralForm' }, 
+            { label: 'AVAILABLE REFERRAL', id: 'available' }, 
+            { label: 'HR DASHBOARD', id: 'contribute' }, 
+            { label: 'NETWORK JOBS', id: 'network' } 
+          ].map((item) => (
+            <button key={item.id} onClick={() => setActiveView(item.id)} className="text-xs font-black text-emerald-400 hover:text-white transition-all uppercase whitespace-nowrap">
+              {item.label}
+            </button>
+          ))}
+        </div>
+        <button className="md:hidden text-emerald-500 text-2xl z-[60] p-2" onClick={() => setIsMenuOpen(!isMenuOpen)}>{isMenuOpen ? "✕" : "☰"}</button>
       </nav>
 
       {isMenuOpen && (
@@ -121,40 +106,21 @@ export default function App() {
         <div className="fixed inset-0 z-[100] bg-black/95 p-12 overflow-y-auto">
           <button onClick={() => setActiveView(null)} className="text-emerald-400 font-bold mb-10">&larr; BACK</button>
           <div className="max-w-4xl mx-auto text-white">
-           {activeView === 'notes' && (
-  <div className="flex flex-row w-full h-[80vh] gap-2 p-2">
-    {/* Left Button List - Fixed width and no growth */}
-    <div className="w-[120px] md:w-[250px] space-y-2 flex-shrink-0 overflow-y-auto">
-      {notesContent.map((item, idx) => (
-        <button 
-          key={idx} 
-          onClick={() => {
-            setPageIndex(idx);
-            if (contentRef.current) contentRef.current.scrollTop = 0;
-          }} 
-          className={`w-full text-xs md:text-sm text-left p-2 md:p-4 rounded border transition-colors truncate ${
-            pageIndex === idx 
-              ? "bg-emerald-600 border-emerald-500 text-white" 
-              : "bg-transparent border-slate-700 text-slate-300 hover:border-emerald-500"
-          }`}
-        >
-          {item.title}
-        </button>
-      ))}
-    </div>
-    
-    {/* Right Content Area - Takes all remaining space */}
-    <div 
-      ref={contentRef} 
-      className="flex-grow overflow-y-auto pl-2 md:pl-4"
-    >
-      <h1 className="text-xl md:text-4xl font-bold mb-4">{notesContent[pageIndex]?.title}</h1>
-      <p className="whitespace-pre-wrap leading-relaxed text-slate-300 text-sm md:text-base">
-        {notesContent[pageIndex]?.body}
-      </p>
-    </div>
-  </div>
-)}
+            {activeView === 'notes' && (
+              <div className="flex flex-row w-full h-[80vh] gap-2 p-2">
+                <div className="w-[120px] md:w-[250px] space-y-2 flex-shrink-0 overflow-y-auto">
+                  {notesContent.map((item, idx) => (
+                    <button key={idx} onClick={() => { setPageIndex(idx); if (contentRef.current) contentRef.current.scrollTop = 0; }} className={`w-full text-xs md:text-sm text-left p-2 md:p-4 rounded border transition-colors truncate ${pageIndex === idx ? "bg-emerald-600 border-emerald-500 text-white" : "bg-transparent border-slate-700 text-slate-300 hover:border-emerald-500"}`}>
+                      {item.title}
+                    </button>
+                  ))}
+                </div>
+                <div ref={contentRef} className="flex-grow overflow-y-auto pl-2 md:pl-4">
+                  <h1 className="text-xl md:text-4xl font-bold mb-4">{notesContent[pageIndex]?.title}</h1>
+                  <p className="whitespace-pre-wrap leading-relaxed text-slate-300 text-sm md:text-base">{notesContent[pageIndex]?.body}</p>
+                </div>
+              </div>
+            )}
             {activeView === 'jobs' && <div className="bg-[#030712]/80 rounded border border-slate-800">{jobOpenings.map((job, idx) => <div key={idx} className="p-6 border-b border-slate-800 flex justify-between"><div><p className="text-emerald-400">{job.company}</p><h2>{job.role}</h2></div><a href={job.link} target="_blank" className="bg-indigo-600 px-6 py-2">APPLY</a></div>)}</div>}
             {activeView === 'referralForm' && (
               <form className="space-y-4" onSubmit={async (e) => { e.preventDefault(); const { error } = await supabase.from('submissions').insert([{ name: e.target[0].value, email: e.target[1].value, company: e.target[2].value, role: e.target[3].value }]); if (!error) { alert("Submitted!"); setActiveView(null); }}}>
@@ -221,46 +187,10 @@ export default function App() {
                 ))}
               </div>
             )}
-            {activeView === 'privacy' && (
-  <div className="max-w-3xl mx-auto p-8 bg-slate-900 border border-slate-800 rounded">
-    <h1 className="text-2xl font-bold mb-6 text-emerald-400">{privacyPolicy.title}</h1>
-    <p className="whitespace-pre-wrap text-slate-300 leading-relaxed">
-      {privacyPolicy.body}
-    </p>
-  </div>
-)}
-{activeView === 'terms' && (
-  <div className="max-w-3xl mx-auto p-8 bg-slate-900 border border-slate-800 rounded">
-    <h1 className="text-2xl font-bold mb-6 text-emerald-400">{termsOfService.title}</h1>
-    <p className="whitespace-pre-wrap text-slate-300 leading-relaxed">
-      {termsOfService.body}
-    </p>
-  </div>
-)}
-{activeView === 'faq' && (
-  <div className="max-w-3xl mx-auto p-8 bg-slate-900 border border-slate-800 rounded">
-    <h1 className="text-2xl font-bold mb-8 text-emerald-400">Frequently Asked Questions</h1>
-    {faqData.map((item, index) => (
-      <details key={index} className="mb-6 border-b border-slate-700 pb-4">
-        <summary className="font-semibold text-white cursor-pointer hover:text-emerald-400 list-none">
-          {item.question}
-        </summary>
-        <p className="mt-3 text-slate-300 leading-relaxed text-sm">
-          {item.answer}
-        </p>
-      </details>
-    ))}
-  </div>
-)}
-{activeView === 'contact' && (
-  <div className="max-w-3xl mx-auto p-8 bg-slate-900 border border-slate-800 rounded">
-    <h1 className="text-2xl font-bold mb-6 text-emerald-400">{contactContent.title}</h1>
-    <p className="whitespace-pre-wrap text-slate-300 leading-relaxed">
-      {contactContent.body}
-    </p>
-  </div>
-)}
-
+            {activeView === 'privacy' && <div className="max-w-3xl mx-auto p-8 bg-slate-900 border border-slate-800 rounded"><h1 className="text-2xl font-bold mb-6 text-emerald-400">{privacyPolicy.title}</h1><p className="whitespace-pre-wrap text-slate-300 leading-relaxed">{privacyPolicy.body}</p></div>}
+            {activeView === 'terms' && <div className="max-w-3xl mx-auto p-8 bg-slate-900 border border-slate-800 rounded"><h1 className="text-2xl font-bold mb-6 text-emerald-400">{termsOfService.title}</h1><p className="whitespace-pre-wrap text-slate-300 leading-relaxed">{termsOfService.body}</p></div>}
+            {activeView === 'faq' && <div className="max-w-3xl mx-auto p-8 bg-slate-900 border border-slate-800 rounded"><h1 className="text-2xl font-bold mb-8 text-emerald-400">Frequently Asked Questions</h1>{faqData.map((item, index) => <details key={index} className="mb-6 border-b border-slate-700 pb-4"><summary className="font-semibold text-white cursor-pointer hover:text-emerald-400 list-none">{item.question}</summary><p className="mt-3 text-slate-300 leading-relaxed text-sm">{item.answer}</p></details>)}</div>}
+            {activeView === 'contact' && <div className="max-w-3xl mx-auto p-8 bg-slate-900 border border-slate-800 rounded"><h1 className="text-2xl font-bold mb-6 text-emerald-400">{contactContent.title}</h1><p className="whitespace-pre-wrap text-slate-300 leading-relaxed">{contactContent.body}</p></div>}
           </div>
         </div>
       )}
@@ -279,78 +209,27 @@ export default function App() {
         </div>
       </section>
 
-     <footer className="bg-[#0b1c2e] text-white p-12 mt-10">
-  <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
-    
-    {/* Left Column: Brand & Support */}
-    <div className="space-y-6">
-      <div className="mb-8">
-  <img 
-    src="/logo.png" 
-    alt="AML_DECODE Logo" 
-    className="h-10 w-auto mb-4 object-contain" 
-  />
-  <p className="text-sm leading-relaxed">
-    AML_DECODE is a specialized platform dedicated to the AML and KYC sector. We provide curated notes for interview preparation, professional networking and jobs resources to empower professionals in the fight against financial crime.
-  </p>
-</div>
-      <div className="flex flex-col gap-2 text-sm text-slate-300">
-{/* Update your footer links in App.jsx */}
-<a href="#" onClick={() => setActiveView('faq')} className="hover:text-white transition-colors">FAQ</a>        
-{/* Add this inside your footer legal links */}
-<a href="#" onClick={() => setActiveView('contact')} className="hover:text-white transition-colors">Contact Us</a>      </div>
-      {/* Social Media Placeholders */}
-      {/* Social Media Section */}
-<div className="flex gap-3 mt-4">
-  {[
-   { name: 'facebook', color: 'bg-blue-600' },
-    { name: 'x', color: 'bg-black' },
-    { name: 'linkedin', color: 'bg-blue-700' },
-    { name: 'instagram', color: 'bg-pink-600' },
-    { name: 'tiktok', color: 'bg-black' },
-    { name: 'youtube', color: 'bg-red-600' },
-    { name: 'telegram', color: 'bg-sky-500' }
-  ].map((social) => (
-    <div 
-      key={social.name} 
-      className={`w-9 h-9 rounded flex items-center justify-center transition-all cursor-pointer ${social.color}`}
-    >
-      <span className="text-[10px] uppercase font-bold text-white">
-        {social.name.charAt(0)}
-      </span>
-    </div>
-  ))}
-</div>
-    </div>
-
-    {/* Right Column: Trust & Apps */}
-    <div className="flex flex-col md:items-end gap-6">
-      <div className="text-right">
-      </div>
-      <div className="flex gap-4">
-      
-      </div>
-      
-      {/* Legal Links */}
-      <div className="flex flex-wrap justify-end gap-4 text-xs text-slate-400 mt-4">
-        {/* ... Inside your Footer component ... */}
-<div className="mt-8 pt-8 border-t border-white/10 text-slate-400 text-sm">
- 
-  <div className="flex flex-wrap gap-4 text-xs">
-    <a href="#" onClick={() => setActiveView('privacy')} className="hover:text-white transition-colors">Privacy</a>
-  <a href="#" onClick={() => setActiveView('terms')} className="hover:text-white transition-colors">Terms of Service</a>
-    <span>© 2026 AML_DECODE / Designed by @ Nitesh</span>
-    <a href="#" onClick={() => setActiveView('privacy')} className="hover:text-white"></a>
-    {/* ... other links ... */}
-  </div>
-</div>
-<div className="flex justify-center items-center gap-6 mt-4 text-xs">
-   
-</div>
-      </div>
-    </div>
-  </div>
-</footer>
+      <footer className="bg-[#0b1c2e] text-white p-12 mt-10">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
+          <div className="space-y-6">
+            <div className="mb-8">
+              <img src="/logo.png" alt="AML_DECODE Logo" className="h-10 w-auto mb-4 object-contain" />
+              <p className="text-sm leading-relaxed">AML_DECODE is a specialized platform dedicated to the AML and KYC sector.</p>
+            </div>
+            <div className="flex flex-col gap-2 text-sm text-slate-300">
+              <button onClick={() => setActiveView('faq')} className="hover:text-white transition-colors text-left">FAQ</button>
+              <button onClick={() => setActiveView('contact')} className="hover:text-white transition-colors text-left">Contact Us</button>
+            </div>
+          </div>
+          <div className="flex flex-col md:items-end gap-6">
+            <div className="flex flex-wrap justify-end gap-4 text-xs text-slate-400 mt-4">
+              <button onClick={() => setActiveView('privacy')} className="hover:text-white transition-colors">Privacy</button>
+              <button onClick={() => setActiveView('terms')} className="hover:text-white transition-colors">Terms of Service</button>
+              <span>© 2026 AML_DECODE / Designed by @ Nitesh</span>
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }
