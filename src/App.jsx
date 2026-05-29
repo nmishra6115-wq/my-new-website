@@ -182,22 +182,23 @@ export default function App() {
   <div className="p-8 bg-slate-900 border border-slate-800 rounded">
     <h1 className="text-2xl font-bold mb-6">{privacyPolicy.title}</h1>
     
-    {/* ADDED 'leading-relaxed' AND 'space-y-4' FOR SPACING */}
-    <div className="text-slate-300 leading-relaxed space-y-4">
+    {/* Use 'whitespace-pre-line' to respect line breaks from your text file */}
+    {/* Use 'leading-relaxed' to add space between lines */}
+    <div className="text-slate-300 leading-relaxed whitespace-pre-line">
       {privacyPolicy.body}
     </div>
   </div>
-)}           
+)}
+
 {activeView === 'terms' && (
   <div className="p-8 bg-slate-900 border border-slate-800 rounded">
     <h1 className="text-2xl font-bold mb-6">{termsOfService.title}</h1>
     
-    {/* ADDED 'leading-relaxed' AND 'space-y-4' FOR SPACING */}
-    <div className="text-slate-300 leading-relaxed space-y-4">
+    <div className="text-slate-300 leading-relaxed whitespace-pre-line">
       {termsOfService.body}
     </div>
   </div>
-)}            {activeView === 'faq' && <div className="p-8 bg-slate-900 border border-slate-800 rounded">{faqData.map((item, i) => <details key={i} className="mb-6"><summary className="cursor-pointer font-bold">{item.question}</summary><p>{item.answer}</p></details>)}</div>}
+)}        {activeView === 'faq' && <div className="p-8 bg-slate-900 border border-slate-800 rounded">{faqData.map((item, i) => <details key={i} className="mb-6"><summary className="cursor-pointer font-bold">{item.question}</summary><p>{item.answer}</p></details>)}</div>}
             {activeView === 'contact' && <div className="p-8 bg-slate-900 border border-slate-800 rounded"><h1>{contactContent.title}</h1><p>{contactContent.body}</p></div>}
           </div>
         </div>
