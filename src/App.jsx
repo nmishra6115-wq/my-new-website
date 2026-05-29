@@ -25,8 +25,7 @@ export default function App() {
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [newsList, setNewsList] = useState([]);
   const contentRef = useRef(null);
-const [testData, setTestData] = useState(null);
-  const [activeView, setActiveView] = useState(null);
+
   useEffect(() => {
     let active = true;
     const fetchData = async () => {
