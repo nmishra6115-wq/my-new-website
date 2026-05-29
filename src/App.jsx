@@ -67,7 +67,8 @@ async function testConnection() {
             { label: 'SUBMIT REFERRAL', id: 'referralForm' }, 
             { label: 'AVAILABLE REFERRAL', id: 'available' }, 
             { label: 'HR DASHBOARD', id: 'contribute' }, 
-            { label: 'NETWORK JOBS', id: 'network' } 
+            { label: 'NETWORK JOBS', id: 'network' }, 
+            { label: 'QUIZ', id: 'quiz' }
           ].map((item) => (
             <button key={item.id} onClick={() => setActiveView(item.id)} className="text-xs font-black text-emerald-400 hover:text-white transition-all uppercase whitespace-nowrap">
               {item.label}
@@ -191,6 +192,28 @@ async function testConnection() {
                   <div key={i} className="p-6 mb-4 bg-slate-900 border border-purple-500/30 rounded flex justify-between items-center">
                     <div><span className="block font-bold text-lg text-white">{f.name}</span></div>
                     <button onClick={() => window.open(f.url, '_blank')} className="px-4 py-2 border border-purple-500 text-purple-400 hover:bg-purple-500 hover:text-white transition-all font-bold">DOWNLOAD</button>
+                  </div>
+                ))}
+              </div>
+            )}
+            {/* ADD THIS NEW QUIZ SECTION HERE */}
+            {activeView === 'quiz' && (
+              <div className="max-w-4xl mx-auto p-8">
+                <h1 className="text-3xl font-bold text-emerald-400 mb-8">AML/KYC Quiz</h1>
+                {testData.map((item, index) => (
+                  <div key={index} className="mb-6 p-6 bg-slate-900 border border-slate-700 rounded">
+                    <h2 className="text-xl font-bold mb-4">{item.question}</h2>
+                    <div className="space-y-2">
+                      {item.options.map((option, i) => (
+                        <button 
+                          key={i} 
+                          className="block w-full text-left p-3 bg-black border border-slate-600 hover:border-emerald-500 rounded transition-all"
+                          onClick={() => alert(option === item.correct_answer ? "Correct!" : "Incorrect, try again!")}
+                        >
+                          {option}
+                        </button>
+                      ))}
+                    </div>
                   </div>
                 ))}
               </div>
