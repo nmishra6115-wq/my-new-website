@@ -136,7 +136,7 @@ export default function App() {
           <section className="bg-black border-t border-emerald-500/20 py-16 px-6">
             <div className="max-w-7xl mx-auto">
               <h2 className="text-emerald-500 font-bold mb-8 uppercase">&gt; Latest KYC News</h2>
-              console.log("News Data Array:", newsList);
+              {console.log("News Data Array:", newsList)}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               
 
