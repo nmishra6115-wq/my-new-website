@@ -58,22 +58,28 @@ const [selectedCategory, setSelectedCategory] = useState('KYC Basics');
   const contentRef = useRef(null);
 
   // --- REPLACE YOUR OLD useEffect WITH THIS EXACT BLOCK ---
+ 
+  // --- UPDATED useEffect THAT FILTERS BY CATEGORY ---
+  // --- UPDATED useEffect THAT FILTERS BY CATEGORY AND FETCHES UP TO 100 ---
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
       
-      // 1. Fetch your other data as before
+      // 1. Fetch your other data
       const { data: subs } = await supabase.from('submissions').select('*');
       const { data: files } = await supabase.from('partner_files').select('*');
       const { data: news, error: newsError } = await supabase.from('news').select('*');
       
-      // 2. Fetch QUIZ data filtered by the current selectedCategory
-      const { data: quiz } = await supabase
+      // 2. Fetch QUIZ data filtered by category and limited to 100 rows
+      const { data: quiz, error: quizError } = await supabase
         .from('quiz_questions')
         .select('*')
-        .eq('category', selectedCategory); // This line filters the quiz!
+        .eq('category', selectedCategory)
+        .range(0, 99); // <--- This allows up to 100 questions
       
-      // 3. Update all your states
+      if (quizError) console.error("Supabase Quiz Error:", quizError);
+      
+      // 3. Update your states
       if (subs) setSubmissions(subs);
       if (files) setPartnerFiles(files);
       if (newsError) console.error("Supabase News Error:", newsError);
@@ -84,9 +90,7 @@ const [selectedCategory, setSelectedCategory] = useState('KYC Basics');
     };
     
     fetchData();
-  }, [selectedCategory]); // <--- This ensures it re-fetches ONLY the quiz when you click a button
-   
-
+  }, [selectedCategory]);
   const navItems = [
     { label: 'NOTES', id: 'notes' }, { label: 'JOBS', id: 'jobs' },
     { label: 'SUBMIT REFERRAL', id: 'referralForm' }, { label: 'AVAILABLE REFERRAL', id: 'available' },
