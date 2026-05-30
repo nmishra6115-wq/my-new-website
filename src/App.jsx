@@ -193,46 +193,51 @@ const [selectedCategory, setSelectedCategory] = useState('KYC Basics');
             {activeView === 'contribute' && <div className="p-16 border border-slate-800 text-center">{!isAuthorized ? <div className="space-y-4"><input type="email" placeholder="Email" onChange={(e) => setEmail(e.target.value)} className="w-full p-4 bg-black border" /><input type="password" placeholder="Pass" onChange={(e) => setPassword(e.target.value)} className="w-full p-4 bg-black border" /><button onClick={async () => { const { error } = await supabase.auth.signInWithPassword({ email, password }); if (!error) setIsAuthorized(true); else alert(error.message); }} className="w-full py-4 bg-emerald-600">LOGIN</button></div> : <p>HR Portal Active</p>}</div>}
             {activeView === 'network' && <div className="max-w-4xl mx-auto">{partnerFiles.map((f, i) => <div key={i} className="p-6 mb-4 bg-slate-900 border border-purple-500/30 rounded flex justify-between items-center"><div><span className="block font-bold text-lg text-white">{f.name}</span></div><button onClick={() => window.open(f.url, '_blank')} className="px-4 py-2 border border-purple-500 text-purple-400 hover:bg-purple-500 hover:text-white transition-all font-bold">DOWNLOAD</button></div>)}</div>}
 {activeView === 'quiz' && (
-  // REMOVED 'flex-col md:' - now it is just 'flex-row' to force side-by-side everywhere
-  <div className="flex flex-row h-full gap-4 p-2 items-start">
+  // Main wrapper: use h-[80vh] to contain the scroll within the modal
+  <div className="flex flex-row h-[80vh] gap-4 p-2 items-start overflow-hidden">
     
-    {/* LEFT SIDEBAR: Quiz Selection */}
-    {/* Set a fixed width to keep them side-by-side */}
-    <div className="w-1/3 min-w-[120px] space-y-2">
-      <h3 className="text-emerald-500 font-bold uppercase text-[10px]">Tests</h3>
+    {/* LEFT SIDEBAR: Sticky */}
+    {/* 'sticky top-0' makes it stay put when the parent container scrolls */}
+    <div className="w-1/3 min-w-[120px] sticky top-0 h-full flex flex-col gap-2">
+      <h3 className="text-emerald-500 font-bold uppercase text-[10px] mb-2">Tests</h3>
       {['KYC Basics', 'AML Advanced', 'Transaction Monitoring'].map((qName, i) => (
         <button 
-    key={i} 
-    onClick={() => {
-      setQuizScore(0);
-      setSelectedCategory(qName); // This changes the category and triggers the fetch
-    }}
-    className={`w-full p-4 md:p-8 bg-slate-900 border transition-all text-sm md:text-lg font-bold
-      ${selectedCategory === qName ? "border-emerald-500" : "border-slate-700 hover:border-emerald-500"}`}
-  >
-    {qName}
-  </button>
+          key={i} 
+          onClick={() => {
+            setQuizScore(0);
+            setSelectedCategory(qName);
+          }}
+          className={`w-full p-4 md:p-8 border transition-all text-sm md:text-lg font-bold
+            ${selectedCategory === qName ? "bg-emerald-900/20 border-emerald-500" : "bg-slate-900 border-slate-700 hover:border-emerald-500"}`}
+        >
+          {qName}
+        </button>
       ))}
     </div>
 
-    {/* RIGHT SIDE: Quiz Questions */}
-    <div className="w-2/3 overflow-y-auto">
-      <div className="flex justify-between items-center mb-4 bg-slate-900 p-2 rounded border border-emerald-500/20">
-        <h1 className="text-sm font-bold text-emerald-400">Score</h1>
-        <div className="bg-black px-2 py-1 rounded border border-emerald-500 font-bold text-xs">
+    {/* RIGHT SIDE: Scrolling Area */}
+    <div className="w-2/3 h-full overflow-y-auto pr-2">
+      
+      {/* Sticky Score Header */}
+      <div className="sticky top-0 z-20 bg-[#030712] flex justify-between items-center mb-4 p-4 rounded border border-emerald-500/20 shadow-md">
+        <h1 className="text-sm font-bold text-emerald-400">SCORE</h1>
+        <div className="bg-black px-4 py-1 rounded border border-emerald-500 font-bold text-sm">
           {quizScore}
         </div>
       </div>
       
-      {isLoading ? (
-        <p className="text-slate-500 text-xs">Loading...</p>
-      ) : testData.length > 0 ? (
-        testData.map((item, index) => (
-          <QuizItem key={index} item={item} onCorrect={() => setQuizScore(s => s + 10)} />
-        ))
-      ) : (
-        <p className="text-slate-500 text-xs">No questions.</p>
-      )}
+      {/* Scrollable Questions List */}
+      <div className="mt-2">
+        {isLoading ? (
+          <p className="text-slate-500 text-xs">Loading...</p>
+        ) : testData.length > 0 ? (
+          testData.map((item, index) => (
+            <QuizItem key={index} item={item} onCorrect={() => setQuizScore(s => s + 10)} />
+          ))
+        ) : (
+          <p className="text-slate-500 text-xs">No questions found for this category.</p>
+        )}
+      </div>
     </div>
   </div>
 )}
