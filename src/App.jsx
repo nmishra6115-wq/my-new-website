@@ -194,8 +194,7 @@ const [showResult, setShowResult] = useState(false);
         <button 
           key={i} 
           onClick={() => setQuizScore(0)}
-          className="w-full p-2 bg-slate-900 border border-slate-700 hover:border-emerald-500 rounded text-left text-xs transition-all"
-        >
+className="w-full p-4 md:p-8 bg-slate-900 border border-slate-700 hover:border-emerald-500 rounded text-left transition-all text-sm md:text-lg font-bold"        >
           {qName}
         </button>
       ))}
