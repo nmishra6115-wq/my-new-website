@@ -49,7 +49,12 @@ export default function App() {
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [newsList, setNewsList] = useState([]);
   const [testData, setTestData] = useState([]);
-  const [score, setScore] = useState(0);
+  
+  const [selectedQuiz, setSelectedQuiz] = useState(null);
+const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+const [quizScore, setQuizScore] = useState(0); // Replacing the old 'score'
+const [showResult, setShowResult] = useState(false);
+
   const contentRef = useRef(null);
 
   // --- REPLACE YOUR OLD useEffect WITH THIS EXACT BLOCK ---
@@ -177,7 +182,50 @@ export default function App() {
             {activeView === 'available' && <div className="max-w-4xl mx-auto">{submissions.map((sub, i) => <div key={i} className="p-6 mb-4 bg-slate-900 border border-emerald-500/30 rounded flex justify-between items-center"><div><h3 className="text-xl font-bold">{sub.name}</h3><p className="text-sm text-slate-400">{sub.company} - {sub.role}</p></div><button className="bg-emerald-600 px-6 py-3 font-bold hover:bg-emerald-500 transition-all text-white">APPLY</button></div>)}</div>}
             {activeView === 'contribute' && <div className="p-16 border border-slate-800 text-center">{!isAuthorized ? <div className="space-y-4"><input type="email" placeholder="Email" onChange={(e) => setEmail(e.target.value)} className="w-full p-4 bg-black border" /><input type="password" placeholder="Pass" onChange={(e) => setPassword(e.target.value)} className="w-full p-4 bg-black border" /><button onClick={async () => { const { error } = await supabase.auth.signInWithPassword({ email, password }); if (!error) setIsAuthorized(true); else alert(error.message); }} className="w-full py-4 bg-emerald-600">LOGIN</button></div> : <p>HR Portal Active</p>}</div>}
             {activeView === 'network' && <div className="max-w-4xl mx-auto">{partnerFiles.map((f, i) => <div key={i} className="p-6 mb-4 bg-slate-900 border border-purple-500/30 rounded flex justify-between items-center"><div><span className="block font-bold text-lg text-white">{f.name}</span></div><button onClick={() => window.open(f.url, '_blank')} className="px-4 py-2 border border-purple-500 text-purple-400 hover:bg-purple-500 hover:text-white transition-all font-bold">DOWNLOAD</button></div>)}</div>}
-            {activeView === 'quiz' && <div className="max-w-4xl mx-auto p-8"><div className="flex justify-between items-center mb-8"><h1 className="text-3xl font-bold text-emerald-400">AML/KYC Quiz<p>Will be added soon...</p></h1><div className="bg-slate-800 p-4 rounded border border-emerald-500 font-bold">SCORE: {score}</div></div>{isLoading ? <p>Loading...</p> : testData.map((item, index) => <QuizItem key={index} item={item} onCorrect={() => setScore(s => s + 1)} />)}</div>}
+{activeView === 'quiz' && (
+  <div className="flex flex-col md:flex-row h-[70vh] gap-6 p-4">
+    {/* LEFT SIDEBAR: Quiz Selection */}
+    <div className="w-full md:w-1/4 border-r border-slate-800 pr-4 space-y-4">
+      <h3 className="text-emerald-500 font-bold mb-4 uppercase text-xs tracking-widest">Select Test</h3>
+      {['KYC Basics', 'AML Advanced', 'Transaction Monitoring'].map((qName, i) => (
+        <button 
+          key={i} 
+          onClick={() => {
+            setScore(0);
+            // Optionally, filter testData based on selection here
+          }}
+          className="w-full p-4 bg-slate-900 border border-slate-700 hover:border-emerald-500 rounded text-left transition-all"
+        >
+          {qName}
+        </button>
+      ))}
+    </div>
+
+    {/* RIGHT SIDE: Quiz Questions */}
+    <div className="w-full md:w-3/4 overflow-y-auto pr-2">
+      <div className="flex justify-between items-center mb-8 bg-slate-900 p-6 rounded border border-emerald-500/20">
+        <h1 className="text-2xl font-bold text-emerald-400">Knowledge Test</h1>
+        <div className="bg-black px-6 py-2 rounded border border-emerald-500 font-bold">
+          SCORE: {score}
+        </div>
+      </div>
+      
+      {isLoading ? (
+        <p className="text-slate-500">Loading questions from database...</p>
+      ) : testData.length > 0 ? (
+        testData.map((item, index) => (
+          <QuizItem 
+            key={index} 
+            item={item} 
+            onCorrect={() => setScore(s => s + 10)} 
+          />
+        ))
+      ) : (
+        <p className="text-slate-500">No questions available at this time.</p>
+      )}
+    </div>
+  </div>
+)}
 {activeView === 'privacy' && (
   <div className="p-8 bg-slate-900 border border-slate-800 rounded">
     <h1 className="text-2xl font-bold mb-6">{privacyPolicy.title}</h1>
