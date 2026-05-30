@@ -190,7 +190,70 @@ const [selectedCategory, setSelectedCategory] = useState('KYC Basics');
             {activeView === 'jobs' && <div className="bg-[#030712]/80 rounded border border-slate-800">{jobOpenings.map((job, idx) => <div key={idx} className="p-6 border-b border-slate-800 flex justify-between"><div><p className="text-emerald-400">{job.company}</p><h2>{job.role}</h2></div><a href={job.link} target="_blank" rel="noopener noreferrer" className="bg-indigo-600 px-6 py-2">APPLY</a></div>)}</div>}
             {activeView === 'referralForm' && <form className="space-y-4" onSubmit={async (e) => { e.preventDefault(); await supabase.from('submissions').insert([{ name: e.target[0].value, email: e.target[1].value, company: e.target[2].value, role: e.target[3].value }]); alert("Submitted!"); setActiveView(null); }}><input className="w-full p-4 bg-black border" placeholder="Name" required /><input className="w-full p-4 bg-black border" placeholder="Email" required /><input className="w-full p-4 bg-black border" placeholder="Company" required /><input className="w-full p-4 bg-black border" placeholder="Role" required /><button type="submit" className="w-full py-4 bg-emerald-600">SUBMIT</button></form>}
             {activeView === 'available' && <div className="max-w-4xl mx-auto">{submissions.map((sub, i) => <div key={i} className="p-6 mb-4 bg-slate-900 border border-emerald-500/30 rounded flex justify-between items-center"><div><h3 className="text-xl font-bold">{sub.name}</h3><p className="text-sm text-slate-400">{sub.company} - {sub.role}</p></div><button className="bg-emerald-600 px-6 py-3 font-bold hover:bg-emerald-500 transition-all text-white">APPLY</button></div>)}</div>}
-            {activeView === 'contribute' && <div className="p-16 border border-slate-800 text-center">{!isAuthorized ? <div className="space-y-4"><input type="email" placeholder="Email" onChange={(e) => setEmail(e.target.value)} className="w-full p-4 bg-black border" /><input type="password" placeholder="Pass" onChange={(e) => setPassword(e.target.value)} className="w-full p-4 bg-black border" /><button onClick={async () => { const { error } = await supabase.auth.signInWithPassword({ email, password }); if (!error) setIsAuthorized(true); else alert(error.message); }} className="w-full py-4 bg-emerald-600">LOGIN</button></div> : <p>HR Portal Active</p>}</div>}
+{activeView === 'contribute' && (
+  <div className="p-8 border border-slate-800 rounded bg-slate-900">
+    {!isAuthorized ? (
+      <div className="space-y-4">
+        {/* ... existing Login Inputs ... */}
+      </div>
+    ) : (
+      <div className="space-y-6">
+        <h2 className="text-xl font-bold text-emerald-400 uppercase tracking-widest">HR Portal: Upload Documents</h2>
+        
+        <div className="p-10 border-2 border-dashed border-slate-700 rounded-lg text-center bg-black/40">
+          <input type="file" id="hrFileInput" className="hidden" onChange={(e) => document.getElementById('fileNameDisplay').innerText = e.target.files[0]?.name || ''} />
+          <label htmlFor="hrFileInput" className="cursor-pointer bg-slate-800 px-6 py-3 rounded font-bold hover:bg-slate-700 transition-all">
+            SELECT DOCUMENT (PDF/IMG)
+          </label>
+          <p id="fileNameDisplay" className="mt-4 text-emerald-500 text-sm font-bold"></p>
+        </div>
+
+        <button 
+          onClick={async () => {
+            const file = document.getElementById('hrFileInput').files[0];
+            if (!file) return alert("Please select a file first!");
+            setIsLoading(true);
+
+            // 1. Upload to Storage
+            const fileExt = file.name.split('.').pop();
+            const fileName = `${Math.random()}.${fileExt}`;
+            const { error: uploadError } = await supabase.storage
+              .from('hr-docs') 
+              .upload(fileName, file);
+
+            if (uploadError) {
+              alert("Storage Error: " + uploadError.message);
+              setIsLoading(false);
+              return;
+            }
+
+            // 2. Get Public URL
+            const { data: urlData } = supabase.storage.from('hr-docs').getPublicUrl(fileName);
+
+            // 3. Insert into Table (This is what 'Network Jobs' reads)
+            const { error: dbError } = await supabase
+              .from('partner_files')
+              .insert([{ name: file.name, url: urlData.publicUrl }]);
+
+            if (dbError) {
+              alert("Database Sync Error: " + dbError.message);
+            } else {
+              alert("Success! Document is now live on Network Jobs tab.");
+              // Optional: Refresh data so it shows immediately
+              const { data: updatedFiles } = await supabase.from('partner_files').select('*');
+              setPartnerFiles(updatedFiles);
+            }
+            setIsLoading(false);
+          }} 
+          className="w-full py-5 bg-emerald-600 hover:bg-emerald-500 text-white font-black uppercase shadow-[0_0_15px_rgba(16,185,129,0.4)]"
+        >
+          {isLoading ? "UPLOADING..." : "SUBMIT TO NETWORK"}
+        </button>
+      </div>
+    )}
+  </div>
+)}
+
             {activeView === 'network' && <div className="max-w-4xl mx-auto">{partnerFiles.map((f, i) => <div key={i} className="p-6 mb-4 bg-slate-900 border border-purple-500/30 rounded flex justify-between items-center"><div><span className="block font-bold text-lg text-white">{f.name}</span></div><button onClick={() => window.open(f.url, '_blank')} className="px-4 py-2 border border-purple-500 text-purple-400 hover:bg-purple-500 hover:text-white transition-all font-bold">DOWNLOAD</button></div>)}</div>}
 {activeView === 'quiz' && (
   // Main wrapper: use h-[80vh] to contain the scroll within the modal
