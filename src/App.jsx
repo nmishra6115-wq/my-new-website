@@ -192,7 +192,7 @@ const [selectedCategory, setSelectedCategory] = useState('KYC Basics');
   <div className="space-y-6">
     {/* LOCATION FILTER BUTTONS */}
     <div className="flex flex-wrap gap-2 mb-6">
-      {['All', 'Bengaluru', 'Kolkata', 'Ranchi', 'Remote'].map((loc) => (
+      {['All', 'Bengaluru', 'Kolkata', 'Gurugram', 'Remote', 'Pune', 'Mumbai', 'Chennai'].map((loc) => (
         <button
           key={loc}
           onClick={() => setSelectedLocation(loc)}
