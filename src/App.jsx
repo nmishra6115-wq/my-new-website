@@ -160,7 +160,7 @@ const [showResult, setShowResult] = useState(false);
       {/* ACTIVE VIEW MODAL */}
       {activeView && (
         <div className="fixed inset-0 z-[100] bg-black/95 p-12 overflow-y-auto">
-          <button onClick={() => { setActiveView(null); setScore(0); }} className="text-emerald-400 font-bold mb-10">&larr; BACK</button>
+          <button onClick={() => { setActiveView(null); setQuizScore(0); }} className="text-emerald-400 font-bold mb-10">&larr; BACK</button>
           <div className="max-w-4xl mx-auto text-white">
             {activeView === 'notes' && (
               <div className="flex flex-row w-full h-[80vh] gap-2 p-2">
@@ -206,7 +206,7 @@ const [showResult, setShowResult] = useState(false);
       <div className="flex justify-between items-center mb-8 bg-slate-900 p-6 rounded border border-emerald-500/20">
         <h1 className="text-2xl font-bold text-emerald-400">Knowledge Test</h1>
         <div className="bg-black px-6 py-2 rounded border border-emerald-500 font-bold">
-          SCORE: {score}
+          SCORE: {quizScore}
         </div>
       </div>
       
@@ -217,7 +217,7 @@ const [showResult, setShowResult] = useState(false);
           <QuizItem 
             key={index} 
             item={item} 
-            onCorrect={() => setScore(s => s + 10)} 
+            onCorrect={() => setQuizScore(s => s + 10)}
           />
         ))
       ) : (
