@@ -183,18 +183,18 @@ const [showResult, setShowResult] = useState(false);
             {activeView === 'contribute' && <div className="p-16 border border-slate-800 text-center">{!isAuthorized ? <div className="space-y-4"><input type="email" placeholder="Email" onChange={(e) => setEmail(e.target.value)} className="w-full p-4 bg-black border" /><input type="password" placeholder="Pass" onChange={(e) => setPassword(e.target.value)} className="w-full p-4 bg-black border" /><button onClick={async () => { const { error } = await supabase.auth.signInWithPassword({ email, password }); if (!error) setIsAuthorized(true); else alert(error.message); }} className="w-full py-4 bg-emerald-600">LOGIN</button></div> : <p>HR Portal Active</p>}</div>}
             {activeView === 'network' && <div className="max-w-4xl mx-auto">{partnerFiles.map((f, i) => <div key={i} className="p-6 mb-4 bg-slate-900 border border-purple-500/30 rounded flex justify-between items-center"><div><span className="block font-bold text-lg text-white">{f.name}</span></div><button onClick={() => window.open(f.url, '_blank')} className="px-4 py-2 border border-purple-500 text-purple-400 hover:bg-purple-500 hover:text-white transition-all font-bold">DOWNLOAD</button></div>)}</div>}
 {activeView === 'quiz' && (
-  <div className="flex flex-col md:flex-row h-[70vh] gap-6 p-4">
+  // REMOVED 'flex-col md:' - now it is just 'flex-row' to force side-by-side everywhere
+  <div className="flex flex-row h-full gap-4 p-2 items-start">
+    
     {/* LEFT SIDEBAR: Quiz Selection */}
-    <div className="w-full md:w-1/4 border-r border-slate-800 pr-4 space-y-4">
-      <h3 className="text-emerald-500 font-bold mb-4 uppercase text-xs tracking-widest">Select Test</h3>
+    {/* Set a fixed width to keep them side-by-side */}
+    <div className="w-1/3 min-w-[120px] space-y-2">
+      <h3 className="text-emerald-500 font-bold uppercase text-[10px]">Tests</h3>
       {['KYC Basics', 'AML Advanced', 'Transaction Monitoring'].map((qName, i) => (
         <button 
           key={i} 
-          onClick={() => {
-            setScore(0);
-            // Optionally, filter testData based on selection here
-          }}
-          className="w-full p-4 bg-slate-900 border border-slate-700 hover:border-emerald-500 rounded text-left transition-all"
+          onClick={() => setQuizScore(0)}
+          className="w-full p-2 bg-slate-900 border border-slate-700 hover:border-emerald-500 rounded text-left text-xs transition-all"
         >
           {qName}
         </button>
@@ -202,30 +202,27 @@ const [showResult, setShowResult] = useState(false);
     </div>
 
     {/* RIGHT SIDE: Quiz Questions */}
-    <div className="w-full md:w-3/4 overflow-y-auto pr-2">
-      <div className="flex justify-between items-center mb-8 bg-slate-900 p-6 rounded border border-emerald-500/20">
-        <h1 className="text-2xl font-bold text-emerald-400">Knowledge Test</h1>
-        <div className="bg-black px-6 py-2 rounded border border-emerald-500 font-bold">
-          SCORE: {quizScore}
+    <div className="w-2/3 overflow-y-auto">
+      <div className="flex justify-between items-center mb-4 bg-slate-900 p-2 rounded border border-emerald-500/20">
+        <h1 className="text-sm font-bold text-emerald-400">Quiz</h1>
+        <div className="bg-black px-2 py-1 rounded border border-emerald-500 font-bold text-xs">
+          {quizScore}
         </div>
       </div>
       
       {isLoading ? (
-        <p className="text-slate-500">Loading questions from database...</p>
+        <p className="text-slate-500 text-xs">Loading...</p>
       ) : testData.length > 0 ? (
         testData.map((item, index) => (
-          <QuizItem 
-            key={index} 
-            item={item} 
-            onCorrect={() => setQuizScore(s => s + 10)}
-          />
+          <QuizItem key={index} item={item} onCorrect={() => setQuizScore(s => s + 10)} />
         ))
       ) : (
-        <p className="text-slate-500">No questions available at this time.</p>
+        <p className="text-slate-500 text-xs">No questions.</p>
       )}
     </div>
   </div>
 )}
+
 {activeView === 'privacy' && (
   <div className="p-8 bg-slate-900 border border-slate-800 rounded">
     <h1 className="text-2xl font-bold mb-6">{privacyPolicy.title}</h1>
