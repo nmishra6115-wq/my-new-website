@@ -54,32 +54,38 @@ export default function App() {
 const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
 const [quizScore, setQuizScore] = useState(0); // Replacing the old 'score'
 const [showResult, setShowResult] = useState(false);
-
+const [selectedCategory, setSelectedCategory] = useState('KYC Basics');
   const contentRef = useRef(null);
 
   // --- REPLACE YOUR OLD useEffect WITH THIS EXACT BLOCK ---
   useEffect(() => {
     const fetchData = async () => {
-      // Fetching data
+      setIsLoading(true);
+      
+      // 1. Fetch your other data as before
       const { data: subs } = await supabase.from('submissions').select('*');
       const { data: files } = await supabase.from('partner_files').select('*');
       const { data: news, error: newsError } = await supabase.from('news').select('*');
-      const { data: quiz } = await supabase.from('quiz_questions').select('*');
       
+      // 2. Fetch QUIZ data filtered by the current selectedCategory
+      const { data: quiz } = await supabase
+        .from('quiz_questions')
+        .select('*')
+        .eq('category', selectedCategory); // This line filters the quiz!
+      
+      // 3. Update all your states
       if (subs) setSubmissions(subs);
       if (files) setPartnerFiles(files);
-      
-      // LOG ERROR IF SUPABASE FAILS
       if (newsError) console.error("Supabase News Error:", newsError);
-      
-      // Fallback: If Supabase news is empty/null, use your local kycNews import
       setNewsList(news && news.length > 0 ? news : kycNews);
       
       if (quiz) setTestData(quiz);
       setIsLoading(false);
     };
+    
     fetchData();
-  }, []);
+  }, [selectedCategory]); // <--- This ensures it re-fetches ONLY the quiz when you click a button
+   
 
   const navItems = [
     { label: 'NOTES', id: 'notes' }, { label: 'JOBS', id: 'jobs' },
@@ -192,11 +198,16 @@ const [showResult, setShowResult] = useState(false);
       <h3 className="text-emerald-500 font-bold uppercase text-[10px]">Tests</h3>
       {['KYC Basics', 'AML Advanced', 'Transaction Monitoring'].map((qName, i) => (
         <button 
-          key={i} 
-          onClick={() => setQuizScore(0)}
-className="w-full p-4 md:p-8 bg-slate-900 border border-slate-700 hover:border-emerald-500 rounded text-left transition-all text-sm md:text-lg font-bold"        >
-          {qName}
-        </button>
+    key={i} 
+    onClick={() => {
+      setQuizScore(0);
+      setSelectedCategory(qName); // This changes the category and triggers the fetch
+    }}
+    className={`w-full p-4 md:p-8 bg-slate-900 border transition-all text-sm md:text-lg font-bold
+      ${selectedCategory === qName ? "border-emerald-500" : "border-slate-700 hover:border-emerald-500"}`}
+  >
+    {qName}
+  </button>
       ))}
     </div>
 
