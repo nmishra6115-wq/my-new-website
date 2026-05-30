@@ -49,6 +49,7 @@ export default function App() {
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [newsList, setNewsList] = useState([]);
   const [testData, setTestData] = useState([]);
+  const [selectedLocation, setSelectedLocation] = useState('All');
   
   const [selectedQuiz, setSelectedQuiz] = useState(null);
 const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -187,8 +188,57 @@ const [selectedCategory, setSelectedCategory] = useState('KYC Basics');
                 </div>
               </div>
             )}
-            {activeView === 'jobs' && <div className="bg-[#030712]/80 rounded border border-slate-800">{jobOpenings.map((job, idx) => <div key={idx} className="p-6 border-b border-slate-800 flex justify-between"><div><p className="text-emerald-400">{job.company}</p><h2>{job.role}</h2></div><a href={job.link} target="_blank" rel="noopener noreferrer" className="bg-indigo-600 px-6 py-2">APPLY</a></div>)}</div>}
-            {activeView === 'referralForm' && <form className="space-y-4" onSubmit={async (e) => { e.preventDefault(); await supabase.from('submissions').insert([{ name: e.target[0].value, email: e.target[1].value, company: e.target[2].value, role: e.target[3].value }]); alert("Submitted!"); setActiveView(null); }}><input className="w-full p-4 bg-black border" placeholder="Name" required /><input className="w-full p-4 bg-black border" placeholder="Email" required /><input className="w-full p-4 bg-black border" placeholder="Company" required /><input className="w-full p-4 bg-black border" placeholder="Role" required /><button type="submit" className="w-full py-4 bg-emerald-600">SUBMIT</button></form>}
+{activeView === 'jobs' && (
+  <div className="space-y-6">
+    {/* LOCATION FILTER BUTTONS */}
+    <div className="flex flex-wrap gap-2 mb-6">
+      {['All', 'Bengaluru', 'Kolkata', 'Ranchi', 'Remote'].map((loc) => (
+        <button
+          key={loc}
+          onClick={() => setSelectedLocation(loc)}
+          className={`px-4 py-2 text-xs font-bold border transition-all ${
+            selectedLocation === loc 
+            ? "bg-emerald-600 border-emerald-500 text-white" 
+            : "bg-slate-900 border-slate-700 text-slate-400 hover:border-emerald-500"
+          }`}
+        >
+          {loc.toUpperCase()}
+        </button>
+      ))}
+    </div>
+
+    {/* FILTERED JOBS LIST */}
+    <div className="bg-[#030712]/80 rounded border border-slate-800">
+      {jobOpenings
+        .filter(job => selectedLocation === 'All' || job.location === selectedLocation)
+        .map((job, idx) => (
+          <div key={idx} className="p-6 border-b border-slate-800 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div>
+              <p className="text-emerald-400 text-xs font-bold uppercase">{job.company}</p>
+              <h2 className="text-xl font-bold">{job.role}</h2>
+              <p className="text-slate-500 text-xs mt-1">{job.location}</p>
+            </div>
+            <a 
+              href={job.link} 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="bg-indigo-600 hover:bg-indigo-500 px-8 py-3 font-bold text-sm transition-all"
+            >
+              APPLY
+            </a>
+          </div>
+        ))
+      }
+      
+      {/* Empty State */}
+      {jobOpenings.filter(job => selectedLocation === 'All' || job.location === selectedLocation).length === 0 && (
+        <div className="p-10 text-center text-slate-500 text-sm">
+          No job openings found for {selectedLocation}.
+        </div>
+      )}
+    </div>
+  </div>
+)}            {activeView === 'referralForm' && <form className="space-y-4" onSubmit={async (e) => { e.preventDefault(); await supabase.from('submissions').insert([{ name: e.target[0].value, email: e.target[1].value, company: e.target[2].value, role: e.target[3].value }]); alert("Submitted!"); setActiveView(null); }}><input className="w-full p-4 bg-black border" placeholder="Name" required /><input className="w-full p-4 bg-black border" placeholder="Email" required /><input className="w-full p-4 bg-black border" placeholder="Company" required /><input className="w-full p-4 bg-black border" placeholder="Role" required /><button type="submit" className="w-full py-4 bg-emerald-600">SUBMIT</button></form>}
             {activeView === 'available' && <div className="max-w-4xl mx-auto">{submissions.map((sub, i) => <div key={i} className="p-6 mb-4 bg-slate-900 border border-emerald-500/30 rounded flex justify-between items-center"><div><h3 className="text-xl font-bold">{sub.name}</h3><p className="text-sm text-slate-400">{sub.company} - {sub.role}</p></div><button className="bg-emerald-600 px-6 py-3 font-bold hover:bg-emerald-500 transition-all text-white">APPLY</button></div>)}</div>}
 {activeView === 'contribute' && (
   <div className="p-8 border border-slate-800 rounded bg-slate-900">
