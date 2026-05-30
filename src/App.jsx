@@ -193,16 +193,45 @@ const [selectedCategory, setSelectedCategory] = useState('KYC Basics');
 {activeView === 'contribute' && (
   <div className="p-8 border border-slate-800 rounded bg-slate-900">
     {!isAuthorized ? (
+      /* 1. LOGIN FORM: This will show if the user is NOT authorized yet */
       <div className="space-y-4">
-        {/* ... existing Login Inputs ... */}
+        <h2 className="text-xl font-bold text-emerald-400 uppercase tracking-widest mb-4">HR Portal Secure Login</h2>
+        <input 
+          type="email" 
+          placeholder="Email" 
+          onChange={(e) => setEmail(e.target.value)} 
+          className="w-full p-4 bg-black border border-slate-700 text-slate-100 font-mono focus:border-emerald-500 outline-none" 
+        />
+        <input 
+          type="password" 
+          placeholder="Password" 
+          onChange={(e) => setPassword(e.target.value)} 
+          className="w-full p-4 bg-black border border-slate-700 text-slate-100 font-mono focus:border-emerald-500 outline-none" 
+        />
+        <button 
+          onClick={async () => { 
+            const { error } = await supabase.auth.signInWithPassword({ email, password }); 
+            if (!error) setIsAuthorized(true); 
+            else alert(error.message); 
+          }} 
+          className="w-full py-4 bg-emerald-600 hover:bg-emerald-500 font-bold uppercase transition-all"
+        >
+          LOGIN
+        </button>
       </div>
     ) : (
+      /* 2. UPLOAD FORM: This shows automatically as soon as isAuthorized becomes TRUE */
       <div className="space-y-6">
         <h2 className="text-xl font-bold text-emerald-400 uppercase tracking-widest">HR Portal: Upload Documents</h2>
         
         <div className="p-10 border-2 border-dashed border-slate-700 rounded-lg text-center bg-black/40">
-          <input type="file" id="hrFileInput" className="hidden" onChange={(e) => document.getElementById('fileNameDisplay').innerText = e.target.files[0]?.name || ''} />
-          <label htmlFor="hrFileInput" className="cursor-pointer bg-slate-800 px-6 py-3 rounded font-bold hover:bg-slate-700 transition-all">
+          <input 
+            type="file" 
+            id="hrFileInput" 
+            className="hidden" 
+            onChange={(e) => document.getElementById('fileNameDisplay').innerText = e.target.files[0]?.name || ''} 
+          />
+          <label htmlFor="hrFileInput" className="cursor-pointer bg-slate-800 px-6 py-3 rounded font-bold hover:bg-slate-700 transition-all text-sm">
             SELECT DOCUMENT (PDF/IMG)
           </label>
           <p id="fileNameDisplay" className="mt-4 text-emerald-500 text-sm font-bold"></p>
@@ -214,7 +243,7 @@ const [selectedCategory, setSelectedCategory] = useState('KYC Basics');
             if (!file) return alert("Please select a file first!");
             setIsLoading(true);
 
-            // 1. Upload to Storage
+            // Action A: Upload the physical file to your Supabase Storage bucket
             const fileExt = file.name.split('.').pop();
             const fileName = `${Math.random()}.${fileExt}`;
             const { error: uploadError } = await supabase.storage
@@ -227,10 +256,10 @@ const [selectedCategory, setSelectedCategory] = useState('KYC Basics');
               return;
             }
 
-            // 2. Get Public URL
+            // Action B: Grab the secure public link of that newly uploaded file
             const { data: urlData } = supabase.storage.from('hr-docs').getPublicUrl(fileName);
 
-            // 3. Insert into Table (This is what 'Network Jobs' reads)
+            // Action C: Shove the file record into the 'partner_files' table so the Network tab displays it instantly
             const { error: dbError } = await supabase
               .from('partner_files')
               .insert([{ name: file.name, url: urlData.publicUrl }]);
@@ -239,13 +268,14 @@ const [selectedCategory, setSelectedCategory] = useState('KYC Basics');
               alert("Database Sync Error: " + dbError.message);
             } else {
               alert("Success! Document is now live on Network Jobs tab.");
-              // Optional: Refresh data so it shows immediately
+              
+              // This instantly updates your state array so it updates the Network tab without a page refresh
               const { data: updatedFiles } = await supabase.from('partner_files').select('*');
-              setPartnerFiles(updatedFiles);
+              if (updatedFiles) setPartnerFiles(updatedFiles);
             }
             setIsLoading(false);
           }} 
-          className="w-full py-5 bg-emerald-600 hover:bg-emerald-500 text-white font-black uppercase shadow-[0_0_15px_rgba(16,185,129,0.4)]"
+          className="w-full py-5 bg-emerald-600 hover:bg-emerald-500 text-white font-black uppercase shadow-[0_0_15px_rgba(16,185,129,0.4)] transition-all"
         >
           {isLoading ? "UPLOADING..." : "SUBMIT TO NETWORK"}
         </button>
@@ -253,7 +283,6 @@ const [selectedCategory, setSelectedCategory] = useState('KYC Basics');
     )}
   </div>
 )}
-
             {activeView === 'network' && <div className="max-w-4xl mx-auto">{partnerFiles.map((f, i) => <div key={i} className="p-6 mb-4 bg-slate-900 border border-purple-500/30 rounded flex justify-between items-center"><div><span className="block font-bold text-lg text-white">{f.name}</span></div><button onClick={() => window.open(f.url, '_blank')} className="px-4 py-2 border border-purple-500 text-purple-400 hover:bg-purple-500 hover:text-white transition-all font-bold">DOWNLOAD</button></div>)}</div>}
 {activeView === 'quiz' && (
   // Main wrapper: use h-[80vh] to contain the scroll within the modal
