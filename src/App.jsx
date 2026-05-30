@@ -203,7 +203,7 @@ className="w-full p-4 md:p-8 bg-slate-900 border border-slate-700 hover:border-e
     {/* RIGHT SIDE: Quiz Questions */}
     <div className="w-2/3 overflow-y-auto">
       <div className="flex justify-between items-center mb-4 bg-slate-900 p-2 rounded border border-emerald-500/20">
-        <h1 className="text-sm font-bold text-emerald-400">Quiz</h1>
+        <h1 className="text-sm font-bold text-emerald-400">Score</h1>
         <div className="bg-black px-2 py-1 rounded border border-emerald-500 font-bold text-xs">
           {quizScore}
         </div>
