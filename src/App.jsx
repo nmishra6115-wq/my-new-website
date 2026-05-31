@@ -35,6 +35,71 @@ function QuizItem({ item, onCorrect }) {
     </div>
   );
 }
+// STABLE SUBSCRIBE COMPONENT: Isolated to keep your app stable
+function SubscribeModal() {
+  const [isOpen, setIsOpen] = useState(false);
+  const [email, setEmail] = useState("");
+
+  useEffect(() => {
+    // Check if the user already closed this once in this browser
+    const hasClosed = localStorage.getItem("sub_modal_closed");
+    if (!hasClosed) {
+      setIsOpen(true);
+    }
+  }, []);
+
+  const handleSubscribe = async (e) => {
+    e.preventDefault();
+    const { error } = await supabase.from('subscribers').insert([{ email }]);
+    if (!error) {
+      alert("Subscribed! You'll receive daily job updates.");
+      handleClose();
+    } else {
+      if (error.code === "23505") {
+        alert("This email is already subscribed!");
+      } else {
+        alert("Error: " + error.message);
+      }
+    }
+  };
+
+  const handleClose = () => {
+    setIsOpen(false);
+    // Saves a marker in the browser so it doesn't pop up again
+    localStorage.setItem("sub_modal_closed", "true");
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+      <div className="bg-[#0b1c2e] border-2 border-emerald-500 p-8 rounded-lg max-w-md w-full relative shadow-[0_0_30px_rgba(16,185,129,0.3)]">
+        {/* CLOSE BUTTON */}
+        <button onClick={handleClose} className="absolute top-4 right-4 text-slate-400 hover:text-white text-xl">✕</button>
+        
+        <h2 className="text-2xl font-black text-emerald-400 mb-2 uppercase bold tracking-tighter">Stay Updated</h2>
+        <p className="text-slate-300 text-sm mb-6 leading-relaxed">
+          Subscribe to get daily AML/KYC job alerts from Bengaluru, Kolkata, and beyond directly in your inbox.
+        </p>
+
+        <form onSubmit={handleSubscribe} className="space-y-4">
+          <input 
+            type="email" 
+            required 
+            placeholder="Enter your email address" 
+            className="w-full p-4 bg-black border border-slate-700 text-white focus:border-emerald-500 outline-none font-mono text-sm"
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <button type="submit" className="w-full py-4 bg-emerald-600 hover:bg-emerald-500 text-white font-bold uppercase tracking-widest transition-all">
+            SUBSCRIBE
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+
 
 export default function App() {
   const [email, setEmail] = useState("");
@@ -462,6 +527,7 @@ const [selectedCategory, setSelectedCategory] = useState('KYC Basics');
     </div>
   </div>
 </footer>
+<SubscribeModal />
     </div>
   );
 }
