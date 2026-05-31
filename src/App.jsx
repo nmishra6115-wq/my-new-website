@@ -36,16 +36,18 @@ function QuizItem({ item, onCorrect }) {
   );
 }
 // STABLE SUBSCRIBE COMPONENT: Isolated to keep your app stable
+// STABLE SUBSCRIBE COMPONENT: Now opens every time the page loads
 function SubscribeModal() {
   const [isOpen, setIsOpen] = useState(false);
   const [email, setEmail] = useState("");
 
   useEffect(() => {
-    // Check if the user already closed this once in this browser
-    const hasClosed = localStorage.getItem("sub_modal_closed");
-    if (!hasClosed) {
+    // We removed the 'hasClosed' check so it triggers every single time
+    const timer = setTimeout(() => {
       setIsOpen(true);
-    }
+    }, 3000); // Pops up after 3 seconds
+    
+    return () => clearTimeout(timer);
   }, []);
 
   const handleSubscribe = async (e) => {
@@ -53,7 +55,7 @@ function SubscribeModal() {
     const { error } = await supabase.from('subscribers').insert([{ email }]);
     if (!error) {
       alert("Subscribed! You'll receive daily job updates.");
-      handleClose();
+      setIsOpen(false); // Just close the window, don't save a permanent marker
     } else {
       if (error.code === "23505") {
         alert("This email is already subscribed!");
@@ -64,9 +66,7 @@ function SubscribeModal() {
   };
 
   const handleClose = () => {
-    setIsOpen(false);
-    // Saves a marker in the browser so it doesn't pop up again
-    localStorage.setItem("sub_modal_closed", "true");
+    setIsOpen(false); // Just close the window for this session
   };
 
   if (!isOpen) return null;
@@ -74,10 +74,9 @@ function SubscribeModal() {
   return (
     <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
       <div className="bg-[#0b1c2e] border-2 border-emerald-500 p-8 rounded-lg max-w-md w-full relative shadow-[0_0_30px_rgba(16,185,129,0.3)]">
-        {/* CLOSE BUTTON */}
         <button onClick={handleClose} className="absolute top-4 right-4 text-slate-400 hover:text-white text-xl">✕</button>
         
-        <h2 className="text-2xl font-black text-emerald-400 mb-2 uppercase bold tracking-tighter">Stay Updated</h2>
+        <h2 className="text-2xl font-black text-emerald-400 mb-2 uppercase italic tracking-tighter">Stay Updated</h2>
         <p className="text-slate-300 text-sm mb-6 leading-relaxed">
           Subscribe to get daily AML/KYC job alerts from Bengaluru, Kolkata, and beyond directly in your inbox.
         </p>
