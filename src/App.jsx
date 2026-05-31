@@ -76,7 +76,7 @@ function SubscribeModal() {
       <div className="bg-[#0b1c2e] border-2 border-emerald-500 p-8 rounded-lg max-w-md w-full relative shadow-[0_0_30px_rgba(16,185,129,0.3)]">
         <button onClick={handleClose} className="absolute top-4 right-4 text-slate-400 hover:text-white text-xl">✕</button>
         
-        <h2 className="text-2xl font-black text-emerald-400 mb-2 uppercase italic tracking-tighter">Stay Updated</h2>
+        <h2 className="text-2xl font-black text-emerald-400 mb-2 uppercase bold tracking-tighter">Stay Updated</h2>
         <p className="text-slate-300 text-sm mb-6 leading-relaxed">
           Subscribe to get daily AML/KYC job alerts from Bengaluru, Kolkata, and beyond directly in your inbox.
         </p>
