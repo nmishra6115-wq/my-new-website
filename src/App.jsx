@@ -121,7 +121,7 @@ const [quizScore, setQuizScore] = useState(0); // Replacing the old 'score'
 const [showResult, setShowResult] = useState(false);
 const [selectedCategory, setSelectedCategory] = useState('KYC Basics');
   const contentRef = useRef(null);
-
+const [showSuccess, setShowSuccess] = useState(false);
   // --- REPLACE YOUR OLD useEffect WITH THIS EXACT BLOCK ---
  
   // --- UPDATED useEffect THAT FILTERS BY CATEGORY ---
@@ -366,7 +366,11 @@ const [selectedCategory, setSelectedCategory] = useState('KYC Basics');
           </label>
           <p id="fileNameDisplay" className="mt-4 text-emerald-500 text-sm font-bold"></p>
         </div>
-
+{showSuccess && (
+  <div className="p-4 mb-4 bg-emerald-900/30 border border-emerald-500 rounded text-emerald-400 font-bold text-sm text-center animate-pulse">
+    ✔ UPLOAD SUCCESSFUL: LIVE ON NETWORK & SCHEDULED FOR EMAIL
+  </div>
+)}
         <button 
           disabled={isLoading}
           onClick={async () => {
@@ -405,13 +409,15 @@ const [selectedCategory, setSelectedCategory] = useState('KYC Basics');
             if (dbError) {
               alert("Database Sync Error: " + dbError.message);
             } else {
-              alert("Success! Document is now live.");
-              const { data: updatedFiles } = await supabase.from('partner_files').select('*');
-              if (updatedFiles) setPartnerFiles(updatedFiles);
-              
-              // Clear state and inputs
-              setRecruiterEmail("");
-              if (fileInput) fileInput.value = "";
+              setShowSuccess(true); // Show the success message
+  const { data: updatedFiles } = await supabase.from('partner_files').select('*');
+  if (updatedFiles) setPartnerFiles(updatedFiles);
+  
+  // Clear success message after 5 seconds
+  setTimeout(() => setShowSuccess(false), 5000);
+  
+  setRecruiterEmail("");
+  if (fileInput) fileInput.value = "";
               const display = document.getElementById('fileNameDisplay');
               if (display) display.innerText = "";
             }
@@ -429,20 +435,32 @@ const [selectedCategory, setSelectedCategory] = useState('KYC Basics');
   <div className="max-w-4xl mx-auto">
     {partnerFiles.map((f, i) => (
       <div key={i} className="p-6 mb-4 bg-slate-900 border border-purple-500/30 rounded flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <div>
+        <div className="flex-grow">
           <span className="block font-bold text-lg text-white">{f.name}</span>
           {f.recruiter_email && (
-            <span className="text-xs text-purple-400 font-bold">CONTACT: {f.recruiter_email}</span>
+            <span className="text-xs text-purple-400 font-bold">RECRUITER: {f.recruiter_email}</span>
           )}
         </div>
-        <div className="flex gap-2">
-          <button onClick={() => window.open(f.url, '_blank')} className="px-4 py-2 border border-purple-500 text-purple-400 hover:bg-purple-500 hover:text-white transition-all font-bold text-xs">
-            DOWNLOAD
+        <div className="flex gap-3">
+          <button onClick={() => window.open(f.url, '_blank')} className="px-4 py-2 border border-purple-500 text-purple-400 hover:bg-purple-500 transition-all font-bold text-xs">
+            VIEW
           </button>
-          {f.recruiter_email && (
-            <a href={`mailto:${f.recruiter_email}`} className="px-4 py-2 bg-purple-600 text-white font-bold text-xs hover:bg-purple-500 transition-all">
-              EMAIL HR
-            </a>
+          
+          {/* DELETE BUTTON: Added for database maintenance */}
+          {isAuthorized && (
+            <button 
+              onClick={async () => {
+                if(window.confirm("Delete this referral?")) {
+                  const { error } = await supabase.from('partner_files').delete().eq('id', f.id);
+                  if(!error) {
+                    setPartnerFiles(prev => prev.filter(item => item.id !== f.id));
+                  }
+                }
+              }}
+              className="px-4 py-2 bg-red-900/20 border border-red-500 text-red-500 hover:bg-red-500 hover:text-white transition-all font-bold text-xs"
+            >
+              DELETE
+            </button>
           )}
         </div>
       </div>
