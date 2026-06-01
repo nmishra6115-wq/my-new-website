@@ -567,24 +567,25 @@ const { error: dbError } = await supabase
     </div>
 
     {/* 2. HORIZONTAL CATEGORY SELECTOR: Thumb-friendly on Mobile */}
-    <div className="flex gap-2 p-3 overflow-x-auto no-scrollbar bg-black/40 border-b border-slate-800 scroll-smooth">
-      {['KYC Basics', 'AML Advanced', 'Transaction Monitoring'].map((qName, i) => (
-        <button 
-          key={i} 
-          onClick={() => { 
-            setQuizScore(0); 
-            setSelectedCategory(qName); 
-          }}
-          className={`whitespace-nowrap px-5 py-2 rounded-full text-[10px] font-bold border transition-all duration-300
-            ${selectedCategory === qName 
-              ? "bg-emerald-600 border-emerald-500 text-white shadow-[0_0_15px_rgba(16,185,129,0.3)]" 
-              : "bg-slate-900 border-slate-700 text-slate-400 hover:border-emerald-500"}`}
-        >
-          {qName.toUpperCase()}
-        </button>
+ <div className="flex-shrink-0 w-full bg-black/40 border-b border-slate-800">
+  <div className="flex gap-3 p-4 overflow-x-auto no-scrollbar scroll-smooth">
+    {['KYC Basics', 'AML Advanced', 'Transaction Monitoring'].map((qName, i) => (
+      <button 
+        key={i} 
+        onClick={() => { 
+          setQuizScore(0); 
+          setSelectedCategory(qName); 
+        }}
+        className={`whitespace-nowrap px-6 py-2.5 rounded-full text-[11px] font-black uppercase tracking-wider border transition-all duration-300 flex-shrink-0
+          ${selectedCategory === qName 
+            ? "bg-emerald-600 border-emerald-400 text-white shadow-[0_0_20px_rgba(16,185,129,0.4)] translate-y-[-1px]" 
+            : "bg-slate-900 border-slate-700 text-slate-400 hover:border-emerald-500 hover:bg-slate-800"}`}
+      >
+        {qName}
+      </button>
       ))}
     </div>
-
+</div>
     {/* 3. SCROLLABLE CONTENT AREA: Single Column focus */}
     <div className="flex-grow overflow-y-auto p-4 pb-24 custom-scrollbar bg-[radial-gradient(circle_at_top,rgba(16,185,129,0.05),transparent)]">
       <div className="max-w-2xl mx-auto space-y-6 mt-2">
