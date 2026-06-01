@@ -366,6 +366,39 @@ const [showSuccess, setShowSuccess] = useState(false);
           </label>
           <p id="fileNameDisplay" className="mt-4 text-emerald-500 text-sm font-bold"></p>
         </div>
+        {/* ADVANCED LIVE PREVIEW: Mirrors the actual job card UI */}
+{(recruiterEmail || (document.getElementById('hrFileInput') && document.getElementById('hrFileInput').files[0])) && (
+  <div className="mt-4 p-6 border border-slate-700 bg-black/40 rounded-lg shadow-inner">
+    <p className="text-[10px] text-emerald-500 font-black mb-4 uppercase tracking-[0.2em]">
+      &gt; PRE-UPLOAD QUALITY CHECK
+    </p>
+    <div className="p-6 bg-slate-900 border border-purple-500/40 rounded flex flex-col md:flex-row justify-between items-start md:items-center gap-4 opacity-80">
+      <div>
+        <span className="block font-bold text-lg text-white">
+          {document.getElementById('hrFileInput')?.files[0]?.name || "Document Name.pdf"}
+        </span>
+        {recruiterEmail && (
+          <span className="text-xs text-purple-400 font-bold uppercase tracking-widest">
+            RECRUITER: {recruiterEmail}
+          </span>
+        )}
+      </div>
+      <div className="flex gap-2">
+        <div className="px-4 py-2 border border-purple-500/30 text-purple-500/50 font-bold text-xs rounded">
+          VIEW
+        </div>
+        {recruiterEmail && (
+          <div className="px-4 py-2 bg-purple-600/30 text-white/50 font-bold text-xs rounded">
+            EMAIL HR
+          </div>
+        )}
+      </div>
+    </div>
+    <p className="mt-3 text-[9px] text-slate-500 italic">
+      * This is a preview of how the referral will appear to subscribers.
+    </p>
+  </div>
+)}
 {showSuccess && (
   <div className="p-4 mb-4 bg-emerald-900/30 border border-emerald-500 rounded text-emerald-400 font-bold text-sm text-center animate-pulse">
     ✔ UPLOAD SUCCESSFUL: LIVE ON NETWORK & SCHEDULED FOR EMAIL
@@ -398,13 +431,20 @@ const [showSuccess, setShowSuccess] = useState(false);
             const { data: urlData } = supabase.storage.from('hr-docs').getPublicUrl(fileName);
 
             // 3. Insert into Database with recruiter_email
-            const { error: dbError } = await supabase
-              .from('partner_files')
-              .insert([{ 
-                name: file.name, 
-                url: urlData.publicUrl,
-                recruiter_email: recruiterEmail || null 
-              }]);
+          // 3. Insert into Database with advanced structural tracking
+const { error: dbError } = await supabase
+  .from('partner_files')
+  .insert([{ 
+    name: file.name, 
+    url: urlData.publicUrl,
+    recruiter_email: recruiterEmail || null,
+    // Advanced Tracking Fields
+    metadata: {
+      uploaded_at: new Date().toISOString(),
+      source_platform: "AML_DECODE_PORTAL_V2",
+      status: "ACTIVE"
+    }
+  }]);
 
             if (dbError) {
               alert("Database Sync Error: " + dbError.message);
@@ -438,15 +478,38 @@ const [showSuccess, setShowSuccess] = useState(false);
         <div className="flex-grow">
           <span className="block font-bold text-lg text-white">{f.name}</span>
           {f.recruiter_email && (
-            <span className="text-xs text-purple-400 font-bold">RECRUITER: {f.recruiter_email}</span>
+            <span className="text-xs text-purple-400 font-bold uppercase tracking-tight">
+              Recruiter: {f.recruiter_email}
+            </span>
           )}
         </div>
-        <div className="flex gap-3">
-          <button onClick={() => window.open(f.url, '_blank')} className="px-4 py-2 border border-purple-500 text-purple-400 hover:bg-purple-500 transition-all font-bold text-xs">
+        
+        {/* ACTION BUTTONS */}
+        <div className="flex flex-wrap gap-3">
+          <button 
+            onClick={() => window.open(f.url, '_blank')} 
+            className="px-4 py-2 border border-purple-500 text-purple-400 hover:bg-purple-500 hover:text-white transition-all font-bold text-xs"
+          >
             VIEW
           </button>
           
-          {/* DELETE BUTTON: Added for database maintenance */}
+          {/* ADVANCED EMAIL BUTTON */}
+          {f.recruiter_email && (
+            <a 
+              href={`mailto:${f.recruiter_email}?subject=${encodeURIComponent(`Application for ${f.name} - via AML_DECODE`)}&body=${encodeURIComponent(
+                `Dear Hiring Team,\n\nI am writing to express my interest in the ${f.name} position I saw on AML_DECODE. I have extensive experience in KYC/AML frameworks and would love to share my profile.\n\nBest regards,\n[Your Name]\n[Your Phone Number]`
+              )}`}
+              className="px-4 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold text-xs hover:from-purple-500 hover:to-indigo-500 transition-all rounded shadow-[0_0_15px_rgba(147,51,234,0.3)] flex items-center gap-2"
+              style={{ textDecoration: 'none' }}
+            >
+              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+              </svg>
+              EMAIL HR
+            </a>
+          )}
+
+          {/* DELETE BUTTON (Internal Maintenance) */}
           {isAuthorized && (
             <button 
               onClick={async () => {
@@ -467,6 +530,7 @@ const [showSuccess, setShowSuccess] = useState(false);
     ))}
   </div>
 )}
+ 
 {activeView === 'quiz' && (
   // Main wrapper: use h-[80vh] to contain the scroll within the modal
   <div className="flex flex-row h-[80vh] gap-4 p-2 items-start overflow-hidden">
