@@ -108,7 +108,7 @@ serve(async (req: Request) => {
           ${fileListHtml}
           <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #1e293b; text-align: center;">
             <p style="font-size: 12px; color: #64748b;">You are receiving this because you subscribed to daily alerts at <b>amldecode.in</b>.</p>
-            <p style="font-size: 12px; color: #64748b; margin-top: 10px;">© 2026 AML_DECODE | Marathahalli, Bengaluru</p>
+            <p style="font-size: 12px; color: #64748b; margin-top: 10px;">© 2026 AML_DECODE | Designed by Nitesh</p>
           </div>
         </div>
       `,
