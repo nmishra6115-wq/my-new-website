@@ -65,30 +65,48 @@ serve(async (req: Request) => {
       `).join('')
     : `<p style="color: #94a3b8; font-style: italic;">No new documents were added in the last 24 hours. Stay tuned!</p>`;
 
-  await fetch(resendUrl, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'Authorization': authHeader },
-    body: JSON.stringify({
-      from: 'AML_DECODE <alerts@amldecode.in>',
-      to: subscribers.map((s: any) => s.email),
-      subject: '🚀 Your Daily AML/KYC Job Updates',
-      html: `
-        <div style="background-color: #030712; color: #f8fafc; font-family: sans-serif; padding: 40px; border-radius: 8px; max-width: 600px; margin: auto;">
-          <div style="text-align: center; margin-bottom: 30px;">
-            <h1 style="color: #10b981; text-transform: uppercase; letter-spacing: 3px; margin: 0;">AML_DECODE</h1>
-            <p style="color: #64748b; font-size: 12px; margin-top: 5px;">FINANCIAL CRIME COMPLIANCE HUB</p>
-          </div>
-          <p style="color: #e2e8f0; font-size: 16px;">Hello,</p>
-          <p style="color: #94a3b8; line-height: 1.6;">Here are the latest job referrals and compliance documents added to the platform in the last 24 hours.</p>
-          <hr style="border: 0; border-top: 1px solid #1e293b; margin: 30px 0;">
-          ${fileListHtml}
-          <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #1e293b; text-align: center;">
-            <p style="font-size: 12px; color: #64748b;">© 2026 AML_DECODE | Designed by Nitesh Mishra</p>
-          </div>
+ // --- 2. DAILY ALERT LOGIC (SCHEDULED RUN) ---
+// ... existing code that gets subscribers and newFiles ...
+
+await fetch(resendUrl, {
+  method: 'POST',
+  headers: { 
+    'Content-Type': 'application/json', 
+    'Authorization': authHeader 
+  },
+  body: JSON.stringify({
+    from: 'AML_DECODE <alerts@amldecode.in>',
+    // This shows your professional address as the primary recipient
+    to: ['alerts@amldecode.in'], 
+    // This hides all your subscribers from each other [Privacy Fix]
+    bcc: subscribers.map((s: any) => s.email), 
+    subject: '🚀 Your Daily AML/KYC Job Updates',
+    html: `
+      <div style="background-color: #030712; color: #f8fafc; font-family: sans-serif; padding: 40px; border-radius: 8px; max-width: 600px; margin: auto;">
+        <div style="text-align: center; margin-bottom: 30px;">
+          <h1 style="color: #10b981; text-transform: uppercase; letter-spacing: 3px; margin: 0;">AML_DECODE</h1>
+          <p style="color: #64748b; font-size: 12px; margin-top: 5px;">FINANCIAL CRIME COMPLIANCE HUB</p>
         </div>
-      `,
-    })
-  });
+        
+        <p style="color: #e2e8f0; font-size: 16px;">Hello,</p>
+        <p style="color: #94a3b8; line-height: 1.6;">Here are the latest job referrals and compliance documents added to the platform in the last 24 hours.</p>
+        
+        <hr style="border: 0; border-top: 1px solid #1e293b; margin: 30px 0;">
+        
+        ${fileListHtml}
+
+        <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #1e293b; text-align: center;">
+          <p style="font-size: 12px; color: #64748b;">
+            You are receiving this because you subscribed to daily alerts at <b>amldecode.in</b>.
+          </p>
+          <p style="font-size: 12px; color: #64748b; margin-top: 10px;">
+            © 2026 AML_DECODE | Designed by Nitesh Mishra
+          </p>
+        </div>
+      </div>
+    `,
+  })
+});
 
   return new Response(JSON.stringify({ success: true }), { headers: { "Content-Type": "application/json" } });
 })
