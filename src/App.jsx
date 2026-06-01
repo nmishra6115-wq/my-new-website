@@ -530,56 +530,84 @@ const { error: dbError } = await supabase
     ))}
   </div>
 )}
- 
-{activeView === 'quiz' && (
-  // Main wrapper: use h-[80vh] to contain the scroll within the modal
-  <div className="flex flex-row h-[80vh] gap-4 p-2 items-start overflow-hidden">
+ {activeView === 'quiz' && (
+  <div className="flex flex-col h-[85vh] bg-[#030712] overflow-hidden rounded-lg border border-emerald-500/20">
     
-    {/* LEFT SIDEBAR: Sticky */}
-    {/* 'sticky top-0' makes it stay put when the parent container scrolls */}
-    <div className="w-1/3 min-w-[120px] sticky top-0 h-full flex flex-col gap-2">
-      <h3 className="text-emerald-500 font-bold uppercase text-[10px] mb-2">Tests</h3>
+    {/* 1. MOBILE-READY STICKY HUD (Heads-Up Display) */}
+    <div className="sticky top-0 z-30 bg-[#0b1c2e] border-b border-emerald-500/30 p-4 shadow-2xl">
+      <div className="max-w-4xl mx-auto flex justify-between items-center">
+        <div className="flex-grow">
+          <h2 className="text-[10px] text-emerald-500 font-black uppercase tracking-widest">Assessment Mode</h2>
+          <h1 className="text-lg font-bold text-white truncate max-w-[150px] md:max-w-none">{selectedCategory}</h1>
+        </div>
+        
+        {/* Performance HUD: Vital for that "Real" Interview Feel */}
+        <div className="flex gap-4 items-center">
+          <div className="text-center">
+            <p className="text-[8px] text-slate-500 font-bold uppercase">Score</p>
+            <p className="text-xl font-black text-emerald-400 leading-none">{quizScore}</p>
+          </div>
+          <div className="h-8 w-[1px] bg-slate-700 hidden md:block"></div>
+          <div className="text-center hidden md:block">
+            <p className="text-[8px] text-slate-500 font-bold uppercase">Accuracy</p>
+            <p className="text-xl font-black text-indigo-400 leading-none">
+              {testData.length > 0 ? Math.round((quizScore / (testData.length * 10)) * 100) : 0}%
+            </p>
+          </div>
+        </div>
+      </div>
+      
+      {/* Dynamic Progress Bar: Fills as you gain points */}
+      <div className="mt-4 h-1.5 w-full bg-slate-800 rounded-full overflow-hidden">
+        <div 
+          className="h-full bg-gradient-to-r from-emerald-500 to-indigo-500 transition-all duration-700 ease-out"
+          style={{ width: `${Math.min((quizScore / (testData.length * 10)) * 100 || 0, 100)}%` }}
+        ></div>
+      </div>
+    </div>
+
+    {/* 2. HORIZONTAL CATEGORY SELECTOR: Thumb-friendly on Mobile */}
+    <div className="flex gap-2 p-3 overflow-x-auto no-scrollbar bg-black/40 border-b border-slate-800 scroll-smooth">
       {['KYC Basics', 'AML Advanced', 'Transaction Monitoring'].map((qName, i) => (
         <button 
           key={i} 
-          onClick={() => {
-            setQuizScore(0);
-            setSelectedCategory(qName);
+          onClick={() => { 
+            setQuizScore(0); 
+            setSelectedCategory(qName); 
           }}
-          className={`w-full p-4 md:p-8 border transition-all text-sm md:text-lg font-bold
-            ${selectedCategory === qName ? "bg-emerald-900/20 border-emerald-500" : "bg-slate-900 border-slate-700 hover:border-emerald-500"}`}
+          className={`whitespace-nowrap px-5 py-2 rounded-full text-[10px] font-bold border transition-all duration-300
+            ${selectedCategory === qName 
+              ? "bg-emerald-600 border-emerald-500 text-white shadow-[0_0_15px_rgba(16,185,129,0.3)]" 
+              : "bg-slate-900 border-slate-700 text-slate-400 hover:border-emerald-500"}`}
         >
-          {qName}
+          {qName.toUpperCase()}
         </button>
       ))}
     </div>
 
-    {/* RIGHT SIDE: Scrolling Area */}
-    <div className="w-2/3 h-full overflow-y-auto pr-2">
-      
-      {/* Sticky Score Header */}
-      <div className="sticky top-0 z-20 bg-[#030712] flex justify-between items-center mb-4 p-4 rounded border border-emerald-500/20 shadow-md">
-        <h1 className="text-sm font-bold text-emerald-400">SCORE</h1>
-        <div className="bg-black px-4 py-1 rounded border border-emerald-500 font-bold text-sm">
-          {quizScore}
-        </div>
-      </div>
-      
-      {/* Scrollable Questions List */}
-      <div className="mt-2">
+    {/* 3. SCROLLABLE CONTENT AREA: Single Column focus */}
+    <div className="flex-grow overflow-y-auto p-4 pb-24 custom-scrollbar bg-[radial-gradient(circle_at_top,rgba(16,185,129,0.05),transparent)]">
+      <div className="max-w-2xl mx-auto space-y-6 mt-2">
         {isLoading ? (
-          <p className="text-slate-500 text-xs">Loading...</p>
+          <div className="flex flex-col items-center justify-center py-20 gap-4">
+            <div className="animate-spin h-10 w-10 border-4 border-emerald-500 border-t-transparent rounded-full"></div>
+            <p className="text-emerald-500 font-bold text-xs animate-pulse">INITIALIZING TEST DATA...</p>
+          </div>
         ) : testData.length > 0 ? (
           testData.map((item, index) => (
             <QuizItem key={index} item={item} onCorrect={() => setQuizScore(s => s + 10)} />
           ))
         ) : (
-          <p className="text-slate-500 text-xs">No questions found for this category.</p>
+          <div className="text-center py-20">
+            <p className="text-slate-500 text-sm">No assessment data available for this category.</p>
+          </div>
         )}
       </div>
     </div>
   </div>
 )}
+
+    
 
 {activeView === 'privacy' && (
   <div className="p-8 bg-slate-900 border border-slate-800 rounded">
