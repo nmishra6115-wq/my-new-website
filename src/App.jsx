@@ -425,7 +425,30 @@ const [selectedCategory, setSelectedCategory] = useState('KYC Basics');
     )}
   </div>
 )}
-            {activeView === 'network' && <div className="max-w-4xl mx-auto">{partnerFiles.map((f, i) => <div key={i} className="p-6 mb-4 bg-slate-900 border border-purple-500/30 rounded flex justify-between items-center"><div><span className="block font-bold text-lg text-white">{f.name}</span></div><button onClick={() => window.open(f.url, '_blank')} className="px-4 py-2 border border-purple-500 text-purple-400 hover:bg-purple-500 hover:text-white transition-all font-bold">DOWNLOAD</button></div>)}</div>}
+{activeView === 'network' && (
+  <div className="max-w-4xl mx-auto">
+    {partnerFiles.map((f, i) => (
+      <div key={i} className="p-6 mb-4 bg-slate-900 border border-purple-500/30 rounded flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+          <span className="block font-bold text-lg text-white">{f.name}</span>
+          {f.recruiter_email && (
+            <span className="text-xs text-purple-400 font-bold">CONTACT: {f.recruiter_email}</span>
+          )}
+        </div>
+        <div className="flex gap-2">
+          <button onClick={() => window.open(f.url, '_blank')} className="px-4 py-2 border border-purple-500 text-purple-400 hover:bg-purple-500 hover:text-white transition-all font-bold text-xs">
+            DOWNLOAD
+          </button>
+          {f.recruiter_email && (
+            <a href={`mailto:${f.recruiter_email}`} className="px-4 py-2 bg-purple-600 text-white font-bold text-xs hover:bg-purple-500 transition-all">
+              EMAIL HR
+            </a>
+          )}
+        </div>
+      </div>
+    ))}
+  </div>
+)}
 {activeView === 'quiz' && (
   // Main wrapper: use h-[80vh] to contain the scroll within the modal
   <div className="flex flex-row h-[80vh] gap-4 p-2 items-start overflow-hidden">
