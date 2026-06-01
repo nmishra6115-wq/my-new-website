@@ -65,10 +65,7 @@ serve(async (req: Request) => {
       `).join('')
     : `<p style="color: #94a3b8; font-style: italic;">No new documents were added in the last 24 hours. Stay tuned!</p>`;
 
- // --- 2. DAILY ALERT LOGIC (SCHEDULED RUN) ---
-// ... existing code that gets subscribers and newFiles ...
-
-await fetch(resendUrl, {
+ await fetch(resendUrl, {
   method: 'POST',
   headers: { 
     'Content-Type': 'application/json', 
@@ -76,10 +73,8 @@ await fetch(resendUrl, {
   },
   body: JSON.stringify({
     from: 'AML_DECODE <alerts@amldecode.in>',
-    // This shows your professional address as the primary recipient
-    to: ['alerts@amldecode.in'], 
-    // This hides all your subscribers from each other [Privacy Fix]
-    bcc: subscribers.map((s: any) => s.email), 
+    to: ['alerts@amldecode.in'], // Primary recipient is you
+    bcc: subscribers.map((s: any) => s.email), // Hides all subscribers from each other
     subject: '🚀 Your Daily AML/KYC Job Updates',
     html: `
       <div style="background-color: #030712; color: #f8fafc; font-family: sans-serif; padding: 40px; border-radius: 8px; max-width: 600px; margin: auto;">
@@ -89,18 +84,26 @@ await fetch(resendUrl, {
         </div>
         
         <p style="color: #e2e8f0; font-size: 16px;">Hello,</p>
-        <p style="color: #94a3b8; line-height: 1.6;">Here are the latest job referrals and compliance documents added to the platform in the last 24 hours.</p>
+        <p style="color: #94a3b8; line-height: 1.6;">Latest compliance job referrals and documents are now live on the portal.</p>
         
         <hr style="border: 0; border-top: 1px solid #1e293b; margin: 30px 0;">
         
-        ${fileListHtml}
+        ${newFiles && newFiles.length > 0 
+          ? newFiles.map((f: any) => `
+              <div style="background: #0f172a; padding: 20px; border-left: 4px solid #10b981; margin-bottom: 15px; border-radius: 4px;">
+                <h3 style="margin: 0; font-size: 18px; color: #ffffff;">${f.name}</h3>
+                <p style="margin: 5px 0; color: #94a3b8; font-size: 14px;">Available for review.</p>
+                <a href="https://amldecode.in" style="color: #10b981; font-weight: bold; text-decoration: none; font-size: 14px;">VIEW ON WEBSITE →</a>
+              </div>
+            `).join('')
+          : '<p style="color: #94a3b8;">No new updates today. Check back tomorrow!</p>'}
 
         <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #1e293b; text-align: center;">
           <p style="font-size: 12px; color: #64748b;">
             You are receiving this because you subscribed to daily alerts at <b>amldecode.in</b>.
           </p>
           <p style="font-size: 12px; color: #64748b; margin-top: 10px;">
-            © 2026 AML_DECODE | Designed by Nitesh Mishra
+            © 2026 AML_DECODE | Marathahalli, Bengaluru
           </p>
         </div>
       </div>
