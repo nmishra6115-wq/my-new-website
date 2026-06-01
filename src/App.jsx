@@ -176,7 +176,26 @@ const [selectedCategory, setSelectedCategory] = useState('KYC Basics');
   const contentRef = useRef(null);
 const [showSuccess, setShowSuccess] = useState(false);
   // --- REPLACE YOUR OLD useEffect WITH THIS EXACT BLOCK ---
- 
+ const trackEmailClick = async (fileId) => {
+    try {
+      // 1. Fetch current count from Supabase
+      const { data: currentData } = await supabase
+        .from('partner_files')
+        .select('click_count')
+        .eq('id', fileId)
+        .single();
+
+      // 2. Increment by 1 and save back to the database
+      await supabase
+        .from('partner_files')
+        .update({ click_count: (currentData?.click_count || 0) + 1 })
+        .eq('id', fileId);
+        
+      console.log(`Analytics: Click logged for file ID ${fileId}`);
+    } catch (err) {
+      console.error("Analytics error:", err);
+    }
+  };
   // --- UPDATED useEffect THAT FILTERS BY CATEGORY ---
   // --- UPDATED useEffect THAT FILTERS BY CATEGORY AND FETCHES UP TO 100 ---
   useEffect(() => {
@@ -550,15 +569,16 @@ const { error: dbError } = await supabase
           {f.recruiter_email && (
             <a 
               href={`mailto:${f.recruiter_email}?subject=${encodeURIComponent(`Application for ${f.name} - via AML_DECODE`)}&body=${encodeURIComponent(
-                `Dear Hiring Team,\n\nI am writing to express my interest in the ${f.name} position I saw on AML_DECODE. I have extensive experience in KYC/AML frameworks and would love to share my profile.\n\nBest regards,\n[Your Name]\n[Your Phone Number]`
-              )}`}
-              className="px-4 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold text-xs hover:from-purple-500 hover:to-indigo-500 transition-all rounded shadow-[0_0_15px_rgba(147,51,234,0.3)] flex items-center gap-2"
-              style={{ textDecoration: 'none' }}
-            >
-              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
-              </svg>
-              EMAIL HR
+      `Dear Hiring Team,\n\nI am writing to express my interest in the ${f.name} position I saw on AML_DECODE. I have extensive experience in KYC/AML frameworks and would love to share my profile.\n\nBest regards,\n[Your Name]\n[Your Phone Number]`
+    )}`}
+    onClick={() => trackEmailClick(f.id)} // <--- PASTE THIS LINE HERE
+    className="px-4 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold text-xs hover:from-purple-500 hover:to-indigo-500 transition-all rounded shadow-[0_0_15px_rgba(147,51,234,0.3)] flex items-center gap-2"
+    style={{ textDecoration: 'none' }}
+  >
+    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+    </svg>
+    EMAIL HR
             </a>
           )}
 
