@@ -16,22 +16,75 @@ function QuizItem({ item, onCorrect }) {
     if (option === item.correct_answer) onCorrect();
   };
 
+  const isCorrect = selected === item.correct_answer;
+
   return (
-    <div className="mb-8 p-6 bg-slate-900 border border-slate-700 rounded">
-      <h2 className="text-xl font-bold mb-4">{item.question}</h2>
-      <div className="space-y-3">
+    <div className={`mb-10 p-0 overflow-hidden bg-slate-900/50 border rounded-xl transition-all duration-500 ${isLocked ? (isCorrect ? 'border-emerald-500 shadow-[0_0_20px_rgba(16,185,129,0.1)]' : 'border-red-500/50') : 'border-slate-800'}`}>
+      
+      {/* 1. Question Header: Bold and Professional */}
+      <div className="p-6 border-b border-slate-800/50 bg-black/20">
+        <div className="flex justify-between items-start gap-4">
+          <h2 className="text-lg font-bold text-slate-100 leading-tight">{item.question}</h2>
+          {isLocked && (
+            <span className={`shrink-0 h-6 w-6 rounded-full flex items-center justify-center text-xs font-black ${isCorrect ? 'bg-emerald-500 text-black' : 'bg-red-500 text-white'}`}>
+              {isCorrect ? '✓' : '✕'}
+            </span>
+          )}
+        </div>
+      </div>
+
+      {/* 2. Options Grid: Sized for Mobile Compatibility */}
+      <div className="p-6 space-y-3">
         {(() => {
           try {
             const options = typeof item.options === 'string' ? JSON.parse(item.options) : item.options;
-            return options.map((opt, i) => (
-              <button key={i} disabled={isLocked} onClick={() => handleSelect(opt)}
-                className={`block w-full text-left p-4 bg-black border rounded transition-all ${selected === opt ? (opt === item.correct_answer ? "border-green-500 bg-green-900/20" : "border-red-500 bg-red-900/20") : "border-slate-600 hover:border-emerald-500"}`}>
-                {opt}
-              </button>
-            ));
+            return options.map((opt, i) => {
+              const isThisSelected = selected === opt;
+              const isThisCorrect = opt === item.correct_answer;
+              
+              let buttonStyle = "border-slate-700 bg-black/40 text-slate-400 hover:border-emerald-500/50";
+              if (isLocked) {
+                if (isThisCorrect) buttonStyle = "border-emerald-500 bg-emerald-500/10 text-emerald-400 shadow-[inset_0_0_10px_rgba(16,185,129,0.1)]";
+                else if (isThisSelected && !isThisCorrect) buttonStyle = "border-red-500 bg-red-500/10 text-red-400";
+                else buttonStyle = "border-slate-800 bg-black/20 text-slate-600 opacity-50";
+              }
+
+              return (
+                <button 
+                  key={i} 
+                  disabled={isLocked} 
+                  onClick={() => handleSelect(opt)}
+                  className={`group relative block w-full text-left p-4 border-2 rounded-lg transition-all duration-300 font-medium text-sm md:text-base min-h-[60px] ${buttonStyle}`}
+                >
+                  <div className="flex items-center justify-between gap-3">
+                    <span className="flex-grow">{opt}</span>
+                    {!isLocked && <span className="opacity-0 group-hover:opacity-100 text-[10px] text-emerald-500 font-black whitespace-nowrap">SELECT</span>}
+                  </div>
+                </button>
+              );
+            });
           } catch { return <p className="text-red-500">Error: Invalid format</p>; }
         })()}
       </div>
+
+      {/* 3. The Rationale: The "Real" Interview Prep Feature */}
+      {isLocked && (
+        <div className={`p-6 border-t animate-in fade-in slide-in-from-top-4 duration-500 ${isCorrect ? 'bg-emerald-500/5 border-emerald-500/20' : 'bg-slate-800/30 border-slate-700'}`}>
+          <div className="flex items-start gap-3">
+            <div className={`mt-1 p-1 rounded-md ${isCorrect ? 'bg-emerald-500/20 text-emerald-400' : 'bg-slate-700 text-slate-400'}`}>
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <div>
+              <p className="text-[10px] font-black uppercase tracking-widest mb-1 text-slate-400">Interview Insight / Rationale</p>
+              <p className="text-sm text-slate-300 leading-relaxed italic">
+                {item.explanation || "This answer is based on standard KYC/AML regulatory frameworks applied in major financial hubs like Bengaluru and Kolkata."}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
