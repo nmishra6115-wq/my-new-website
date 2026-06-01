@@ -114,7 +114,7 @@ export default function App() {
   const [newsList, setNewsList] = useState([]);
   const [testData, setTestData] = useState([]);
   const [selectedLocation, setSelectedLocation] = useState('All');
-  
+  const [recruiterEmail, setRecruiterEmail] = useState("");
   const [selectedQuiz, setSelectedQuiz] = useState(null);
 const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
 const [quizScore, setQuizScore] = useState(0); // Replacing the old 'score'
@@ -307,18 +307,19 @@ const [selectedCategory, setSelectedCategory] = useState('KYC Basics');
 {activeView === 'contribute' && (
   <div className="p-8 border border-slate-800 rounded bg-slate-900">
     {!isAuthorized ? (
-      /* 1. LOGIN FORM: This will show if the user is NOT authorized yet */
       <div className="space-y-4">
         <h2 className="text-xl font-bold text-emerald-400 uppercase tracking-widest mb-4">HR Portal Secure Login</h2>
         <input 
           type="email" 
           placeholder="Email" 
+          value={email}
           onChange={(e) => setEmail(e.target.value)} 
           className="w-full p-4 bg-black border border-slate-700 text-slate-100 font-mono focus:border-emerald-500 outline-none" 
         />
         <input 
           type="password" 
           placeholder="Password" 
+          value={password}
           onChange={(e) => setPassword(e.target.value)} 
           className="w-full p-4 bg-black border border-slate-700 text-slate-100 font-mono focus:border-emerald-500 outline-none" 
         />
@@ -334,16 +335,31 @@ const [selectedCategory, setSelectedCategory] = useState('KYC Basics');
         </button>
       </div>
     ) : (
-      /* 2. UPLOAD FORM: This shows automatically as soon as isAuthorized becomes TRUE */
       <div className="space-y-6">
         <h2 className="text-xl font-bold text-emerald-400 uppercase tracking-widest">HR Portal: Upload Documents</h2>
         
+        {/* Recruiter Email Input - Managed by React State */}
+        <div className="space-y-2">
+          <label className="text-xs text-slate-400 font-bold uppercase">Recruiter Email (Optional)</label>
+          <input 
+            type="email" 
+            placeholder="hr@company.com" 
+            value={recruiterEmail}
+            onChange={(e) => setRecruiterEmail(e.target.value)}
+            className="w-full p-4 bg-black border border-slate-700 text-slate-100 font-mono focus:border-emerald-500 outline-none" 
+          />
+        </div>
+
         <div className="p-10 border-2 border-dashed border-slate-700 rounded-lg text-center bg-black/40">
           <input 
             type="file" 
             id="hrFileInput" 
             className="hidden" 
-            onChange={(e) => document.getElementById('fileNameDisplay').innerText = e.target.files[0]?.name || ''} 
+            onChange={(e) => {
+              const fileName = e.target.files[0]?.name || '';
+              const display = document.getElementById('fileNameDisplay');
+              if (display) display.innerText = fileName;
+            }} 
           />
           <label htmlFor="hrFileInput" className="cursor-pointer bg-slate-800 px-6 py-3 rounded font-bold hover:bg-slate-700 transition-all text-sm">
             SELECT DOCUMENT (PDF/IMG)
@@ -352,14 +368,18 @@ const [selectedCategory, setSelectedCategory] = useState('KYC Basics');
         </div>
 
         <button 
+          disabled={isLoading}
           onClick={async () => {
-            const file = document.getElementById('hrFileInput').files[0];
+            const fileInput = document.getElementById('hrFileInput');
+            const file = fileInput?.files[0];
+            
             if (!file) return alert("Please select a file first!");
             setIsLoading(true);
 
-            // Action A: Upload the physical file to your Supabase Storage bucket
             const fileExt = file.name.split('.').pop();
             const fileName = `${Math.random()}.${fileExt}`;
+            
+            // 1. Upload to Storage
             const { error: uploadError } = await supabase.storage
               .from('hr-docs') 
               .upload(fileName, file);
@@ -370,26 +390,34 @@ const [selectedCategory, setSelectedCategory] = useState('KYC Basics');
               return;
             }
 
-            // Action B: Grab the secure public link of that newly uploaded file
+            // 2. Get Public URL
             const { data: urlData } = supabase.storage.from('hr-docs').getPublicUrl(fileName);
 
-            // Action C: Shove the file record into the 'partner_files' table so the Network tab displays it instantly
+            // 3. Insert into Database with recruiter_email
             const { error: dbError } = await supabase
               .from('partner_files')
-              .insert([{ name: file.name, url: urlData.publicUrl }]);
+              .insert([{ 
+                name: file.name, 
+                url: urlData.publicUrl,
+                recruiter_email: recruiterEmail || null 
+              }]);
 
             if (dbError) {
               alert("Database Sync Error: " + dbError.message);
             } else {
-              alert("Success! Document is now live on Network Jobs tab.");
-              
-              // This instantly updates your state array so it updates the Network tab without a page refresh
+              alert("Success! Document is now live.");
               const { data: updatedFiles } = await supabase.from('partner_files').select('*');
               if (updatedFiles) setPartnerFiles(updatedFiles);
+              
+              // Clear state and inputs
+              setRecruiterEmail("");
+              if (fileInput) fileInput.value = "";
+              const display = document.getElementById('fileNameDisplay');
+              if (display) display.innerText = "";
             }
             setIsLoading(false);
           }} 
-          className="w-full py-5 bg-emerald-600 hover:bg-emerald-500 text-white font-black uppercase shadow-[0_0_15px_rgba(16,185,129,0.4)] transition-all"
+          className="w-full py-5 bg-emerald-600 hover:bg-emerald-500 text-white font-black uppercase transition-all disabled:opacity-50"
         >
           {isLoading ? "UPLOADING..." : "SUBMIT TO NETWORK"}
         </button>
