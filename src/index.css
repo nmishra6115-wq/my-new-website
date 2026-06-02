@@ -104,3 +104,33 @@ body { background-color: #030712 !important; background-attachment: fixed !impor
     flex-direction: column; /* Stack on top of each other on mobile */
   }
 }
+/* --- STEP 2: ANIMATION FOR THE LIVE TICKER --- */
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee 30s linear infinite;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
+/* Add this to your index.css */
+button {
+  touch-action: manipulation; /* Prevents accidental zooming on double-tap */
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Ensure the bento grid cards don't feel "cramped" on small screens */
+@media (max-width: 768px) {
+  .grid {
+    gap: 1rem;
+  }
+  .p-10 {
+    padding: 1.5rem;
+  }
+}
