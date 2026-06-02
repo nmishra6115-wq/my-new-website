@@ -179,18 +179,17 @@ export default function App() {
       tag: "COMPLIANCE" 
     }
   ]);
-const [isTestStarted, setIsTestStarted] = useState(false);
-const [isTestComplete, setIsTestComplete] = useState(false);
-const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-const [userName, setUserName] = useState("");
-const [selectedOption, setSelectedOption] = useState(null);
-const [quizScore, setQuizScore] = useState(0);
+
+  const [isTestStarted, setIsTestStarted] = useState(false);
+  const [isTestComplete, setIsTestComplete] = useState(false);
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [userName, setUserName] = useState("");
+  const [selectedOption, setSelectedOption] = useState(null);
+  const [quizScore, setQuizScore] = useState(0);
   const [testData, setTestData] = useState([]);
   const [selectedLocation, setSelectedLocation] = useState('All');
   const [recruiterEmail, setRecruiterEmail] = useState("");
   const [selectedQuiz, setSelectedQuiz] = useState(null);
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [quizScore, setQuizScore] = useState(0); 
   const [showResult, setShowResult] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState('KYC Basics');
   const contentRef = useRef(null);
@@ -401,7 +400,7 @@ const [quizScore, setQuizScore] = useState(0);
               className="absolute bottom-12 right-12 z-20 bg-emerald-600/20 hover:bg-emerald-500 backdrop-blur-md text-white p-4 rounded-full border border-emerald-500/30 transition-all active:scale-95"
             >
               {isMuted ? (
-                <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M16.5(12)c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.38.28-.79.52-1.25.7v2.06c1.02-.21 1.95-.62 2.76-1.18L19.73 21 21 19.73 4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>
+                <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.38.28-.79.52-1.25.7v2.06c1.02-.21 1.95-.62 2.76-1.18L19.73 21 21 19.73 4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>
               ) : (
                 <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
               )}
@@ -533,7 +532,6 @@ const [quizScore, setQuizScore] = useState(0);
                     ))}
                   </div>
 
-                  {/* FIX: Replaced empty layout elements with contextual terminal details */}
                   <div className="absolute top-10 left-10 p-3 bg-black/60 border border-emerald-500/20 rounded-lg backdrop-blur-md animate-float">
                     <p className="text-[8px] font-black text-emerald-500 uppercase tracking-widest">Inbound</p>
                     <p className="text-xs font-bold text-white uppercase">Encrypted</p>
@@ -641,88 +639,89 @@ const [quizScore, setQuizScore] = useState(0);
               </div>
             </div>
           </section>
+
           {/* --- ANIMATED MENTORSHIP & EMAIL ROUTING TERMINAL --- */}
-<section className="py-32 px-6 bg-[#020617] relative overflow-hidden border-t border-emerald-500/30">
-  {/* Cyber Grid Background */}
-  <div className="absolute inset-0 opacity-[0.03] pointer-events-none"
-       style={{ backgroundImage: 'linear-gradient(#10b981 1px, transparent 1px), linear-gradient(90deg, #10b981 1px, transparent 1px)', backgroundSize: '30px 30px' }}></div>
+          <section className="py-32 px-6 bg-[#020617] relative overflow-hidden border-t border-emerald-500/30">
+            {/* Cyber Grid Background */}
+            <div className="absolute inset-0 opacity-[0.03] pointer-events-none"
+                 style={{ backgroundImage: 'linear-gradient(#10b981 1px, transparent 1px), linear-gradient(90deg, #10b981 1px, transparent 1px)', backgroundSize: '30px 30px' }}></div>
 
-  <div className="max-w-7xl mx-auto relative z-10">
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-      
-      {/* 1. THE VISUAL: LIVE STATUS TERMINAL */}
-      <div className="relative p-1 bg-gradient-to-br from-emerald-500/20 to-blue-500/20 rounded-[32px]">
-        <div className="bg-[#030712] rounded-[30px] p-10 border border-white/5 relative overflow-hidden">
-          <div className="flex items-center gap-3 mb-8">
-            <div className="h-3 w-3 rounded-full bg-emerald-500 animate-ping"></div>
-            <span className="text-[10px] font-black text-emerald-500 uppercase tracking-[0.4em]">Mentor_Allocation_Active</span>
-          </div>
+            <div className="max-w-7xl mx-auto relative z-10">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                
+                {/* 1. THE VISUAL: LIVE STATUS TERMINAL */}
+                <div className="relative p-1 bg-gradient-to-br from-emerald-500/20 to-blue-500/20 rounded-[32px]">
+                  <div className="bg-[#030712] rounded-[30px] p-10 border border-white/5 relative overflow-hidden">
+                    <div className="flex items-center gap-3 mb-8">
+                      <div className="h-3 w-3 rounded-full bg-emerald-500 animate-ping"></div>
+                      <span className="text-[10px] font-black text-emerald-500 uppercase tracking-[0.4em]">Mentor_Allocation_Active</span>
+                    </div>
 
-          <h3 className="text-3xl font-black text-white mb-6 tracking-tighter uppercase leading-none">
-            Join Our 1:1 Session <br /> <span className="text-emerald-500">& Get Expert Help For</span>
-          </h3>
+                    <h3 className="text-3xl font-black text-white mb-6 tracking-tighter uppercase leading-none">
+                      Join Our 1:1 Session <br /> <span className="text-emerald-500">& Get Expert Help For</span>
+                    </h3>
 
-          <div className="space-y-6 mb-10">
-            {[
-              "Resume Review & Optimization",
-              "Right Strategy to Apply",
-              "How to get more Interview calls",
-              "End-to-End Interview Preparation",
-              "Specialized for AML/KYC Roles"
-            ].map((text, i) => (
-              <div key={i} className="flex items-start gap-4 group">
-                <span className="text-emerald-500 font-black mt-1 group-hover:translate-x-1 transition-transform">&gt;</span>
-                <p className="text-sm text-slate-400 font-bold uppercase tracking-tight">{text}</p>
+                    <div className="space-y-6 mb-10">
+                      {[
+                        "Resume Review & Optimization",
+                        "Right Strategy to Apply",
+                        "How to get more Interview calls",
+                        "End-to-End Interview Preparation",
+                        "Specialized for AML/KYC Roles"
+                      ].map((text, i) => (
+                        <div key={i} className="flex items-start gap-4 group">
+                          <span className="text-emerald-500 font-black mt-1 group-hover:translate-x-1 transition-transform">&gt;</span>
+                          <p className="text-sm text-slate-400 font-bold uppercase tracking-tight">{text}</p>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Animated Status Bar */}
+                    <div className="w-full h-1 bg-slate-800 rounded-full overflow-hidden">
+                      <div className="h-full bg-emerald-500 w-2/3 animate-data-stream"></div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 2. THE CONTENT: DIRECT INTAKE ROUTING */}
+                <div className="space-y-8">
+                  <h2 className="text-5xl font-black text-white leading-none tracking-tighter">
+                    One Stop Career <br />
+                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-blue-500">Guidance with Our Expert</span>
+                  </h2>
+
+                  <p className="text-lg text-slate-400 leading-relaxed">
+                    Our mentorship sessions are highly exclusive and tailored to your specific career path in 
+                    **KYC, AML, and Transaction Monitoring**. To ensure the right mentor match, we process 
+                    all requests through our **Secure Intelligence Desk**.
+                  </p>
+
+                  <div className="p-6 bg-emerald-500/5 border border-emerald-500/20 rounded-2xl">
+                    <p className="text-xs font-black text-emerald-500 uppercase tracking-widest mb-2">Instructions</p>
+                    <p className="text-sm text-slate-300 italic">
+                      "Click below to Book the Session. Mention your current role and 
+                      the program you are interested in."
+                    </p>
+                  </div>
+
+                  <button 
+                    onClick={() => {
+                      const subject = encodeURIComponent("Mentorship Intake Request - [Your Name]");
+                      const body = encodeURIComponent("Hello AML_DECODE Team,\n\nI am interested in a 1:1 mentorship session. Here are my details:\n\nCurrent Role:\nLocation:\nProgram of Interest (Resume/Interview/Full Prep):\n\nPlease guide me on the next steps.");
+                      window.location.href = `mailto:alerts@amldecode.in?subject=${subject}&body=${body}`;
+                    }}
+                    className="group relative px-12 py-5 bg-emerald-600 hover:bg-emerald-500 text-black font-black text-xs uppercase tracking-widest rounded-xl transition-all shadow-[0_0_40px_rgba(16,185,129,0.2)]"
+                  >
+                    <span className="relative z-10 flex items-center gap-3">
+                      Initialize Intake Request
+                      <span className="group-hover:translate-x-2 transition-transform">&rarr;</span>
+                    </span>
+                  </button>
+                </div>
+
               </div>
-            ))}
-          </div>
-
-          {/* Animated Status Bar */}
-          <div className="w-full h-1 bg-slate-800 rounded-full overflow-hidden">
-            <div className="h-full bg-emerald-500 w-2/3 animate-data-stream"></div>
-          </div>
-        </div>
-      </div>
-
-      {/* 2. THE CONTENT: DIRECT INTAKE ROUTING */}
-      <div className="space-y-8">
-        <h2 className="text-5xl font-black text-white leading-none tracking-tighter">
-          One Stop Career <br />
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-blue-500">Guidance with Our Expert</span>
-        </h2>
-
-        <p className="text-lg text-slate-400 leading-relaxed">
-          Our mentorship sessions are highly exclusive and tailored to your specific career path in 
-          **KYC, AML, and Transaction Monitoring**. To ensure the right mentor match, we process 
-          all requests through our **Secure Intelligence Desk**.
-        </p>
-
-        <div className="p-6 bg-emerald-500/5 border border-emerald-500/20 rounded-2xl">
-          <p className="text-xs font-black text-emerald-500 uppercase tracking-widest mb-2">Instructions</p>
-          <p className="text-sm text-slate-300 italic">
-            "Click below to Book the Session. Mention your current role and 
-            the program you are interested in."
-          </p>
-        </div>
-
-        <button 
-          onClick={() => {
-            const subject = encodeURIComponent("Mentorship Intake Request - [Your Name]");
-            const body = encodeURIComponent("Hello AML_DECODE Team,\n\nI am interested in a 1:1 mentorship session. Here are my details:\n\nCurrent Role:\nLocation:\nProgram of Interest (Resume/Interview/Full Prep):\n\nPlease guide me on the next steps.");
-            window.location.href = `mailto:alerts@amldecode.in?subject=${subject}&body=${body}`;
-          }}
-          className="group relative px-12 py-5 bg-emerald-600 hover:bg-emerald-500 text-black font-black text-xs uppercase tracking-widest rounded-xl transition-all shadow-[0_0_40px_rgba(16,185,129,0.2)]"
-        >
-          <span className="relative z-10 flex items-center gap-3">
-            Initialize Intake Request
-            <span className="group-hover:translate-x-2 transition-transform">&rarr;</span>
-          </span>
-        </button>
-      </div>
-
-    </div>
-  </div>
-</section>
+            </div>
+          </section>
         </main>
       )}
 
@@ -736,7 +735,6 @@ const [quizScore, setQuizScore] = useState(0);
             &larr; BACK
           </button>
           
-          {/* FIX: Handled key transitions explicitly using dynamic state stamps to prevent freezing */}
           <div key={activeView} className="animate-view-entry max-w-7xl mx-auto text-white">
             {activeView === 'notes' && (
               <div className="flex flex-row w-full h-[80vh] gap-2 p-2">
@@ -850,180 +848,179 @@ const [quizScore, setQuizScore] = useState(0);
               </div>
             )}
 
-            {/* --- STEALTH ASSESSMENT TERMINAL --- */}
-{/* --- UNIFIED ASSESSMENT TERMINAL --- */}
-{/* --- UNIFIED ASSESSMENT TERMINAL --- */}
-{activeView === 'quiz' && (
-  <div className="flex flex-col h-[85vh] bg-[#030712] overflow-hidden rounded-3xl border border-emerald-500/20 shadow-2xl animate-view-entry">
-    
-    {/* PHASE 1: REGISTRATION GATE */}
-    {!isTestStarted ? (
-      <div className="flex-grow flex flex-col items-center justify-center p-8 text-center space-y-8 bg-[radial-gradient(circle_at_center,rgba(16,185,129,0.1),transparent)]">
-        <div className="space-y-4">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-500/10 border border-emerald-500/20 rounded-full mb-4">
-            <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
-            <span className="text-[10px] font-black text-emerald-500 uppercase tracking-widest">System Readiness: 100%</span>
-          </div>
-          <h2 className="text-4xl font-black text-white tracking-tighter uppercase">
-            Intelligence <br /> <span className="text-emerald-500">Assessment</span>
-          </h2>
-          <p className="text-slate-400 text-sm max-w-xs mx-auto leading-relaxed">
-            This evaluation contains technical nodes for KYC/AML specialists. Your performance will be logged.
-          </p>
-        </div>
+            {/* --- UNIFIED ASSESSMENT TERMINAL --- */}
+            {activeView === 'quiz' && (
+              <div className="flex flex-col h-[85vh] bg-[#030712] overflow-hidden rounded-3xl border border-emerald-500/20 shadow-2xl animate-view-entry">
+                
+                {/* PHASE 1: REGISTRATION GATE */}
+                {!isTestStarted ? (
+                  <div className="flex-grow flex flex-col items-center justify-center p-8 text-center space-y-8 bg-[radial-gradient(circle_at_center,rgba(16,185,129,0.1),transparent)]">
+                    <div className="space-y-4">
+                      <div className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-500/10 border border-emerald-500/20 rounded-full mb-4">
+                        <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                        <span className="text-[10px] font-black text-emerald-500 uppercase tracking-widest">System Readiness: 100%</span>
+                      </div>
+                      <h2 className="text-4xl font-black text-white tracking-tighter uppercase">
+                        Intelligence <br /> <span className="text-emerald-500">Assessment</span>
+                      </h2>
+                      <p className="text-slate-400 text-sm max-w-xs mx-auto leading-relaxed">
+                        This evaluation contains technical nodes for KYC/AML specialists. Your performance will be logged.
+                      </p>
+                    </div>
 
-        <div className="w-full max-w-sm space-y-4">
-          <input 
-            type="text" 
-            placeholder="ENTER FULL NAME" 
-            value={userName}
-            onChange={(e) => setUserName(e.target.value)}
-            className="w-full p-5 bg-black/60 border-2 border-slate-800 rounded-2xl text-white font-bold placeholder:text-slate-600 focus:border-emerald-500 outline-none transition-all"
-          />
-          <button 
-            disabled={!userName.trim()}
-            onClick={async () => {
-              try {
-                const { error } = await supabase
-                  .from('assessment_logs')
-                  .insert([{ 
-                    full_name: userName, 
-                    category: selectedCategory, 
-                    started_at: new Date().toISOString() 
-                  }]);
-                if (!error) setIsTestStarted(true);
-                else console.error("Database Error:", error);
-              } catch (err) {
-                // If Supabase fails, we still let the user test locally
-                setIsTestStarted(true);
-              }
-            }}
-            className="w-full py-5 bg-emerald-600 hover:bg-emerald-500 disabled:bg-slate-800 disabled:text-slate-500 text-black font-black uppercase tracking-widest rounded-2xl transition-all shadow-[0_0_30px_rgba(16,185,129,0.2)]"
-          >
-            Initialize Test
-          </button>
-        </div>
-      </div>
-    ) : !isTestComplete ? (
-      /* PHASE 2: INTERACTIVE QUESTION ENGINE */
-      <div className="flex flex-col h-full animate-view-entry">
-        {/* Progress Tracker */}
-        <div className="p-6 bg-[#0b1c2e] border-b border-emerald-500/20 flex justify-between items-center">
-          <div className="flex items-center gap-4">
-            <span className="text-[10px] font-black text-emerald-500 uppercase tracking-widest">
-              Node {currentQuestionIndex + 1} / {testData.length}
-            </span>
-            <div className="h-1 w-24 bg-slate-800 rounded-full overflow-hidden">
-              <div 
-                className="h-full bg-emerald-500 transition-all duration-500" 
-                style={{ width: `${((currentQuestionIndex + 1) / testData.length) * 100}%` }}
-              ></div>
-            </div>
-          </div>
-          <div className="px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 rounded text-[10px] font-bold text-emerald-400 uppercase">
-            Score: {quizScore}
-          </div>
-        </div>
+                    <div className="w-full max-w-sm space-y-4">
+                      <input 
+                        type="text" 
+                        placeholder="ENTER FULL NAME" 
+                        value={userName}
+                        onChange={(e) => setUserName(e.target.value)}
+                        className="w-full p-5 bg-black/60 border-2 border-slate-800 rounded-2xl text-white font-bold placeholder:text-slate-600 focus:border-emerald-500 outline-none transition-all"
+                      />
+                      <button 
+                        disabled={!userName.trim()}
+                        onClick={async () => {
+                          try {
+                            const { error } = await supabase
+                              .from('assessment_logs')
+                              .insert([{ 
+                                full_name: userName, 
+                                category: selectedCategory, 
+                                started_at: new Date().toISOString() 
+                              }]);
+                            if (!error) setIsTestStarted(true);
+                            else console.error("Database Error:", error);
+                          } catch (err) {
+                            // If Supabase fails, we still let the user test locally
+                            setIsTestStarted(true);
+                          }
+                        }}
+                        className="w-full py-5 bg-emerald-600 hover:bg-emerald-500 disabled:bg-slate-800 disabled:text-slate-500 text-black font-black uppercase tracking-widest rounded-2xl transition-all shadow-[0_0_30px_rgba(16,185,129,0.2)]"
+                      >
+                        Initialize Test
+                      </button>
+                    </div>
+                  </div>
+                ) : !isTestComplete ? (
+                  /* PHASE 2: INTERACTIVE QUESTION ENGINE */
+                  <div className="flex flex-col h-full animate-view-entry">
+                    {/* Progress Tracker */}
+                    <div className="p-6 bg-[#0b1c2e] border-b border-emerald-500/20 flex justify-between items-center">
+                      <div className="flex items-center gap-4">
+                        <span className="text-[10px] font-black text-emerald-500 uppercase tracking-widest">
+                          Node {currentQuestionIndex + 1} / {testData.length}
+                        </span>
+                        <div className="h-1 w-24 bg-slate-800 rounded-full overflow-hidden">
+                          <div 
+                            className="h-full bg-emerald-500 transition-all duration-500" 
+                            style={{ width: `${((currentQuestionIndex + 1) / testData.length) * 100}%` }}
+                          ></div>
+                        </div>
+                      </div>
+                      <div className="px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 rounded text-[10px] font-bold text-emerald-400 uppercase">
+                        Score: {quizScore}
+                      </div>
+                    </div>
 
-        {/* Question Area */}
-        <div className="flex-grow flex flex-col justify-center p-6 md:p-12 overflow-y-auto custom-scrollbar">
-          <div key={currentQuestionIndex} className="max-w-2xl mx-auto w-full space-y-8 animate-slide-up">
-            <h3 className="text-xl md:text-2xl font-bold text-white leading-tight">
-              {testData[currentQuestionIndex]?.question}
-            </h3>
-            <div className="space-y-3">
-              {testData[currentQuestionIndex]?.options.map((opt, i) => {
-                const isSelected = selectedOption === opt;
-                const isLocked = !!selectedOption;
-                const isCorrect = opt === testData[currentQuestionIndex].correct_answer;
+                    {/* Question Area */}
+                    <div className="flex-grow flex flex-col justify-center p-6 md:p-12 overflow-y-auto custom-scrollbar">
+                      <div key={currentQuestionIndex} className="max-w-2xl mx-auto w-full space-y-8 animate-slide-up">
+                        <h3 className="text-xl md:text-2xl font-bold text-white leading-tight">
+                          {testData[currentQuestionIndex]?.question}
+                        </h3>
+                        <div className="space-y-3">
+                          {testData[currentQuestionIndex]?.options.map((opt, i) => {
+                            const isSelected = selectedOption === opt;
+                            const isLocked = !!selectedOption;
+                            const isCorrect = opt === testData[currentQuestionIndex].correct_answer;
 
-                let btnStyle = "border-slate-800 bg-black/40 text-slate-400 hover:border-emerald-500/50";
-                if (isSelected) {
-                  btnStyle = isCorrect ? "border-emerald-500 bg-emerald-500/20 text-emerald-400 shadow-lg" : "border-red-500 bg-red-500/20 text-red-400";
-                }
+                            let btnStyle = "border-slate-800 bg-black/40 text-slate-400 hover:border-emerald-500/50";
+                            if (isSelected) {
+                              btnStyle = isCorrect ? "border-emerald-500 bg-emerald-500/20 text-emerald-400 shadow-lg" : "border-red-500 bg-red-500/20 text-red-400";
+                            }
 
-                return (
-                  <button
-                    key={i}
-                    disabled={isLocked}
-                    onClick={() => {
-                      setSelectedOption(opt);
-                      if (opt === testData[currentQuestionIndex].correct_answer) setQuizScore(prev => prev + 10);
-                    }}
-                    className={`w-full text-left p-5 rounded-2xl border-2 font-bold transition-all transform active:scale-[0.98] ${btnStyle}`}
-                  >
-                    {opt}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        </div>
+                            return (
+                              <button
+                                key={i}
+                                disabled={isLocked}
+                                onClick={() => {
+                                  setSelectedOption(opt);
+                                  if (opt === testData[currentQuestionIndex].correct_answer) setQuizScore(prev => prev + 10);
+                                }}
+                                className={`w-full text-left p-5 rounded-2xl border-2 font-bold transition-all transform active:scale-[0.98] ${btnStyle}`}
+                              >
+                                {opt}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    </div>
 
-        {/* Footer Nav */}
-        <div className="p-6 bg-[#0b1c2e]/50 border-t border-emerald-500/10 flex justify-end">
-          {selectedOption && (
-            <button
-              onClick={() => {
-                if (currentQuestionIndex < testData.length - 1) {
-                  setCurrentQuestionIndex(prev => prev + 1);
-                  setSelectedOption(null);
-                } else {
-                  setIsTestComplete(true);
-                }
-              }}
-              className="px-10 py-4 bg-emerald-600 hover:bg-emerald-500 text-black font-black uppercase tracking-widest rounded-xl transition-all shadow-lg"
-            >
-              {currentQuestionIndex === testData.length - 1 ? "FINALIZE RESULTS" : "NEXT NODE →"}
-            </button>
-          )}
-        </div>
-      </div>
-    ) : (
-      /* PHASE 3: FINAL RESULTS & TAGGING */
-      <div className="flex-grow flex flex-col items-center justify-center p-8 text-center space-y-8">
-        <div className="bg-slate-900 border-2 border-emerald-500/30 p-10 rounded-full w-48 h-48 flex flex-col items-center justify-center shadow-2xl">
-          <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Final Score</p>
-          <p className="text-5xl font-black text-white leading-none">{quizScore}</p>
-        </div>
+                    {/* Footer Nav */}
+                    <div className="p-6 bg-[#0b1c2e]/50 border-t border-emerald-500/10 flex justify-end">
+                      {selectedOption && (
+                        <button
+                          onClick={() => {
+                            if (currentQuestionIndex < testData.length - 1) {
+                              setCurrentQuestionIndex(prev => prev + 1);
+                              setSelectedOption(null);
+                            } else {
+                              setIsTestComplete(true);
+                            }
+                          }}
+                          className="px-10 py-4 bg-emerald-600 hover:bg-emerald-500 text-black font-black uppercase tracking-widest rounded-xl transition-all shadow-lg"
+                        >
+                          {currentQuestionIndex === testData.length - 1 ? "FINALIZE RESULTS" : "NEXT NODE →"}
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                ) : (
+                  /* PHASE 3: FINAL RESULTS & TAGGING */
+                  <div className="flex-grow flex flex-col items-center justify-center p-8 text-center space-y-8">
+                    <div className="bg-slate-900 border-2 border-emerald-500/30 p-10 rounded-full w-48 h-48 flex flex-col items-center justify-center shadow-2xl">
+                      <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Final Score</p>
+                      <p className="text-5xl font-black text-white leading-none">{quizScore}</p>
+                    </div>
 
-        <div className="space-y-4">
-          <h2 className="text-3xl font-black text-white uppercase tracking-tighter">
-            Expertise: <span className={quizScore >= 400 ? "text-emerald-400" : quizScore >= 250 ? "text-indigo-400" : "text-amber-500"}>
-              {quizScore >= 400 ? "DEPTH KNOWLEDGE" : quizScore >= 250 ? "AVERAGE KNOWLEDGE" : "IMPROVEMENT NEEDED"}
-            </span>
-          </h2>
-          <p className="text-slate-400 text-sm max-w-xs mx-auto italic">
-            Assessment complete for {userName}. Record logged in Bengaluru.
-          </p>
-        </div>
+                    <div className="space-y-4">
+                      <h2 className="text-3xl font-black text-white uppercase tracking-tighter">
+                        Expertise: <span className={quizScore >= 400 ? "text-emerald-400" : quizScore >= 250 ? "text-indigo-400" : "text-amber-500"}>
+                          {quizScore >= 400 ? "DEPTH KNOWLEDGE" : quizScore >= 250 ? "AVERAGE KNOWLEDGE" : "IMPROVEMENT NEEDED"}
+                        </span>
+                      </h2>
+                      <p className="text-slate-400 text-sm max-w-xs mx-auto italic">
+                        Assessment complete for {userName}. Record logged in Bengaluru.
+                      </p>
+                    </div>
 
-        <button 
-          onClick={async () => {
-            try {
-              await supabase.from('assessment_logs').update({ 
-                final_score: quizScore, 
-                expertise_tag: quizScore >= 400 ? "Depth" : quizScore >= 250 ? "Average" : "Improvement",
-                completed_at: new Date().toISOString() 
-              }).eq('full_name', userName);
-            } catch (err) {
-              console.error("Final Save Failed");
-            }
-            // System Reset
-            setIsTestStarted(false); 
-            setIsTestComplete(false); 
-            setCurrentQuestionIndex(0); 
-            setQuizScore(0); 
-            setUserName("");
-          }}
-          className="px-12 py-5 bg-white text-black font-black uppercase tracking-widest rounded-2xl hover:bg-emerald-500 transition-all shadow-xl"
-        >
-          Submit & Close Terminal
-        </button>
-      </div>
-    )}
-  </div>
-)}
+                    <button 
+                      onClick={async () => {
+                        try {
+                          await supabase.from('assessment_logs').update({ 
+                            final_score: quizScore, 
+                            expertise_tag: quizScore >= 400 ? "Depth" : quizScore >= 250 ? "Average" : "Improvement",
+                            completed_at: new Date().toISOString() 
+                          }).eq('full_name', userName);
+                        } catch (err) {
+                          console.error("Final Save Failed");
+                        }
+                        // System Reset
+                        setIsTestStarted(false); 
+                        setIsTestComplete(false); 
+                        setCurrentQuestionIndex(0); 
+                        setQuizScore(0); 
+                        setUserName("");
+                      }}
+                      className="px-12 py-5 bg-white text-black font-black uppercase tracking-widest rounded-2xl hover:bg-emerald-500 transition-all shadow-xl"
+                    >
+                      Submit & Close Terminal
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
+            
             {activeView === 'privacy' && (
               <div className="p-8 bg-slate-900 border border-slate-800 rounded animate-view-entry">
                 <h1 className="text-2xl font-bold mb-6 text-emerald-400">{privacyPolicy.title}</h1>
@@ -1069,82 +1066,81 @@ const [quizScore, setQuizScore] = useState(0);
       )}
          
 
-     {/* --- ANIMATED SYSTEM FOOTER --- */}
-      {/* FOOTER */}
-<footer className="bg-[#0b1c2e] text-white border-t border-emerald-500/20 pt-16 pb-8 mt-20 relative overflow-hidden">
+      {/* --- ANIMATED SYSTEM FOOTER --- */}
+      <footer className="bg-[#0b1c2e] text-white border-t border-emerald-500/20 pt-16 pb-8 mt-20 relative overflow-hidden">
   
-  {/* Hyper-Animated Laser Scan Overlay */}
-  <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-emerald-400 to-transparent opacity-40 shadow-[0_0_15px_#10b981]"
-       style={{ animation: 'footer-scan 4s linear infinite', pointerEvents: 'none' }}></div>
+        {/* Hyper-Animated Laser Scan Overlay */}
+        <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-emerald-400 to-transparent opacity-40 shadow-[0_0_15px_#10b981]"
+             style={{ animation: 'footer-scan 4s linear infinite', pointerEvents: 'none' }}></div>
 
-  <div className="max-w-7xl mx-auto px-6 relative z-10">
-    <div className="grid grid-cols-1 md:grid-cols-12 gap-12 mb-16">
-      
-      <div className="md:col-span-5 space-y-6">
-        {/* Pulsing Branding Element */}
-        <img 
-          src="/logo.png" 
-          alt="AML_DECODE" 
-          className="h-12 w-auto object-contain transition-transform duration-500" 
-          style={{ animation: 'terminal-pulse 3s ease-in-out infinite' }}
-        />
-        <p className="text-sm leading-relaxed text-slate-400 max-w-md">
-          AMLDecode is your go-to platform for AML, KYC, EDD, and Transaction Monitoring learning. 
-          We provide interview preparation notes, industry insights, and latest job opportunities 
-          to help professionals grow their careers in financial crime compliance.
-        </p>
-      </div>
+        <div className="max-w-7xl mx-auto px-6 relative z-10">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-12 mb-16">
+            
+            <div className="md:col-span-5 space-y-6">
+              {/* Pulsing Branding Element */}
+              <img 
+                src="/logo.png" 
+                alt="AML_DECODE" 
+                className="h-12 w-auto object-contain transition-transform duration-500" 
+                style={{ animation: 'terminal-pulse 3s ease-in-out infinite' }}
+              />
+              <p className="text-sm leading-relaxed text-slate-400 max-w-md">
+                AMLDecode is your go-to platform for AML, KYC, EDD, and Transaction Monitoring learning. 
+                We provide interview preparation notes, industry insights, and latest job opportunities 
+                to help professionals grow their careers in financial crime compliance.
+              </p>
+            </div>
 
-      <div className="md:col-span-3 space-y-4">
-        <h3 className="text-emerald-500 font-black uppercase text-[10px] tracking-widest flex items-center gap-2">
-          <span className="h-1.5 w-1.5 bg-emerald-500 rounded-full animate-ping"></span>
-          Navigation
-        </h3>
-        <div className="flex flex-col gap-3 text-sm text-slate-300">
-          <button onClick={() => setActiveView('faq')} className="hover:text-emerald-400 transition-all text-left w-fit uppercase font-bold tracking-tighter hover:translate-x-1.5 duration-300">FAQ</button>
-          <button onClick={() => setActiveView('contact')} className="hover:text-emerald-400 transition-colors text-left w-fit uppercase font-bold tracking-tighter hover:translate-x-1.5 duration-300">Contact Us</button>
-          <button onClick={() => setActiveView('notes')} className="hover:text-emerald-400 transition-colors text-left w-fit uppercase font-bold tracking-tighter hover:translate-x-1.5 duration-300">Learning Notes</button>
+            <div className="md:col-span-3 space-y-4">
+              <h3 className="text-emerald-500 font-black uppercase text-[10px] tracking-widest flex items-center gap-2">
+                <span className="h-1.5 w-1.5 bg-emerald-500 rounded-full animate-ping"></span>
+                Navigation
+              </h3>
+              <div className="flex flex-col gap-3 text-sm text-slate-300">
+                <button onClick={() => setActiveView('faq')} className="hover:text-emerald-400 transition-all text-left w-fit uppercase font-bold tracking-tighter hover:translate-x-1.5 duration-300">FAQ</button>
+                <button onClick={() => setActiveView('contact')} className="hover:text-emerald-400 transition-colors text-left w-fit uppercase font-bold tracking-tighter hover:translate-x-1.5 duration-300">Contact Us</button>
+                <button onClick={() => setActiveView('notes')} className="hover:text-emerald-400 transition-colors text-left w-fit uppercase font-bold tracking-tighter hover:translate-x-1.5 duration-300">Learning Notes</button>
+              </div>
+            </div>
+
+            <div className="md:col-span-4 space-y-4">
+              <h3 className="text-emerald-500 font-black uppercase text-[10px] tracking-widest flex items-center gap-2">
+                <span className="h-1.5 w-1.5 bg-emerald-500 rounded-full animate-ping [animation-delay:1s]"></span>
+                Legal & Compliance
+              </h3>
+              <div className="flex flex-col gap-3 text-sm text-slate-300">
+                <button onClick={() => setActiveView('privacy')} className="hover:text-emerald-400 transition-colors text-left w-fit uppercase font-bold tracking-tighter hover:translate-x-1.5 duration-300">Privacy Policy</button>
+                <button onClick={() => setActiveView('terms')} className="hover:text-emerald-400 transition-colors text-left w-fit uppercase font-bold tracking-tighter hover:translate-x-1.5 duration-300">Terms of Service</button>
+              </div>
+            </div>
+          </div>
+
+          <div className="border-t border-slate-800/50 pt-8 flex flex-col md:flex-row justify-between items-center gap-6">
+            <div className="text-[10px] text-slate-500 font-bold uppercase tracking-widest text-center md:text-left flex items-center gap-2">
+              {/* Operational Status Dot */}
+              <span className="h-2 w-2 rounded-full bg-emerald-500 inline-block" style={{ animation: 'terminal-pulse 1s ease-in-out infinite' }}></span>
+              <span>© 2026 AML_DECODE / Designed by @ Nitesh Mishra</span>
+            </div>
+
+            <div className="flex items-center gap-8">
+              {/* LinkedIn Icon Link */}
+              <a href="https://linkedin.com/in/yourprofile" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-[#0077b5] transition-all duration-300 transform hover:scale-135 hover:rotate-6">
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.761 0 5-2.239 5-5v-14c0-2.761-2.239-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+              </a>
+
+              {/* Twitter Icon Link */}
+              <a href="https://twitter.com/yourhandle" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-white transition-all duration-300 transform hover:scale-135 hover:-rotate-6">
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/></svg>
+              </a>
+
+              {/* Instagram Icon Link */}
+              <a href="https://instagram.com/yourhandle" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-[#e4405f] transition-all duration-300 transform hover:scale-135 hover:rotate-12">
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 1.173.055 1.805.249 2.227.415.563.22.964.482 1.385.904.422.421.684.822.904 1.385.166.422.36 1.054.415 2.227.058 1.266.07 1.646.07 4.85s-.012 3.584-.07 4.85c-.055 1.173-.249 1.805-.415 2.227-.22.563-.482.964-.904 1.385-.421.421-.822.684-1.385.904-.422.166-1.054.36-2.227.415-1.266.058-1.646.07-4.85.07s-3.584-.012-4.85-.07c-1.173-.055-1.805-.249-2.227-.415-.563-.22-.964-.482-1.385-.904-.421-.421-.684-.822-.904-1.385-.166-.422-.36-1.054-.415-2.227-.058-1.266-.07-1.646-.07-4.85s.012-3.584.07-4.85c.055-1.173.249-1.805.415-2.227.22-.563.482-.964.904-1.385.421-.421.822-.684 1.385-.904.422-.166 1.054-.36 2.227-.415 1.266-.058 1.646-.07 4.85-.07zm0 1.442c-3.136 0-3.509.012-4.75.068-1.077.05-1.662.23-2.052.383-.518.201-.887.44-1.275.828s-.627.757-.828 1.275c-.153.39-.333.975-.383 2.052-.056 1.241-.068 1.614-.068 4.75s.012 3.509.068 4.75c.05 1.077.23 1.662.383 2.052.201.518.44.887.828 1.275s.757.627 1.275.828c.39.153.975.333 2.052.383 1.241.056 1.614.068 4.75.068s3.509-.012 4.75-.068c1.077-.05 1.662-.23 2.052-.383.518-.201.887-.44 1.275-.828s.627-.757.828-1.275c.153-.39.333-.975.383-2.052.056-1.241.068-1.614.068-4.75s-.012-3.509-.068-4.75c-.05-1.077-.23-1.662-.383-2.052-.201-.518-.44-.887-.828-1.275s-.757-.627-1.275-.828c-.39-.153-.975-.333-2.052-.383-1.241-.056-1.614-.068-4.75-.068zm0 3.64a4.755 4.755 0 1 0 0 9.51 4.755 4.755 0 0 0 0-9.51zm0 1.442a3.313 3.313 0 1 1 0 6.626 3.313 3.313 0 0 1 0-6.626zm5.35-4.832a1.11 1.11 0 1 1-2.22 0 1.11 1.11 0 0 1 2.22 0z"/></svg>
+              </a>
+            </div>
+          </div>
         </div>
-      </div>
-
-      <div className="md:col-span-4 space-y-4">
-        <h3 className="text-emerald-500 font-black uppercase text-[10px] tracking-widest flex items-center gap-2">
-          <span className="h-1.5 w-1.5 bg-emerald-500 rounded-full animate-ping [animation-delay:1s]"></span>
-          Legal & Compliance
-        </h3>
-        <div className="flex flex-col gap-3 text-sm text-slate-300">
-          <button onClick={() => setActiveView('privacy')} className="hover:text-emerald-400 transition-colors text-left w-fit uppercase font-bold tracking-tighter hover:translate-x-1.5 duration-300">Privacy Policy</button>
-          <button onClick={() => setActiveView('terms')} className="hover:text-emerald-400 transition-colors text-left w-fit uppercase font-bold tracking-tighter hover:translate-x-1.5 duration-300">Terms of Service</button>
-        </div>
-      </div>
-    </div>
-
-    <div className="border-t border-slate-800/50 pt-8 flex flex-col md:flex-row justify-between items-center gap-6">
-      <div className="text-[10px] text-slate-500 font-bold uppercase tracking-widest text-center md:text-left flex items-center gap-2">
-        {/* Operational Status Dot */}
-        <span className="h-2 w-2 rounded-full bg-emerald-500 inline-block" style={{ animation: 'terminal-pulse 1s ease-in-out infinite' }}></span>
-        <span>© 2026 AML_DECODE / Designed by @ Nitesh Mishra</span>
-      </div>
-
-    <div className="flex items-center gap-8">
-  {/* LinkedIn Icon Link */}
-  <a href="https://linkedin.com/in/yourprofile" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-[#0077b5] transition-all duration-300 transform hover:scale-135 hover:rotate-6">
-    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.761 0 5-2.239 5-5v-14c0-2.761-2.239-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
-  </a>
-
-  {/* Twitter Icon Link - Fixed (0) typo */}
-  <a href="https://twitter.com/yourhandle" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-white transition-all duration-300 transform hover:scale-135 hover:-rotate-6">
-    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/></svg>
-  </a>
-
-  {/* Instagram Icon Link - Fixed (12) typo */}
-  <a href="https://instagram.com/yourhandle" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-[#e4405f] transition-all duration-300 transform hover:scale-135 hover:rotate-12">
-    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 1.173.055 1.805.249 2.227.415.563.22.964.482 1.385.904.422.421.684.822.904 1.385.166.422.36 1.054.415 2.227.058 1.266.07 1.646.07 4.85s-.012 3.584-.07 4.85c-.055 1.173-.249 1.805-.415 2.227-.22.563-.482.964-.904 1.385-.421.421-.822.684-1.385.904-.422.166-1.054.36-2.227.415-1.266.058-1.646.07-4.85.07s-3.584-.012-4.85-.07c-1.173-.055-1.805-.249-2.227-.415-.563-.22-.964-.482-1.385-.904-.421-.421-.684-.822-.904-1.385-.166-.422-.36-1.054-.415-2.227-.058-1.266-.07-1.646-.07-4.85s.012-3.584.07-4.85c.055-1.173.249-1.805.415-2.227.22-.563.482-.964.904-1.385.421-.421.822-.684 1.385-.904.422-.166 1.054-.36 2.227-.415 1.266-.058 1.646-.07 4.85-.07zm0 1.442c-3.136 0-3.509.012-4.75.068-1.077.05-1.662.23-2.052.383-.518.201-.887.44-1.275.828s-.627.757-.828 1.275c-.153.39-.333.975-.383 2.052-.056 1.241-.068 1.614-.068 4.75s.012 3.509.068 4.75c.05 1.077.23 1.662.383 2.052.201.518.44.887.828 1.275s.757.627 1.275.828c.39.153.975.333 2.052.383 1.241.056 1.614.068 4.75.068s3.509-.012 4.75-.068c1.077-.05 1.662-.23 2.052-.383.518-.201.887-.44 1.275-.828s.627-.757.828-1.275c.153-.39.333-.975.383-2.052.056-1.241.068-1.614.068-4.75s-.012-3.509-.068-4.75c-.05-1.077-.23-1.662-.383-2.052-.201-.518-.44-.887-.828-1.275s-.757-.627-1.275-.828c-.39-.153-.975-.333-2.052-.383-1.241-.056-1.614-.068-4.75-.068zm0 3.64a4.755 4.755 0 1 0 0 9.51 4.755 4.755 0 0 0 0-9.51zm0 1.442a3.313 3.313 0 1 1 0 6.626 3.313 3.313 0 0 1 0-6.626zm5.35-4.832a1.11 1.11 0 1 1-2.22 0 1.11 1.11 0 0 1 2.22 0z"/></svg>
-  </a>
-</div>
-    </div>
-  </div>
-</footer>
+      </footer>
 
       <SubscribeModal/>
     </div>
