@@ -426,19 +426,26 @@ export default function App() {
                 </div>
 
                 {/* REGULATORY TICKER */}
-                <div className="md:col-span-12 mt-4 p-6 bg-black/80 backdrop-blur-md border border-white/10 rounded-2xl flex items-center gap-8 overflow-hidden">
-                  <div className="shrink-0 flex items-center gap-3 px-4 py-2 bg-red-500/10 border border-red-500/20 rounded-lg">
-                    <span className="h-2 w-2 rounded-full bg-red-500 animate-ping"></span>
-                    <span className="text-[11px] font-black text-red-500 uppercase tracking-widest">Global Watch</span>
-                  </div>
-                  <div className="text-[12px] font-bold text-slate-400 uppercase tracking-[0.25em] flex gap-24 whitespace-nowrap animate-marquee">
-                    <span>&gt; RBI UPDATES MASTER DIRECTION ON KYC FOR 2026</span>
-                    <span>&gt; NEW AML BLITZ HIRING EVENT CONFIRMED FOR KOLKATA IN DECEMBER</span>
-                    <span>&gt; FATF UPDATES GREY LIST REQUIREMENTS FOR HIGH-RISK JURISDICTIONS</span>
-                    <span>&gt; RBI UPDATES MASTER DIRECTION ON KYC FOR 2026</span>
-                    <span>&gt; NEW AML BLITZ HIRING EVENT CONFIRMED FOR KOLKATA IN DECEMBER</span>
-                  </div>
-                </div>
+<div className="md:col-span-12 mt-4 p-6 bg-black/80 backdrop-blur-md border border-white/10 rounded-2xl flex items-center overflow-hidden relative">
+  
+  {/* FIXED LABEL */}
+  <div className="shrink-0 flex items-center gap-3 px-6 py-2 bg-[#030712] border border-red-500/30 rounded-lg relative z-20 mr-6 shadow-[10px_0_20px_rgba(0,0,0,0.8)]">
+    <span className="h-2 w-2 rounded-full bg-red-500 animate-ping"></span>
+    <span className="text-[11px] font-black text-red-500 uppercase tracking-widest whitespace-nowrap">Global Watch</span>
+  </div>
+
+  {/* SCROLLING AREA */}
+  <div className="relative flex-grow overflow-hidden z-10">
+    <div className="text-[12px] font-bold text-slate-400 uppercase tracking-[0.25em] flex gap-24 whitespace-nowrap animate-marquee">
+      <span>&gt; RBI UPDATES MASTER DIRECTION ON KYC FOR 2026</span>
+      <span>&gt; NEW AML BLITZ HIRING EVENT CONFIRMED FOR KOLKATA IN DECEMBER</span>
+      <span>&gt; FATF UPDATES GREY LIST REQUIREMENTS FOR HIGH-RISK JURISDICTIONS</span>
+      {/* Duplicates for seamless loop */}
+      <span>&gt; RBI UPDATES MASTER DIRECTION ON KYC FOR 2026</span>
+      <span>&gt; NEW AML BLITZ HIRING EVENT CONFIRMED FOR KOLKATA IN DECEMBER</span>
+    </div>
+  </div>
+</div>
 
               </div>
             </div>
