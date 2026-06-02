@@ -158,3 +158,33 @@ button {
 .animate-float { animation: float 5s ease-in-out infinite; }
 .animate-float-delayed { animation: float 5s ease-in-out infinite 2.5s; }
 .animate-spin-slow { animation: spin 10s linear infinite; }
+
+@keyframes scan-move {
+  from { transform: translateY(-100%); }
+  to { transform: translateY(100%); }
+}
+
+@keyframes code-scroll {
+  0% { transform: translateX(100%); }
+  100% { transform: translateX(-100%); }
+}
+
+@keyframes bar-grow {
+  0%, 100% { transform: scaleY(1); }
+  50% { transform: scaleY(1.5); }
+}
+
+@keyframes ping-slow {
+  0% { transform: scale(1); opacity: 0.5; }
+  100% { transform: scale(1.5); opacity: 0; }
+}
+
+@keyframes pulse-fast {
+  0%, 100% { opacity: 0.2; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(1.05); }
+}
+
+.animate-code-scroll { animation: code-scroll 10s linear infinite; }
+.animate-bar-grow { animation: bar-grow 2s ease-in-out infinite; transform-origin: bottom; }
+.animate-ping-slow { animation: ping-slow 3s cubic-bezier(0, 0, 0.2, 1) infinite; }
+.animate-pulse-fast { animation: pulse-fast 1.5s ease-in-out infinite; }
