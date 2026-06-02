@@ -373,16 +373,24 @@ export default function App() {
                       Daily Intelligence Challenge
                     </h3>
                     <p className="text-2xl md:text-3xl font-bold text-white mb-8 leading-tight">
-                      "A customer makes 3 deposits of ₹45,000 in different Marathahalli branches within 60 minutes."
+                      "A customer makes 3 deposits of ₹45,000 in different branches within 60 minutes."
                     </p>
                     <div className="flex flex-wrap gap-4">
                       {/* FIX: Connected your click engine function to the buttons */}
-                      <button 
-                        onClick={() => handleChallenge(true)}
-                        className="px-8 py-3 bg-emerald-600 hover:bg-emerald-500 text-black text-[12px] font-black rounded-lg transition-all shadow-[0_0_20px_rgba(16,185,129,0.3)]"
-                      >
-                        STRUCTURING
-                      </button>
+                     <button 
+    onClick={() => handleChallenge(true)}
+    className="px-8 py-3 bg-slate-800/50 border border-white/10 text-slate-300 text-[12px] font-black rounded-lg hover:bg-emerald-600 hover:text-black hover:border-emerald-500/50 transition-all shadow-sm hover:shadow-[0_0_20px_rgba(16,185,129,0.3)]"
+  >
+    STRUCTURING
+  </button>
+
+  {/* PLACEMENT BUTTON - Matched Style */}
+  <button 
+    onClick={() => handleChallenge(false)}
+    className="px-8 py-3 bg-slate-800/50 border border-white/10 text-slate-300 text-[12px] font-black rounded-lg hover:bg-emerald-600 hover:text-black hover:border-emerald-500/50 transition-all shadow-sm hover:shadow-[0_0_20px_rgba(16,185,129,0.3)]"
+  >
+    PLACEMENT
+  </button>
                       <button 
                         onClick={() => handleChallenge(false)}
                         className="px-8 py-3 bg-slate-800/50 border border-white/10 text-slate-300 text-[12px] font-black rounded-lg hover:border-emerald-500/50 transition-all"
