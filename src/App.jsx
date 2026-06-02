@@ -846,64 +846,165 @@ export default function App() {
             )}
 
             {/* --- STEALTH ASSESSMENT TERMINAL --- */}
+{/* --- UNIFIED ASSESSMENT TERMINAL --- */}
 {activeView === 'quiz' && (
   <div className="flex flex-col h-[85vh] bg-[#030712] overflow-hidden rounded-3xl border border-emerald-500/20 shadow-2xl animate-view-entry">
     
-    {/* 1. STICKY HEADER: CATEGORY SELECTOR & HIDDEN SCORE */}
-    <div className="sticky top-0 z-30 bg-[#0b1c2e] border-b border-emerald-500/30 p-4 shadow-2xl">
-      <div className="max-w-4xl mx-auto flex justify-between items-center mb-4">
-        <div className="flex-grow">
-          <h2 className="text-[10px] text-emerald-500 font-black uppercase tracking-[0.3em] mb-1">Assessment Engine</h2>
-          <h1 className="text-lg font-bold text-white uppercase">{selectedCategory}</h1>
+    {/* PHASE 1: REGISTRATION GATE */}
+    {!isTestStarted ? (
+      <div className="flex-grow flex flex-col items-center justify-center p-8 text-center space-y-8 bg-[radial-gradient(circle_at_center,rgba(16,185,129,0.1),transparent)]">
+        <div className="space-y-4">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-500/10 border border-emerald-500/20 rounded-full mb-4">
+            <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span className="text-[10px] font-black text-emerald-500 uppercase tracking-widest">System Readiness: 100%</span>
+          </div>
+          <h2 className="text-4xl font-black text-white tracking-tighter uppercase">
+            Intelligence <br /> <span className="text-emerald-500">Assessment</span>
+          </h2>
+          <p className="text-slate-400 text-sm max-w-xs mx-auto leading-relaxed">
+            This evaluation contains 50 technical nodes. Your performance will be logged in our Bengaluru terminal.
+          </p>
         </div>
-        
-        {/* SCORE POP-UP: Only shows if all questions are locked */}
-        {testData.every(item => item.isLocked) && testData.length > 0 ? (
-          <div className="flex gap-4 items-center animate-bounce-in">
-            <div className="text-center">
-              <p className="text-[8px] text-emerald-500 font-bold uppercase">Final Score</p>
-              <p className="text-2xl font-black text-emerald-400 leading-none">{quizScore}</p>
-            </div>
-            <div className="text-center border-l border-slate-700 pl-4">
-              <p className="text-[8px] text-indigo-500 font-bold uppercase">Accuracy</p>
-              <p className="text-2xl font-black text-indigo-400 leading-none">
-                {Math.round((quizScore / (testData.length * 10)) * 100)}%
-              </p>
-            </div>
-          </div>
-        ) : (
-          <div className="flex items-center gap-2 px-3 py-1 bg-black/40 border border-white/5 rounded-lg">
-            <div className="h-1.5 w-1.5 rounded-full bg-slate-600 animate-pulse"></div>
-            <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Awaiting Completion</span>
-          </div>
-        )}
-      </div>
 
-      {/* 2. CATEGORY SWITCHER */}
-      <div className="flex gap-3 overflow-x-auto no-scrollbar">
-        {['KYC Basics', 'AML Advanced', 'Transaction Monitoring'].map((qName, i) => (
+        <div className="w-full max-w-sm space-y-4">
+          <input 
+            type="text" 
+            placeholder="ENTER FULL NAME" 
+            value={userName}
+            onChange={(e) => setUserName(e.target.value)}
+            className="w-full p-5 bg-black/60 border-2 border-slate-800 rounded-2xl text-white font-bold placeholder:text-slate-600 focus:border-emerald-500 outline-none transition-all"
+          />
           <button 
-            key={i} 
-            onClick={() => { setQuizScore(0); setSelectedCategory(qName); }}
-            className={`whitespace-nowrap px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-wider border transition-all
-              ${selectedCategory === qName ? "bg-emerald-600 border-emerald-400 text-white" : "bg-slate-900 border-slate-700 text-slate-400"}`}
+            disabled={!userName.trim()}
+            onClick={async () => {
+              // Registration Log
+              const { error } = await supabase
+                .from('assessment_logs')
+                .insert([{ 
+                  full_name: userName, 
+                  category: selectedCategory, 
+                  started_at: new Date().toISOString() 
+                }]);
+              if (!error) setIsTestStarted(true);
+              else alert("Network error. Please try again.");
+            }}
+            className="w-full py-5 bg-emerald-600 hover:bg-emerald-500 disabled:bg-slate-800 disabled:text-slate-500 text-black font-black uppercase tracking-widest rounded-2xl transition-all shadow-[0_0_30px_rgba(16,185,129,0.2)]"
           >
-            {qName}
+            Initialize Test
           </button>
-        ))}
+        </div>
       </div>
-    </div>
-
-    {/* 3. QUESTION STREAM */}
-    <div className="flex-grow overflow-y-auto p-6 pb-24 custom-scrollbar bg-[radial-gradient(circle_at_top,rgba(16,185,129,0.05),transparent)]">
-      <div className="max-w-2xl mx-auto space-y-8">
-        {testData.map((item, index) => (
-          <div key={index} className="animate-slide-up" style={{ animationDelay: `${index * 0.1}s` }}>
-            <QuizItem item={item} onCorrect={() => setQuizScore(s => s + 10)} />
+    ) : !isTestComplete ? (
+      /* PHASE 2: INTERACTIVE QUESTION ENGINE */
+      <div className="flex flex-col h-full animate-view-entry">
+        {/* Progress Tracker */}
+        <div className="p-6 bg-[#0b1c2e] border-b border-emerald-500/20 flex justify-between items-center">
+          <div className="flex items-center gap-4">
+            <span className="text-[10px] font-black text-emerald-500 uppercase tracking-widest">
+              Node {currentQuestionIndex + 1} / {testData.length}
+            </span>
+            <div className="h-1 w-24 bg-slate-800 rounded-full overflow-hidden">
+              <div 
+                className="h-full bg-emerald-500 transition-all duration-500" 
+                style={{ width: `${((currentQuestionIndex + 1) / testData.length) * 100}%` }}
+              ></div>
+            </div>
           </div>
-        ))}
+          <div className="px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 rounded text-[10px] font-bold text-emerald-400 uppercase">
+            Score: {quizScore}
+          </div>
+        </div>
+
+        {/* Question Area */}
+        <div className="flex-grow flex flex-col justify-center p-6 md:p-12 overflow-y-auto custom-scrollbar">
+          <div key={currentQuestionIndex} className="max-w-2xl mx-auto w-full space-y-8 animate-slide-up">
+            <h3 className="text-xl md:text-2xl font-bold text-white leading-tight">
+              {testData[currentQuestionIndex]?.question}
+            </h3>
+            <div className="space-y-3">
+              {testData[currentQuestionIndex]?.options.map((opt, i) => {
+                const isSelected = selectedOption === opt;
+                const isLocked = !!selectedOption;
+                const isCorrect = opt === testData[currentQuestionIndex].correct_answer;
+
+                let btnStyle = "border-slate-800 bg-black/40 text-slate-400 hover:border-emerald-500/50";
+                if (isSelected) {
+                  btnStyle = isCorrect ? "border-emerald-500 bg-emerald-500/20 text-emerald-400 shadow-lg" : "border-red-500 bg-red-500/20 text-red-400";
+                }
+
+                return (
+                  <button
+                    key={i}
+                    disabled={isLocked}
+                    onClick={() => {
+                      setSelectedOption(opt);
+                      if (opt === testData[currentQuestionIndex].correct_answer) setQuizScore(prev => prev + 10);
+                    }}
+                    className={`w-full text-left p-5 rounded-2xl border-2 font-bold transition-all transform active:scale-[0.98] ${btnStyle}`}
+                  >
+                    {opt}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+
+        {/* Footer Nav */}
+        <div className="p-6 bg-[#0b1c2e]/50 border-t border-emerald-500/10 flex justify-end">
+          {selectedOption && (
+            <button
+              onClick={() => {
+                if (currentQuestionIndex < testData.length - 1) {
+                  setCurrentQuestionIndex(prev => prev + 1);
+                  setSelectedOption(null);
+                } else {
+                  setIsTestComplete(true);
+                }
+              }}
+              className="px-10 py-4 bg-emerald-600 hover:bg-emerald-500 text-black font-black uppercase tracking-widest rounded-xl transition-all animate-bounce-in shadow-lg"
+            >
+              {currentQuestionIndex === testData.length - 1 ? "FINALIZE RESULTS" : "NEXT NODE →"}
+            </button>
+          )}
+        </div>
       </div>
-    </div>
+    ) : (
+      /* PHASE 3: FINAL RESULTS & TAGGING */
+      <div className="flex-grow flex flex-col items-center justify-center p-8 text-center space-y-8 animate-bounce-in">
+        <div className="bg-slate-900 border-2 border-emerald-500/30 p-10 rounded-full w-48 h-48 flex flex-col items-center justify-center shadow-2xl">
+          <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Final Score</p>
+          <p className="text-5xl font-black text-white leading-none">{quizScore}</p>
+        </div>
+
+        <div className="space-y-4">
+          <h2 className="text-3xl font-black text-white uppercase tracking-tighter">
+            Expertise: <span className={quizScore >= 400 ? "text-emerald-400" : quizScore >= 250 ? "text-indigo-400" : "text-amber-500"}>
+              {quizScore >= 400 ? "DEPTH KNOWLEDGE" : quizScore >= 250 ? "AVERAGE KNOWLEDGE" : "IMPROVEMENT NEEDED"}
+            </span>
+          </h2>
+          <p className="text-slate-400 text-sm max-w-xs mx-auto italic">
+            Evaluation complete for Nitesh Mishra. Expertise logged in Bengaluru.
+          </p>
+        </div>
+
+        <button 
+          onClick={async () => {
+            await supabase.from('assessment_logs').update({ 
+              final_score: quizScore, 
+              expertise_tag: quizScore >= 400 ? "Depth" : quizScore >= 250 ? "Average" : "Improvement",
+              completed_at: new Date().toISOString() 
+            }).eq('full_name', userName);
+
+            // System Reset
+            setIsTestStarted(false); setIsTestComplete(false); setCurrentQuestionIndex(0); setQuizScore(0); setUserName("");
+          }}
+          className="px-12 py-5 bg-white text-black font-black uppercase tracking-widest rounded-2xl hover:bg-emerald-500 transition-all shadow-xl"
+        >
+          Submit & Close Terminal
+        </button>
+      </div>
+    )}
   </div>
 )}
             {activeView === 'privacy' && (
