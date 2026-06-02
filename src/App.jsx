@@ -391,12 +391,7 @@ export default function App() {
   >
     PLACEMENT
   </button>
-                      <button 
-                        onClick={() => handleChallenge(false)}
-                        className="px-8 py-3 bg-slate-800/50 border border-white/10 text-slate-300 text-[12px] font-black rounded-lg hover:border-emerald-500/50 transition-all"
-                      >
-                        PLACEMENT
-                      </button>
+                     
                     </div>
                   </div>
                 </div>
