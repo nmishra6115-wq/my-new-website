@@ -468,7 +468,100 @@ export default function App() {
               </div>
             </div>
           </section>
+{/* --- THE NEURAL INTELLIGENCE CORE --- */}
+<section className="py-32 px-6 bg-[#020617] relative overflow-hidden border-t border-white/5">
+  
+  {/* Background Ambient Glow */}
+  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-emerald-500/5 blur-[120px] rounded-full pointer-events-none"></div>
 
+  <div className="max-w-7xl mx-auto relative z-10">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+      
+      {/* 1. THE ANIMATION: DATA FLOW PIPELINE */}
+      <div className="relative h-[450px] w-full bg-black/40 rounded-3xl border border-white/5 overflow-hidden flex items-center justify-center group">
+        
+        {/* Animated Grid Background */}
+        <div className="absolute inset-0 opacity-10" 
+             style={{ backgroundImage: 'linear-gradient(#334155 1px, transparent 1px), linear-gradient(90deg, #334155 1px, transparent 1px)', backgroundSize: '30px 30px' }}>
+        </div>
+
+        {/* Central Processing Hub */}
+        <div className="relative z-20">
+          <div className="h-24 w-24 bg-emerald-500/10 border-2 border-emerald-500 rounded-full flex items-center justify-center animate-pulse shadow-[0_0_50px_rgba(16,185,129,0.3)]">
+            <svg className="w-10 h-10 text-emerald-500 animate-spin-slow" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+            </svg>
+          </div>
+        </div>
+
+        {/* Floating Data Packets (Particles) */}
+        <div className="absolute inset-0 z-10">
+          {[...Array(6)].map((_, i) => (
+            <div 
+              key={i} 
+              className={`absolute h-1 w-12 bg-gradient-to-r from-transparent via-emerald-500 to-transparent rounded-full animate-data-stream opacity-40`}
+              style={{ 
+                top: `${20 + (i * 15)}%`, 
+                left: '-10%', 
+                animationDelay: `${i * 0.8}s` 
+              }}
+            ></div>
+          ))}
+          {[...Array(6)].map((_, i) => (
+            <div 
+              key={i+6} 
+              className={`absolute h-1 w-12 bg-gradient-to-r from-transparent via-blue-500 to-transparent rounded-full animate-data-stream-reverse opacity-40`}
+              style={{ 
+                top: `${15 + (i * 15)}%`, 
+                right: '-10%', 
+                animationDelay: `${i * 1.2}s` 
+              }}
+            ></div>
+          ))}
+        </div>
+
+        {/* Floating Status Badges */}
+        <div className="absolute top-10 left-10 p-3 bg-black/60 border border-emerald-500/20 rounded-lg backdrop-blur-md animate-float">
+          <p className="text-[8px] font-black text-emerald-500 uppercase tracking-widest">Inbound Traffic</p>
+          <p className="text-xs font-bold text-white uppercase">Secured</p>
+        </div>
+        <div className="absolute bottom-10 right-10 p-3 bg-black/60 border border-blue-500/20 rounded-lg backdrop-blur-md animate-float-delayed">
+          <p className="text-[8px] font-black text-blue-500 uppercase tracking-widest">Verification</p>
+          <p className="text-xs font-bold text-white uppercase">99.8% Match</p>
+        </div>
+      </div>
+
+      {/* 2. THE CONTENT: MISSION STATEMENT */}
+      <div className="space-y-8">
+        <div className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-500/10 border border-emerald-500/20 rounded-lg">
+          <span className="h-2 w-2 rounded-full bg-emerald-500 animate-ping"></span>
+          <span className="text-[10px] font-black text-emerald-500 uppercase tracking-[0.3em]">Operational Protocol</span>
+        </div>
+
+        <h2 className="text-5xl font-black text-white tracking-tighter leading-none">
+          THE ENGINE OF <br />
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-blue-500">COMPLIANCE.</span>
+        </h2>
+
+        <p className="text-lg text-slate-400 leading-relaxed max-w-lg">
+          AML_DECODE is built on the philosophy of **precision over volume**. Our internal engine 
+          processes complex regulatory frameworks from **RBI** and **FATF**, translating them into 
+          actionable intelligence for the modern specialist.
+        </p>
+
+        <div className="flex flex-col gap-4 sm:flex-row">
+          <button onClick={() => setActiveView('notes')} className="px-10 py-4 bg-emerald-600 hover:bg-emerald-500 text-black font-black text-xs uppercase tracking-widest rounded-xl transition-all shadow-[0_0_30px_rgba(16,185,129,0.2)]">
+            Explore Learning
+          </button>
+          <button onClick={() => setActiveView('quiz')} className="px-10 py-4 bg-slate-800/50 border border-white/10 text-white font-black text-xs uppercase tracking-widest rounded-xl hover:bg-slate-700 transition-all">
+            Take Assessment
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
         </main>
       )}
 
