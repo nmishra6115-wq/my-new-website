@@ -845,18 +845,67 @@ export default function App() {
               </div>
             )}
 
-            {activeView === 'quiz' && (
-              <div className="flex flex-col h-[85vh] bg-[#030712] overflow-hidden rounded-lg border border-emerald-500/20">
-                {/* Quiz selection content goes here */}
-                <div className="flex-grow overflow-y-auto p-4 pb-24 custom-scrollbar bg-[radial-gradient(circle_at_top,rgba(16,185,129,0.05),transparent)]">
-                  <div className="max-w-2xl mx-auto space-y-6 mt-2">
-                    {testData.map((item, index) => (
-                      <QuizItem key={index} item={item} onCorrect={() => setQuizScore(s => s + 10)} />
-                    ))}
-                  </div>
-                </div>
-              </div>
-            )}
+            {/* --- STEALTH ASSESSMENT TERMINAL --- */}
+{activeView === 'quiz' && (
+  <div className="flex flex-col h-[85vh] bg-[#030712] overflow-hidden rounded-3xl border border-emerald-500/20 shadow-2xl animate-view-entry">
+    
+    {/* 1. STICKY HEADER: CATEGORY SELECTOR & HIDDEN SCORE */}
+    <div className="sticky top-0 z-30 bg-[#0b1c2e] border-b border-emerald-500/30 p-4 shadow-2xl">
+      <div className="max-w-4xl mx-auto flex justify-between items-center mb-4">
+        <div className="flex-grow">
+          <h2 className="text-[10px] text-emerald-500 font-black uppercase tracking-[0.3em] mb-1">Assessment Engine</h2>
+          <h1 className="text-lg font-bold text-white uppercase">{selectedCategory}</h1>
+        </div>
+        
+        {/* SCORE POP-UP: Only shows if all questions are locked */}
+        {testData.every(item => item.isLocked) && testData.length > 0 ? (
+          <div className="flex gap-4 items-center animate-bounce-in">
+            <div className="text-center">
+              <p className="text-[8px] text-emerald-500 font-bold uppercase">Final Score</p>
+              <p className="text-2xl font-black text-emerald-400 leading-none">{quizScore}</p>
+            </div>
+            <div className="text-center border-l border-slate-700 pl-4">
+              <p className="text-[8px] text-indigo-500 font-bold uppercase">Accuracy</p>
+              <p className="text-2xl font-black text-indigo-400 leading-none">
+                {Math.round((quizScore / (testData.length * 10)) * 100)}%
+              </p>
+            </div>
+          </div>
+        ) : (
+          <div className="flex items-center gap-2 px-3 py-1 bg-black/40 border border-white/5 rounded-lg">
+            <div className="h-1.5 w-1.5 rounded-full bg-slate-600 animate-pulse"></div>
+            <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Awaiting Completion</span>
+          </div>
+        )}
+      </div>
+
+      {/* 2. CATEGORY SWITCHER */}
+      <div className="flex gap-3 overflow-x-auto no-scrollbar">
+        {['KYC Basics', 'AML Advanced', 'Transaction Monitoring'].map((qName, i) => (
+          <button 
+            key={i} 
+            onClick={() => { setQuizScore(0); setSelectedCategory(qName); }}
+            className={`whitespace-nowrap px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-wider border transition-all
+              ${selectedCategory === qName ? "bg-emerald-600 border-emerald-400 text-white" : "bg-slate-900 border-slate-700 text-slate-400"}`}
+          >
+            {qName}
+          </button>
+        ))}
+      </div>
+    </div>
+
+    {/* 3. QUESTION STREAM */}
+    <div className="flex-grow overflow-y-auto p-6 pb-24 custom-scrollbar bg-[radial-gradient(circle_at_top,rgba(16,185,129,0.05),transparent)]">
+      <div className="max-w-2xl mx-auto space-y-8">
+        {testData.map((item, index) => (
+          <div key={index} className="animate-slide-up" style={{ animationDelay: `${index * 0.1}s` }}>
+            <QuizItem item={item} onCorrect={() => setQuizScore(s => s + 10)} />
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+)}
             {activeView === 'privacy' && (
               <div className="p-8 bg-slate-900 border border-slate-800 rounded animate-view-entry">
                 <h1 className="text-2xl font-bold mb-6 text-emerald-400">{privacyPolicy.title}</h1>
