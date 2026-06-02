@@ -238,95 +238,90 @@ const [showSuccess, setShowSuccess] = useState(false);
   return (
     <div className="text-slate-100 font-mono min-h-screen flex flex-col relative bg-[#030712]">
       {/* NAVBAR */}
-     {/* ELITE TERMINAL NAV: Sophisticated & Authoritative */}
-<nav className="sticky top-0 z-50 w-full bg-[#020617] border-b border-emerald-500/10 shadow-[0_10px_50px_rgba(0,0,0,0.8)]">
+     {/* COMMAND CENTER NAV: Bold, Clear, and Professional */}
+<nav className="sticky top-0 z-50 w-full bg-[#020617]/95 backdrop-blur-xl border-b border-emerald-500/20 shadow-[0_8px_32px_rgba(0,0,0,0.6)]">
   
-  {/* Ultra-thin Animated Scanning Line */}
-  <div className="absolute bottom-0 left-0 h-[1px] w-full bg-gradient-to-r from-transparent via-emerald-400/40 to-transparent animate-pulse"></div>
+  {/* Sophisticated Glow Accent */}
+  <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-emerald-400/30 to-transparent"></div>
 
   <div className="max-w-7xl mx-auto px-8">
-    <div className="flex items-center justify-between h-20">
+    <div className="flex items-center justify-between h-24">
       
-      {/* Refined Brand Logo */}
+      {/* Brand Logo: Slightly Larger for Presence */}
       <div 
         onClick={() => setActiveView(null)} 
-        className="flex items-center cursor-pointer hover:scale-[1.02] transition-transform shrink-0"
+        className="flex items-center cursor-pointer hover:opacity-90 transition-all shrink-0"
       >
         <img 
           src="/logo.png" 
           alt="AML_DECODE" 
-          className="h-10 md:h-12 w-auto object-contain brightness-110" 
+          className="h-14 md:h-16 w-auto object-contain" 
         />
       </div>
 
-      {/* Segmented HUD Navigation */}
-      <div className="hidden lg:flex items-center gap-1 bg-slate-950/50 p-1 border border-white/5 rounded-lg">
+      {/* Navigation: Increased Font Size & Defined Spacing */}
+      <div className="hidden lg:flex items-center gap-2">
         {navItems.map((item) => {
           const isActive = activeView === item.id;
           return (
             <button
               key={item.id}
               onClick={() => setActiveView(item.id)}
-              className={`px-5 py-2.5 rounded-md text-[10px] font-black uppercase tracking-[0.15em] transition-all duration-200 relative overflow-hidden group
+              className={`px-6 py-3 rounded-lg text-[13px] font-bold uppercase tracking-widest transition-all duration-300 relative group
                 ${isActive 
-                  ? "text-emerald-400 bg-emerald-500/10 shadow-[inset_0_0_12px_rgba(16,185,129,0.1)]" 
-                  : "text-slate-500 hover:text-slate-200"}`}
+                  ? "text-emerald-400 bg-emerald-500/5 shadow-[inset_0_0_20px_rgba(16,185,129,0.05)]" 
+                  : "text-slate-400 hover:text-white hover:bg-white/5"}`}
             >
-              {/* Subtle hover "shine" effect */}
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
-              
               <span className="relative z-10">{item.label}</span>
               
-              {/* Sharp underline for active state */}
-              {isActive && (
-                <span className="absolute bottom-1 left-1/2 -translate-x-1/2 w-4 h-[2px] bg-emerald-500 rounded-full shadow-[0_0_10px_rgba(16,185,129,1)]"></span>
-              )}
+              {/* Animated Underline */}
+              <span className={`absolute bottom-2 left-1/2 -translate-x-1/2 h-[2px] bg-emerald-500 transition-all duration-300 
+                ${isActive ? 'w-8 opacity-100 shadow-[0_0_12px_rgba(16,185,129,1)]' : 'w-0 opacity-0 group-hover:w-4 group-hover:opacity-50'}`}>
+              </span>
             </button>
           );
         })}
       </div>
 
-      {/* Dashboard Access Button */}
+      {/* CTA Section: High Contrast */}
       <div className="hidden lg:block">
         <button 
           onClick={() => setActiveView('contribute')}
-          className="px-6 py-2 border border-emerald-500/50 text-emerald-400 text-[10px] font-black uppercase tracking-widest rounded hover:bg-emerald-500 hover:text-black transition-all duration-300 shadow-[0_0_15px_rgba(16,185,129,0.1)]"
+          className="px-8 py-3 bg-emerald-600 hover:bg-emerald-500 text-black text-[12px] font-black uppercase tracking-widest rounded-md transition-all duration-300 shadow-[0_0_20px_rgba(16,185,129,0.2)] hover:shadow-[0_0_30px_rgba(16,185,129,0.4)] hover:-translate-y-0.5"
         >
           Portal Access
         </button>
       </div>
 
-      {/* Mobile Trigger */}
+      {/* Mobile Menu Trigger */}
       <div className="lg:hidden">
         <button 
-          className="p-2 text-emerald-500"
+          className="p-3 text-emerald-500 hover:bg-emerald-500/10 rounded-xl transition-all"
           onClick={() => setIsMenuOpen(!isMenuOpen)}
         >
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={isMenuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"} />
+          <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d={isMenuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"} />
           </svg>
         </button>
       </div>
     </div>
   </div>
 
-  {/* Mobile Overlay: Vertical List */}
-  {isMenuOpen && (
-    <div className="lg:hidden bg-[#020617] border-t border-white/5 animate-in slide-in-from-top duration-300">
-      <div className="p-8 flex flex-col gap-6">
-        {navItems.map((item) => (
-          <button
-            key={item.id}
-            onClick={() => { setActiveView(item.id); setIsMenuOpen(false); }}
-            className={`text-sm font-black uppercase tracking-[0.2em] text-left
-              ${activeView === item.id ? "text-emerald-500" : "text-slate-500"}`}
-          >
-            {item.label}
-          </button>
-        ))}
-      </div>
+  {/* Mobile Overlay */}
+  <div className={`lg:hidden overflow-hidden transition-all duration-500 ease-in-out bg-[#020617] ${isMenuOpen ? "max-h-screen opacity-100 border-t border-white/5" : "max-h-0 opacity-0"}`}>
+    <div className="p-10 flex flex-col gap-8">
+      {navItems.map((item) => (
+        <button
+          key={item.id}
+          onClick={() => { setActiveView(item.id); setIsMenuOpen(false); }}
+          className={`text-lg font-black uppercase tracking-[0.2em] text-left transition-colors
+            ${activeView === item.id ? "text-emerald-500" : "text-slate-500"}`}
+        >
+          {item.label}
+        </button>
+      ))}
     </div>
-  )}
+  </div>
 </nav>
 
       {/* MOBILE MENU */}
