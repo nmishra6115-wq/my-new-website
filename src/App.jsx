@@ -854,52 +854,67 @@ export default function App() {
                 
                 {/* PHASE 1: REGISTRATION GATE */}
                 {!isTestStarted ? (
-                  <div className="flex-grow flex flex-col items-center justify-center p-8 text-center space-y-8 bg-[radial-gradient(circle_at_center,rgba(16,185,129,0.1),transparent)]">
-                    <div className="space-y-4">
-                      <div className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-500/10 border border-emerald-500/20 rounded-full mb-4">
-                        <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                        <span className="text-[10px] font-black text-emerald-500 uppercase tracking-widest">System Readiness: 100%</span>
-                      </div>
-                      <h2 className="text-4xl font-black text-white tracking-tighter uppercase">
-                        Intelligence <br /> <span className="text-emerald-500">Assessment</span>
-                      </h2>
-                      <p className="text-slate-400 text-sm max-w-xs mx-auto leading-relaxed">
-                        This evaluation contains technical nodes for KYC/AML specialists. Your performance will be logged.
-                      </p>
-                    </div>
+  <div className="flex-grow flex flex-col items-center justify-center p-8 text-center space-y-6 bg-[radial-gradient(circle_at_center,rgba(16,185,129,0.1),transparent)]">
+    <div className="space-y-4">
+      <div className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-500/10 border border-emerald-500/20 rounded-full mb-4">
+        <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
+        <span className="text-[10px] font-black text-emerald-500 uppercase tracking-widest">System Readiness: 100%</span>
+      </div>
+      <h2 className="text-3xl font-black text-white tracking-tighter uppercase leading-none">
+        Intelligence <br /> <span className="text-emerald-500">Assessment Portal</span>
+      </h2>
+    </div>
 
-                    <div className="w-full max-w-sm space-y-4">
-                      <input 
-                        type="text" 
-                        placeholder="ENTER FULL NAME" 
-                        value={userName}
-                        onChange={(e) => setUserName(e.target.value)}
-                        className="w-full p-5 bg-black/60 border-2 border-slate-800 rounded-2xl text-white font-bold placeholder:text-slate-600 focus:border-emerald-500 outline-none transition-all"
-                      />
-                      <button 
-                        disabled={!userName.trim()}
-                        onClick={async () => {
-                          try {
-                            const { error } = await supabase
-                              .from('assessment_logs')
-                              .insert([{ 
-                                full_name: userName, 
-                                category: selectedCategory, 
-                                started_at: new Date().toISOString() 
-                              }]);
-                            if (!error) setIsTestStarted(true);
-                            else console.error("Database Error:", error);
-                          } catch (err) {
-                            // If Supabase fails, we still let the user test locally
-                            setIsTestStarted(true);
-                          }
-                        }}
-                        className="w-full py-5 bg-emerald-600 hover:bg-emerald-500 disabled:bg-slate-800 disabled:text-slate-500 text-black font-black uppercase tracking-widest rounded-2xl transition-all shadow-[0_0_30px_rgba(16,185,129,0.2)]"
-                      >
-                        Initialize Test
-                      </button>
-                    </div>
-                  </div>
+    {/* NEW: CATEGORY SELECTOR BUTTONS */}
+    <div className="w-full max-w-md space-y-3">
+      <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-2">Select Assessment Node</p>
+      <div className="flex flex-col gap-2">
+        {['KYC Basics', 'AML Advanced', 'Transaction Monitoring'].map((cat) => (
+          <button
+            key={cat}
+            onClick={() => setSelectedCategory(cat)}
+            className={`py-4 rounded-xl border-2 font-bold transition-all uppercase text-xs tracking-widest
+              ${selectedCategory === cat 
+                ? "bg-emerald-500/20 border-emerald-500 text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.2)]" 
+                : "bg-black/40 border-slate-800 text-slate-500 hover:border-slate-600"}`}
+          >
+            {cat}
+          </button>
+        ))}
+      </div>
+    </div>
+
+    {/* USER REGISTRATION */}
+    <div className="w-full max-w-sm space-y-4 pt-4">
+      <input 
+        type="text" 
+        placeholder="ENTER FULL NAME" 
+        value={userName}
+        onChange={(e) => setUserName(e.target.value)}
+        className="w-full p-5 bg-black/60 border-2 border-slate-800 rounded-2xl text-white font-bold placeholder:text-slate-600 focus:border-emerald-500 outline-none transition-all"
+      />
+      <button 
+        disabled={!userName.trim()}
+        onClick={async () => {
+          try {
+            const { error } = await supabase
+              .from('assessment_logs')
+              .insert([{ 
+                full_name: userName, 
+                category: selectedCategory, 
+                started_at: new Date().toISOString() 
+              }]);
+            if (!error) setIsTestStarted(true);
+          } catch (err) {
+            setIsTestStarted(true); // Fallback to allow testing if DB is slow
+          }
+        }}
+        className="w-full py-5 bg-emerald-600 hover:bg-emerald-500 disabled:bg-slate-800 disabled:text-slate-500 text-black font-black uppercase tracking-widest rounded-2xl transition-all shadow-[0_0_30px_rgba(16,185,129,0.2)]"
+      >
+        Initialize {selectedCategory.split(' ')[0]} Test
+      </button>
+    </div>
+  </div>
                 ) : !isTestComplete ? (
                   /* PHASE 2: INTERACTIVE QUESTION ENGINE */
                   <div className="flex flex-col h-full animate-view-entry">
