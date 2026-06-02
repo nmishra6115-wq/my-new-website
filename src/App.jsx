@@ -580,8 +580,8 @@ export default function App() {
                   </div>
 
                   <div className="absolute top-10 left-10 p-3 bg-black/60 border border-emerald-500/20 rounded-lg backdrop-blur-md animate-float">
-                    <p className="text-[8px] font-black text-emerald-500 uppercase tracking-widest">Inbound</p>
-                    <p className="text-xs font-bold text-white uppercase">Encrypted</p>
+                    <p className="text-[8px] font-black text-emerald-500 uppercase tracking-widest">AML</p>
+                    <p className="text-xs font-bold text-white uppercase">DECODE</p>
                   </div>
                   <div className="absolute bottom-10 right-10 p-3 bg-black/60 border border-blue-500/20 rounded-lg backdrop-blur-md animate-float-delayed">
                     <p className="text-[8px] font-black text-blue-500 uppercase tracking-widest">Verification</p>
@@ -760,7 +760,7 @@ export default function App() {
                     className="group relative px-12 py-5 bg-emerald-600 hover:bg-emerald-500 text-black font-black text-xs uppercase tracking-widest rounded-xl transition-all shadow-[0_0_40px_rgba(16,185,129,0.2)]"
                   >
                     <span className="relative z-10 flex items-center gap-3">
-                      Initialize Intake Request
+                      Book Your Slot Now
                       <span className="group-hover:translate-x-2 transition-transform">&rarr;</span>
                     </span>
                   </button>
