@@ -369,11 +369,11 @@ export default function App() {
       <div className="flex justify-between items-center">
         <div>
           <p className="text-[8px] font-black text-slate-500 uppercase tracking-widest">Protocol</p>
-          <p className="text-[10px] font-bold text-slate-300 uppercase">AML_DECODE_v2.0.26</p>
+          <p className="text-[10px] font-bold text-slate-300 uppercase">AML_DECODE</p>
         </div>
         <div className="text-right">
-          <p className="text-[8px] font-black text-slate-500 uppercase tracking-widest">Region</p>
-          <p className="text-[10px] font-bold text-emerald-500 uppercase tracking-tighter">Bengaluru Hub</p>
+          <p className="text-[8px] font-black text-slate-500 uppercase tracking-widest"></p>
+          <p className="text-[10px] font-bold text-emerald-500 uppercase tracking-tighter"></p>
         </div>
       </div>
     </div>
