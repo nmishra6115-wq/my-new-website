@@ -808,13 +808,13 @@ export default function App() {
       <div className="space-y-2">
         <div className="inline-flex items-center gap-2 px-3 py-1 bg-indigo-500/10 border border-indigo-500/20 rounded-full">
           <span className="h-1.5 w-1.5 rounded-full bg-indigo-400 animate-pulse"></span>
-          <span className="text-[9px] font-black text-indigo-400 uppercase tracking-widest">Ecosystem Tracking Active</span>
+          <span className="text-[9px] font-black text-indigo-400 uppercase tracking-widest">AML_DECODE</span>
         </div>
         <h1 className="text-3xl font-black text-white tracking-tighter uppercase">
-          Compliance <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-emerald-400">Career Feed</span>
+          Current <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-emerald-400">Job Openings</span>
         </h1>
         <p className="text-xs text-slate-400 max-w-md font-medium leading-relaxed">
-          Filter through live deployment openings, peer referral pipelines, and secure HR uploaded credential profiles.
+          Search for the suitable jobs and Apply.
         </p>
       </div>
 
