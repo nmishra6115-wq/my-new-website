@@ -775,9 +775,50 @@ export default function App() {
                 </div>
               </div>
             )}
+            {activeView === 'privacy' && (
+              <div className="p-8 bg-slate-900 border border-slate-800 rounded animate-view-entry">
+                <h1 className="text-2xl font-bold mb-6 text-emerald-400">{privacyPolicy.title}</h1>
+                <div className="text-slate-300 leading-relaxed whitespace-pre-line text-sm md:text-base">
+                  {privacyPolicy.body}
+                </div>
+              </div>
+            )}
+
+            {activeView === 'terms' && (
+              <div className="p-8 bg-slate-900 border border-slate-800 rounded animate-view-entry">
+                <h1 className="text-2xl font-bold mb-6 text-emerald-400">{termsOfService.title}</h1>
+                <div className="text-slate-300 leading-relaxed whitespace-pre-line text-sm md:text-base">
+                  {termsOfService.body}
+                </div>
+              </div>
+            )}
+            
+            {activeView === 'faq' && (
+              <div className="p-8 bg-slate-900 border border-slate-800 rounded animate-view-entry space-y-4">
+                <h1 className="text-2xl font-bold mb-6 text-emerald-400">Frequently Asked Questions</h1>
+                {faqData.map((item, i) => (
+                  <details key={i} className="mb-6 p-4 bg-black/40 border border-slate-800 rounded-lg group">
+                    <summary className="cursor-pointer font-bold text-slate-200 select-none list-none flex justify-between items-center group-open:text-emerald-400">
+                      <span>{item.question}</span>
+                      <span className="text-xs transition-transform group-open:rotate-180">&darr;</span>
+                    </summary>
+                    <p className="mt-4 text-slate-400 text-sm leading-relaxed whitespace-pre-line border-t border-slate-800/60 pt-4">{item.answer}</p>
+                  </details>
+                ))}
+              </div>
+            )}
+
+            {activeView === 'contact' && (
+              <div className="p-8 bg-slate-900 border border-slate-800 rounded animate-view-entry">
+                <h1 className="text-2xl font-bold mb-4 text-emerald-400">{contactContent.title}</h1>
+                <p className="text-slate-300 leading-relaxed text-sm md:text-base whitespace-pre-line">{contactContent.body}</p>
+              </div>
+            )}
+
           </div>
         </div>
       )}
+         
 
      {/* --- ANIMATED SYSTEM FOOTER --- */}
       {/* FOOTER */}
