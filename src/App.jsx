@@ -636,6 +636,86 @@ export default function App() {
               </div>
             </div>
           </section>
+          {/* --- ANIMATED MENTORSHIP & EMAIL ROUTING TERMINAL --- */}
+<section className="py-32 px-6 bg-[#020617] relative overflow-hidden border-t border-emerald-500/30">
+  {/* Cyber Grid Background */}
+  <div className="absolute inset-0 opacity-[0.03] pointer-events-none"
+       style={{ backgroundImage: 'linear-gradient(#10b981 1px, transparent 1px), linear-gradient(90deg, #10b981 1px, transparent 1px)', backgroundSize: '30px 30px' }}></div>
+
+  <div className="max-w-7xl mx-auto relative z-10">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+      
+      {/* 1. THE VISUAL: LIVE STATUS TERMINAL */}
+      <div className="relative p-1 bg-gradient-to-br from-emerald-500/20 to-blue-500/20 rounded-[32px]">
+        <div className="bg-[#030712] rounded-[30px] p-10 border border-white/5 relative overflow-hidden">
+          <div className="flex items-center gap-3 mb-8">
+            <div className="h-3 w-3 rounded-full bg-emerald-500 animate-ping"></div>
+            <span className="text-[10px] font-black text-emerald-500 uppercase tracking-[0.4em]">Mentor_Allocation_Active</span>
+          </div>
+
+          <h3 className="text-3xl font-black text-white mb-6 tracking-tighter uppercase leading-none">
+            1:1 Placement <br /> <span className="text-emerald-500">Accelerator</span>
+          </h3>
+
+          <div className="space-y-6 mb-10">
+            {[
+              "Resume Architecture & ATS Optimization",
+              "End-to-End Interview Simulation",
+              "Strategy for Tier-1 Compliance Firms"
+            ].map((text, i) => (
+              <div key={i} className="flex items-start gap-4 group">
+                <span className="text-emerald-500 font-black mt-1 group-hover:translate-x-1 transition-transform">&gt;</span>
+                <p className="text-sm text-slate-400 font-bold uppercase tracking-tight">{text}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* Animated Status Bar */}
+          <div className="w-full h-1 bg-slate-800 rounded-full overflow-hidden">
+            <div className="h-full bg-emerald-500 w-2/3 animate-data-stream"></div>
+          </div>
+        </div>
+      </div>
+
+      {/* 2. THE CONTENT: DIRECT INTAKE ROUTING */}
+      <div className="space-y-8">
+        <h2 className="text-5xl font-black text-white leading-none tracking-tighter">
+          READY FOR THE <br />
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-blue-500">NEXT MANDATE?</span>
+        </h2>
+
+        <p className="text-lg text-slate-400 leading-relaxed">
+          Our mentorship sessions are highly exclusive and tailored to your specific career path in 
+          **KYC, AML, and Transaction Monitoring**. To ensure the right mentor match, we process 
+          all requests through our **Secure Intelligence Desk**.
+        </p>
+
+        <div className="p-6 bg-emerald-500/5 border border-emerald-500/20 rounded-2xl">
+          <p className="text-xs font-black text-emerald-500 uppercase tracking-widest mb-2">Instructions</p>
+          <p className="text-sm text-slate-300 italic">
+            "Click below to initialize an intake request. Mention your current role and 
+            the program you are interested in."
+          </p>
+        </div>
+
+        <button 
+          onClick={() => {
+            const subject = encodeURIComponent("Mentorship Intake Request - [Your Name]");
+            const body = encodeURIComponent("Hello AML_DECODE Team,\n\nI am interested in a 1:1 mentorship session. Here are my details:\n\nCurrent Role:\nLocation:\nProgram of Interest (Resume/Interview/Full Prep):\n\nPlease guide me on the next steps.");
+            window.location.href = `mailto:alerts@amldecode.in?subject=${subject}&body=${body}`;
+          }}
+          className="group relative px-12 py-5 bg-emerald-600 hover:bg-emerald-500 text-black font-black text-xs uppercase tracking-widest rounded-xl transition-all shadow-[0_0_40px_rgba(16,185,129,0.2)]"
+        >
+          <span className="relative z-10 flex items-center gap-3">
+            Initialize Intake Request
+            <span className="group-hover:translate-x-2 transition-transform">&rarr;</span>
+          </span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+</section>
         </main>
       )}
 
