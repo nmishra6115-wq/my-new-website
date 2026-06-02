@@ -654,14 +654,16 @@ export default function App() {
           </div>
 
           <h3 className="text-3xl font-black text-white mb-6 tracking-tighter uppercase leading-none">
-            1:1 Placement <br /> <span className="text-emerald-500">Accelerator</span>
+            Join Our 1:1 Session <br /> <span className="text-emerald-500">& Get Expert Help For</span>
           </h3>
 
           <div className="space-y-6 mb-10">
             {[
-              "Resume Architecture & ATS Optimization",
-              "End-to-End Interview Simulation",
-              "Strategy for Tier-1 Compliance Firms"
+              "Resume Review & Optimization",
+              "Right Strategy to Apply",
+              "How to get more Interview calls",
+              "End-to-End Interview Preparation",
+              "Specialized for AML/KYC Roles"
             ].map((text, i) => (
               <div key={i} className="flex items-start gap-4 group">
                 <span className="text-emerald-500 font-black mt-1 group-hover:translate-x-1 transition-transform">&gt;</span>
@@ -680,8 +682,8 @@ export default function App() {
       {/* 2. THE CONTENT: DIRECT INTAKE ROUTING */}
       <div className="space-y-8">
         <h2 className="text-5xl font-black text-white leading-none tracking-tighter">
-          READY FOR THE <br />
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-blue-500">NEXT MANDATE?</span>
+          One Stop Career <br />
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-blue-500">Guidance with Our Expert</span>
         </h2>
 
         <p className="text-lg text-slate-400 leading-relaxed">
@@ -693,7 +695,7 @@ export default function App() {
         <div className="p-6 bg-emerald-500/5 border border-emerald-500/20 rounded-2xl">
           <p className="text-xs font-black text-emerald-500 uppercase tracking-widest mb-2">Instructions</p>
           <p className="text-sm text-slate-300 italic">
-            "Click below to initialize an intake request. Mention your current role and 
+            "Click below to Book the Session. Mention your current role and 
             the program you are interested in."
           </p>
         </div>
