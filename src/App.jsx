@@ -522,8 +522,8 @@ export default function App() {
 
         {/* Floating Status Badges */}
         <div className="absolute top-10 left-10 p-3 bg-black/60 border border-emerald-500/20 rounded-lg backdrop-blur-md animate-float">
-          <p className="text-[8px] font-black text-emerald-500 uppercase tracking-widest">Inbound Traffic</p>
-          <p className="text-xs font-bold text-white uppercase">Secured</p>
+          <p className="text-[8px] font-black text-emerald-500 uppercase tracking-widest"></p>
+          <p className="text-xs font-bold text-white uppercase"></p>
         </div>
         <div className="absolute bottom-10 right-10 p-3 bg-black/60 border border-blue-500/20 rounded-lg backdrop-blur-md animate-float-delayed">
           <p className="text-[8px] font-black text-blue-500 uppercase tracking-widest">Verification</p>
@@ -535,7 +535,7 @@ export default function App() {
       <div className="space-y-8">
         <div className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-500/10 border border-emerald-500/20 rounded-lg">
           <span className="h-2 w-2 rounded-full bg-emerald-500 animate-ping"></span>
-          <span className="text-[10px] font-black text-emerald-500 uppercase tracking-[0.3em]">Operational Protocol</span>
+          <span className="text-[10px] font-black text-emerald-500 uppercase tracking-[0.3em]"></span>
         </div>
 
         <h2 className="text-5xl font-black text-white tracking-tighter leading-none">
