@@ -238,52 +238,50 @@ const [showSuccess, setShowSuccess] = useState(false);
   return (
     <div className="text-slate-100 font-mono min-h-screen flex flex-col relative bg-[#030712]">
       {/* NAVBAR */}
-     {/* ADVANCED GLASS-EFFECT NAVBAR */}
-<nav className="sticky top-0 z-50 w-full bg-[#030712]/80 backdrop-blur-xl border-b border-emerald-500/20 shadow-[0_4px_30px_rgba(0,0,0,0.5)]">
-  <div className="max-w-7xl mx-auto px-4 md:px-8">
+     {/* MINIMALIST PROFESSIONAL NAVBAR */}
+<nav className="sticky top-0 z-50 w-full bg-[#030712]/90 backdrop-blur-md border-b border-white/5 shadow-xl">
+  <div className="max-w-7xl mx-auto px-6">
     <div className="flex items-center justify-between h-20">
       
-      {/* Brand Logo Section */}
+      {/* Brand Logo */}
       <div 
         onClick={() => setActiveView(null)} 
-        className="flex items-center cursor-pointer hover:opacity-80 transition-opacity shrink-0"
+        className="flex items-center cursor-pointer group shrink-0"
       >
         <img 
           src="/logo.png" 
           alt="AML_DECODE Logo" 
-          className="h-12 md:h-14 w-auto object-contain" 
+          className="h-12 md:h-14 w-auto object-contain group-hover:brightness-110 transition-all" 
         />
       </div>
 
-      {/* Desktop Navigation: HUD Style */}
-      <div className="hidden lg:flex items-center gap-1 bg-black/20 p-1.5 rounded-full border border-white/5">
+      {/* Modern Text-Based Navigation */}
+      <div className="hidden lg:flex items-center gap-8">
         {navItems.map((item) => {
           const isActive = activeView === item.id;
           return (
             <button
               key={item.id}
               onClick={() => setActiveView(item.id)}
-              className={`px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest transition-all duration-300 whitespace-nowrap
+              className={`relative py-2 text-[11px] font-black uppercase tracking-[0.15em] transition-all duration-300
                 ${isActive 
-                  ? "bg-emerald-500 text-black shadow-[0_0_15px_rgba(16,185,129,0.4)] scale-105" 
-                  : "text-slate-400 hover:text-emerald-400 hover:bg-white/5"}`}
+                  ? "text-emerald-400" 
+                  : "text-slate-400 hover:text-white"}`}
             >
               {item.label}
+              {/* Sleek Underline Indicator */}
+              {isActive && (
+                <span className="absolute bottom-0 left-0 w-full h-[2px] bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)] animate-in fade-in zoom-in duration-300"></span>
+              )}
             </button>
           );
         })}
       </div>
 
-      {/* Action Area: Mobile Toggle & Status */}
-      <div className="flex items-center gap-4">
-        {/* Simple Online Status Indicator */}
-        <div className="hidden md:flex items-center gap-2 px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 rounded-full">
-          <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-          <span className="text-[9px] font-bold text-emerald-500 uppercase tracking-tighter">System Live</span>
-        </div>
-
+      {/* Mobile Toggle Only */}
+      <div className="lg:hidden">
         <button 
-          className="lg:hidden p-2 text-emerald-500 hover:bg-emerald-500/10 rounded-lg transition-colors"
+          className="p-2 text-emerald-500 transition-colors"
           onClick={() => setIsMenuOpen(!isMenuOpen)}
         >
           {isMenuOpen ? (
@@ -296,15 +294,15 @@ const [showSuccess, setShowSuccess] = useState(false);
     </div>
   </div>
 
-  {/* Mobile Menu: Slide-down Animation */}
-  <div className={`lg:hidden overflow-hidden transition-all duration-300 ease-in-out bg-[#030712] border-b border-emerald-500/20 ${isMenuOpen ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"}`}>
-    <div className="p-6 space-y-4">
+  {/* Simplified Mobile Menu */}
+  <div className={`lg:hidden overflow-hidden transition-all duration-300 ease-in-out bg-[#030712] ${isMenuOpen ? "max-h-screen border-b border-white/5" : "max-h-0"}`}>
+    <div className="p-8 space-y-6">
       {navItems.map((item) => (
         <button
           key={item.id}
           onClick={() => { setActiveView(item.id); setIsMenuOpen(false); }}
-          className={`block w-full text-left text-sm font-black uppercase tracking-[0.2em] pb-2 border-b border-white/5
-            ${activeView === item.id ? "text-emerald-500" : "text-slate-400 hover:text-white"}`}
+          className={`block w-full text-left text-sm font-black uppercase tracking-[0.2em] 
+            ${activeView === item.id ? "text-emerald-500" : "text-slate-500 hover:text-white"}`}
         >
           {item.label}
         </button>
