@@ -238,88 +238,70 @@ const [showSuccess, setShowSuccess] = useState(false);
   return (
     <div className="text-slate-100 font-mono min-h-screen flex flex-col relative bg-[#030712]">
       {/* NAVBAR */}
-     {/* COMMAND CENTER NAV: Bold, Clear, and Professional */}
-<nav className="sticky top-0 z-50 w-full bg-[#020617]/95 backdrop-blur-xl border-b border-emerald-500/20 shadow-[0_8px_32px_rgba(0,0,0,0.6)]">
-  
-  {/* Sophisticated Glow Accent */}
-  <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-emerald-400/30 to-transparent"></div>
-
+     {/* DECLUTTERED PREMIUM NAVBAR */}
+<nav className="sticky top-0 z-50 w-full bg-[#020617]/95 backdrop-blur-xl border-b border-white/5 shadow-2xl">
   <div className="max-w-7xl mx-auto px-8">
     <div className="flex items-center justify-between h-24">
       
-      {/* Brand Logo: Slightly Larger for Presence */}
-      <div 
-        onClick={() => setActiveView(null)} 
-        className="flex items-center cursor-pointer hover:opacity-90 transition-all shrink-0"
-      >
-        <img 
-          src="/logo.png" 
-          alt="AML_DECODE" 
-          className="h-14 md:h-16 w-auto object-contain" 
-        />
+      {/* Brand Logo - Given space to breathe */}
+      <div onClick={() => setActiveView(null)} className="flex items-center cursor-pointer shrink-0 mr-8">
+        <img src="/logo.png" alt="AML_DECODE" className="h-14 w-auto object-contain" />
       </div>
 
-      {/* Navigation: Increased Font Size & Defined Spacing */}
-      <div className="hidden lg:flex items-center gap-2">
-        {navItems.map((item) => {
-          const isActive = activeView === item.id;
-          return (
-            <button
-              key={item.id}
-              onClick={() => setActiveView(item.id)}
-              className={`px-6 py-3 rounded-lg text-[13px] font-bold uppercase tracking-widest transition-all duration-300 relative group
-                ${isActive 
-                  ? "text-emerald-400 bg-emerald-500/5 shadow-[inset_0_0_20px_rgba(16,185,129,0.05)]" 
-                  : "text-slate-400 hover:text-white hover:bg-white/5"}`}
-            >
-              <span className="relative z-10">{item.label}</span>
-              
-              {/* Animated Underline */}
-              <span className={`absolute bottom-2 left-1/2 -translate-x-1/2 h-[2px] bg-emerald-500 transition-all duration-300 
-                ${isActive ? 'w-8 opacity-100 shadow-[0_0_12px_rgba(16,185,129,1)]' : 'w-0 opacity-0 group-hover:w-4 group-hover:opacity-50'}`}>
-              </span>
-            </button>
-          );
-        })}
+      {/* Main Navigation - Only the essentials */}
+      <div className="hidden lg:flex items-center gap-2 flex-grow justify-center">
+        {[
+          { label: 'Notes', id: 'notes' },
+          { label: 'Jobs', id: 'jobs' },
+          { label: 'Network', id: 'network' },
+          { label: 'Test', id: 'quiz' }
+        ].map((item) => (
+          <button
+            key={item.id}
+            onClick={() => setActiveView(item.id)}
+            className={`px-6 py-3 rounded-lg text-[14px] font-bold uppercase tracking-widest transition-all
+              ${activeView === item.id ? "text-emerald-400 bg-emerald-500/5" : "text-slate-400 hover:text-white"}`}
+          >
+            {item.label}
+          </button>
+        ))}
+
+        {/* RESOURCES DROPDOWN: Consolidates the "Crowdy" items */}
+        <div className="relative group px-6 py-3 cursor-pointer">
+          <span className="text-[14px] font-bold text-slate-400 group-hover:text-white uppercase tracking-widest flex items-center gap-2">
+            Resources <svg className="w-4 h-4 transition-transform group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7" strokeWidth="3" /></svg>
+          </span>
+          <div className="absolute top-full left-0 w-64 bg-[#0b1c2e] border border-white/10 rounded-xl mt-2 py-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all shadow-3xl z-50">
+            {[
+              { label: 'Submit Referral', id: 'referralForm' },
+              { label: 'Available Referral', id: 'available' }
+            ].map((sub) => (
+              <button 
+                key={sub.id} 
+                onClick={() => setActiveView(sub.id)} 
+                className="w-full text-left px-6 py-3 text-xs font-bold text-slate-300 hover:bg-emerald-500/10 hover:text-emerald-400 uppercase"
+              >
+                {sub.label}
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
 
-      {/* CTA Section: High Contrast */}
-      <div className="hidden lg:block">
+      {/* Portal Access - Styled as a primary action */}
+      <div className="hidden lg:block ml-8">
         <button 
           onClick={() => setActiveView('contribute')}
-          className="px-8 py-3 bg-emerald-600 hover:bg-emerald-500 text-black text-[12px] font-black uppercase tracking-widest rounded-md transition-all duration-300 shadow-[0_0_20px_rgba(16,185,129,0.2)] hover:shadow-[0_0_30px_rgba(16,185,129,0.4)] hover:-translate-y-0.5"
+          className="px-8 py-3 bg-emerald-600 hover:bg-emerald-500 text-black text-[12px] font-black uppercase tracking-widest rounded-lg transition-all shadow-[0_0_20px_rgba(16,185,129,0.2)]"
         >
           Portal Access
         </button>
       </div>
 
-      {/* Mobile Menu Trigger */}
-      <div className="lg:hidden">
-        <button 
-          className="p-3 text-emerald-500 hover:bg-emerald-500/10 rounded-xl transition-all"
-          onClick={() => setIsMenuOpen(!isMenuOpen)}
-        >
-          <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d={isMenuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"} />
-          </svg>
-        </button>
-      </div>
-    </div>
-  </div>
-
-  {/* Mobile Overlay */}
-  <div className={`lg:hidden overflow-hidden transition-all duration-500 ease-in-out bg-[#020617] ${isMenuOpen ? "max-h-screen opacity-100 border-t border-white/5" : "max-h-0 opacity-0"}`}>
-    <div className="p-10 flex flex-col gap-8">
-      {navItems.map((item) => (
-        <button
-          key={item.id}
-          onClick={() => { setActiveView(item.id); setIsMenuOpen(false); }}
-          className={`text-lg font-black uppercase tracking-[0.2em] text-left transition-colors
-            ${activeView === item.id ? "text-emerald-500" : "text-slate-500"}`}
-        >
-          {item.label}
-        </button>
-      ))}
+      {/* Mobile Trigger */}
+      <button className="lg:hidden p-3 text-emerald-500" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+        <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeWidth="2.5" d={isMenuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"} /></svg>
+      </button>
     </div>
   </div>
 </nav>
