@@ -188,3 +188,22 @@ button {
 .animate-bar-grow { animation: bar-grow 2s ease-in-out infinite; transform-origin: bottom; }
 .animate-ping-slow { animation: ping-slow 3s cubic-bezier(0, 0, 0.2, 1) infinite; }
 .animate-pulse-fast { animation: pulse-fast 1.5s ease-in-out infinite; }
+@keyframes draw {
+  0% { stroke-dasharray: 0, 1000; opacity: 0; }
+  50% { opacity: 0.5; }
+  100% { stroke-dasharray: 1000, 0; opacity: 0.3; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-15px) scale(1.02); }
+}
+
+@keyframes bounce-slow {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.animate-draw { animation: draw 10s ease-in-out infinite; }
+.animate-float { animation: float 6s ease-in-out infinite; }
+.animate-bounce-slow { animation: bounce-slow 4s ease-in-out infinite; }

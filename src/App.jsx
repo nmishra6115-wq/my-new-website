@@ -563,79 +563,84 @@ export default function App() {
   </div>
 </section>
 
-{/* --- THE ENCRYPTED DATA PULSE --- */}
-<section className="py-32 px-6 bg-[#030712] relative overflow-hidden">
+{/* --- THE INTELLIGENCE CONSTELLATION --- */}
+<section className="py-32 px-6 bg-[#030712] relative overflow-hidden border-t border-white/5">
   
-  {/* Matrix-style Scanning Background */}
-  <div className="absolute inset-0 opacity-[0.03] pointer-events-none" 
-       style={{ backgroundImage: 'linear-gradient(transparent 0%, #10b981 50%, transparent 100%)', backgroundSize: '100% 4px', animation: 'scan-move 3s linear infinite' }}>
+  {/* Live Particle Background */}
+  <div className="absolute inset-0 z-0 opacity-20">
+    <div className="absolute top-1/4 left-1/4 w-72 h-72 bg-emerald-500/10 blur-[100px] animate-pulse"></div>
+    <div className="absolute bottom-1/4 right-1/4 w-72 h-72 bg-blue-500/10 blur-[100px] animate-pulse [animation-delay:2s]"></div>
   </div>
 
   <div className="max-w-7xl mx-auto relative z-10">
-    <div className="flex flex-col items-center text-center mb-20">
-      <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-500/10 border border-blue-500/20 rounded-lg mb-6">
-        <span className="text-[10px] font-black text-blue-400 uppercase tracking-[0.4em]">Protocol: AES-256 Enabled</span>
-      </div>
-      <h2 className="text-5xl md:text-6xl font-black text-white tracking-tighter mb-6">
-        PROTECTING THE <br />
-        <span className="text-blue-500">INTEGRITY LAYER.</span>
-      </h2>
-    </div>
-
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
       
-      {/* 1. ANIMATED ENCRYPTION BOX */}
-      <div className="p-10 bg-slate-900/40 border border-white/5 rounded-3xl relative overflow-hidden group hover:border-blue-500/30 transition-all">
-        <div className="relative z-10">
-          <div className="h-12 w-12 bg-blue-500/10 rounded-xl flex items-center justify-center mb-6 text-blue-400 group-hover:scale-110 transition-transform">
-            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 00-2 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-            </svg>
-          </div>
-          <h4 className="text-xl font-bold text-white mb-4 uppercase tracking-tighter">Zero-Knowledge Vault</h4>
-          <p className="text-sm text-slate-400 leading-relaxed mb-8">All user assessments and referral data are processed through a stateless encryption layer, ensuring total privacy.</p>
+      {/* 1. THE ANIMATION: DYNAMIC KNOWLEDGE NODES */}
+      <div className="relative h-[500px] w-full bg-slate-900/20 rounded-[40px] border border-white/5 flex items-center justify-center group overflow-hidden">
+        
+        {/* Animated Connecting Lines (SVG) */}
+        <svg className="absolute inset-0 w-full h-full opacity-30" viewBox="0 0 400 400">
+          <path d="M100,100 L300,300 M300,100 L100,300 M200,50 L200,350 M50,200 L350,200" 
+                stroke="#10b981" strokeWidth="0.5" fill="none" className="animate-draw" />
+        </svg>
+
+        {/* Floating Intelligence Nodes */}
+        <div className="relative w-full h-full">
+          {[
+            { label: 'KYC Logic', pos: 'top-[15%] left-[20%]', color: 'emerald' },
+            { label: 'AML Framework', pos: 'top-[15%] right-[20%]', color: 'blue' },
+            { label: 'SAR Reporting', pos: 'bottom-[20%] left-[25%]', color: 'emerald' },
+            { label: 'Sanctions', pos: 'bottom-[25%] right-[20%]', color: 'blue' },
+            { label: 'EDD Reviews', pos: 'top-[50%] left-[10%]', color: 'emerald' },
+            { label: 'Transaction Monitoring', pos: 'top-[45%] right-[5%]', color: 'blue' }
+          ].map((node, i) => (
+            <div 
+              key={i} 
+              className={`absolute ${node.pos} p-4 bg-black/60 border border-${node.color}-500/30 rounded-2xl backdrop-blur-xl animate-float shadow-2xl transition-all group-hover:border-${node.color}-400`}
+              style={{ animationDelay: `${i * 0.5}s` }}
+            >
+              <div className="flex items-center gap-3">
+                <div className={`h-2 w-2 rounded-full bg-${node.color}-500 animate-pulse`}></div>
+                <span className="text-[10px] font-black text-white uppercase tracking-widest">{node.label}</span>
+              </div>
+            </div>
+          ))}
           
-          {/* Animated "Code" String */}
-          <div className="bg-black/60 p-4 rounded-xl border border-white/5 font-mono text-[10px] text-blue-500/60 overflow-hidden">
-            <div className="animate-code-scroll whitespace-nowrap">
-              0x4A7B...99F2 // SECURE_HANDSHAKE // 0x11B2...A44D // VALIDATED
+          {/* Central Core Node */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+            <div className="h-24 w-24 bg-emerald-500 border-4 border-black rounded-full flex items-center justify-center shadow-[0_0_60px_rgba(16,185,129,0.4)] animate-bounce-slow">
+              <span className="text-black font-black text-sm uppercase tracking-tighter">DECODE</span>
             </div>
           </div>
         </div>
       </div>
 
-      {/* 2. CENTRAL PULSE VISUALIZER (Main Animation) */}
-      <div className="p-10 bg-gradient-to-b from-blue-600/10 to-transparent border border-blue-500/20 rounded-3xl flex flex-col items-center justify-center relative">
-        <div className="relative h-48 w-48">
-          <div className="absolute inset-0 bg-blue-500/20 rounded-full animate-ping-slow"></div>
-          <div className="absolute inset-0 border border-blue-500/40 rounded-full animate-pulse-fast"></div>
-          <div className="absolute inset-4 border-2 border-blue-500/20 rounded-full flex items-center justify-center">
-             <div className="h-20 w-20 bg-blue-500/20 rounded-full flex items-center justify-center animate-spin-slow">
-                <svg className="w-8 h-8 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                </svg>
-             </div>
-          </div>
+      {/* 2. THE CONTENT: ARCHITECTURE OF KNOWLEDGE */}
+      <div className="space-y-8">
+        <div className="inline-flex items-center gap-2 px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 rounded-full">
+          <span className="text-[10px] font-black text-emerald-500 uppercase tracking-widest">Intelligence Hub</span>
         </div>
-        <p className="mt-8 text-[10px] font-black text-blue-400 uppercase tracking-[0.5em] animate-pulse">Scanning Integrity</p>
-      </div>
 
-      {/* 3. NETWORK NODE VISUALIZER */}
-      <div className="p-10 bg-slate-900/40 border border-white/5 rounded-3xl relative overflow-hidden group hover:border-blue-500/30 transition-all">
-        <div className="relative z-10">
-          <div className="h-12 w-12 bg-blue-500/10 rounded-xl flex items-center justify-center mb-6 text-blue-400 group-hover:scale-110 transition-transform">
-            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-            </svg>
+        <h2 className="text-5xl font-black text-white leading-none tracking-tighter">
+          WHERE DATA <br />
+          BECOMES <span className="text-emerald-500">EXPERTISE.</span>
+        </h2>
+
+        <p className="text-lg text-slate-400 leading-relaxed">
+          The **AML_DECODE** architecture is built to mirror the professional journey. 
+          We connect the dots between complex **Regulatory Directions** and practical 
+          **Interview Intelligence**, providing a 360° view of the financial crime landscape 
+          in hubs like **Bengaluru** and **Kolkata**.
+        </p>
+
+        <div className="grid grid-cols-2 gap-6 pt-6">
+          <div className="p-6 bg-white/5 rounded-2xl border border-white/5">
+            <p className="text-3xl font-black text-white mb-1">100+</p>
+            <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Knowledge Nodes</p>
           </div>
-          <h4 className="text-xl font-bold text-white mb-4 uppercase tracking-tighter">Velocity Monitoring</h4>
-          <p className="text-sm text-slate-400 leading-relaxed mb-8">Real-time tracking of transaction patterns to identify structuring and placement risks instantly.</p>
-          
-          {/* Animated "Bar" Graph */}
-          <div className="flex items-end gap-1 h-12">
-            {[...Array(12)].map((_, i) => (
-              <div key={i} className="flex-1 bg-blue-500/20 rounded-t-sm animate-bar-grow" style={{ animationDelay: `${i * 0.1}s`, height: `${Math.random() * 100}%` }}></div>
-            ))}
+          <div className="p-6 bg-white/5 rounded-2xl border border-white/5">
+            <p className="text-3xl font-black text-white mb-1">2026</p>
+            <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Global Standards</p>
           </div>
         </div>
       </div>
