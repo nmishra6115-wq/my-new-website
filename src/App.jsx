@@ -287,19 +287,26 @@ export default function App() {
                 
               ))}
 <button
-    onClick={() => {
-      setActiveView(null);
-      setHighlightCareer(true);
-      setTimeout(() => {
-        const element = document.getElementById('career-guidance');
-        if (element) element.scrollIntoView({ behavior: 'smooth' });
-      }, 100);
-      setTimeout(() => setHighlightCareer(false), 4000);
-    }}
-    className="px-6 py-3 rounded-lg text-[14px] font-bold uppercase tracking-widest text-slate-400 hover:text-white transition-all"
-  >
-    Career Guidance
-  </button>
+  onClick={() => {
+    // 1. Clear any active modals to reveal the home page
+    setActiveView(null); 
+    
+    // 2. Small delay to allow the React state to clear the modal view
+    setTimeout(() => {
+      const element = document.getElementById('career-guidance');
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+        // 3. Trigger the glow animation state
+        setHighlightCareer(true);
+        // 4. Remove glow after 4 seconds
+        setTimeout(() => setHighlightCareer(false), 4000);
+      }
+    }, 150); // Increased delay for better reliability
+  }}
+  className="px-6 py-3 rounded-lg text-[14px] font-bold uppercase tracking-widest text-slate-400 hover:text-white transition-all"
+>
+  Career Guidance
+</button>
               <div className="relative group px-6 py-3 cursor-pointer">
                 <span className="text-[14px] font-bold text-slate-400 group-hover:text-white uppercase tracking-widest flex items-center gap-2">
                   Resources <svg className="w-4 h-4 transition-transform group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7" strokeWidth="3" /></svg>
@@ -681,7 +688,7 @@ export default function App() {
           </section>
 
           {/* --- ANIMATED MENTORSHIP & EMAIL ROUTING TERMINAL --- */}
-          <section className="py-32 px-6 bg-[#020617] relative overflow-hidden border-t border-emerald-500/30">
+          <section id="career-guidance" className="py-32 px-6 bg-[#020617] relative overflow-hidden border-t border-emerald-500/30">
             {/* Cyber Grid Background */}
             <div className="absolute inset-0 opacity-[0.03] pointer-events-none"
                  style={{ backgroundImage: 'linear-gradient(#10b981 1px, transparent 1px), linear-gradient(90deg, #10b981 1px, transparent 1px)', backgroundSize: '30px 30px' }}></div>
