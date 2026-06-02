@@ -179,7 +179,12 @@ export default function App() {
       tag: "COMPLIANCE" 
     }
   ]);
-
+const [isTestStarted, setIsTestStarted] = useState(false);
+const [isTestComplete, setIsTestComplete] = useState(false);
+const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+const [userName, setUserName] = useState("");
+const [selectedOption, setSelectedOption] = useState(null);
+const [quizScore, setQuizScore] = useState(0);
   const [testData, setTestData] = useState([]);
   const [selectedLocation, setSelectedLocation] = useState('All');
   const [recruiterEmail, setRecruiterEmail] = useState("");
@@ -847,6 +852,7 @@ export default function App() {
 
             {/* --- STEALTH ASSESSMENT TERMINAL --- */}
 {/* --- UNIFIED ASSESSMENT TERMINAL --- */}
+{/* --- UNIFIED ASSESSMENT TERMINAL --- */}
 {activeView === 'quiz' && (
   <div className="flex flex-col h-[85vh] bg-[#030712] overflow-hidden rounded-3xl border border-emerald-500/20 shadow-2xl animate-view-entry">
     
@@ -862,7 +868,7 @@ export default function App() {
             Intelligence <br /> <span className="text-emerald-500">Assessment</span>
           </h2>
           <p className="text-slate-400 text-sm max-w-xs mx-auto leading-relaxed">
-            This evaluation contains 50 technical nodes. Your performance will be logged in our Bengaluru terminal.
+            This evaluation contains technical nodes for KYC/AML specialists. Your performance will be logged.
           </p>
         </div>
 
@@ -877,16 +883,20 @@ export default function App() {
           <button 
             disabled={!userName.trim()}
             onClick={async () => {
-              // Registration Log
-              const { error } = await supabase
-                .from('assessment_logs')
-                .insert([{ 
-                  full_name: userName, 
-                  category: selectedCategory, 
-                  started_at: new Date().toISOString() 
-                }]);
-              if (!error) setIsTestStarted(true);
-              else alert("Network error. Please try again.");
+              try {
+                const { error } = await supabase
+                  .from('assessment_logs')
+                  .insert([{ 
+                    full_name: userName, 
+                    category: selectedCategory, 
+                    started_at: new Date().toISOString() 
+                  }]);
+                if (!error) setIsTestStarted(true);
+                else console.error("Database Error:", error);
+              } catch (err) {
+                // If Supabase fails, we still let the user test locally
+                setIsTestStarted(true);
+              }
             }}
             className="w-full py-5 bg-emerald-600 hover:bg-emerald-500 disabled:bg-slate-800 disabled:text-slate-500 text-black font-black uppercase tracking-widest rounded-2xl transition-all shadow-[0_0_30px_rgba(16,185,129,0.2)]"
           >
@@ -962,7 +972,7 @@ export default function App() {
                   setIsTestComplete(true);
                 }
               }}
-              className="px-10 py-4 bg-emerald-600 hover:bg-emerald-500 text-black font-black uppercase tracking-widest rounded-xl transition-all animate-bounce-in shadow-lg"
+              className="px-10 py-4 bg-emerald-600 hover:bg-emerald-500 text-black font-black uppercase tracking-widest rounded-xl transition-all shadow-lg"
             >
               {currentQuestionIndex === testData.length - 1 ? "FINALIZE RESULTS" : "NEXT NODE →"}
             </button>
@@ -971,7 +981,7 @@ export default function App() {
       </div>
     ) : (
       /* PHASE 3: FINAL RESULTS & TAGGING */
-      <div className="flex-grow flex flex-col items-center justify-center p-8 text-center space-y-8 animate-bounce-in">
+      <div className="flex-grow flex flex-col items-center justify-center p-8 text-center space-y-8">
         <div className="bg-slate-900 border-2 border-emerald-500/30 p-10 rounded-full w-48 h-48 flex flex-col items-center justify-center shadow-2xl">
           <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Final Score</p>
           <p className="text-5xl font-black text-white leading-none">{quizScore}</p>
@@ -984,20 +994,27 @@ export default function App() {
             </span>
           </h2>
           <p className="text-slate-400 text-sm max-w-xs mx-auto italic">
-            Evaluation complete for Nitesh Mishra. Expertise logged in Bengaluru.
+            Assessment complete for {userName}. Record logged in Bengaluru.
           </p>
         </div>
 
         <button 
           onClick={async () => {
-            await supabase.from('assessment_logs').update({ 
-              final_score: quizScore, 
-              expertise_tag: quizScore >= 400 ? "Depth" : quizScore >= 250 ? "Average" : "Improvement",
-              completed_at: new Date().toISOString() 
-            }).eq('full_name', userName);
-
+            try {
+              await supabase.from('assessment_logs').update({ 
+                final_score: quizScore, 
+                expertise_tag: quizScore >= 400 ? "Depth" : quizScore >= 250 ? "Average" : "Improvement",
+                completed_at: new Date().toISOString() 
+              }).eq('full_name', userName);
+            } catch (err) {
+              console.error("Final Save Failed");
+            }
             // System Reset
-            setIsTestStarted(false); setIsTestComplete(false); setCurrentQuestionIndex(0); setQuizScore(0); setUserName("");
+            setIsTestStarted(false); 
+            setIsTestComplete(false); 
+            setCurrentQuestionIndex(0); 
+            setQuizScore(0); 
+            setUserName("");
           }}
           className="px-12 py-5 bg-white text-black font-black uppercase tracking-widest rounded-2xl hover:bg-emerald-500 transition-all shadow-xl"
         >
