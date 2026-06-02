@@ -799,54 +799,143 @@ export default function App() {
               </div>
             )}
             
-            {activeView === 'jobs' && (
-              <div className="space-y-6">
-                <div className="flex flex-wrap gap-2 mb-6">
-                  {['All', 'Bengaluru', 'Kolkata', 'Gurugram', 'Remote', 'Pune', 'Mumbai', 'Chennai'].map((loc) => (
-                    <button
-                      key={loc}
-                      onClick={() => setSelectedLocation(loc)}
-                      className={`px-4 py-2 text-xs font-bold border transition-all ${
-                        selectedLocation === loc 
-                        ? "bg-emerald-600 border-emerald-500 text-white" 
-                        : "bg-slate-900 border-slate-700 text-slate-400 hover:border-emerald-500"
-                      }`}
-                    >
-                      {loc.toUpperCase()}
-                    </button>
-                  ))}
-                </div>
+          {activeView === 'jobs' && (
+  <div className="space-y-12 animate-view-entry max-w-6xl mx-auto pb-20">
+    
+    {/* HEADER TERMINAL NODES */}
+    <div className="relative p-8 rounded-3xl bg-slate-900/40 border border-slate-800 backdrop-blur-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-6 overflow-hidden">
+      <div className="absolute top-0 right-0 w-96 h-96 bg-indigo-500/5 blur-[80px] rounded-full pointer-events-none"></div>
+      <div className="space-y-2">
+        <div className="inline-flex items-center gap-2 px-3 py-1 bg-indigo-500/10 border border-indigo-500/20 rounded-full">
+          <span className="h-1.5 w-1.5 rounded-full bg-indigo-400 animate-pulse"></span>
+          <span className="text-[9px] font-black text-indigo-400 uppercase tracking-widest">Ecosystem Tracking Active</span>
+        </div>
+        <h1 className="text-3xl font-black text-white tracking-tighter uppercase">
+          Compliance <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-emerald-400">Career Feed</span>
+        </h1>
+        <p className="text-xs text-slate-400 max-w-md font-medium leading-relaxed">
+          Filter through live deployment openings, peer referral pipelines, and secure HR uploaded credential profiles.
+        </p>
+      </div>
 
-                <div className="bg-[#030712]/80 rounded border border-slate-800">
-                  {jobOpenings
-                    .filter(job => selectedLocation === 'All' || job.location === selectedLocation)
-                    .map((job, idx) => (
-                      <div key={idx} className="p-6 border-b border-slate-800 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                        <div>
-                          <p className="text-emerald-400 text-xs font-bold uppercase">{job.company}</p>
-                          <h2 className="text-xl font-bold">{job.role}</h2>
-                          <p className="text-slate-500 text-xs mt-1">{job.location}</p>
-                        </div>
-                        <a 
-                          href={job.link} 
-                          target="_blank" 
-                          rel="noopener noreferrer" 
-                          className="bg-indigo-600 hover:bg-indigo-500 px-8 py-3 font-bold text-sm transition-all"
-                        >
-                          APPLY
-                        </a>
-                      </div>
-                    ))
-                  }
-                  
-                  {jobOpenings.filter(job => selectedLocation === 'All' || job.location === selectedLocation).length === 0 && (
-                    <div className="p-10 text-center text-slate-500 text-sm">
-                      No job openings found for {selectedLocation}.
-                    </div>
-                  )}
+      {/* FILTER TERMINAL STRIP */}
+      <div className="flex flex-wrap gap-1.5 p-1.5 bg-black/60 border border-slate-800 rounded-2xl w-full md:w-auto">
+        {['All', 'Bengaluru', 'Kolkata', 'Gurugram', 'Remote'].map((loc) => (
+          <button
+            key={loc}
+            onClick={() => setSelectedLocation(loc)}
+            className={`flex-grow md:flex-grow-0 px-4 py-2 text-[10px] md:text-xs font-black uppercase tracking-wider rounded-xl transition-all duration-300
+              ${selectedLocation === loc 
+                ? "bg-indigo-600 border border-indigo-400/30 text-white shadow-lg shadow-indigo-600/20" 
+                : "text-slate-500 hover:text-slate-300 bg-transparent"}`}
+          >
+            {loc}
+          </button>
+        ))}
+      </div>
+    </div>
+
+    {/* STREAM 1: SECURE DIRECT PATHWAYS (Recruiter uploaded files & Peer Submissions) */}
+    <div className="space-y-4">
+      <div className="flex items-center gap-3 px-2">
+        <div className="h-2 w-2 rounded-full bg-purple-500 animate-ping"></div>
+        <h2 className="text-xs font-black text-purple-400 uppercase tracking-[0.25em]">Direct Recruiter Streams &amp; Referrals</h2>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* COMBINED RECRUITER UPLOAD FEED */}
+        {partnerFiles
+          .filter(f => selectedLocation === 'All' || f.name.toLowerCase().includes(selectedLocation.toLowerCase()))
+          .map((f, i) => (
+            <div key={`partner-${i}`} className="group relative p-6 bg-slate-900/30 border border-purple-500/20 rounded-2xl backdrop-blur-md hover:border-purple-500/50 transition-all duration-300 flex flex-col justify-between gap-6 hover:shadow-[0_0_25px_rgba(147,51,234,0.1)]">
+              <div>
+                <div className="flex justify-between items-start mb-2">
+                  <span className="text-[9px] font-black text-purple-400 bg-purple-500/10 border border-purple-500/20 px-2 py-0.5 rounded uppercase tracking-widest">Verified Profile Document</span>
+                  <span className="text-[10px] text-slate-600 font-bold font-mono">ID: {f.id?.slice(0,8) || 'SYSTEM'}</span>
+                </div>
+                <h3 className="text-base font-bold text-slate-100 group-hover:text-purple-300 transition-colors">{f.name}</h3>
+                {f.recruiter_email && (
+                  <p className="text-xs text-slate-500 mt-1 font-mono truncate">Desk: {f.recruiter_email}</p>
+                )}
+              </div>
+              <div className="grid grid-cols-2 gap-2 pt-2 border-t border-slate-800/60">
+                <button onClick={() => window.open(f.url, '_blank')} className="py-2.5 bg-black/40 border border-slate-800 text-slate-400 hover:text-white hover:border-slate-700 rounded-xl transition-all font-bold text-xs uppercase tracking-wider">
+                  View Document
+                </button>
+                {f.recruiter_email && (
+                  <a href={`mailto:${f.recruiter_email}?subject=Inquiry regarding Compliance Placement`} onClick={() => trackEmailClick(f.id)} className="py-2.5 bg-purple-600 hover:bg-purple-500 text-white text-center rounded-xl font-bold text-xs uppercase tracking-wider transition-all shadow-md shadow-purple-900/30">
+                    Email HR Desk
+                  </a>
+                )}
+              </div>
+            </div>
+          ))}
+
+        {/* COMBINED PEER REFERRALS SUBMISSIONS FEED */}
+        {submissions.map((sub, i) => (
+          <div key={`sub-${i}`} className="group relative p-6 bg-slate-900/30 border border-emerald-500/20 rounded-2xl backdrop-blur-md hover:border-emerald-500/50 transition-all duration-300 flex flex-col justify-between gap-6 hover:shadow-[0_0_25px_rgba(16,185,129,0.1)]">
+            <div>
+              <div className="flex justify-between items-start mb-2">
+                <span className="text-[9px] font-black text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded uppercase tracking-widest">Active Peer Referral</span>
+                <span className="text-[10px] text-slate-600 font-bold font-mono">READY</span>
+              </div>
+              <h3 className="text-lg font-bold text-slate-100">{sub.role || 'Compliance Professional'}</h3>
+              <p className="text-xs text-emerald-400 font-bold uppercase tracking-tight mt-1">{sub.company || 'Top Tier Firm'}</p>
+              <p className="text-xs text-slate-500 mt-2">Submitted by: <span className="text-slate-300 font-medium">{sub.name}</span></p>
+            </div>
+            <a href={`mailto:${sub.email}?subject=AML/KYC Internal Referral Channel`} className="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-black text-center rounded-xl font-black text-xs uppercase tracking-widest transition-all shadow-md shadow-emerald-900/20">
+              Request Referral
+            </a>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    {/* STREAM 2: CORE ECOSYSTEM OPENINGS */}
+    <div className="space-y-4">
+      <div className="flex items-center gap-3 px-2 pt-4">
+        <div className="h-2 w-2 rounded-full bg-indigo-500 animate-pulse"></div>
+        <h2 className="text-xs font-black text-indigo-400 uppercase tracking-[0.25em]">Live Core Network Openings</h2>
+      </div>
+
+      <div className="bg-black/40 rounded-3xl border border-slate-800 overflow-hidden divide-y divide-slate-800/60 shadow-2xl">
+        {jobOpenings
+          .filter(job => selectedLocation === 'All' || job.location === selectedLocation)
+          .map((job, idx) => (
+            <div key={`job-${idx}`} className="p-6 hover:bg-slate-900/20 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 transition-all duration-300 group">
+              <div className="space-y-1">
+                <p className="text-emerald-400 text-[10px] font-black uppercase tracking-widest">{job.company}</p>
+                <h2 className="text-lg font-bold text-white group-hover:text-indigo-400 transition-colors duration-300">{job.role}</h2>
+                <div className="flex items-center gap-4 text-xs text-slate-500">
+                  <span className="flex items-center gap-1">
+                    <svg className="w-3.5 h-3.5 shrink-0 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                    {job.location}
+                  </span>
+                  <span className="font-mono text-[10px] px-2 py-0.5 bg-slate-800 rounded text-slate-400 uppercase tracking-tighter">Node_Active</span>
                 </div>
               </div>
-            )}
+              
+              <a 
+                href={job.link} 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="w-full sm:w-auto px-6 py-3 bg-slate-900 hover:bg-indigo-600 text-slate-300 hover:text-white font-black text-xs uppercase tracking-widest rounded-xl border border-slate-800 hover:border-indigo-400/30 transition-all duration-300 shadow-inner group-hover:translate-x-1 sm:group-hover:translate-x-0"
+              >
+                Launch Application &rarr;
+              </a>
+            </div>
+          ))}
+        
+        {jobOpenings.filter(job => selectedLocation === 'All' || job.location === selectedLocation).length === 0 && (
+          <div className="p-16 text-center text-slate-600 text-sm font-medium italic bg-slate-900/10">
+            No live core openings logged under target node context: {selectedLocation}.
+          </div>
+        )}
+      </div>
+    </div>
+
+  </div>
+)}
             
             {activeView === 'referralForm' && <form className="space-y-4" onSubmit={async (e) => { e.preventDefault(); await supabase.from('submissions').insert([{ name: e.target[0].value, email: e.target[1].value, company: e.target[2].value, role: e.target[3].value }]); alert("Submitted!"); setActiveView(null); }}><input className="w-full p-4 bg-black border" placeholder="Name" required /><input className="w-full p-4 bg-black border" placeholder="Email" required /><input className="w-full p-4 bg-black border" placeholder="Company" required /><input className="w-full p-4 bg-black border" placeholder="Role" required /><button type="submit" className="w-full py-4 bg-emerald-600">SUBMIT</button></form>}
             {activeView === 'available' && <div className="max-w-4xl mx-auto">{submissions.map((sub, i) => <div key={i} className="p-6 mb-4 bg-slate-900 border border-emerald-500/30 rounded flex justify-between items-center"><div><h3 className="text-xl font-bold">{sub.name}</h3><p className="text-sm text-slate-400">{sub.company} - {sub.role}</p></div><button className="bg-emerald-600 px-6 py-3 font-bold hover:bg-emerald-500 transition-all text-white">APPLY</button></div>)}</div>}
