@@ -241,3 +241,21 @@ button {
 .hover\:translate-x-1\.5:hover {
   transform: translateX(6px);
 }
+@keyframes section-alert-glow {
+  0%, 100% {
+    box-shadow: 0 0 0px rgba(16, 185, 129, 0);
+    border-color: rgba(16, 185, 129, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(16, 185, 129, 0.4);
+    border-color: rgba(16, 185, 129, 1);
+  }
+}
+
+.animate-target-glow {
+  animation: section-alert-glow 2s ease-in-out 2; /* Loops twice, then fades out smoothly */
+}
+/* Ensures the section lands with enough space below the fixed navbar */
+#career-guidance {
+  scroll-margin-top: 100px; 
+}

@@ -161,7 +161,7 @@ export default function App() {
   const [submissions, setSubmissions] = useState([]);
   const [partnerFiles, setPartnerFiles] = useState([]);
   const [isAuthorized, setIsAuthorized] = useState(false);
-  
+  const [highlightCareer, setHighlightCareer] = useState(false);
   const [newsList, setNewsList] = useState([
     { 
       title: "RBI Master Direction Update: New Digital Onboarding Norms for 2026", 
@@ -284,8 +284,22 @@ export default function App() {
                 >
                   {item.label}
                 </button>
+                
               ))}
-
+<button
+    onClick={() => {
+      setActiveView(null);
+      setHighlightCareer(true);
+      setTimeout(() => {
+        const element = document.getElementById('career-guidance');
+        if (element) element.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+      setTimeout(() => setHighlightCareer(false), 4000);
+    }}
+    className="px-6 py-3 rounded-lg text-[14px] font-bold uppercase tracking-widest text-slate-400 hover:text-white transition-all"
+  >
+    Career Guidance
+  </button>
               <div className="relative group px-6 py-3 cursor-pointer">
                 <span className="text-[14px] font-bold text-slate-400 group-hover:text-white uppercase tracking-widest flex items-center gap-2">
                   Resources <svg className="w-4 h-4 transition-transform group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7" strokeWidth="3" /></svg>
@@ -360,6 +374,32 @@ export default function App() {
                 <div className="absolute bottom-0 left-0 h-[1px] w-0 bg-emerald-500 group-hover:w-full transition-all duration-500"></div>
               </button>
             ))}
+            <button 
+    onClick={() => { 
+      setActiveView(null); 
+      setIsMenuOpen(false); // Close the menu first
+      setHighlightCareer(true);
+      setTimeout(() => {
+        const element = document.getElementById('career-guidance');
+        if (element) element.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+      setTimeout(() => setHighlightCareer(false), 4000);
+    }} 
+    className="group relative w-full text-left py-6 px-4 rounded-xl border border-transparent hover:border-emerald-500/20 hover:bg-emerald-500/5 transition-all"
+  >
+    <div className="flex items-center justify-between">
+      <div className="flex items-center gap-4">
+        <span className="text-[8px] font-black text-slate-600 tracking-tighter">0{navItems.length + 1}</span>
+        <span className="text-xl font-black uppercase tracking-tighter text-slate-300 group-hover:text-emerald-400">
+          Career Guidance
+        </span>
+      </div>
+      <svg className="w-5 h-5 text-emerald-500 opacity-0 group-hover:opacity-100 -translate-x-4 group-hover:translate-x-0 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeWidth="3" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+      </svg>
+    </div>
+  </button>
+
           </div>
 
           <div className="p-8 border-t border-white/5 bg-black/40">
