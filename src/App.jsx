@@ -710,54 +710,61 @@ const { error: dbError } = await supabase
       )}
 
       {/* FOOTER */}
-    <footer className="bg-[#0b1c2e] text-white p-12 mt-10">
-  <div className="max-w-7xl mx-auto space-y-8">
-    {/* LOGO AND DESCRIPTION */}
-    <div className="max-w-xl">
-      <img src="/logo.png" alt="Logo" className="h-10 w-auto mb-4 object-contain" />
-      <p className="text-sm leading-relaxed text-slate-300">
-        AMLDecode is your go-to platform for AML, KYC, EDD, and Transaction Monitoring learning. 
-        We provide interview preparation notes, industry insights, and latest job opportunities 
-        to help professionals grow their careers in financial crime compliance.
-      </p>
-    </div>
-
-    {/* ALL LINKS STACKED VERTICALLY */}
-    <div className="flex flex-col gap-2 text-sm text-slate-300">
-      <button onClick={() => setActiveView('faq')} className="hover:text-white transition-colors text-left w-fit">FAQ</button>
-      <button onClick={() => setActiveView('contact')} className="hover:text-white transition-colors text-left w-fit">Contact Us</button>
-      <button onClick={() => setActiveView('privacy')} className="hover:text-white transition-colors text-left w-fit">Privacy Policy</button>
-      <button onClick={() => setActiveView('terms')} className="hover:text-white transition-colors text-left w-fit">Terms of Service</button>
-    </div>
-
-    {/* BOTTOM SECTION: Copyright and Social Media */}
-    <div className="border-t border-slate-700/50 pt-8 text-center text-xs text-slate-400">
-      <div className="mb-4">
-        <span>© 2026 AML_DECODE / Designed by @ Nitesh</span>
+   {/* MODERN & MOBILE-RESPONSIVE FOOTER */}
+<footer className="bg-[#0b1c2e] text-white border-t border-emerald-500/20 pt-16 pb-8 mt-20">
+  <div className="max-w-7xl mx-auto px-6">
+    <div className="grid grid-cols-1 md:grid-cols-12 gap-12 mb-16">
+      
+      {/* Brand & Mission Column */}
+      <div className="md:col-span-5 space-y-6">
+        <img src="/logo.png" alt="AML_DECODE" className="h-12 w-auto object-contain" />
+        <p className="text-sm leading-relaxed text-slate-400 max-w-md">
+          AMLDecode is your go-to platform for AML, KYC, EDD, and Transaction Monitoring learning. 
+          We provide interview preparation notes, industry insights, and latest job opportunities 
+          to help professionals grow their careers in financial crime compliance.
+        </p>
       </div>
 
-   <div className="flex justify-center gap-6 mt-2">
-  {/* LinkedIn: Blue */}
-  <a href="https://linkedin.com/in/yourprofile" target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:text-blue-400 transition-colors">
-    <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-      <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452z"/>
-    </svg>
-  </a>
-  
-  {/* Twitter/X: White */}
-  <a href="https://twitter.com/yourhandle" target="_blank" rel="noopener noreferrer" className="text-white hover:text-slate-300 transition-colors">
-    <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-      <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
-    </svg>
-  </a>
-  
-  {/* Instagram: Pink */}
-  <a href="https://instagram.com/yourhandle" target="_blank" rel="noopener noreferrer" className="text-pink-500 hover:text-pink-400 transition-colors">
-    <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-      <path d="M12 2.163c3.204 0 3.584.012 4.85.07 1.173.055 1.805.249 2.227.415.563.22.964.482 1.385.904.422.421.684.822.904 1.385.166.422.36 1.054.415 2.227.058 1.266.07 1.646.07 4.85s-.012 3.584-.07 4.85c-.055 1.173-.249 1.805-.415 2.227-.22.563-.482.964-.904 1.385-.421.421-.822.684-1.385.904-.422.166-1.054.36-2.227.415-1.266.058-1.646.07-4.85.07s-3.584-.012-4.85-.07c-1.173-.055-1.805-.249-2.227-.415-.563-.22-.964-.482-1.385-.904-.421-.421-.684-.822-.904-1.385-.166-.422-.36-1.054-.415-2.227-.058-1.266-.07-1.646-.07-4.85s.012-3.584.07-4.85c.055-1.173.249-1.805.415-2.227.22-.563.482-.964.904-1.385.421-.421.822-.684 1.385-.904.422-.166 1.054-.36 2.227-.415 1.266-.058 1.646-.07 4.85-.07zm0 1.442c-3.136 0-3.509.012-4.75.068-1.077.05-1.662.23-2.052.383-.518.201-.887.44-1.275.828s-.627.757-.828 1.275c-.153.39-.333.975-.383 2.052-.056 1.241-.068 1.614-.068 4.75s.012 3.509.068 4.75c.05 1.077.23 1.662.383 2.052.201.518.44.887.828 1.275s.757.627 1.275.828c.39.153.975.333 2.052.383 1.241.056 1.614.068 4.75.068s3.509-.012 4.75-.068c1.077-.05 1.662-.23 2.052-.383.518-.201.887-.44 1.275-.828s.627-.757.828-1.275c.153-.39.333-.975.383-2.052.056-1.241.068-1.614.068-4.75s-.012-3.509-.068-4.75c-.05-1.077-.23-1.662-.383-2.052-.201-.518-.44-.887-.828-1.275s-.757-.627-1.275-.828c-.39-.153-.975-.333-2.052-.383-1.241-.056-1.614-.068-4.75-.068zM12 7.245a4.755 4.755 0 1 1 0 9.51 4.755 4.755 0 0 1 0-9.51zm0 1.442a3.313 3.313 0 1 0 0 6.626 3.313 3.313 0 0 0 0-6.626zm5.35-4.832a1.11 1.11 0 1 1 0 2.22 1.11 1.11 0 0 1 0-2.22z"/>
-    </svg>
-  </a>
-</div>
+      {/* Quick Links Column */}
+      <div className="md:col-span-3 space-y-4">
+        <h3 className="text-emerald-500 font-black uppercase text-[10px] tracking-widest">Navigation</h3>
+        <div className="flex flex-col gap-3 text-sm text-slate-300">
+          <button onClick={() => setActiveView('faq')} className="hover:text-emerald-400 transition-colors text-left w-fit uppercase font-bold tracking-tighter">FAQ</button>
+          <button onClick={() => setActiveView('contact')} className="hover:text-emerald-400 transition-colors text-left w-fit uppercase font-bold tracking-tighter">Contact Us</button>
+          <button onClick={() => setActiveView('notes')} className="hover:text-emerald-400 transition-colors text-left w-fit uppercase font-bold tracking-tighter">Learning Notes</button>
+        </div>
+      </div>
+
+      {/* Legal Column */}
+      <div className="md:col-span-4 space-y-4">
+        <h3 className="text-emerald-500 font-black uppercase text-[10px] tracking-widest">Legal & Compliance</h3>
+        <div className="flex flex-col gap-3 text-sm text-slate-300">
+          <button onClick={() => setActiveView('privacy')} className="hover:text-emerald-400 transition-colors text-left w-fit uppercase font-bold tracking-tighter">Privacy Policy</button>
+          <button onClick={() => setActiveView('terms')} className="hover:text-emerald-400 transition-colors text-left w-fit uppercase font-bold tracking-tighter">Terms of Service</button>
+        </div>
+      </div>
+    </div>
+
+    {/* Bottom Bar: Copyright & Socials */}
+    <div className="border-t border-slate-800/50 pt-8 flex flex-col md:flex-row justify-between items-center gap-6">
+      <div className="text-[10px] text-slate-500 font-bold uppercase tracking-widest text-center md:text-left">
+        © 2026 AML_DECODE / Designed by @ Nitesh Mishra
+      </div>
+
+      <div className="flex items-center gap-8">
+        {/* LinkedIn */}
+        <a href="https://linkedin.com/in/yourprofile" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-[#0077b5] transition-all hover:scale-110">
+          <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.761 0 5-2.239 5-5v-14c0-2.761-2.239-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+        </a>
+        {/* Twitter */}
+        <a href="https://twitter.com/yourhandle" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-white transition-all hover:scale-110">
+          <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/></svg>
+        </a>
+        {/* Instagram */}
+        <a href="https://instagram.com/yourhandle" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-[#e4405f] transition-all hover:scale-110">
+          <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 1.173.055 1.805.249 2.227.415.563.22.964.482 1.385.904.422.421.684.822.904 1.385.166.422.36 1.054.415 2.227.058 1.266.07 1.646.07 4.85s-.012 3.584-.07 4.85c-.055 1.173-.249 1.805-.415 2.227-.22.563-.482.964-.904 1.385-.421.421-.822.684-1.385.904-.422.166-1.054.36-2.227.415-1.266.058-1.646.07-4.85.07s-3.584-.012-4.85-.07c-1.173-.055-1.805-.249-2.227-.415-.563-.22-.964-.482-1.385-.904-.421-.421-.684-.822-.904-1.385-.166-.422-.36-1.054-.415-2.227-.058-1.266-.07-1.646-.07-4.85s.012-3.584.07-4.85c.055-1.173.249-1.805.415-2.227.22-.563.482-.964.904-1.385.421-.421.822-.684 1.385-.904.422-.166 1.054-.36 2.227-.415 1.266-.058 1.646-.07 4.85-.07zm0 1.442c-3.136 0-3.509.012-4.75.068-1.077.05-1.662.23-2.052.383-.518.201-.887.44-1.275.828s-.627.757-.828 1.275c-.153.39-.333.975-.383 2.052-.056 1.241-.068 1.614-.068 4.75s.012 3.509.068 4.75c.05 1.077.23 1.662.383 2.052.201.518.44.887.828 1.275s.757.627 1.275.828c.39.153.975.333 2.052.383 1.241.056 1.614.068 4.75.068s3.509-.012 4.75-.068c1.077-.05 1.662-.23 2.052-.383.518-.201.887-.44 1.275-.828s.627-.757.828-1.275c.153-.39.333-.975.383-2.052.056-1.241.068-1.614.068-4.75s-.012-3.509-.068-4.75c-.05-1.077-.23-1.662-.383-2.052-.201-.518-.44-.887-.828-1.275s-.757-.627-1.275-.828c-.39-.153-.975-.333-2.052-.383-1.241-.056-1.614-.068-4.75-.068zM12 7.245a4.755 4.755 0 1 1 0 9.51 4.755 4.755 0 0 1 0-9.51zm0 1.442a3.313 3.313 0 1 0 0 6.626 3.313 3.313 0 0 0 0-6.626zm5.35-4.832a1.11 1.11 0 1 1 0 2.22 1.11 1.11 0 0 1 0-2.22z"/></svg>
+        </a>
+      </div>
     </div>
   </div>
 </footer>
