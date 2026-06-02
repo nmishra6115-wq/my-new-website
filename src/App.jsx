@@ -294,7 +294,7 @@ const [showSuccess, setShowSuccess] = useState(false);
           onClick={() => setActiveView('contribute')}
           className="px-8 py-3 bg-emerald-600 hover:bg-emerald-500 text-black text-[12px] font-black uppercase tracking-widest rounded-lg transition-all shadow-[0_0_20px_rgba(16,185,129,0.2)]"
         >
-          Portal Access
+          HR DASHBOARD
         </button>
       </div>
 
