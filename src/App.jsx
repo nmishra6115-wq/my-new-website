@@ -704,9 +704,16 @@ export default function App() {
 
       {/* ACTIVE VIEW MODAL */}
       {activeView && (
-        <div className="fixed inset-0 z-[100] bg-black/95 p-12 overflow-y-auto">
-          <button onClick={() => { setActiveView(null); setQuizScore(0); }} className="text-emerald-400 font-bold mb-10">&larr; BACK</button>
-          <div className="max-w-4xl mx-auto text-white">
+        <div className="fixed inset-0 z-[100] bg-black/95 p-12 overflow-y-auto custom-scrollbar">
+    <button 
+      onClick={() => { setActiveView(null); setQuizScore(0); }} 
+      className="text-emerald-400 font-bold mb-10 hover:text-emerald-300 transition-colors"
+    >
+      &larr; BACK
+    </button>
+    
+    {/* ADD THIS TRANSITION WRAPPER HERE */}
+    <div key={activeView} className="animate-view-entry max-w-7xl mx-auto text-white">
             {activeView === 'notes' && (
               <div className="flex flex-row w-full h-[80vh] gap-2 p-2">
                 <div className="w-[120px] md:w-[250px] space-y-2 flex-shrink-0 overflow-y-auto">
