@@ -320,15 +320,66 @@ export default function App() {
       </nav>
 
       {/* MOBILE MENU */}
-      {isMenuOpen && (
-        <div className="md:hidden fixed inset-0 top-[80px] z-[999] bg-[#030712] p-6 flex flex-col gap-6" onClick={() => setIsMenuOpen(false)}>
-          {navItems.map((item) => (
-            <button key={item.id} onClick={() => { setActiveView(item.id); setIsMenuOpen(false); }} className="text-xl font-black text-left text-emerald-400 uppercase border-b border-emerald-500/10 pb-4">
-              {item.label}
-            </button>
-          ))}
+      {/* --- ANIMATED INTELLIGENCE MOBILE MENU --- */}
+{isMenuOpen && (
+  <div className="lg:hidden fixed inset-0 z-[999] bg-[#030712]/98 backdrop-blur-2xl flex flex-col overflow-hidden">
+    
+    {/* Animated Header for Menu */}
+    <div className="flex justify-between items-center p-8 border-b border-white/5 bg-black/20">
+      <div className="flex items-center gap-3">
+        <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></div>
+        <span className="text-[10px] font-black text-emerald-500 uppercase tracking-widest">System Navigation</span>
+      </div>
+      <button onClick={() => setIsMenuOpen(false)} className="text-slate-400 hover:text-white p-2">
+        <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeWidth="2.5" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+
+    {/* Staggered Animated Links */}
+    <div className="flex-grow p-8 flex flex-col gap-2 overflow-y-auto">
+      {navItems.map((item, index) => (
+        <button 
+          key={item.id} 
+          onClick={() => { setActiveView(item.id); setIsMenuOpen(false); }} 
+          className="group relative w-full text-left py-6 px-4 rounded-xl border border-transparent hover:border-emerald-500/20 hover:bg-emerald-500/5 transition-all animate-slide-in"
+          style={{ animationDelay: `${index * 0.1}s` }}
+        >
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <span className="text-[8px] font-black text-slate-600 group-hover:text-emerald-500 tracking-tighter">0{index + 1}</span>
+              <span className={`text-xl font-black uppercase tracking-tighter ${activeView === item.id ? 'text-emerald-400' : 'text-slate-300'}`}>
+                {item.label}
+              </span>
+            </div>
+            <svg className="w-5 h-5 text-emerald-500 opacity-0 group-hover:opacity-100 -translate-x-4 group-hover:translate-x-0 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeWidth="3" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+            </svg>
+          </div>
+          
+          {/* Animated "Scan Line" on Hover */}
+          <div className="absolute bottom-0 left-0 h-[1px] w-0 bg-emerald-500 group-hover:w-full transition-all duration-500"></div>
+        </button>
+      ))}
+    </div>
+
+    {/* Menu Footer Status */}
+    <div className="p-8 border-t border-white/5 bg-black/40">
+      <div className="flex justify-between items-center">
+        <div>
+          <p className="text-[8px] font-black text-slate-500 uppercase tracking-widest">Protocol</p>
+          <p className="text-[10px] font-bold text-slate-300 uppercase">AML_DECODE_v2.0.26</p>
         </div>
-      )}
+        <div className="text-right">
+          <p className="text-[8px] font-black text-slate-500 uppercase tracking-widest">Region</p>
+          <p className="text-[10px] font-bold text-emerald-500 uppercase tracking-tighter">Bengaluru Hub</p>
+        </div>
+      </div>
+    </div>
+  </div>
+)}
+      
 
       {/* HOME PAGE */}
       {!activeView && (
