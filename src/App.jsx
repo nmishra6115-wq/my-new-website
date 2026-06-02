@@ -238,19 +238,80 @@ const [showSuccess, setShowSuccess] = useState(false);
   return (
     <div className="text-slate-100 font-mono min-h-screen flex flex-col relative bg-[#030712]">
       {/* NAVBAR */}
-      <nav className="p-6 border-b border-emerald-500/30 flex items-center justify-between sticky top-0 bg-[#030712]/90 backdrop-blur-lg z-50 w-full shadow-[0_0_20px_rgba(16,185,129,0.1)]">
-        <div onClick={() => setActiveView(null)} className="cursor-pointer h-16 flex items-center shrink-0">
-          <img src="/logo.png" alt="AML_DECODE Logo" className="h-full w-auto object-contain" />
-        </div>
-        <div className="hidden md:flex gap-6 items-center overflow-x-auto">
-          {navItems.map((item) => (
-            <button key={item.id} onClick={() => setActiveView(item.id)} className="text-xs font-black text-emerald-400 hover:text-white transition-all uppercase whitespace-nowrap">
+     {/* ADVANCED GLASS-EFFECT NAVBAR */}
+<nav className="sticky top-0 z-50 w-full bg-[#030712]/80 backdrop-blur-xl border-b border-emerald-500/20 shadow-[0_4px_30px_rgba(0,0,0,0.5)]">
+  <div className="max-w-7xl mx-auto px-4 md:px-8">
+    <div className="flex items-center justify-between h-20">
+      
+      {/* Brand Logo Section */}
+      <div 
+        onClick={() => setActiveView(null)} 
+        className="flex items-center cursor-pointer hover:opacity-80 transition-opacity shrink-0"
+      >
+        <img 
+          src="/logo.png" 
+          alt="AML_DECODE Logo" 
+          className="h-12 md:h-14 w-auto object-contain" 
+        />
+      </div>
+
+      {/* Desktop Navigation: HUD Style */}
+      <div className="hidden lg:flex items-center gap-1 bg-black/20 p-1.5 rounded-full border border-white/5">
+        {navItems.map((item) => {
+          const isActive = activeView === item.id;
+          return (
+            <button
+              key={item.id}
+              onClick={() => setActiveView(item.id)}
+              className={`px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest transition-all duration-300 whitespace-nowrap
+                ${isActive 
+                  ? "bg-emerald-500 text-black shadow-[0_0_15px_rgba(16,185,129,0.4)] scale-105" 
+                  : "text-slate-400 hover:text-emerald-400 hover:bg-white/5"}`}
+            >
               {item.label}
             </button>
-          ))}
+          );
+        })}
+      </div>
+
+      {/* Action Area: Mobile Toggle & Status */}
+      <div className="flex items-center gap-4">
+        {/* Simple Online Status Indicator */}
+        <div className="hidden md:flex items-center gap-2 px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 rounded-full">
+          <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span className="text-[9px] font-bold text-emerald-500 uppercase tracking-tighter">System Live</span>
         </div>
-        <button className="md:hidden text-emerald-500 text-2xl z-[60] p-2" onClick={() => setIsMenuOpen(!isMenuOpen)}>{isMenuOpen ? "✕" : "☰"}</button>
-      </nav>
+
+        <button 
+          className="lg:hidden p-2 text-emerald-500 hover:bg-emerald-500/10 rounded-lg transition-colors"
+          onClick={() => setIsMenuOpen(!isMenuOpen)}
+        >
+          {isMenuOpen ? (
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
+          ) : (
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" /></svg>
+          )}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  {/* Mobile Menu: Slide-down Animation */}
+  <div className={`lg:hidden overflow-hidden transition-all duration-300 ease-in-out bg-[#030712] border-b border-emerald-500/20 ${isMenuOpen ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"}`}>
+    <div className="p-6 space-y-4">
+      {navItems.map((item) => (
+        <button
+          key={item.id}
+          onClick={() => { setActiveView(item.id); setIsMenuOpen(false); }}
+          className={`block w-full text-left text-sm font-black uppercase tracking-[0.2em] pb-2 border-b border-white/5
+            ${activeView === item.id ? "text-emerald-500" : "text-slate-400 hover:text-white"}`}
+        >
+          {item.label}
+        </button>
+      ))}
+    </div>
+  </div>
+</nav>
 
       {/* MOBILE MENU */}
       {isMenuOpen && (
