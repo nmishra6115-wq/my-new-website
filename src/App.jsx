@@ -265,9 +265,15 @@ export default function App() {
         <div className="max-w-7xl mx-auto px-8">
           <div className="flex items-center justify-between h-24">
             
-            <div onClick={() => setActiveView(null)} className="flex items-center cursor-pointer shrink-0 mr-8">
-              <img src="/logo.png" alt="AML_DECODE" className="h-14 w-auto object-contain" />
-            </div>
+            <div className="group flex items-center gap-3 cursor-pointer">
+  <img 
+    src="/logo.png" 
+    className="h-9 w-auto transition-all duration-500 group-hover:rotate-[360deg] group-hover:brightness-125"
+  />
+  <span className="text-white font-black tracking-tighter opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+    AML_DECODE
+  </span>
+</div>
 
             <div className="hidden lg:flex items-center gap-2 flex-grow justify-center">
               {[

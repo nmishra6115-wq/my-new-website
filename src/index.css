@@ -259,3 +259,23 @@ button {
 #career-guidance {
   scroll-margin-top: 100px; 
 }
+@keyframes scan {
+  0% { left: -100%; }
+  100% { left: 100%; }
+}
+
+.logo-scan-container {
+  position: relative;
+  overflow: hidden;
+}
+
+.logo-scan-container::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(to right, transparent, rgba(16, 185, 129, 0.2), transparent);
+  transform: skewX(-25deg);
+  animation: scan 3s infinite;
+}
