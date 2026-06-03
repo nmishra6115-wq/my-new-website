@@ -412,3 +412,35 @@ button {
   animation: high-freq-scanner 6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
   z-index: 5;
 }
+/* --- CINEMATIC NEURAL ENGINE --- */
+@keyframes neural-drift {
+  0% { background-position: 0 0; }
+  100% { background-position: 100px 100px; }
+}
+
+@keyframes link-pulse {
+  0%, 100% { opacity: 0.05; }
+  50% { opacity: 0.2; }
+}
+
+.terminal-core {
+  height: 600px;
+  width: 100%;
+  background: radial-gradient(circle at center, #061a12 0%, #030712 100%);
+  position: relative;
+  overflow: hidden;
+  border-bottom: 1px solid rgba(16, 185, 129, 0.1);
+}
+
+/* Drifting Technical Grid */
+.terminal-core::before {
+  content: "";
+  position: absolute;
+  inset: -100px;
+  background-image: 
+    linear-gradient(rgba(16, 185, 129, 0.1) 1px, transparent 1px), 
+    linear-gradient(90deg, rgba(16, 185, 129, 0.1) 1px, transparent 1px);
+  background-size: 50px 50px;
+  animation: neural-drift 12s linear infinite;
+  mask-image: radial-gradient(circle at center, black, transparent 80%);
+}

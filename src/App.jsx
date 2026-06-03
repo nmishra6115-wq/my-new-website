@@ -436,30 +436,44 @@ export default function App() {
         <main className="flex-grow bg-[#030712]">
           
           {/* 1. HERO VIDEO SECTION */}
-         {/* 1. CINEMATIC NEURAL TERMINAL (ZERO-TEXT CORE) */}
-<section className="cinematic-terminal-hero">
-  <div className="scanner-overlay"></div>
-  
-  {/* Live Neural Pulsing Nodes */}
+         {/* 1. CINEMATIC NEURAL CORE (ZERO-TEXT) */}
+<section className="terminal-core">
+  <div className="absolute inset-0 z-10">
+    <svg className="w-full h-full">
+      {/* Animated Connectivity Links */}
+      {[...Array(6)].map((_, i) => (
+        <line 
+          key={`link-${i}`}
+          x1={`${20 + i * 12}%`} y1={`${30 + (i % 2) * 20}%`}
+          x2={`${35 + i * 8}%`} y2={`${60 - (i % 2) * 15}%`}
+          stroke="#10b981"
+          strokeWidth="0.5"
+          className="animate-pulse"
+          style={{ animationDuration: `${4 + i}s`, opacity: 0.1 }}
+        />
+      ))}
+    </svg>
+  </div>
+
+  {/* Floating Intelligence Nodes */}
   <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-    {[...Array(12)].map((_, i) => (
+    {[...Array(10)].map((_, i) => (
       <div 
-        key={i}
-        className="absolute w-1 h-1 bg-emerald-400 rounded-full"
+        key={`node-${i}`}
+        className="absolute w-1.5 h-1.5 bg-emerald-500 rounded-full"
         style={{
-          top: `${20 + Math.random() * 60}%`,
-          left: `${10 + Math.random() * 80}%`,
-          boxShadow: '0 0 15px rgba(16, 185, 129, 0.6)',
-          animation: `pulse 3s ease-in-out infinite`,
-          animationDelay: `${i * 0.4}s`,
+          top: `${Math.random() * 70 + 15}%`,
+          left: `${Math.random() * 80 + 10}%`,
+          boxShadow: '0 0 15px rgba(16, 185, 129, 0.8)',
+          animation: `pulse ${3 + i}s ease-in-out infinite`,
           opacity: 0.4
         }}
       ></div>
     ))}
   </div>
 
-  {/* Ambient Shadow Layer */}
-  <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,#020617_95%)] pointer-events-none"></div>
+  {/* Ambient Scan Line */}
+  <div className="absolute inset-0 bg-gradient-to-b from-transparent via-emerald-500/5 to-transparent h-1/2 w-full animate-data-stream opacity-20 pointer-events-none"></div>
 </section>
 
           {/* 2. INTELLIGENCE BENTO GRID */}
