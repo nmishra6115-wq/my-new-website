@@ -1291,10 +1291,10 @@ export default function App() {
         <div className="space-y-2">
           <div className="inline-flex items-center gap-2 px-3 py-1 bg-purple-500/10 border border-purple-500/30 rounded-full">
             <span className="h-1.5 w-1.5 rounded-full bg-purple-400 animate-ping"></span>
-            <span className="text-[9px] font-black text-purple-400 uppercase tracking-[0.2em]">Neural Network Active</span>
+            <span className="text-[9px] font-black text-purple-400 uppercase tracking-[0.2em]">AML_DECODE</span>
           </div>
           <h1 className="text-3xl md:text-4xl font-black text-white tracking-tighter uppercase leading-none">
-            Internal <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-indigo-400">Intelligence Hub</span>
+            Active <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-indigo-400">Network Jobs</span>
           </h1>
           <p className="text-xs text-slate-400 max-w-md font-medium leading-relaxed font-mono">
             Exclusive career nodes sourced directly from verified HR partners and internal network referrals.
@@ -1304,7 +1304,7 @@ export default function App() {
         {/* NETWORK STATS BOX */}
         <div className="flex gap-4 p-4 bg-black/40 border border-white/5 rounded-2xl">
           <div className="text-center px-4 border-r border-white/10">
-            <p className="text-[10px] font-black text-slate-500 uppercase">Nodes</p>
+            <p className="text-[10px] font-black text-slate-500 uppercase">Available</p>
             <p className="text-xl font-black text-purple-400">{partnerFiles.length}</p>
           </div>
           <div className="text-center px-4">
@@ -1323,7 +1323,7 @@ export default function App() {
         <div className="p-6 bg-slate-900/40 border border-slate-800 rounded-2xl space-y-4">
           <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Filter Stream</h3>
           <div className="space-y-2">
-            {['All Nodes', 'HR Uploads', 'Referral Docs'].map((filter) => (
+            {['All Jobs', 'HR Uploads', 'Referral Docs'].map((filter) => (
               <button key={filter} className="w-full text-left px-4 py-3 rounded-xl border border-transparent hover:border-purple-500/30 hover:bg-purple-500/5 text-xs font-bold text-slate-400 hover:text-purple-400 transition-all">
                 {filter}
               </button>
