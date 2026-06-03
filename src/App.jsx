@@ -3,6 +3,7 @@ import { supabase } from './supabaseClient';
 import { notesContent, privacyPolicy, termsOfService, faqData, contactContent } from './content';
 import { jobOpenings } from './jobs';
 import { kycNews } from './news';
+import CinematicHero from './CinematicHero';
 
 // STABLE QUIZ COMPONENT: Isolated to keep your app stable
 function QuizItem({ item, onCorrect }) {
@@ -438,47 +439,13 @@ export default function App() {
           
           {/* 1. HERO VIDEO SECTION */}
          {/* 1. CINEMATIC NEURAL CORE (ZERO-TEXT) */}
-<section className="terminal-core">
-  <div className="absolute inset-0 z-10">
-    <svg className="w-full h-full">
-      {/* Animated Connectivity Links */}
-      {[...Array(6)].map((_, i) => (
-        <line 
-          key={`link-${i}`}
-          x1={`${20 + i * 12}%`} y1={`${30 + (i % 2) * 20}%`}
-          x2={`${35 + i * 8}%`} y2={`${60 - (i % 2) * 15}%`}
-          stroke="#10b981"
-          strokeWidth="0.5"
-          className="animate-pulse"
-          style={{ animationDuration: `${4 + i}s`, opacity: 0.1 }}
-        />
-      ))}
-    </svg>
-  </div>
-
-  {/* Floating Intelligence Nodes */}
-  <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-    {[...Array(10)].map((_, i) => (
-      <div 
-        key={`node-${i}`}
-        className="absolute w-1.5 h-1.5 bg-emerald-500 rounded-full"
-        style={{
-          top: `${Math.random() * 70 + 15}%`,
-          left: `${Math.random() * 80 + 10}%`,
-          boxShadow: '0 0 15px rgba(16, 185, 129, 0.8)',
-          animation: `pulse ${3 + i}s ease-in-out infinite`,
-          opacity: 0.4
-        }}
-      ></div>
-    ))}
-  </div>
-
-  {/* Ambient Scan Line */}
-  <div className="absolute inset-0 bg-gradient-to-b from-transparent via-emerald-500/5 to-transparent h-1/2 w-full animate-data-stream opacity-20 pointer-events-none"></div>
-</section>
+{/* 1. CINEMATIC HERO FIELD */}
+          <CinematicHero />
 
           {/* 2. INTELLIGENCE BENTO GRID */}
           <section className="relative w-full py-12 px-6 -mt-20">
+          {/* 2. INTELLIGENCE BENTO GRID */}
+         
             <div className="max-w-7xl mx-auto">
               <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
                 
