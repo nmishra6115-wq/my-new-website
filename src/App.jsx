@@ -436,29 +436,30 @@ export default function App() {
         <main className="flex-grow bg-[#030712]">
           
           {/* 1. HERO VIDEO SECTION */}
-         {/* FULLY ANIMATED CINEMATIC TERMINAL */}
-<section className="terminal-cinematic-bg">
-  <div className="scanner-line"></div>
+         {/* 1. CINEMATIC NEURAL TERMINAL (ZERO-TEXT CORE) */}
+<section className="cinematic-terminal-hero">
+  <div className="scanner-overlay"></div>
   
-  {/* Floating Neural Nodes */}
+  {/* Live Neural Pulsing Nodes */}
   <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-    {[...Array(8)].map((_, i) => (
+    {[...Array(12)].map((_, i) => (
       <div 
         key={i}
-        className="absolute w-2 h-2 bg-emerald-500 rounded-full"
+        className="absolute w-1 h-1 bg-emerald-400 rounded-full"
         style={{
-          top: `${Math.random() * 80 + 10}%`,
-          left: `${Math.random() * 80 + 10}%`,
-          boxShadow: '0 0 20px rgba(16, 185, 129, 0.8)',
-          animation: `neural-pulse ${2 + i}s ease-in-out infinite`,
-          opacity: 0.5
+          top: `${20 + Math.random() * 60}%`,
+          left: `${10 + Math.random() * 80}%`,
+          boxShadow: '0 0 15px rgba(16, 185, 129, 0.6)',
+          animation: `pulse 3s ease-in-out infinite`,
+          animationDelay: `${i * 0.4}s`,
+          opacity: 0.4
         }}
       ></div>
     ))}
   </div>
 
-  {/* Cinematic Glow Overlay */}
-  <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,#030712_90%)] pointer-events-none"></div>
+  {/* Ambient Shadow Layer */}
+  <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,#020617_95%)] pointer-events-none"></div>
 </section>
 
           {/* 2. INTELLIGENCE BENTO GRID */}

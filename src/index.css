@@ -347,3 +347,68 @@ button {
   animation: scanner-sweep 6s ease-in-out infinite;
   z-index: 10;
 }
+/* --- CINEMATIC NEURAL CORE --- */
+@keyframes atmospheric-drift {
+  0% { transform: scale(1) translate(0, 0); }
+  50% { transform: scale(1.1) translate(-15px, 15px); }
+  100% { transform: scale(1) translate(0, 0); }
+}
+
+@keyframes grid-drift-deep {
+  0% { background-position: 0 0; }
+  100% { background-position: 120px 120px; }
+}
+
+@keyframes high-freq-scanner {
+  0% { top: -20%; opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { top: 120%; opacity: 0; }
+}
+
+.cinematic-terminal-hero {
+  height: 600px;
+  width: 100%;
+  background-color: #020617;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Drifting Neural Grid */
+.cinematic-terminal-hero::before {
+  content: "";
+  position: absolute;
+  inset: -100px;
+  background-image: 
+    linear-gradient(rgba(16, 185, 129, 0.1) 1px, transparent 1px), 
+    linear-gradient(90deg, rgba(16, 185, 129, 0.1) 1px, transparent 1px);
+  background-size: 60px 60px;
+  animation: grid-drift-deep 10s linear infinite;
+  mask-image: radial-gradient(circle at center, black, transparent 85%);
+  transform: perspective(1000px) rotateX(20deg);
+}
+
+/* Atmospheric Nebula Pulse */
+.cinematic-terminal-hero::after {
+  content: "";
+  position: absolute;
+  width: 150%;
+  height: 150%;
+  background: radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.05) 0%, transparent 60%);
+  animation: atmospheric-drift 20s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* High-Frequency Scanner Line */
+.scanner-overlay {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 100px;
+  background: linear-gradient(to bottom, transparent, rgba(16, 185, 129, 0.15), transparent);
+  animation: high-freq-scanner 6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  z-index: 5;
+}
