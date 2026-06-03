@@ -1056,10 +1056,204 @@ export default function App() {
 
   </div>
 )}
+      {activeView === 'referralForm' && (
+  <div className="max-w-3xl mx-auto animate-view-entry pb-20 px-4">
+    
+    {/* FORM HEADER */}
+    <div className="mb-10 space-y-3 text-center sm:text-left">
+      <div className="inline-flex items-center gap-2 px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 rounded-full">
+        <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+        <span className="text-[9px] font-black text-emerald-500 uppercase tracking-[0.2em]">Secure Node Submission</span>
+      </div>
+      <h1 className="text-3xl font-black text-white uppercase tracking-tighter">
+        Initialize <span className="text-emerald-500">Peer Referral</span>
+      </h1>
+      <p className="text-xs text-slate-400 font-mono">
+        Contribute to the network intelligence pool by submitting active internal opportunities.
+      </p>
+    </div>
+
+    {/* SUBMISSION CONSOLE */}
+    <form 
+      className="p-1 bg-gradient-to-br from-emerald-500/20 to-slate-800/40 rounded-[32px] shadow-2xl"
+      onSubmit={async (e) => { 
+        e.preventDefault(); 
+        const formData = {
+          name: e.target[0].value,
+          email: e.target[1].value,
+          company: e.target[2].value,
+          role: e.target[3].value
+        };
+        const { error } = await supabase.from('submissions').insert([formData]); 
+        if(!error) {
+          alert("TRANSMISSION SUCCESSFUL: Referral Node Logged."); 
+          setActiveView('jobs'); 
+        } else {
+          alert("CRITICAL ERROR: Connection Terminated.");
+        }
+      }}
+    >
+      <div className="bg-[#030712] rounded-[30px] p-6 sm:p-10 space-y-6">
+        
+        {/* INPUT GRID */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-2">
+            <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Full Name</label>
+            <input 
+              className="w-full p-4 bg-black/40 border border-slate-800 rounded-2xl text-white font-mono text-sm focus:border-emerald-500 outline-none transition-all placeholder:text-slate-700" 
+              placeholder="e.g. Nitesh Mishra" 
+              required 
+            />
+          </div>
+          <div className="space-y-2">
+            <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Email Address</label>
+            <input 
+              type="email"
+              className="w-full p-4 bg-black/40 border border-slate-800 rounded-2xl text-white font-mono text-sm focus:border-emerald-500 outline-none transition-all placeholder:text-slate-700" 
+              placeholder="verified@email.com" 
+              required 
+            />
+          </div>
+          <div className="space-y-2">
+            <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Company / Firm</label>
+            <input 
+              className="w-full p-4 bg-black/40 border border-slate-800 rounded-2xl text-white font-mono text-sm focus:border-emerald-500 outline-none transition-all placeholder:text-slate-700" 
+              placeholder="e.g. KPMG Global Services" 
+              required 
+            />
+          </div>
+          <div className="space-y-2">
+            <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Target Role</label>
+            <input 
+              className="w-full p-4 bg-black/40 border border-slate-800 rounded-2xl text-white font-mono text-sm focus:border-emerald-500 outline-none transition-all placeholder:text-slate-700" 
+              placeholder="e.g. AML Specialist" 
+              required 
+            />
+          </div>
+        </div>
+
+        {/* COMPLIANCE CHECKBOX */}
+        <div className="pt-4 flex items-start gap-3">
+          <input type="checkbox" required className="mt-1 accent-emerald-500" />
+          <p className="text-[10px] text-slate-500 leading-relaxed font-medium">
+            I confirm this is a valid professional referral and I authorize the AML_DECODE network to display this information to verified specialists.
+          </p>
+        </div>
+
+        {/* SUBMIT BUTTON */}
+        <button 
+          type="submit" 
+          className="group w-full py-5 bg-emerald-600 hover:bg-emerald-500 text-black font-black uppercase tracking-[0.3em] text-xs rounded-2xl transition-all shadow-[0_0_30px_rgba(16,185,129,0.2)] active:scale-95 flex items-center justify-center gap-3"
+        >
+          Execute Submission 
+          <span className="group-hover:translate-x-2 transition-transform">&rarr;</span>
+        </button>
+
+        {/* SYSTEM STATUS BAR */}
+        <div className="pt-6 border-t border-white/5 flex justify-between items-center">
+          <div className="flex gap-2">
+            <div className="h-1 w-8 bg-emerald-500/40 rounded-full"></div>
+            <div className="h-1 w-8 bg-emerald-500/20 rounded-full"></div>
+            <div className="h-1 w-8 bg-emerald-500/10 rounded-full"></div>
+          </div>
+          <span className="text-[9px] font-bold text-slate-600 uppercase tracking-tighter">Encrypted_Payload_Ready</span>
+        </div>
+      </div>
+    </form>
+
+  </div>
+)}      
+{activeView === 'available' && (
+  <div className="space-y-8 animate-view-entry max-w-5xl mx-auto pb-20 px-4">
+    
+    {/* MODE HEADER */}
+    <div className="relative p-8 rounded-3xl bg-emerald-500/5 border border-emerald-500/20 backdrop-blur-xl overflow-hidden">
+      <div className="absolute -top-10 -left-10 w-40 h-40 bg-emerald-600/10 blur-[50px] rounded-full"></div>
+      <div className="relative z-10 flex flex-col md:flex-row justify-between items-center gap-6 text-center md:text-left">
+        <div className="space-y-2">
+          <div className="inline-flex items-center gap-2 px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 rounded-full">
+            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span className="text-[9px] font-black text-emerald-500 uppercase tracking-widest">Peer-to-Peer Protocol</span>
+          </div>
+          <h1 className="text-3xl font-black text-white uppercase tracking-tighter">
+            Available <span className="text-emerald-500">Network Referrals</span>
+          </h1>
+          <p className="text-xs text-slate-400 font-mono max-w-md">
+            Direct pipelines to Tier-1 firms shared by verified specialists within the AML_DECODE ecosystem.
+          </p>
+        </div>
+        <div className="shrink-0 py-3 px-6 bg-black/40 border border-white/5 rounded-2xl">
+          <p className="text-[9px] font-black text-slate-500 uppercase mb-1 text-center">Active Leads</p>
+          <p className="text-2xl font-black text-emerald-400 font-mono text-center">{submissions.length}</p>
+        </div>
+      </div>
+    </div>
+
+    {/* REFERRAL NODES GRID */}
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      {submissions.length > 0 ? (
+        submissions.map((sub, i) => (
+          <div 
+            key={i} 
+            className="group relative p-6 bg-slate-900/40 border border-slate-800 rounded-[24px] hover:border-emerald-500/40 transition-all duration-500 flex flex-col justify-between gap-6 overflow-hidden shadow-xl"
+          >
+            {/* Animated background pulse */}
+            <div className="absolute inset-0 bg-emerald-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
             
-            {activeView === 'referralForm' && <form className="space-y-4" onSubmit={async (e) => { e.preventDefault(); await supabase.from('submissions').insert([{ name: e.target[0].value, email: e.target[1].value, company: e.target[2].value, role: e.target[3].value }]); alert("Submitted!"); setActiveView(null); }}><input className="w-full p-4 bg-black border" placeholder="Name" required /><input className="w-full p-4 bg-black border" placeholder="Email" required /><input className="w-full p-4 bg-black border" placeholder="Company" required /><input className="w-full p-4 bg-black border" placeholder="Role" required /><button type="submit" className="w-full py-4 bg-emerald-600">SUBMIT</button></form>}
-            {activeView === 'available' && <div className="max-w-4xl mx-auto">{submissions.map((sub, i) => <div key={i} className="p-6 mb-4 bg-slate-900 border border-emerald-500/30 rounded flex justify-between items-center"><div><h3 className="text-xl font-bold">{sub.name}</h3><p className="text-sm text-slate-400">{sub.company} - {sub.role}</p></div><button className="bg-emerald-600 px-6 py-3 font-bold hover:bg-emerald-500 transition-all text-white">APPLY</button></div>)}</div>}
-            
+            <div className="relative z-10 space-y-4">
+              <div className="flex justify-between items-start">
+                <div className="p-2 bg-emerald-500/10 rounded-lg border border-emerald-500/20">
+                  <svg className="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                  </svg>
+                </div>
+                <div className="text-right">
+                  <p className="text-[8px] font-black text-slate-600 uppercase tracking-widest">Node_Status</p>
+                  <p className="text-[10px] font-bold text-emerald-500 font-mono">ENCRYPTED_READY</p>
+                </div>
+              </div>
+
+              <div className="space-y-1">
+                <p className="text-[10px] font-black text-emerald-500 uppercase tracking-widest">{sub.company || 'Confidential Firm'}</p>
+                <h3 className="text-xl font-bold text-white leading-tight group-hover:text-emerald-400 transition-colors">
+                  {sub.role || 'Compliance Associate'}
+                </h3>
+                <div className="flex items-center gap-2 pt-1">
+                  <div className="h-1.5 w-1.5 rounded-full bg-slate-700 group-hover:bg-emerald-500 transition-colors"></div>
+                  <p className="text-xs text-slate-400 font-medium">Source: <span className="text-slate-200">{sub.name}</span></p>
+                </div>
+              </div>
+            </div>
+
+            <div className="relative z-10 flex gap-2 pt-4 border-t border-slate-800/60">
+              <a 
+                href={`mailto:${sub.email}?subject=Referral Inquiry: ${sub.role} at ${sub.company}`}
+                className="flex-grow py-3.5 bg-emerald-600 hover:bg-emerald-500 text-black font-black text-xs uppercase tracking-widest rounded-xl text-center transition-all shadow-lg shadow-emerald-900/20 active:scale-95"
+              >
+                Request Referral Channel
+              </a>
+            </div>
+          </div>
+        ))
+      ) : (
+        <div className="col-span-full py-24 text-center bg-slate-900/20 rounded-[32px] border-2 border-dashed border-slate-800">
+          <p className="text-slate-500 font-mono text-sm uppercase tracking-[0.3em]">No Peer Referral Nodes Detected</p>
+        </div>
+      )}
+    </div>
+
+    {/* FOOTER TIP */}
+    <div className="p-6 bg-white/5 rounded-2xl border border-white/5 flex items-center gap-4">
+      <div className="h-10 w-10 shrink-0 bg-indigo-500/10 rounded-full flex items-center justify-center text-indigo-400">
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+      </div>
+      <p className="text-[11px] text-slate-400 leading-relaxed">
+        <span className="text-white font-bold uppercase">Pro Tip:</span> Mention your specific expertise in <span className="text-emerald-500">Transaction Monitoring</span> or <span className="text-emerald-500">Sanctions Screening</span> when reaching out to referrers to increase your success rate.
+      </p>
+    </div>
+
+  </div>
+)}            
             {activeView === 'contribute' && (
               <div className="p-8 border border-slate-800 rounded bg-slate-900">
                 {!isAuthorized ? (
@@ -1087,22 +1281,141 @@ export default function App() {
               </div>
             )}
 
-            {activeView === 'network' && (
-              <div className="max-w-4xl mx-auto">
-                {partnerFiles.map((f, i) => (
-                  <div key={i} className="p-6 mb-4 bg-slate-900 border border-purple-500/30 rounded flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                    <div className="flex-grow">
-                      <span className="block font-bold text-lg text-white">{f.name}</span>
-                      {f.recruiter_email && <span className="text-xs text-purple-400 font-bold uppercase tracking-tight">Recruiter: {f.recruiter_email}</span>}
-                    </div>
-                    <div className="flex flex-wrap gap-3">
-                      <button onClick={() => window.open(f.url, '_blank')} className="px-4 py-2 border border-purple-500 text-purple-400 hover:bg-purple-500 hover:text-white transition-all font-bold text-xs">VIEW</button>
-                      {f.recruiter_email && <a href={`mailto:${f.recruiter_email}...`} onClick={() => trackEmailClick(f.id)} className="px-4 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold text-xs rounded shadow-lg flex items-center gap-2">EMAIL HR</a>}
-                    </div>
+           {activeView === 'network' && (
+  <div className="space-y-8 animate-view-entry max-w-7xl mx-auto pb-20 px-4 sm:px-6">
+    
+    {/* HUB HEADER: Neural Connection Theme */}
+    <div className="relative p-8 rounded-3xl bg-[#0b1c2e]/60 border border-purple-500/20 backdrop-blur-xl overflow-hidden shadow-2xl">
+      <div className="absolute top-0 right-0 w-64 h-64 bg-purple-600/10 blur-[100px] rounded-full"></div>
+      <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+        <div className="space-y-2">
+          <div className="inline-flex items-center gap-2 px-3 py-1 bg-purple-500/10 border border-purple-500/30 rounded-full">
+            <span className="h-1.5 w-1.5 rounded-full bg-purple-400 animate-ping"></span>
+            <span className="text-[9px] font-black text-purple-400 uppercase tracking-[0.2em]">Neural Network Active</span>
+          </div>
+          <h1 className="text-3xl md:text-4xl font-black text-white tracking-tighter uppercase leading-none">
+            Internal <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-indigo-400">Intelligence Hub</span>
+          </h1>
+          <p className="text-xs text-slate-400 max-w-md font-medium leading-relaxed font-mono">
+            Exclusive career nodes sourced directly from verified HR partners and internal network referrals.
+          </p>
+        </div>
+        
+        {/* NETWORK STATS BOX */}
+        <div className="flex gap-4 p-4 bg-black/40 border border-white/5 rounded-2xl">
+          <div className="text-center px-4 border-r border-white/10">
+            <p className="text-[10px] font-black text-slate-500 uppercase">Nodes</p>
+            <p className="text-xl font-black text-purple-400">{partnerFiles.length}</p>
+          </div>
+          <div className="text-center px-4">
+            <p className="text-[10px] font-black text-slate-500 uppercase">Active</p>
+            <p className="text-xl font-black text-emerald-400">LIVE</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {/* MAIN CONTENT GRID */}
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      
+      {/* LEFT: INTERACTIVE FILTER (Visible on Desktop) */}
+      <div className="hidden lg:block lg:col-span-3 space-y-6 sticky top-28">
+        <div className="p-6 bg-slate-900/40 border border-slate-800 rounded-2xl space-y-4">
+          <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Filter Stream</h3>
+          <div className="space-y-2">
+            {['All Nodes', 'HR Uploads', 'Referral Docs'].map((filter) => (
+              <button key={filter} className="w-full text-left px-4 py-3 rounded-xl border border-transparent hover:border-purple-500/30 hover:bg-purple-500/5 text-xs font-bold text-slate-400 hover:text-purple-400 transition-all">
+                {filter}
+              </button>
+            ))}
+          </div>
+        </div>
+        
+        <div className="p-6 bg-gradient-to-br from-purple-900/20 to-indigo-900/20 border border-purple-500/10 rounded-2xl">
+          <p className="text-[9px] font-black text-purple-400 uppercase mb-2">Notice</p>
+          <p className="text-[11px] text-slate-400 italic leading-relaxed">
+            Internal referral files are updated every 24 hours. Contact HR directly using the "Email HR" function.
+          </p>
+        </div>
+      </div>
+
+      {/* RIGHT: DYNAMIC CARDS FEED */}
+      <div className="lg:col-span-9 grid grid-cols-1 md:grid-cols-2 gap-4">
+        {partnerFiles.length > 0 ? (
+          partnerFiles.map((f, i) => (
+            <div 
+              key={i} 
+              className="group relative p-6 bg-[#030712] border border-slate-800 rounded-3xl hover:border-purple-500/50 transition-all duration-500 hover:shadow-[0_0_40px_rgba(168,85,247,0.15)] flex flex-col justify-between gap-8 overflow-hidden animate-slide-up"
+              style={{ animationDelay: `${i * 0.1}s` }}
+            >
+              {/* Background Accent Lines */}
+              <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-purple-500/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+              
+              <div className="space-y-4 relative z-10">
+                <div className="flex justify-between items-start">
+                  <div className="p-2.5 bg-purple-500/10 rounded-xl border border-purple-500/20">
+                    <svg className="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
                   </div>
-                ))}
+                  <span className="text-[9px] font-black text-slate-600 font-mono tracking-tighter uppercase">Entry_{i + 1004}</span>
+                </div>
+
+                <div>
+                  <h3 className="text-lg font-bold text-white group-hover:text-purple-300 transition-colors leading-tight">
+                    {f.name}
+                  </h3>
+                  {f.recruiter_email && (
+                    <div className="mt-2 flex items-center gap-2">
+                      <div className="h-1 w-1 rounded-full bg-emerald-500"></div>
+                      <span className="text-[10px] text-purple-400 font-bold uppercase tracking-tight truncate">
+                        Recruiter: {f.recruiter_email}
+                      </span>
+                    </div>
+                  )}
+                </div>
               </div>
-            )}
+
+              {/* ACTION ROW */}
+              <div className="flex items-center gap-2 pt-4 border-t border-slate-800/50 relative z-10">
+                <button 
+                  onClick={() => window.open(f.url, '_blank')}
+                  className="flex-grow py-3 px-4 bg-slate-900 border border-slate-800 hover:border-purple-500/50 text-slate-300 hover:text-white rounded-xl font-bold text-xs uppercase transition-all flex items-center justify-center gap-2"
+                >
+                  View Intel
+                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
+                </button>
+                
+                {f.recruiter_email && (
+                  <a 
+                    href={`mailto:${f.recruiter_email}?subject=Inquiry: ${f.name} (via AML_DECODE)`}
+                    onClick={() => trackEmailClick(f.id)}
+                    className="p-3 bg-purple-600 hover:bg-purple-500 text-white rounded-xl transition-all shadow-lg shadow-purple-900/20 group/btn"
+                  >
+                    <svg className="w-5 h-5 group-hover/btn:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                  </a>
+                )}
+              </div>
+
+              {/* Hover Glow Effect */}
+              <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+            </div>
+          ))
+        ) : (
+          <div className="col-span-full py-20 text-center bg-slate-900/20 rounded-3xl border border-dashed border-slate-800">
+            <div className="mb-4 inline-block p-4 bg-slate-800/50 rounded-full text-slate-600">
+              <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+            </div>
+            <p className="text-slate-500 font-mono text-sm uppercase tracking-widest">No Intelligence Nodes Found in Current Stream</p>
+          </div>
+        )}
+      </div>
+
+    </div>
+  </div>
+)}
 
             {/* --- UNIFIED ASSESSMENT TERMINAL --- */}
             {/* --- UNIFIED ASSESSMENT TERMINAL (COMPACT RESPONSIVE FIX) --- */}
