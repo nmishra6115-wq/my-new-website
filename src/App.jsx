@@ -154,6 +154,7 @@ export default function App() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [activeView, setActiveView] = useState(null);
+  const [selectedFile, setSelectedFile] = useState(null);
   const [challengeSelected, setChallengeSelected] = useState(null);
   const [isChallengeLocked, setIsChallengeLocked] = useState(false);
   const [pageIndex, setPageIndex] = useState(0);
@@ -1419,11 +1420,19 @@ export default function App() {
             </div>
             
             <div className="relative group">
-              <input type="file" id="hrFileInput" className="hidden" onChange={(e) => {
-                const fileName = e.target.files[0]?.name || '';
-                const display = document.getElementById('fileNameDisplay');
-                if (display) display.innerText = `READY: ${fileName}`;
-              }} />
+<input 
+  type="file" 
+  id="hrFileInput" 
+  className="hidden" 
+  onChange={(e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setSelectedFile(file);
+      const display = document.getElementById('fileNameDisplay');
+      if (display) display.innerText = `READY: ${file.name}`;
+    }
+  }} 
+/>              
               <label htmlFor="hrFileInput" className="cursor-pointer block p-12 border-2 border-dashed border-slate-800 rounded-[24px] bg-black/40 text-center hover:border-emerald-500/50 transition-all group-hover:bg-emerald-500/5">
                 <svg className="w-10 h-10 text-slate-600 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" /></svg>
                 <p className="text-sm font-bold text-slate-400 uppercase tracking-widest">Select Intelligence File</p>
@@ -1431,13 +1440,62 @@ export default function App() {
               </label>
             </div>
 
-            <button 
-              disabled={isLoading} 
-              onClick={async () => { /* Your upload logic */ }} 
-              className="w-full py-5 bg-emerald-600 hover:bg-emerald-500 text-black font-black uppercase tracking-[0.2em] text-xs rounded-2xl transition-all shadow-lg shadow-emerald-900/20 disabled:opacity-50"
-            >
-              Execute Deployment
-            </button>
+           <button 
+  disabled={isLoading || !selectedFile || !recruiterEmail} 
+  onClick={async () => {
+    try {
+      setIsLoading(true);
+      
+      // 1. Generate a clean, unique path for the file inside your bucket
+      const fileExt = selectedFile.name.split('.').pop();
+      const fileName = `${Math.random()}.${fileExt}`;
+      const filePath = `hr_uploads/${fileName}`;
+
+      // 2. Upload the raw binary file to your Supabase Storage bucket named 'intelligence'
+      const { error: uploadError } = await supabase.storage
+        .from('intelligence')
+        .upload(filePath, selectedFile);
+
+      if (uploadError) throw uploadError;
+
+      // 3. Retrieve the permanent public URL for the newly deployed asset
+      const { data: { publicUrl } } = supabase.storage
+        .from('intelligence')
+        .getPublicUrl(filePath);
+
+      // 4. Create a tracking reference log in your 'partner_files' database table
+      const { error: dbError } = await supabase
+        .from('partner_files')
+        .insert([
+          { 
+            name: selectedFile.name, 
+            url: publicUrl, 
+            recruiter_email: recruiterEmail 
+          }
+        ]);
+
+      if (dbError) throw dbError;
+
+      alert("DEPLOYMENT SUCCESSFUL: Intelligence Node synced with Network Stream.");
+      
+      // 5. Clean up local terminal states and sync views
+      setSelectedFile(null);
+      setRecruiterEmail("");
+      const display = document.getElementById('fileNameDisplay');
+      if (display) display.innerText = "";
+      setActiveView('network'); // Shifts view straight to active streams to check the document
+
+    } catch (err) {
+      console.error("Critical submission failure:", err);
+      alert(`CRITICAL ERROR: Submission rejected. Reason: ${err.message || err}`);
+    } finally {
+      setIsLoading(false);
+    }
+  }} 
+  className="w-full py-5 bg-emerald-600 hover:bg-emerald-500 text-black font-black uppercase tracking-[0.2em] text-xs rounded-2xl transition-all shadow-lg shadow-emerald-900/20 disabled:opacity-50"
+>
+  {isLoading ? "TRANSMITTING DATA..." : "Execute Deployment"}
+</button>
           </div>
         </div>
 
