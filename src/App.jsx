@@ -791,64 +791,96 @@ export default function App() {
       <div className="space-y-1">
         <div className="inline-flex items-center gap-2 px-2.5 py-0.5 bg-emerald-500/10 border border-emerald-500/20 rounded-full">
           <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-          <span className="text-[9px] font-black text-emerald-400 uppercase tracking-widest">Master Directives Loaded</span>
+          <span className="text-[9px] font-black text-emerald-400 uppercase tracking-widest">AML_DECODE</span>
         </div>
-        <h1 className="text-2xl font-black text-white uppercase tracking-tight">Regulatory Intelligence Vault</h1>
+        <h1 className="text-2xl font-black text-white uppercase tracking-tight">Interview Ready Notes</h1>
       </div>
       <div className="text-left sm:text-right shrink-0">
-        <p className="text-[10px] font-mono font-black text-slate-500 uppercase tracking-wider">Storage Integrity</p>
-        <p className="text-xs font-bold text-emerald-500 font-mono">SECURE / 2026_V1</p>
+        <p className="text-[10px] font-mono font-black text-slate-500 uppercase tracking-wider"></p>
+        <p className="text-xs font-bold text-emerald-500 font-mono"></p>
       </div>
     </div>
 
     {/* CORE DISCOVERY TERMINAL LAYOUT */}
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
       
-      {/* LEFT NAVIGATION COLUMN: Responsive Scroll Strip */}
-      <div className="lg:col-span-4 flex lg:flex-col gap-2 overflow-x-auto lg:overflow-y-auto pb-3 lg:pb-0 pr-2 lg:max-h-[65vh] custom-scrollbar snap-x shrink-0">
-        {notesContent.map((item, idx) => {
-          const isActive = pageIndex === idx;
-          return (
-            <button 
-              key={idx} 
-              onClick={() => { 
-                setPageIndex(idx); 
-                if (contentRef.current) contentRef.current.scrollTop = 0; 
-              }} 
-              className={`w-48 sm:w-64 lg:w-full text-left p-4 rounded-xl border font-mono uppercase tracking-tight transition-all duration-300 shrink-0 snap-center relative overflow-hidden group
-                ${isActive 
-                  ? "bg-gradient-to-r from-emerald-500/20 to-slate-900/40 border-emerald-500 text-white shadow-lg shadow-emerald-950/20" 
-                  : "bg-slate-900/20 border-slate-800/80 text-slate-400 hover:text-slate-200 hover:border-slate-700 hover:bg-slate-900/40"
-                }`}
-            >
-              {/* Active neon pointer line */}
-              {isActive && (
-                <div className="absolute top-0 left-0 h-full w-[3px] bg-emerald-500"></div>
-              )}
-              
-              <div className="flex items-center justify-between gap-3">
-                <div className="truncate">
-                  <p className="text-[8px] font-black text-slate-500 group-hover:text-slate-400 tracking-widest mb-0.5">NODE_0{idx + 1}</p>
-                  <p className="text-xs font-bold truncate tracking-tight">{item.title}</p>
+      {/* LEFT NAVIGATION COLUMN: Responsive Switcher */}
+      <div className="lg:col-span-4 shrink-0">
+        
+        {/* MOBILE ONLY: Topic Selector Dropdown (Visible on screens < 1024px) */}
+        <div className="lg:hidden mb-4 relative group">
+          <div className="absolute left-4 top-1/2 -translate-y-1/2 text-emerald-500 pointer-events-none">
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M4 6h16M4 12h16m-7 6h7" />
+            </svg>
+          </div>
+          <select 
+            value={pageIndex}
+            onChange={(e) => {
+              setPageIndex(parseInt(e.target.value));
+              if (contentRef.current) contentRef.current.scrollTop = 0;
+            }}
+            className="w-full bg-slate-900 border border-slate-700 text-white pl-12 pr-10 py-4 rounded-xl font-mono text-xs uppercase tracking-widest outline-none focus:border-emerald-500 appearance-none shadow-xl"
+          >
+            {notesContent.map((item, idx) => (
+              <option key={idx} value={idx}>
+                NODE_0{idx + 1}: {item.title}
+              </option>
+            ))}
+          </select>
+          <div className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none">
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M19 9l-7 7-7-7" />
+            </svg>
+          </div>
+        </div>
+
+        {/* DESKTOP ONLY: Vertical Scroll Strip (Visible on screens > 1024px) */}
+        <div className="hidden lg:flex lg:flex-col gap-2 overflow-y-auto pr-2 lg:max-h-[65vh] custom-scrollbar">
+          {notesContent.map((item, idx) => {
+            const isActive = pageIndex === idx;
+            return (
+              <button 
+                key={idx} 
+                onClick={() => { 
+                  setPageIndex(idx); 
+                  if (contentRef.current) contentRef.current.scrollTop = 0; 
+                }} 
+                className={`w-full text-left p-4 rounded-xl border font-mono uppercase tracking-tight transition-all duration-300 shrink-0 relative overflow-hidden group
+                  ${isActive 
+                    ? "bg-gradient-to-r from-emerald-500/20 to-slate-900/40 border-emerald-500 text-white shadow-lg shadow-emerald-950/20" 
+                    : "bg-slate-900/20 border-slate-800/80 text-slate-400 hover:text-slate-200 hover:border-slate-700 hover:bg-slate-900/40"
+                  }`}
+              >
+                {/* Active neon pointer line */}
+                {isActive && (
+                  <div className="absolute top-0 left-0 h-full w-[3px] bg-emerald-500"></div>
+                )}
+                
+                <div className="flex items-center justify-between gap-3">
+                  <div className="truncate">
+                    <p className="text-[8px] font-black text-slate-500 group-hover:text-slate-400 tracking-widest mb-0.5">NODE_0{idx + 1}</p>
+                    <p className="text-xs font-bold truncate tracking-tight">{item.title}</p>
+                  </div>
+                  <span className={`text-[10px] font-bold font-mono transition-transform duration-300 group-hover:translate-x-1 shrink-0 ${isActive ? 'text-emerald-400' : 'text-slate-600'}`}>
+                    &rarr;
+                  </span>
                 </div>
-                <span className={`text-[10px] font-bold font-mono transition-transform duration-300 group-hover:translate-x-1 shrink-0 ${isActive ? 'text-emerald-400' : 'text-slate-600'}`}>
-                  &rarr;
-                </span>
-              </div>
-            </button>
-          );
-        })}
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       {/* RIGHT DISPLAY VIEWPORT: Content Reader Canvas */}
-      <div className="lg:col-span-8 bg-black/40 border border-slate-800 rounded-2xl flex flex-col overflow-hidden shadow-2xl h-[55vh] lg:h-[65vh]">
+      <div className="lg:col-span-8 bg-black/40 border border-slate-800 rounded-2xl flex flex-col overflow-hidden shadow-2xl h-[60vh] lg:h-[65vh]">
         
         {/* Viewport Control Tab */}
         <div className="px-6 py-4 bg-slate-900/30 border-b border-slate-800/80 flex justify-between items-center shrink-0">
           <div className="flex items-center gap-2 font-mono text-[10px] font-black text-slate-500 tracking-widest uppercase">
-            <span>Core Data Layer</span>
-            <span>//</span>
-            <span className="text-slate-400 truncate max-w-[180px] sm:max-w-none">
+            <span className="hidden sm:inline">Core Data Layer</span>
+            <span className="hidden sm:inline">//</span>
+            <span className="text-slate-400 truncate max-w-[200px] sm:max-w-none">
               {notesContent[pageIndex]?.title}
             </span>
           </div>
@@ -876,8 +908,8 @@ export default function App() {
 
         {/* Viewport Bottom Status Bar */}
         <div className="px-6 py-3 bg-black/60 border-t border-slate-800/40 font-mono text-[9px] text-slate-500 font-bold uppercase tracking-widest flex justify-between items-center shrink-0">
-          <span>Readout Context Validated</span>
-          <span className="font-mono text-emerald-500/60">OK_TERMINAL</span>
+          <span>End of Content</span>
+          <span className="font-mono text-emerald-500/60"></span>
         </div>
 
       </div>
