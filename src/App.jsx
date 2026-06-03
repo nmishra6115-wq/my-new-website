@@ -783,21 +783,109 @@ export default function App() {
           </button>
           
           <div key={activeView} className="animate-view-entry max-w-7xl mx-auto text-white">
-            {activeView === 'notes' && (
-              <div className="flex flex-row w-full h-[80vh] gap-2 p-2">
-                <div className="w-[120px] md:w-[250px] space-y-2 flex-shrink-0 overflow-y-auto">
-                  {notesContent.map((item, idx) => (
-                    <button key={idx} onClick={() => { setPageIndex(idx); if (contentRef.current) contentRef.current.scrollTop = 0; }} className={`w-full text-xs md:text-sm text-left p-2 md:p-4 rounded border transition-colors ${pageIndex === idx ? "bg-emerald-600 border-emerald-500 text-white" : "bg-transparent border-slate-700 text-slate-300 hover:border-emerald-500"}`}>
-                      {item.title}
-                    </button>
-                  ))}
+           {activeView === 'notes' && (
+  <div className="space-y-8 animate-view-entry max-w-7xl mx-auto pb-20">
+    
+    {/* INTEL HEADER BLOCK */}
+    <div className="relative p-6 rounded-2xl bg-slate-900/40 border border-slate-800 backdrop-blur-md flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <div className="space-y-1">
+        <div className="inline-flex items-center gap-2 px-2.5 py-0.5 bg-emerald-500/10 border border-emerald-500/20 rounded-full">
+          <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span className="text-[9px] font-black text-emerald-400 uppercase tracking-widest">Master Directives Loaded</span>
+        </div>
+        <h1 className="text-2xl font-black text-white uppercase tracking-tight">Regulatory Intelligence Vault</h1>
+      </div>
+      <div className="text-left sm:text-right shrink-0">
+        <p className="text-[10px] font-mono font-black text-slate-500 uppercase tracking-wider">Storage Integrity</p>
+        <p className="text-xs font-bold text-emerald-500 font-mono">SECURE / 2026_V1</p>
+      </div>
+    </div>
+
+    {/* CORE DISCOVERY TERMINAL LAYOUT */}
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+      
+      {/* LEFT NAVIGATION COLUMN: Responsive Scroll Strip */}
+      <div className="lg:col-span-4 flex lg:flex-col gap-2 overflow-x-auto lg:overflow-y-auto pb-3 lg:pb-0 pr-2 lg:max-h-[65vh] custom-scrollbar snap-x shrink-0">
+        {notesContent.map((item, idx) => {
+          const isActive = pageIndex === idx;
+          return (
+            <button 
+              key={idx} 
+              onClick={() => { 
+                setPageIndex(idx); 
+                if (contentRef.current) contentRef.current.scrollTop = 0; 
+              }} 
+              className={`w-48 sm:w-64 lg:w-full text-left p-4 rounded-xl border font-mono uppercase tracking-tight transition-all duration-300 shrink-0 snap-center relative overflow-hidden group
+                ${isActive 
+                  ? "bg-gradient-to-r from-emerald-500/20 to-slate-900/40 border-emerald-500 text-white shadow-lg shadow-emerald-950/20" 
+                  : "bg-slate-900/20 border-slate-800/80 text-slate-400 hover:text-slate-200 hover:border-slate-700 hover:bg-slate-900/40"
+                }`}
+            >
+              {/* Active neon pointer line */}
+              {isActive && (
+                <div className="absolute top-0 left-0 h-full w-[3px] bg-emerald-500"></div>
+              )}
+              
+              <div className="flex items-center justify-between gap-3">
+                <div className="truncate">
+                  <p className="text-[8px] font-black text-slate-500 group-hover:text-slate-400 tracking-widest mb-0.5">NODE_0{idx + 1}</p>
+                  <p className="text-xs font-bold truncate tracking-tight">{item.title}</p>
                 </div>
-                <div ref={contentRef} className="flex-grow overflow-y-auto pl-2 md:pl-4">
-                  <h1 className="text-xl md:text-4xl font-bold mb-4">{notesContent[pageIndex]?.title}</h1>
-                  <p className="whitespace-pre-wrap leading-relaxed text-slate-300 text-sm md:text-base">{notesContent[pageIndex]?.body}</p>
-                </div>
+                <span className={`text-[10px] font-bold font-mono transition-transform duration-300 group-hover:translate-x-1 shrink-0 ${isActive ? 'text-emerald-400' : 'text-slate-600'}`}>
+                  &rarr;
+                </span>
               </div>
-            )}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* RIGHT DISPLAY VIEWPORT: Content Reader Canvas */}
+      <div className="lg:col-span-8 bg-black/40 border border-slate-800 rounded-2xl flex flex-col overflow-hidden shadow-2xl h-[55vh] lg:h-[65vh]">
+        
+        {/* Viewport Control Tab */}
+        <div className="px-6 py-4 bg-slate-900/30 border-b border-slate-800/80 flex justify-between items-center shrink-0">
+          <div className="flex items-center gap-2 font-mono text-[10px] font-black text-slate-500 tracking-widest uppercase">
+            <span>Core Data Layer</span>
+            <span>//</span>
+            <span className="text-slate-400 truncate max-w-[180px] sm:max-w-none">
+              {notesContent[pageIndex]?.title}
+            </span>
+          </div>
+          <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse shrink-0"></div>
+        </div>
+
+        {/* Scrollable Document Text Body */}
+        <div 
+          ref={contentRef} 
+          className="flex-grow overflow-y-auto p-6 md:p-8 custom-scrollbar space-y-6 bg-gradient-to-b from-transparent to-slate-950/20"
+        >
+          <div className="space-y-2 border-b border-slate-800/60 pb-4">
+            <h2 className="text-xl md:text-3xl font-black text-white tracking-tight uppercase leading-snug">
+              {notesContent[pageIndex]?.title}
+            </h2>
+            <p className="text-[10px] font-mono text-emerald-500/80 uppercase tracking-widest font-bold">
+              Classification: Technical Field Intelligence
+            </p>
+          </div>
+
+          <p className="whitespace-pre-wrap leading-relaxed text-slate-300 text-sm md:text-base font-medium tracking-normal antialiased">
+            {notesContent[pageIndex]?.body}
+          </p>
+        </div>
+
+        {/* Viewport Bottom Status Bar */}
+        <div className="px-6 py-3 bg-black/60 border-t border-slate-800/40 font-mono text-[9px] text-slate-500 font-bold uppercase tracking-widest flex justify-between items-center shrink-0">
+          <span>Readout Context Validated</span>
+          <span className="font-mono text-emerald-500/60">OK_TERMINAL</span>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+)}
             
           {activeView === 'jobs' && (
   <div className="space-y-12 animate-view-entry max-w-6xl mx-auto pb-20">
