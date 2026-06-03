@@ -1254,32 +1254,134 @@ export default function App() {
 
   </div>
 )}            
-            {activeView === 'contribute' && (
-              <div className="p-8 border border-slate-800 rounded bg-slate-900">
-                {!isAuthorized ? (
-                  <div className="space-y-4">
-                    <h2 className="text-xl font-bold text-emerald-400 uppercase tracking-widest mb-4">HR Portal Secure Login</h2>
-                    <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full p-4 bg-black border border-slate-700 text-slate-100 font-mono focus:border-emerald-500 outline-none" />
-                    <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full p-4 bg-black border border-slate-700 text-slate-100 font-mono focus:border-emerald-500 outline-none" />
-                    <button onClick={async () => { const { error } = await supabase.auth.signInWithPassword({ email, password }); if (!error) setIsAuthorized(true); else alert(error.message); }} className="w-full py-4 bg-emerald-600 hover:bg-emerald-500 font-bold uppercase transition-all">LOGIN</button>
-                  </div>
-                ) : (
-                  <div className="space-y-6">
-                    <h2 className="text-xl font-bold text-emerald-400 uppercase tracking-widest">HR Portal: Upload Documents</h2>
-                    <div className="space-y-2">
-                      <label className="text-xs text-slate-400 font-bold uppercase">Recruiter Email (Optional)</label>
-                      <input type="email" placeholder="hr@company.com" value={recruiterEmail} onChange={(e) => setRecruiterEmail(e.target.value)} className="w-full p-4 bg-black border border-slate-700 text-slate-100 font-mono focus:border-emerald-500 outline-none" />
-                    </div>
-                    <div className="p-10 border-2 border-dashed border-slate-700 rounded-lg text-center bg-black/40">
-                      <input type="file" id="hrFileInput" className="hidden" onChange={(e) => { const fileName = e.target.files[0]?.name || ''; const display = document.getElementById('fileNameDisplay'); if (display) display.innerText = fileName; }} />
-                      <label htmlFor="hrFileInput" className="cursor-pointer bg-slate-800 px-6 py-3 rounded font-bold hover:bg-slate-700 transition-all text-sm">SELECT DOCUMENT (PDF/IMG)</label>
-                      <p id="fileNameDisplay" className="mt-4 text-emerald-500 text-sm font-bold"></p>
-                    </div>
-                    <button disabled={isLoading} onClick={async () => { /* Upload logic preserved precisely */ }} className="w-full py-5 bg-emerald-600 hover:bg-emerald-500 text-white font-black uppercase transition-all disabled:opacity-50">SUBMIT TO NETWORK</button>
-                  </div>
-                )}
+          {activeView === 'contribute' && (
+  <div className="max-w-4xl mx-auto animate-view-entry pb-20 px-4">
+    
+    {/* DASHBOARD HEADER */}
+    <div className="relative p-8 rounded-3xl bg-[#0b1c2e]/80 border border-emerald-500/30 backdrop-blur-xl mb-8 overflow-hidden shadow-2xl">
+      <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-600/5 blur-[100px] rounded-full"></div>
+      <div className="relative z-10 flex flex-col md:flex-row justify-between items-center gap-6">
+        <div className="space-y-2">
+          <div className="inline-flex items-center gap-2 px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 rounded-full">
+            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-ping"></span>
+            <span className="text-[9px] font-black text-emerald-500 uppercase tracking-widest">Authorized Access Only</span>
+          </div>
+          <h1 className="text-3xl font-black text-white uppercase tracking-tighter">
+            HR <span className="text-emerald-500">Command Center</span>
+          </h1>
+          <p className="text-xs text-slate-400 font-mono">Terminal for verified partners to deploy referral intelligence.</p>
+        </div>
+        
+        {isAuthorized && (
+          <button 
+            onClick={() => setIsAuthorized(false)}
+            className="px-4 py-2 bg-red-500/10 border border-red-500/30 text-red-400 text-[10px] font-black uppercase rounded-lg hover:bg-red-500 hover:text-white transition-all"
+          >
+            Terminate Session
+          </button>
+        )}
+      </div>
+    </div>
+
+    {/* AUTHENTICATION GATE */}
+    {!isAuthorized ? (
+      <div className="bg-slate-900/40 border border-slate-800 p-10 rounded-[32px] max-w-md mx-auto shadow-2xl">
+        <div className="space-y-6">
+          <div className="space-y-2 text-center">
+            <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Protocol Login</p>
+            <h2 className="text-xl font-bold text-white">Identity Verification</h2>
+          </div>
+          <div className="space-y-4">
+            <input 
+              type="email" 
+              placeholder="Partner Email" 
+              value={email} 
+              onChange={(e) => setEmail(e.target.value)} 
+              className="w-full p-4 bg-black border border-slate-800 rounded-2xl text-white font-mono text-sm focus:border-emerald-500 outline-none transition-all" 
+            />
+            <input 
+              type="password" 
+              placeholder="Security Key" 
+              value={password} 
+              onChange={(e) => setPassword(e.target.value)} 
+              className="w-full p-4 bg-black border border-slate-800 rounded-2xl text-white font-mono text-sm focus:border-emerald-500 outline-none transition-all" 
+            />
+            <button 
+              onClick={async () => { 
+                const { error } = await supabase.auth.signInWithPassword({ email, password }); 
+                if (!error) setIsAuthorized(true); 
+                else alert("ACCESS DENIED: Credentials Rejected."); 
+              }} 
+              className="w-full py-4 bg-emerald-600 hover:bg-emerald-500 text-black font-black uppercase tracking-widest text-xs rounded-2xl transition-all shadow-lg"
+            >
+              Verify Identity
+            </button>
+          </div>
+        </div>
+      </div>
+    ) : (
+      /* AUTHORIZED UPLOAD PANEL */
+      <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
+        <div className="md:col-span-8 bg-slate-900/40 border border-slate-800 p-8 rounded-[32px] space-y-8">
+          <div className="space-y-4">
+            <h3 className="text-lg font-bold text-white flex items-center gap-3">
+              <span className="h-6 w-1 bg-emerald-500 rounded-full"></span>
+              Deploy Intelligence Node
+            </h3>
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Assigned Recruiter Desk</label>
+              <input 
+                type="email" 
+                placeholder="hr@firm.com" 
+                value={recruiterEmail} 
+                onChange={(e) => setRecruiterEmail(e.target.value)} 
+                className="w-full p-4 bg-black border border-slate-800 rounded-2xl text-white font-mono text-sm focus:border-emerald-500 outline-none transition-all" 
+              />
+            </div>
+            
+            <div className="relative group">
+              <input type="file" id="hrFileInput" className="hidden" onChange={(e) => {
+                const fileName = e.target.files[0]?.name || '';
+                const display = document.getElementById('fileNameDisplay');
+                if (display) display.innerText = `READY: ${fileName}`;
+              }} />
+              <label htmlFor="hrFileInput" className="cursor-pointer block p-12 border-2 border-dashed border-slate-800 rounded-[24px] bg-black/40 text-center hover:border-emerald-500/50 transition-all group-hover:bg-emerald-500/5">
+                <svg className="w-10 h-10 text-slate-600 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" /></svg>
+                <p className="text-sm font-bold text-slate-400 uppercase tracking-widest">Select Intelligence File</p>
+                <p id="fileNameDisplay" className="mt-4 text-emerald-500 text-xs font-mono font-black"></p>
+              </label>
+            </div>
+
+            <button 
+              disabled={isLoading} 
+              onClick={async () => { /* Your upload logic */ }} 
+              className="w-full py-5 bg-emerald-600 hover:bg-emerald-500 text-black font-black uppercase tracking-[0.2em] text-xs rounded-2xl transition-all shadow-lg shadow-emerald-900/20 disabled:opacity-50"
+            >
+              Execute Deployment
+            </button>
+          </div>
+        </div>
+
+        {/* SIDEBAR ANALYTICS */}
+        <div className="md:col-span-4 space-y-6">
+          <div className="p-6 bg-black/60 border border-slate-800 rounded-[24px] space-y-4">
+            <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Active Stats</h4>
+            <div className="space-y-4">
+              <div className="flex justify-between items-center">
+                <span className="text-xs text-slate-400">Your Uploads</span>
+                <span className="text-sm font-black text-emerald-400">{partnerFiles.length}</span>
               </div>
-            )}
+              <div className="flex justify-between items-center">
+                <span className="text-xs text-slate-400">Global Reach</span>
+                <span className="text-sm font-black text-purple-400">ACTIVE</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    )}
+  </div>
+)}
 
            {activeView === 'network' && (
   <div className="space-y-8 animate-view-entry max-w-7xl mx-auto pb-20 px-4 sm:px-6">
