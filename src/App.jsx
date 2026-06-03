@@ -436,30 +436,30 @@ export default function App() {
         <main className="flex-grow bg-[#030712]">
           
           {/* 1. HERO VIDEO SECTION */}
-          <section className="w-full relative bg-black overflow-hidden group">
-            <video 
-              className="w-full h-[400px] md:h-[550px] object-cover opacity-70 group-hover:opacity-80 transition-opacity duration-700" 
-              autoPlay 
-              muted={isMuted} 
-              loop 
-              playsInline
-            >
-              <source src="/intro.mp4" type="video/mp4" />
-            </video>
-            
-            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#030712]"></div>
-            
-            <button 
-              onClick={() => setIsMuted(!isMuted)} 
-              className="absolute bottom-12 right-12 z-20 bg-emerald-600/20 hover:bg-emerald-500 backdrop-blur-md text-white p-4 rounded-full border border-emerald-500/30 transition-all active:scale-95"
-            >
-              {isMuted ? (
-                <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.38.28-.79.52-1.25.7v2.06c1.02-.21 1.95-.62 2.76-1.18L19.73 21 21 19.73 4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>
-              ) : (
-                <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
-              )}
-            </button>
-          </section>
+         {/* FULLY ANIMATED CINEMATIC TERMINAL */}
+<section className="terminal-cinematic-bg">
+  <div className="scanner-line"></div>
+  
+  {/* Floating Neural Nodes */}
+  <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+    {[...Array(8)].map((_, i) => (
+      <div 
+        key={i}
+        className="absolute w-2 h-2 bg-emerald-500 rounded-full"
+        style={{
+          top: `${Math.random() * 80 + 10}%`,
+          left: `${Math.random() * 80 + 10}%`,
+          boxShadow: '0 0 20px rgba(16, 185, 129, 0.8)',
+          animation: `neural-pulse ${2 + i}s ease-in-out infinite`,
+          opacity: 0.5
+        }}
+      ></div>
+    ))}
+  </div>
+
+  {/* Cinematic Glow Overlay */}
+  <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,#030712_90%)] pointer-events-none"></div>
+</section>
 
           {/* 2. INTELLIGENCE BENTO GRID */}
           <section className="relative w-full py-12 px-6 -mt-20">
