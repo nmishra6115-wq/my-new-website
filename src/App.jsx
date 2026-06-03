@@ -1063,10 +1063,10 @@ export default function App() {
     <div className="mb-10 space-y-3 text-center sm:text-left">
       <div className="inline-flex items-center gap-2 px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 rounded-full">
         <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-        <span className="text-[9px] font-black text-emerald-500 uppercase tracking-[0.2em]">Secure Node Submission</span>
+        <span className="text-[9px] font-black text-emerald-500 uppercase tracking-[0.2em]">AML_DECODE</span>
       </div>
       <h1 className="text-3xl font-black text-white uppercase tracking-tighter">
-        Initialize <span className="text-emerald-500">Peer Referral</span>
+        Initialize <span className="text-emerald-500">Referral</span>
       </h1>
       <p className="text-xs text-slate-400 font-mono">
         Contribute to the network intelligence pool by submitting active internal opportunities.
@@ -1156,7 +1156,7 @@ export default function App() {
             <div className="h-1 w-8 bg-emerald-500/20 rounded-full"></div>
             <div className="h-1 w-8 bg-emerald-500/10 rounded-full"></div>
           </div>
-          <span className="text-[9px] font-bold text-slate-600 uppercase tracking-tighter">Encrypted_Payload_Ready</span>
+          <span className="text-[9px] font-bold text-slate-600 uppercase tracking-tighter"></span>
         </div>
       </div>
     </form>
@@ -1173,7 +1173,7 @@ export default function App() {
         <div className="space-y-2">
           <div className="inline-flex items-center gap-2 px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 rounded-full">
             <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-            <span className="text-[9px] font-black text-emerald-500 uppercase tracking-widest">Peer-to-Peer Protocol</span>
+            <span className="text-[9px] font-black text-emerald-500 uppercase tracking-widest">AML_DECODE</span>
           </div>
           <h1 className="text-3xl font-black text-white uppercase tracking-tighter">
             Available <span className="text-emerald-500">Network Referrals</span>
@@ -1183,7 +1183,7 @@ export default function App() {
           </p>
         </div>
         <div className="shrink-0 py-3 px-6 bg-black/40 border border-white/5 rounded-2xl">
-          <p className="text-[9px] font-black text-slate-500 uppercase mb-1 text-center">Active Leads</p>
+          <p className="text-[9px] font-black text-slate-500 uppercase mb-1 text-center">Active Referral</p>
           <p className="text-2xl font-black text-emerald-400 font-mono text-center">{submissions.length}</p>
         </div>
       </div>
@@ -1230,7 +1230,7 @@ export default function App() {
                 href={`mailto:${sub.email}?subject=Referral Inquiry: ${sub.role} at ${sub.company}`}
                 className="flex-grow py-3.5 bg-emerald-600 hover:bg-emerald-500 text-black font-black text-xs uppercase tracking-widest rounded-xl text-center transition-all shadow-lg shadow-emerald-900/20 active:scale-95"
               >
-                Request Referral Channel
+                Request Referral 
               </a>
             </div>
           </div>
