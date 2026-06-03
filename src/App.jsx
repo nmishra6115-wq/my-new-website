@@ -154,6 +154,8 @@ export default function App() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [activeView, setActiveView] = useState(null);
+  const [challengeSelected, setChallengeSelected] = useState(null);
+  const [isChallengeLocked, setIsChallengeLocked] = useState(false);
   const [pageIndex, setPageIndex] = useState(0);
   const [isMuted, setIsMuted] = useState(true);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -214,12 +216,10 @@ export default function App() {
     }
   };
 
-  const handleChallenge = (isCorrect) => {
-    if (isCorrect) {
-      alert("CORRECT: This is 'Structuring'. In the AML world, breaking down large cash deposits into smaller amounts to evade reporting thresholds is a major red flag.");
-    } else {
-      alert("NOT QUITE: Placement is the first stage of money laundering, but the specific act of splitting transactions to avoid detection is known as 'Structuring'.");
-    }
+ const handleChallenge = (option) => {
+    if (isChallengeLocked) return;
+    setChallengeSelected(option);
+    setIsChallengeLocked(true);
   };
 
   useEffect(() => {
@@ -466,33 +466,90 @@ export default function App() {
             <div className="max-w-7xl mx-auto">
               <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
                 
-                {/* DAILY CHALLENGE MODULE */}
-                <div className="md:col-span-8 p-10 rounded-3xl bg-slate-900/60 border border-emerald-500/20 backdrop-blur-xl shadow-2xl relative overflow-hidden group">
-                  <div className="relative z-10">
-                    <h3 className="text-emerald-500 font-black text-[11px] tracking-[0.3em] uppercase mb-6 flex items-center gap-2">
-                      <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                      Daily Intelligence Challenge
-                    </h3>
-                    <p className="text-2xl md:text-3xl font-bold text-white mb-8 leading-tight">
-                      "A customer makes 3 deposits of ₹45,000 in different branches within 60 minutes."
-                    </p>
-                    <div className="flex flex-wrap gap-4">
-                      <button 
-                        onClick={() => handleChallenge(true)}
-                        className="px-8 py-3 bg-slate-800/50 border border-white/10 text-slate-300 text-[12px] font-black rounded-lg hover:bg-emerald-600 hover:text-black hover:border-emerald-500/50 transition-all shadow-sm hover:shadow-[0_0_20px_rgba(16,185,129,0.3)]"
-                      >
-                        STRUCTURING
-                      </button>
-                      <button 
-                        onClick={() => handleChallenge(false)}
-                        className="px-8 py-3 bg-slate-800/50 border border-white/10 text-slate-300 text-[12px] font-black rounded-lg hover:bg-emerald-600 hover:text-black hover:border-emerald-500/50 transition-all shadow-sm hover:shadow-[0_0_20px_rgba(16,185,129,0.3)]"
-                      >
-                        PLACEMENT
-                      </button>
-                    </div>
-                  </div>
-                </div>
+             {/* DAILY CHALLENGE MODULE */}
+<div className={`md:col-span-8 p-10 rounded-3xl bg-slate-900/60 backdrop-blur-xl shadow-2xl relative overflow-hidden transition-all duration-500 border ${
+  isChallengeLocked 
+    ? (challengeSelected === 'edd' 
+        ? 'border-emerald-500 shadow-[0_0_30px_rgba(16,185,129,0.15)]' 
+        : 'border-red-500/50') 
+    : 'border-emerald-500/20'
+}`}>
+  <div className="relative z-10">
+    <div className="flex justify-between items-center mb-6">
+      <h3 className="text-emerald-500 font-black text-[11px] tracking-[0.3em] uppercase flex items-center gap-2">
+        <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
+        Daily Intelligence Challenge
+      </h3>
+      {isChallengeLocked && (
+        <span className={`h-6 w-6 rounded-full flex items-center justify-center text-xs font-black animate-view-entry ${
+          challengeSelected === 'edd' ? 'bg-emerald-500 text-black' : 'bg-red-500 text-white'
+        }`}>
+          {challengeSelected === 'edd' ? '✓' : '✕'}
+        </span>
+      )}
+    </div>
 
+    <p className="text-2xl md:text-3xl font-bold text-white mb-8 leading-tight">
+      "A client name matches a Sanctions List. DOB and Nationality match, but the middle name has a minor spelling difference. What is the protocol?"
+    </p>
+
+    {/* Options Layout */}
+    <div className="flex flex-wrap gap-4 mb-6">
+      <button 
+        disabled={isChallengeLocked}
+        onClick={() => handleChallenge('edd')}
+        className={`px-8 py-3 text-[12px] font-black rounded-lg transition-all duration-300 shadow-sm ${
+          isChallengeLocked
+            ? (challengeSelected === 'edd'
+                ? 'bg-emerald-500 text-black shadow-[0_0_20px_rgba(16,185,129,0.4)]'
+                : 'bg-slate-800/20 text-slate-600 border border-slate-800/40 opacity-50')
+            : 'bg-slate-800/50 border border-white/10 text-slate-300 hover:bg-emerald-600 hover:text-black hover:border-emerald-500/50'
+        }`}
+      >
+        ENHANCED DUE DILIGENCE (EDD)
+      </button>
+
+      <button 
+        disabled={isChallengeLocked}
+        onClick={() => handleChallenge('dismiss')}
+        className={`px-8 py-3 text-[12px] font-black rounded-lg transition-all duration-300 shadow-sm ${
+          isChallengeLocked
+            ? (challengeSelected === 'dismiss'
+                ? 'bg-red-500 text-white'
+                : 'bg-slate-800/20 text-slate-600 border border-slate-800/40 opacity-50')
+            : 'bg-slate-800/50 border border-white/10 text-slate-300 hover:bg-emerald-600 hover:text-black hover:border-emerald-500/50'
+        }`}
+      >
+        IMMEDIATE DISMISSAL
+      </button>
+    </div>
+
+    {/* Animated Rationale Reveal */}
+    {isChallengeLocked && (
+      <div className={`p-5 rounded-2xl border border-dashed animate-view-entry ${
+        challengeSelected === 'edd' 
+          ? 'bg-emerald-500/5 border-emerald-500/30 text-emerald-300' 
+          : 'bg-red-500/5 border-red-500/30 text-red-300'
+      }`}>
+        <div className="flex gap-3 items-start">
+          <div className="text-xs font-mono font-black mt-0.5">
+            {challengeSelected === 'edd' ? '[VALIDATED]' : '[ALERT]'}
+          </div>
+          <div>
+            <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">
+              Interview Insight / Rationale
+            </p>
+            <p className="text-xs font-mono leading-relaxed">
+              {challengeSelected === 'edd' 
+                ? "CORRECT: Minor spelling variations (fuzzy matching) are common in sanctions evasion. Matching DOB and Nationality makes this a high-probability hit that requires Enhanced Due Diligence (EDD) before clearing."
+                : "INCORRECT: Dismissing a match with identical DOB and Nationality based solely on a middle-name misspelling is a high-risk compliance failure. You must escalate for EDD."}
+            </p>
+          </div>
+        </div>
+      </div>
+    )}
+  </div>
+</div>
                 {/* REGIONAL PULSE MODULE */}
                 <div className="md:col-span-4 p-10 rounded-3xl bg-gradient-to-b from-slate-900 to-[#030712] border border-white/5 shadow-xl">
                   <h3 className="text-slate-500 font-black text-[11px] tracking-[0.3em] uppercase mb-8">Regional Pulse</h3>
