@@ -266,12 +266,13 @@ export default function App() {
           <div className="flex items-center justify-between h-24">
             
             <div className="group flex items-center gap-3 cursor-pointer">
-  <img 
-    src="/logo.png" 
-    className="h-9 w-auto transition-all duration-500 group-hover:rotate-[360deg] group-hover:brightness-125"
-  />
+<img 
+  src="/logo.png" 
+  alt="AML_DECODE Logo" 
+  className="h-9 w-auto animate-pulse-emerald drop-shadow-[0_0_8px_rgba(16,185,129,0.3)]"
+/>
   <span className="text-white font-black tracking-tighter opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-    AML_DECODE
+    
   </span>
 </div>
 
