@@ -2,9 +2,11 @@ import React, { useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 
 const CinematicHero = () => {
+  const pillarWrapperRef = useRef(null);
   const canvasRef = useRef(null);
 
   useEffect(() => {
+    // 1. Neural Background Logic (Canvas)
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
     let nodes = [];
@@ -15,43 +17,32 @@ const CinematicHero = () => {
     };
 
     const initNodes = () => {
-      nodes = Array.from({ length: 45 }, () => ({
+      nodes = Array.from({ length: 30 }, () => ({
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
-        vx: (Math.random() - 0.5) * 0.4,
-        vy: (Math.random() - 0.5) * 0.4,
-        radius: Math.random() * 1.5 + 0.5
+        vx: (Math.random() - 0.5) * 0.3,
+        vy: (Math.random() - 0.5) * 0.3,
       }));
     };
 
     const draw = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      
       nodes.forEach((node, i) => {
-        node.x += node.vx;
-        node.y += node.vy;
-
-        // Boundary bounce logic
+        node.x += node.vx; node.y += node.vy;
         if (node.x < 0 || node.x > canvas.width) node.vx *= -1;
         if (node.y < 0 || node.y > canvas.height) node.vy *= -1;
 
-        // Render individual technical data point
-        ctx.fillStyle = 'rgba(16, 185, 129, 0.8)';
+        ctx.fillStyle = 'rgba(16, 185, 129, 0.4)';
         ctx.beginPath();
-        ctx.arc(node.x, node.y, node.radius, 0, Math.PI * 2);
+        ctx.arc(node.x, node.y, 1, 0, Math.PI * 2);
         ctx.fill();
 
-        // Map live connecting networks
         for (let j = i + 1; j < nodes.length; j++) {
-          const target = nodes[j];
-          const dist = Math.hypot(node.x - target.x, node.y - target.y);
-          if (dist < 180) {
-            ctx.strokeStyle = `rgba(16, 185, 129, ${0.12 * (1 - dist / 180)})`;
-            ctx.lineWidth = 0.6;
-            ctx.beginPath();
-            ctx.moveTo(node.x, node.y);
-            ctx.lineTo(target.x, target.y);
-            ctx.stroke();
+          const dist = Math.hypot(node.x - nodes[j].x, node.y - nodes[j].y);
+          if (dist < 150) {
+            ctx.strokeStyle = `rgba(16, 185, 129, ${0.1 * (1 - dist / 150)})`;
+            ctx.lineWidth = 0.5;
+            ctx.beginPath(); ctx.moveTo(node.x, node.y); ctx.lineTo(nodes[j].x, nodes[j].y); ctx.stroke();
           }
         }
       });
@@ -59,16 +50,19 @@ const CinematicHero = () => {
     };
 
     window.addEventListener('resize', resize);
-    resize();
-    initNodes();
-    draw();
+    resize(); initNodes(); draw();
 
-    // GSAP high-frequency perimeter scan tracking
-    gsap.to(".scanner-beam", {
-      top: "100%",
-      duration: 7,
-      ease: "none",
-      repeat: -1
+    // 2. GSAP PILLAR REVEAL ANIMATION
+    const timeline = gsap.timeline({ repeat: -1, yoyo: true, repeatDelay: 2 });
+    
+    timeline.to(".reveal-pillar", {
+      height: "0%",
+      duration: 1.2,
+      ease: "power4.inOut",
+      stagger: {
+        amount: 0.8,
+        from: "center"
+      }
     });
 
     return () => window.removeEventListener('resize', resize);
@@ -76,15 +70,24 @@ const CinematicHero = () => {
 
   return (
     <div className="hero-visual-container">
-      <canvas ref={canvasRef} id="neuralCanvas" />
-      <div className="scanner-beam" />
-      <div className="hero-vignette" />
+      {/* Background Layer */}
+      <canvas ref={canvasRef} id="neuralCanvas" className="absolute inset-0 opacity-40" />
       
-      {/* Structural Corner Alignment Brackets */}
-      <div className="absolute top-10 left-10 w-8 h-8 border-t-2 border-l-2 border-emerald-500/30"></div>
-      <div className="absolute top-10 right-10 w-8 h-8 border-t-2 border-r-2 border-emerald-500/30"></div>
-      <div className="absolute bottom-10 left-10 w-8 h-8 border-b-2 border-l-2 border-emerald-500/30"></div>
-      <div className="absolute bottom-10 right-10 w-8 h-8 border-b-2 border-r-2 border-emerald-500/30"></div>
+      {/* Centered Brand Text */}
+      <div className="hero-content-back">
+        <h1 className="text-7xl md:text-9xl font-black text-white/10 tracking-tighter uppercase select-none">
+          AML_DECODE
+        </h1>
+      </div>
+
+      {/* Shutter Pillar Layer */}
+      <div className="pillar-wrapper" ref={pillarWrapperRef}>
+        {[...Array(12)].map((_, i) => (
+          <div key={i} className="reveal-pillar" />
+        ))}
+      </div>
+
+      <div className="hero-vignette" />
     </div>
   );
 };
