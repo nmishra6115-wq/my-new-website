@@ -35,26 +35,37 @@ const CinematicHero = () => {
       }));
     };
     const draw = () => {
-     ctx.fillStyle = 'rgba(251, 191, 36, 0.8)'; 
-    ctx.beginPath(); 
-    ctx.arc(node.x, node.y, 2, 0, Math.PI * 2); // Increased radius to 2
-    ctx.fill();
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    for (let j = i + 1; j < nodes.length; j++) {
-      const dist = Math.hypot(node.x - nodes[j].x, node.y - nodes[j].y);
-      if (dist < 180) {
-        // INCREASED OPACITY: from 0.15 to 0.4
-        ctx.strokeStyle = `rgba(251, 191, 36, ${0.4 * (1 - dist / 180)})`;
-        
-        // INCREASED THICKNESS: from 0.8 to 1.5
-        ctx.lineWidth = 1.5; 
-        
+      // Restored the iterating loop to correctly define 'node' and 'i'
+      nodes.forEach((node, i) => {
+        node.x += node.vx;
+        node.y += node.vy;
+
+        if (node.x < 0 || node.x > canvas.width) node.vx *= -1;
+        if (node.y < 0 || node.y > canvas.height) node.vy *= -1;
+
+        ctx.fillStyle = 'rgba(251, 191, 36, 0.8)'; 
         ctx.beginPath(); 
-        ctx.moveTo(node.x, node.y); 
-        ctx.lineTo(nodes[j].x, nodes[j].y); 
-        ctx.stroke();
-      }
-    }
+        ctx.arc(node.x, node.y, 2, 0, Math.PI * 2); // Increased radius to 2
+        ctx.fill();
+
+        for (let j = i + 1; j < nodes.length; j++) {
+          const dist = Math.hypot(node.x - nodes[j].x, node.y - nodes[j].y);
+          if (dist < 180) {
+            // INCREASED OPACITY: from 0.15 to 0.4
+            ctx.strokeStyle = `rgba(251, 191, 36, ${0.4 * (1 - dist / 180)})`;
+            
+            // INCREASED THICKNESS: from 0.8 to 1.5
+            ctx.lineWidth = 1.5; 
+            
+            ctx.beginPath(); 
+            ctx.moveTo(node.x, node.y); 
+            ctx.lineTo(nodes[j].x, nodes[j].y); 
+            ctx.stroke();
+          }
+        }
+      });
   
       requestAnimationFrame(draw);
     };
@@ -84,14 +95,14 @@ const CinematicHero = () => {
       <div className="hero-background-layer">
         <canvas ref={canvasRef} className="absolute inset-0 opacity-40" />
         <h1 
-  className="hero-brand-text animate-text-glow" 
-  style={{ 
-    color: 'rgba(251, 191, 36, 0.45)', // Increased opacity for visibility
-    letterSpacing: '0.15em' 
-  }}
->
-  DECODE<br/>COMPLIANCE
-</h1>
+          className="hero-brand-text animate-text-glow" 
+          style={{ 
+            color: 'rgba(251, 191, 36, 0.45)', // Increased opacity for visibility
+            letterSpacing: '0.15em' 
+          }}
+        >
+          DECODE<br/>COMPLIANCE
+        </h1>
       </div>
 
       <div className="pillar-wrapper">
