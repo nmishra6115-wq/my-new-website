@@ -2,11 +2,11 @@ import React, { useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 
 const CinematicHero = () => {
-  const pillarWrapperRef = useRef(null);
+  const containerRef = useRef(null);
   const canvasRef = useRef(null);
 
   useEffect(() => {
-    // 1. Neural Background Logic (Canvas)
+    // 1. HIGH-DENSITY NEURAL BACKGROUND
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
     let nodes = [];
@@ -17,11 +17,11 @@ const CinematicHero = () => {
     };
 
     const initNodes = () => {
-      nodes = Array.from({ length: 30 }, () => ({
+      nodes = Array.from({ length: 50 }, () => ({
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
-        vx: (Math.random() - 0.5) * 0.3,
-        vy: (Math.random() - 0.5) * 0.3,
+        vx: (Math.random() - 0.5) * 0.5,
+        vy: (Math.random() - 0.5) * 0.5,
       }));
     };
 
@@ -32,16 +32,14 @@ const CinematicHero = () => {
         if (node.x < 0 || node.x > canvas.width) node.vx *= -1;
         if (node.y < 0 || node.y > canvas.height) node.vy *= -1;
 
-        ctx.fillStyle = 'rgba(16, 185, 129, 0.4)';
-        ctx.beginPath();
-        ctx.arc(node.x, node.y, 1, 0, Math.PI * 2);
-        ctx.fill();
+        ctx.fillStyle = 'rgba(16, 185, 129, 0.5)';
+        ctx.beginPath(); ctx.arc(node.x, node.y, 1.5, 0, Math.PI * 2); ctx.fill();
 
         for (let j = i + 1; j < nodes.length; j++) {
           const dist = Math.hypot(node.x - nodes[j].x, node.y - nodes[j].y);
-          if (dist < 150) {
-            ctx.strokeStyle = `rgba(16, 185, 129, ${0.1 * (1 - dist / 150)})`;
-            ctx.lineWidth = 0.5;
+          if (dist < 180) {
+            ctx.strokeStyle = `rgba(16, 185, 129, ${0.15 * (1 - dist / 180)})`;
+            ctx.lineWidth = 0.8;
             ctx.beginPath(); ctx.moveTo(node.x, node.y); ctx.lineTo(nodes[j].x, nodes[j].y); ctx.stroke();
           }
         }
@@ -52,42 +50,55 @@ const CinematicHero = () => {
     window.addEventListener('resize', resize);
     resize(); initNodes(); draw();
 
-    // 2. GSAP PILLAR REVEAL ANIMATION
-    const timeline = gsap.timeline({ repeat: -1, yoyo: true, repeatDelay: 2 });
-    
-    timeline.to(".reveal-pillar", {
-      height: "0%",
-      duration: 1.2,
-      ease: "power4.inOut",
-      stagger: {
-        amount: 0.8,
-        from: "center"
-      }
+    // 2. MASTER GSAP REVEAL SEQUENCE (Matching Video)
+    const tl = gsap.timeline({
+      repeat: -1,
+      yoyo: true,
+      repeatDelay: 1.5
     });
+
+    // Animate Pillars
+    tl.to(".reveal-pillar", {
+      scaleY: 0,
+      opacity: 0,
+      duration: 1.5,
+      ease: "expo.inOut",
+      stagger: {
+        amount: 1,
+        from: "center", // Reveal starts from middle like the video
+        grid: "auto"
+      }
+    }, 0);
+
+    // Zoom the background text slightly for that cinematic scale-in
+    tl.fromTo(".hero-brand-text", 
+      { scale: 0.8, opacity: 0 },
+      { scale: 1.1, opacity: 1, duration: 2, ease: "power2.out" },
+      0.5
+    );
 
     return () => window.removeEventListener('resize', resize);
   }, []);
 
   return (
-    <div className="hero-visual-container">
-      {/* Background Layer */}
-      <canvas ref={canvasRef} id="neuralCanvas" className="absolute inset-0 opacity-40" />
-      
-      {/* Centered Brand Text */}
-      <div className="hero-content-back">
-        <h1 className="text-7xl md:text-9xl font-black text-white/10 tracking-tighter uppercase select-none">
-          AML_DECODE
+    <div className="hero-visual-container" ref={containerRef}>
+      {/* Deep Background Layer */}
+      <div className="hero-background-layer">
+        <canvas ref={canvasRef} className="absolute inset-0 opacity-30" />
+        <h1 className="hero-brand-text">
+          AML<br/>DECODE
         </h1>
       </div>
 
-      {/* Shutter Pillar Layer */}
-      <div className="pillar-wrapper" ref={pillarWrapperRef}>
-        {[...Array(12)].map((_, i) => (
+      {/* The 20-Pillar Shutter System */}
+      <div className="pillar-wrapper">
+        {[...Array(20)].map((_, i) => (
           <div key={i} className="reveal-pillar" />
         ))}
       </div>
 
-      <div className="hero-vignette" />
+      {/* Atmospheric Fog */}
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#030712] z-30 pointer-events-none" />
     </div>
   );
 };
