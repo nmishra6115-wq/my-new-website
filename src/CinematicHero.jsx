@@ -10,54 +10,47 @@ const CinematicHero = () => {
   const canvasRef = useRef(null);
 
   useEffect(() => {
-    // 1. SEQUENTIAL SCROLL TIMELINE (Matching the video timing)
+    // 1. PINNING & OCEAN VANISHING LOGIC
     const scrollTl = gsap.timeline({
       scrollTrigger: {
         trigger: sectionRef.current,
         start: "top top",
-        end: "+=150%", // Increased scroll distance so the sequence has breathing room
+        end: "+=100%", 
         pin: true,
-        pinSpacing: false, // Allows the bento grid section to slide over it smoothly at the end
-        scrub: 1, // Locks the animation progress directly to the scrollbar position
+        pinSpacing: false, // Next section slides directly over it
+        scrub: 1, // Smoothly tracks your scrollbar
       }
     });
 
-    // Clear any default timelines to prevent overlapping bugs
-    scrollTl.scrollTrigger.refresh();
+    // The entire hero content sinks down and fades away ("vanishing in ocean")
+    scrollTl.to(".hero-background-layer, .pillar-wrapper", {
+      y: 150, // Sinks downward smoothly
+      opacity: 0, // Fades out into the dark background
+      duration: 1,
+      ease: "power1.inOut"
+    }, 0);
 
-    // --- SEQUENTIAL ANIMATION STEPS ---
-    scrollTl
-      // STEP 1: The pillars slide open/vanish first to reveal the screen
-      .to(".reveal-pillar", {
-        scaleY: 0,
-        opacity: 0,
-        duration: 1,
-        ease: "power2.inOut",
-        stagger: { amount: 0.4, from: "center" }
-      })
-      
-      // STEP 2: As you scroll more, the text starts to wrap up/shrink
-      .to(".hero-brand-text", {
-        scale: 0.2,
-        opacity: 0,
-        duration: 1,
-        ease: "power3.inOut"
-      }, "+=0.2") // Adds a slight delay after pillars finish before text starts shrinking
-      
-      // STEP 3: Right as the text finishes shrinking, the button cleanly pops up in its place
-      .fromTo(".hero-popup-btn", 
-        { scale: 0.4, opacity: 0 },
-        { scale: 1, opacity: 1, duration: 0.6, ease: "back.out(2)" },
-        "-=0.3" // Starts slightly before the text is completely invisible for a smooth handoff
-      );
+    // The Design Arrow with "Explore Learning" pops up immediately on scroll...
+    scrollTl.fromTo(".scroll-explore-arrow", 
+      { opacity: 0, y: -20 },
+      { opacity: 1, y: 0, duration: 0.3 }, 
+      0
+    );
 
-    // 2. HIGH-VISIBILITY NEURAL CANVAS BACKGROUND
+    // ...and vanishes completely right at the end when you reach the main section
+    scrollTl.to(".scroll-explore-arrow", {
+      opacity: 0,
+      y: 30,
+      duration: 0.3
+    }, 0.7);
+
+    // 2. NEURAL CANVAS BACKGROUND
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
     let nodes = [];
     const resize = () => {
       canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
+      canvas.height = window.innerHeight; // Full screen height
     };
     const initNodes = () => {
       nodes = Array.from({ length: 40 }, () => ({
@@ -69,6 +62,7 @@ const CinematicHero = () => {
     };
     const draw = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
+
       nodes.forEach((node, i) => {
         node.x += node.vx;
         node.y += node.vy;
@@ -93,46 +87,53 @@ const CinematicHero = () => {
           }
         }
       });
+  
       requestAnimationFrame(draw);
     };
 
     window.addEventListener('resize', resize);
     resize(); initNodes(); draw();
 
+    // 3. PILLAR REVEAL (Kept exactly as it was)
+    const tl = gsap.timeline({ repeat: -1, yoyo: true, repeatDelay: 1.5 });
+    tl.to(".reveal-pillar", {
+      scaleY: 0,
+      opacity: 0,
+      duration: 1.5,
+      ease: "expo.inOut",
+      stagger: { amount: 1, from: "center" }
+    });
+
     return () => {
       window.removeEventListener('resize', resize);
-      ScrollTrigger.getAll().forEach(t => t.kill());
+      ScrollTrigger.getAll().forEach(t => t.kill()); // Cleanup
     };
   }, []);
 
  return (
-    <div className="hero-visual-container" ref={sectionRef}>
+    <div className="hero-visual-container relative" ref={sectionRef}>
       
-      <div className="hero-background-layer flex flex-col items-center justify-center relative w-full h-full">
+      <div className="hero-background-layer">
         <canvas ref={canvasRef} className="absolute inset-0 opacity-40" />
-        
-        {/* Absolute positioning keeps text centered during scaling */}
         <h1 
-          className="hero-brand-text absolute text-center select-none" 
+          className="hero-brand-text animate-text-glow" 
           style={{ 
             color: 'rgba(251, 191, 36, 0.45)', 
-            letterSpacing: '0.15em',
-            willChange: 'transform, opacity' // Optimizes browser rendering for smooth scaling
+            letterSpacing: '0.15em' 
           }}
         >
           DECODE<br/>COMPLIANCE
         </h1>
+      </div>
 
-        {/* Center Popup Button */}
-        <button 
-          onClick={() => {
-            const nextSection = document.querySelector('.intelligence-grid-section');
-            if (nextSection) nextSection.scrollIntoView({ behavior: 'smooth' });
-          }}
-          className="hero-popup-btn opacity-0 absolute z-40 px-8 py-4 bg-emerald-600 hover:bg-emerald-500 text-black font-black text-xs uppercase tracking-widest rounded-xl transition-all shadow-[0_0_30px_rgba(16,185,129,0.4)]"
-        >
-          Explore Learning &rarr;
-        </button>
+      {/* NEW: Design Arrow with text that pops up on scroll and vanishes at the main content */}
+      <div className="scroll-explore-arrow opacity-0 absolute bottom-12 left-1/2 -translate-x-1/2 z-40 flex flex-col items-center gap-2 pointer-events-none">
+        <span className="text-[10px] font-black text-amber-500 uppercase tracking-[0.3em] bg-black/60 px-4 py-2 border border-amber-500/20 rounded-full backdrop-blur-md shadow-xl">
+          Explore Learning
+        </span>
+        <svg className="w-6 h-6 text-amber-500 animate-bounce mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+        </svg>
       </div>
 
       <div className="pillar-wrapper">
@@ -141,6 +142,7 @@ const CinematicHero = () => {
         ))}
       </div>
 
+      {/* Brighter Vignette */}
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#030712] z-30 pointer-events-none" />
     </div>
   );
