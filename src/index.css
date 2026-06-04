@@ -510,8 +510,8 @@ button {
   flex: 1;
   height: 100%;
   background-color: #030712;
-  /* Changed border to a subtle brown tint */
-  border-right: 1px solid rgba(120, 53, 15, 0.15); 
+  /* Lighter Copper border for visibility */
+  border-right: 1px solid rgba(217, 119, 6, 0.25); 
   transform-origin: center;
 }
 
@@ -551,8 +551,8 @@ button {
   position: relative;
   z-index: 10;
   background-color: #030712;
-  /* Shadow with a deep brown glow instead of black */
-  box-shadow: 0 -50px 100px rgba(120, 53, 15, 0.1); 
+  /* Brighter top shadow to separate from Hero */
+  box-shadow: 0 -40px 80px rgba(180, 83, 9, 0.15); 
 }
 
 .pillar-wrapper {

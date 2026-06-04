@@ -40,11 +40,11 @@ const CinematicHero = () => {
         node.x += node.vx; node.y += node.vy;
         if (node.x < 0 || node.x > canvas.width) node.vx *= -1;
         if (node.y < 0 || node.y > canvas.height) node.vy *= -1;
-ctx.fillStyle = 'rgba(217, 119, 6, 0.4)';        ctx.beginPath(); ctx.arc(node.x, node.y, 1.2, 0, Math.PI * 2); ctx.fill();
+ctx.fillStyle = 'rgba(251, 191, 36, 0.6)'; // Brighter Gold/Amber       ctx.beginPath(); ctx.arc(node.x, node.y, 1.2, 0, Math.PI * 2); ctx.fill();
         for (let j = i + 1; j < nodes.length; j++) {
           const dist = Math.hypot(node.x - nodes[j].x, node.y - nodes[j].y);
           if (dist < 150) {
-            ctx.strokeStyle = `rgba(120, 53, 15, ${0.1 * (1 - dist / 150)})`; // Brown lines
+            ctx.strokeStyle = `rgba(180, 83, 9, ${0.2 * (1 - dist / 150)})`; // Copper connecting lines
             ctx.lineWidth = 0.5;
             ctx.beginPath(); ctx.moveTo(node.x, node.y); ctx.lineTo(nodes[j].x, nodes[j].y); ctx.stroke();
           }
@@ -75,20 +75,20 @@ ctx.fillStyle = 'rgba(217, 119, 6, 0.4)';        ctx.beginPath(); ctx.arc(node.x
  return (
     <div className="hero-visual-container" ref={sectionRef}>
       
-      {/* Deep Background Layer */}
       <div className="hero-background-layer">
-        <canvas ref={canvasRef} className="absolute inset-0 opacity-30" />
-        <h1 className="hero-brand-text">AML<br/>DECODE</h1>
+        <canvas ref={canvasRef} className="absolute inset-0 opacity-40" />
+        <h1 className="hero-brand-text" style={{ color: 'rgba(251, 191, 36, 0.08)' }}>
+          AML<br/>DECODE
+        </h1>
       </div>
 
-      {/* CHANGED HERE: The 20-Pillar Shutter System with Brown Borders */}
       <div className="pillar-wrapper">
         {[...Array(20)].map((_, i) => (
-          <div key={i} className="reveal-pillar border-r border-amber-900/30" />
+          <div key={i} className="reveal-pillar border-r border-amber-600/20" />
         ))}
       </div>
 
-      {/* Atmospheric Fog */}
+      {/* Brighter Vignette */}
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#030712] z-30 pointer-events-none" />
     </div>
   );
