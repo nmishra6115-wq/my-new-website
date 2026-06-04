@@ -535,3 +535,46 @@ button {
   text-align: center;
   user-select: none;
 }
+/* Update your CSS file with these modifications */
+
+.hero-visual-container {
+  position: relative;
+  width: 100%;
+  height: 100vh; /* Set to viewport height to pin properly */
+  background-color: #030712;
+  overflow: hidden;
+  z-index: 1; /* Keep hero below the rest */
+}
+
+/* Ensure the next section in App.jsx has a higher z-index and its own background */
+.intelligence-grid-section {
+  position: relative;
+  z-index: 10;
+  background-color: #030712; /* Solid background so hero isn't visible behind it */
+  box-shadow: 0 -50px 100px rgba(0,0,0,0.5); /* Shadow to create the "above" depth */
+}
+
+.pillar-wrapper {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  z-index: 20;
+}
+
+.reveal-pillar {
+  flex: 1;
+  height: 100%;
+  background-color: #030712;
+  border-right: 1px solid rgba(16, 185, 129, 0.08);
+  transform-origin: center;
+}
+
+.hero-brand-text {
+  font-size: 12vw;
+  font-weight: 900;
+  color: rgba(255, 255, 255, 0.05);
+  text-transform: uppercase;
+  letter-spacing: -0.05em;
+  line-height: 0.8;
+  text-align: center;
+}

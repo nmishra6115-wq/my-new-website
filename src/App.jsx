@@ -432,390 +432,363 @@ export default function App() {
           </div>
         </div>
       )}
-
-      {/* HOME PAGE */}
+{/* HOME PAGE */}
       {!activeView && (
-        <main className="flex-grow bg-[#030712]">
-          
-          {/* 1. HERO VIDEO SECTION */}
-         {/* 1. CINEMATIC NEURAL CORE (ZERO-TEXT) */}
-{/* 1. CINEMATIC HERO FIELD */}
-          <CinematicHero />
+        <main className="flex-grow bg-[#030712] overflow-x-hidden">
+          <div className="relative w-full">
+            
+            {/* 1. HERO SECTION (Pinned via ScrollTrigger) */}
+            <CinematicHero />
 
-          {/* 2. INTELLIGENCE BENTO GRID */}
-          <section className="relative w-full py-12 px-6 -mt-20">
-          {/* 2. INTELLIGENCE BENTO GRID */}
-         
-            <div className="max-w-7xl mx-auto">
-              <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+            {/* 2. THE INTEL LAYER THAT SLIDES ABOVE THE HERO */}
+            <section className="intelligence-grid-section relative z-10 w-full py-12 px-6 bg-[#030712]">
+              <div className="max-w-7xl mx-auto space-y-12">
                 
-             {/* DAILY CHALLENGE MODULE */}
-<div className={`md:col-span-8 p-10 rounded-3xl bg-slate-900/60 backdrop-blur-xl shadow-2xl relative overflow-hidden transition-all duration-500 border ${
-  isChallengeLocked 
-    ? (challengeSelected === 'edd' 
-        ? 'border-emerald-500 shadow-[0_0_30px_rgba(16,185,129,0.15)]' 
-        : 'border-red-500/50') 
-    : 'border-emerald-500/20'
-}`}>
-  <div className="relative z-10">
-    <div className="flex justify-between items-center mb-6">
-      <h3 className="text-emerald-500 font-black text-[11px] tracking-[0.3em] uppercase flex items-center gap-2">
-        <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
-        Daily Intelligence Challenge
-      </h3>
-      {isChallengeLocked && (
-        <span className={`h-6 w-6 rounded-full flex items-center justify-center text-xs font-black animate-view-entry ${
-          challengeSelected === 'edd' ? 'bg-emerald-500 text-black' : 'bg-red-500 text-white'
-        }`}>
-          {challengeSelected === 'edd' ? '✓' : '✕'}
-        </span>
-      )}
-    </div>
-
-    <p className="text-2xl md:text-3xl font-bold text-white mb-8 leading-tight">
-      "A client name matches a Sanctions List. DOB and Nationality match, but the middle name has a minor spelling difference. What is the protocol?"
-    </p>
-
-    {/* Options Layout */}
-    <div className="flex flex-wrap gap-4 mb-6">
-      <button 
-        disabled={isChallengeLocked}
-        onClick={() => handleChallenge('edd')}
-        className={`px-8 py-3 text-[12px] font-black rounded-lg transition-all duration-300 shadow-sm ${
-          isChallengeLocked
-            ? (challengeSelected === 'edd'
-                ? 'bg-emerald-500 text-black shadow-[0_0_20px_rgba(16,185,129,0.4)]'
-                : 'bg-slate-800/20 text-slate-600 border border-slate-800/40 opacity-50')
-            : 'bg-slate-800/50 border border-white/10 text-slate-300 hover:bg-emerald-600 hover:text-black hover:border-emerald-500/50'
-        }`}
-      >
-        ENHANCED DUE DILIGENCE (EDD)
-      </button>
-
-      <button 
-        disabled={isChallengeLocked}
-        onClick={() => handleChallenge('dismiss')}
-        className={`px-8 py-3 text-[12px] font-black rounded-lg transition-all duration-300 shadow-sm ${
-          isChallengeLocked
-            ? (challengeSelected === 'dismiss'
-                ? 'bg-red-500 text-white'
-                : 'bg-slate-800/20 text-slate-600 border border-slate-800/40 opacity-50')
-            : 'bg-slate-800/50 border border-white/10 text-slate-300 hover:bg-emerald-600 hover:text-black hover:border-emerald-500/50'
-        }`}
-      >
-        IMMEDIATE DISMISSAL
-      </button>
-    </div>
-
-    {/* Animated Rationale Reveal */}
-    {isChallengeLocked && (
-      <div className={`p-5 rounded-2xl border border-dashed animate-view-entry ${
-        challengeSelected === 'edd' 
-          ? 'bg-emerald-500/5 border-emerald-500/30 text-emerald-300' 
-          : 'bg-red-500/5 border-red-500/30 text-red-300'
-      }`}>
-        <div className="flex gap-3 items-start">
-          <div className="text-xs font-mono font-black mt-0.5">
-            {challengeSelected === 'edd' ? '[VALIDATED]' : '[ALERT]'}
-          </div>
-          <div>
-            <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">
-              Interview Insight / Rationale
-            </p>
-            <p className="text-xs font-mono leading-relaxed">
-              {challengeSelected === 'edd' 
-                ? "CORRECT: Minor spelling variations (fuzzy matching) are common in sanctions evasion. Matching DOB and Nationality makes this a high-probability hit that requires Enhanced Due Diligence (EDD) before clearing."
-                : "INCORRECT: Dismissing a match with identical DOB and Nationality based solely on a middle-name misspelling is a high-risk compliance failure. You must escalate for EDD."}
-            </p>
-          </div>
-        </div>
-      </div>
-    )}
-  </div>
-</div>
-                {/* REGIONAL PULSE MODULE */}
-                <div className="md:col-span-4 p-10 rounded-3xl bg-gradient-to-b from-slate-900 to-[#030712] border border-white/5 shadow-xl">
-                  <h3 className="text-slate-500 font-black text-[11px] tracking-[0.3em] uppercase mb-8">Regional Pulse</h3>
-                  <div className="space-y-6">
-                    <div className="flex justify-between items-center p-4 rounded-xl bg-white/5 border border-white/5 group hover:border-emerald-500/30 transition-all cursor-default">
-                      <div>
-                        <span className="text-xs font-bold text-slate-200 uppercase block">Bengaluru</span>
-                        <span className="text-[9px] text-emerald-500/70 uppercase tracking-tighter font-black">Trend: +14% Hiring Spike</span>
+                {/* BENTO CONTAINER FOR DAILY CHALLENGE & REGIONAL PULSE */}
+                <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+                  
+                  {/* DAILY CHALLENGE MODULE */}
+                  <div className={`md:col-span-8 p-10 rounded-3xl bg-slate-900/60 backdrop-blur-xl shadow-2xl relative overflow-hidden transition-all duration-500 border ${
+                    isChallengeLocked 
+                      ? (challengeSelected === 'edd' 
+                          ? 'border-emerald-500 shadow-[0_0_30px_rgba(16,185,129,0.15)]' 
+                          : 'border-red-500/50') 
+                      : 'border-emerald-500/20'
+                  }`}>
+                    <div className="relative z-10">
+                      <div className="flex justify-between items-center mb-6">
+                        <h3 className="text-emerald-500 font-black text-[11px] tracking-[0.3em] uppercase flex items-center gap-2">
+                          <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                          Daily Intelligence Challenge
+                        </h3>
+                        {isChallengeLocked && (
+                          <span className={`h-6 w-6 rounded-full flex items-center justify-center text-xs font-black animate-view-entry ${
+                            challengeSelected === 'edd' ? 'bg-emerald-500 text-black' : 'bg-red-500 text-white'
+                          }`}>
+                            {challengeSelected === 'edd' ? '✓' : '✕'}
+                          </span>
+                        )}
                       </div>
-                      <span className="text-[10px] font-black text-emerald-400 bg-emerald-400/10 px-3 py-1 rounded-full border border-emerald-400/20">CRITICAL</span>
-                    </div>
 
-                    <div className="flex justify-between items-center p-4 rounded-xl bg-white/5 border border-white/5 group hover:border-blue-500/30 transition-all cursor-default">
-                      <div>
-                        <span className="text-xs font-bold text-slate-200 uppercase block">Kolkata</span>
-                        <span className="text-[9px] text-blue-500/70 uppercase tracking-tighter font-black">Next Blitz: Dec 2025</span>
-                      </div>
-                      <span className="text-[10px] font-black text-blue-400 bg-blue-400/10 px-3 py-1 rounded-full border border-blue-400/20">STEADY</span>
-                    </div>
-
-                    <div className="pt-4 border-t border-white/5">
-                      <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mb-2 text-center">Global Watch</p>
-                      <p className="text-xs text-slate-400 italic text-center leading-relaxed">
-                        High demand for Sanctions Screening specialists in MENA regions like Doha.
+                      <p className="text-2xl md:text-3xl font-bold text-white mb-8 leading-tight">
+                        "A client name matches a Sanctions List. DOB and Nationality match, but the middle name has a minor spelling difference. What is the protocol?"
                       </p>
-                    </div>
-                  </div>
-                </div>
 
-                {/* REGULATORY TICKER */}
-                <div className="md:col-span-12 mt-4 p-6 bg-black/80 backdrop-blur-md border border-white/10 rounded-2xl flex items-center overflow-hidden relative">
-                  <div className="shrink-0 flex items-center gap-3 px-6 py-2 bg-[#030712] border border-red-500/30 rounded-lg relative z-20 mr-6 shadow-[10px_0_20px_rgba(0,0,0,0.8)]">
-                    <span className="h-2 w-2 rounded-full bg-red-500 animate-ping"></span>
-                    <span className="text-[11px] font-black text-red-500 uppercase tracking-widest whitespace-nowrap">Global Watch</span>
-                  </div>
-                  <div className="relative flex-grow overflow-hidden z-10">
-                    <div className="text-[12px] font-bold text-slate-400 uppercase tracking-[0.25em] flex gap-24 whitespace-nowrap animate-marquee">
-                      <span>&gt; RBI UPDATES MASTER DIRECTION ON KYC FOR 2026</span>
-                      <span>&gt; NEW AML BLITZ HIRING EVENT CONFIRMED FOR KOLKATA IN DECEMBER</span>
-                      <span>&gt; FATF UPDATES GREY LIST REQUIREMENTS FOR HIGH-RISK JURISDICTIONS</span>
-                      <span>&gt; RBI UPDATES MASTER DIRECTION ON KYC FOR 2026</span>
-                      <span>&gt; NEW AML BLITZ HIRING EVENT CONFIRMED FOR KOLKATA IN DECEMBER</span>
-                    </div>
-                  </div>
-                </div>
+                      <div className="flex flex-wrap gap-4 mb-6">
+                        <button 
+                          disabled={isChallengeLocked}
+                          onClick={() => handleChallenge('edd')}
+                          className={`px-8 py-3 text-[12px] font-black rounded-lg transition-all duration-300 shadow-sm ${
+                            isChallengeLocked
+                              ? (challengeSelected === 'edd'
+                                  ? 'bg-emerald-500 text-black shadow-[0_0_20px_rgba(16,185,129,0.4)]'
+                                  : 'bg-slate-800/20 text-slate-600 border border-slate-800/40 opacity-50')
+                              : 'bg-slate-800/50 border border-white/10 text-slate-300 hover:bg-emerald-600 hover:text-black hover:border-emerald-500/50'
+                          }`}
+                        >
+                          ENHANCED DUE DILIGENCE (EDD)
+                        </button>
 
-              </div>
-            </div>
-          </section>
-
-          {/* 3. LATEST NEWS SECTION */}
-          <section className="bg-[#030712] border-t border-white/5 py-16 px-6">
-            <div className="max-w-7xl mx-auto">
-              <h2 className="text-emerald-500 font-bold mb-8 uppercase tracking-widest flex items-center gap-3">
-                <span className="w-8 h-[2px] bg-emerald-500"></span>
-                Latest KYC News
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {newsList.slice(0, 3).map((news, i) => (
-                  <a key={i} href={news.link} target="_blank" rel="noopener noreferrer" className="p-8 bg-slate-900/40 border border-white/5 rounded-2xl hover:border-emerald-500/50 hover:bg-slate-900/60 transition-all group">
-                    <p className="text-white font-bold mb-4 leading-tight group-hover:text-emerald-400 transition-colors">{news.title}</p>
-                    {news.link && <span className="text-emerald-500 text-[10px] font-black uppercase tracking-widest">Read Full Intelligence →</span>}
-                  </a>
-                ))}
-              </div>
-            </div>
-          </section>
-
-          {/* --- THE NEURAL INTELLIGENCE CORE --- */}
-          <section className="py-32 px-6 bg-[#020617] relative overflow-hidden border-t border-white/5">
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-emerald-500/5 blur-[120px] rounded-full pointer-events-none"></div>
-            <div className="max-w-7xl mx-auto relative z-10">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
-                
-                <div className="relative h-[450px] w-full bg-black/40 rounded-3xl border border-white/5 overflow-hidden flex items-center justify-center group">
-                  <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'linear-gradient(#334155 1px, transparent 1px), linear-gradient(90deg, #334155 1px, transparent 1px)', backgroundSize: '30px 30px' }}></div>
-                  <div className="relative z-20">
-                    <div className="h-24 w-24 bg-emerald-500/10 border-2 border-emerald-500 rounded-full flex items-center justify-center animate-pulse shadow-[0_0_50px_rgba(16,185,129,0.3)]">
-                      <svg className="w-10 h-10 text-emerald-500 animate-spin-slow" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
-                      </svg>
-                    </div>
-                  </div>
-
-                  <div className="absolute inset-0 z-10">
-                    {[...Array(6)].map((_, i) => (
-                      <div key={i} className="absolute h-1 w-12 bg-gradient-to-r from-transparent via-emerald-500 to-transparent rounded-full animate-data-stream opacity-40" style={{ top: `${20 + (i * 15)}%`, left: '-10%', animationDelay: `${i * 0.8}s` }}></div>
-                    ))}
-                    {[...Array(6)].map((_, i) => (
-                      <div key={i+6} className="absolute h-1 w-12 bg-gradient-to-r from-transparent via-blue-500 to-transparent rounded-full animate-data-stream-reverse opacity-40" style={{ top: `${15 + (i * 15)}%`, right: '-10%', animationDelay: `${i * 1.2}s` }}></div>
-                    ))}
-                  </div>
-
-                  <div className="absolute top-10 left-10 p-3 bg-black/60 border border-emerald-500/20 rounded-lg backdrop-blur-md animate-float">
-                    <p className="text-[8px] font-black text-emerald-500 uppercase tracking-widest">AML</p>
-                    <p className="text-xs font-bold text-white uppercase">DECODE</p>
-                  </div>
-                  <div className="absolute bottom-10 right-10 p-3 bg-black/60 border border-blue-500/20 rounded-lg backdrop-blur-md animate-float-delayed">
-                    <p className="text-[8px] font-black text-blue-500 uppercase tracking-widest">Verification</p>
-                    <p className="text-xs font-bold text-white uppercase">99.8% Match</p>
-                  </div>
-                </div>
-
-                <div className="space-y-8">
-                  <div className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-500/10 border border-emerald-500/20 rounded-lg">
-                    <span className="h-2 w-2 rounded-full bg-emerald-500 animate-ping"></span>
-                    <span className="text-[10px] font-black text-emerald-500 uppercase tracking-[0.3em]">Operational Protocol</span>
-                  </div>
-                  <h2 className="text-5xl font-black text-white tracking-tighter leading-none">
-                    THE ENGINE OF <br />
-                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-blue-500">COMPLIANCE.</span>
-                  </h2>
-                  <p className="text-lg text-slate-400 leading-relaxed max-w-lg">
-                    AML_DECODE is built on the philosophy of **precision over volume**. Our internal engine 
-                    processes complex regulatory frameworks from **RBI** and **FATF**, translating them into 
-                    actionable intelligence for the modern specialist.
-                  </p>
-                  <div className="flex flex-col gap-4 sm:flex-row">
-                    <button onClick={() => setActiveView('notes')} className="px-10 py-4 bg-emerald-600 hover:bg-emerald-500 text-black font-black text-xs uppercase tracking-widest rounded-xl transition-all shadow-[0_0_30px_rgba(16,185,129,0.2)]">
-                      Explore Learning
-                    </button>
-                    <button onClick={() => setActiveView('quiz')} className="px-10 py-4 bg-slate-800/50 border border-white/10 text-white font-black text-xs uppercase tracking-widest rounded-xl hover:bg-slate-700 transition-all">
-                      Take Assessment
-                    </button>
-                  </div>
-                </div>
-
-              </div>
-            </div>
-          </section>
-
-          {/* --- THE INTELLIGENCE CONSTELLATION --- */}
-          <section className="py-32 px-6 bg-[#030712] relative overflow-hidden border-t border-white/5">
-            <div className="absolute inset-0 z-0 opacity-20">
-              <div className="absolute top-1/4 left-1/4 w-72 h-72 bg-emerald-500/10 blur-[100px] animate-pulse"></div>
-              <div className="absolute bottom-1/4 right-1/4 w-72 h-72 bg-blue-500/10 blur-[100px] animate-pulse [animation-delay:2s]"></div>
-            </div>
-
-            <div className="max-w-7xl mx-auto relative z-10">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-                
-                <div className="relative h-[500px] w-full bg-slate-900/20 rounded-[40px] border border-white/5 flex items-center justify-center group overflow-hidden">
-                  <svg className="absolute inset-0 w-full h-full opacity-30" viewBox="0 0 400 400">
-                    <path d="M100,100 L300,300 M300,100 L100,300 M200,50 L200,350 M50,200 L350,200" stroke="#10b981" strokeWidth="0.5" fill="none" className="animate-draw" />
-                  </svg>
-
-                  <div className="relative w-full h-full">
-                    {[
-                      { label: 'KYC Logic', pos: 'top-[15%] left-[20%]', color: 'emerald' },
-                      { label: 'AML Framework', pos: 'top-[15%] right-[20%]', color: 'blue' },
-                      { label: 'SAR Reporting', pos: 'bottom-[20%] left-[25%]', color: 'emerald' },
-                      { label: 'Sanctions', pos: 'bottom-[25%] right-[20%]', color: 'blue' },
-                      { label: 'EDD Reviews', pos: 'top-[50%] left-[10%]', color: 'emerald' },
-                      { label: 'Transaction Monitoring', pos: 'top-[45%] right-[5%]', color: 'blue' }
-                    ].map((node, i) => (
-                      <div key={i} className={`absolute ${node.pos} p-4 bg-black/60 border border-${node.color}-500/30 rounded-2xl backdrop-blur-xl animate-float shadow-2xl transition-all group-hover:border-${node.color}-400`} style={{ animationDelay: `${i * 0.5}s` }}>
-                        <div className="flex items-center gap-3">
-                          <div className={`h-2 w-2 rounded-full bg-${node.color}-500 animate-pulse`}></div>
-                          <span className="text-[10px] font-black text-white uppercase tracking-widest">{node.label}</span>
-                        </div>
+                        <button 
+                          disabled={isChallengeLocked}
+                          onClick={() => handleChallenge('dismiss')}
+                          className={`px-8 py-3 text-[12px] font-black rounded-lg transition-all duration-300 shadow-sm ${
+                            isChallengeLocked
+                              ? (challengeSelected === 'dismiss'
+                                  ? 'bg-red-500 text-white'
+                                  : 'bg-slate-800/20 text-slate-600 border border-slate-800/40 opacity-50')
+                              : 'bg-slate-800/50 border border-white/10 text-slate-300 hover:bg-emerald-600 hover:text-black hover:border-emerald-500/50'
+                          }`}
+                        >
+                          IMMEDIATE DISMISSAL
+                        </button>
                       </div>
-                    ))}
-                    
-                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-                      <div className="h-24 w-24 bg-emerald-500 border-4 border-black rounded-full flex items-center justify-center shadow-[0_0_60px_rgba(16,185,129,0.4)] animate-bounce-slow">
-                        <span className="text-black font-black text-sm uppercase tracking-tighter">DECODE</span>
+
+                      {isChallengeLocked && (
+                        <div className={`p-5 rounded-2xl border border-dashed animate-view-entry ${
+                          challengeSelected === 'edd' 
+                            ? 'bg-emerald-500/5 border-emerald-500/30 text-emerald-300' 
+                            : 'bg-red-500/5 border-red-500/30 text-red-300'
+                        }`}>
+                          <div className="flex gap-3 items-start">
+                            <div className="text-xs font-mono font-black mt-0.5">
+                              {challengeSelected === 'edd' ? '[VALIDATED]' : '[ALERT]'}
+                            </div>
+                            <div>
+                              <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">
+                                Interview Insight / Rationale
+                              </p>
+                              <p className="text-xs font-mono leading-relaxed">
+                                {challengeSelected === 'edd' 
+                                  ? "CORRECT: Minor spelling variations (fuzzy matching) are common in sanctions evasion. Matching DOB and Nationality makes this a high-probability hit that requires Enhanced Due Diligence (EDD) before clearing."
+                                  : "INCORRECT: Dismissing a match with identical DOB and Nationality based solely on a middle-name misspelling is a high-risk compliance failure. You must escalate for EDD."}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* REGIONAL PULSE MODULE */}
+                  <div className="md:col-span-4 p-10 rounded-3xl bg-gradient-to-b from-slate-900 to-[#030712] border border-white/5 shadow-xl">
+                    <h3 className="text-slate-500 font-black text-[11px] tracking-[0.3em] uppercase mb-8">Regional Pulse</h3>
+                    <div className="space-y-6">
+                      <div className="flex justify-between items-center p-4 rounded-xl bg-white/5 border border-white/5 group hover:border-emerald-500/30 transition-all cursor-default">
+                        <div>
+                          <span className="text-xs font-bold text-slate-200 uppercase block">Bengaluru</span>
+                          <span className="text-[9px] text-emerald-500/70 uppercase tracking-tighter font-black">Trend: +14% Hiring Spike</span>
+                        </div>
+                        <span className="text-[10px] font-black text-emerald-400 bg-emerald-400/10 px-3 py-1 rounded-full border border-emerald-400/20">CRITICAL</span>
+                      </div>
+
+                      <div className="flex justify-between items-center p-4 rounded-xl bg-white/5 border border-white/5 group hover:border-blue-500/30 transition-all cursor-default">
+                        <div>
+                          <span className="text-xs font-bold text-slate-200 uppercase block">Kolkata</span>
+                          <span className="text-[9px] text-blue-500/70 uppercase tracking-tighter font-black">Next Blitz: Dec 2025</span>
+                        </div>
+                        <span className="text-[10px] font-black text-blue-400 bg-blue-400/10 px-3 py-1 rounded-full border border-blue-400/20">STEADY</span>
+                      </div>
+
+                      <div className="pt-4 border-t border-white/5">
+                        <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mb-2 text-center">Global Watch</p>
+                        <p className="text-xs text-slate-400 italic text-center leading-relaxed">
+                          High demand for Sanctions Screening specialists in MENA regions like Doha.
+                        </p>
                       </div>
                     </div>
                   </div>
+
+                  {/* REGULATORY TICKER */}
+                  <div className="md:col-span-12 mt-4 p-6 bg-black/80 backdrop-blur-md border border-white/10 rounded-2xl flex items-center overflow-hidden relative">
+                    <div className="shrink-0 flex items-center gap-3 px-6 py-2 bg-[#030712] border border-red-500/30 rounded-lg relative z-20 mr-6 shadow-[10px_0_20px_rgba(0,0,0,0.8)]">
+                      <span className="h-2 w-2 rounded-full bg-red-500 animate-ping"></span>
+                      <span className="text-[11px] font-black text-red-500 uppercase tracking-widest whitespace-nowrap">Global Watch</span>
+                    </div>
+                    <div className="relative flex-grow overflow-hidden z-10">
+                      <div className="text-[12px] font-bold text-slate-400 uppercase tracking-[0.25em] flex gap-24 whitespace-nowrap animate-marquee">
+                        <span>&gt; RBI UPDATES MASTER DIRECTION ON KYC FOR 2026</span>
+                        <span>&gt; NEW AML BLITZ HIRING EVENT CONFIRMED FOR KOLKATA IN DECEMBER</span>
+                        <span>&gt; FATF UPDATES GREY LIST REQUIREMENTS FOR HIGH-RISK JURISDICTIONS</span>
+                        <span>&gt; RBI UPDATES MASTER DIRECTION ON KYC FOR 2026</span>
+                        <span>&gt; NEW AML BLITZ HIRING EVENT CONFIRMED FOR KOLKATA IN DECEMBER</span>
+                      </div>
+                    </div>
+                  </div>
+
                 </div>
 
-                <div className="space-y-8">
-                  <div className="inline-flex items-center gap-2 px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 rounded-full">
-                    <span className="text-[10px] font-black text-emerald-500 uppercase tracking-widest">Intelligence Hub</span>
-                  </div>
-                  <h2 className="text-5xl font-black text-white leading-none tracking-tighter">
-                    WHERE DATA <br />
-                    BECOMES <span className="text-emerald-500">EXPERTISE.</span>
+                {/* 3. LATEST NEWS SECTION */}
+                <div className="border-t border-white/5 pt-16">
+                  <h2 className="text-emerald-500 font-bold mb-8 uppercase tracking-widest flex items-center gap-3">
+                    <span className="w-8 h-[2px] bg-emerald-500"></span>
+                    Latest KYC News
                   </h2>
-                  <p className="text-lg text-slate-400 leading-relaxed">
-                    The **AML_DECODE** architecture is built to mirror the professional journey. 
-                    We connect the dots between complex **Regulatory Directions** and practical 
-                    **Interview Intelligence**, providing a 360° view of the financial crime landscape 
-                    in hubs like **Bengaluru** and **Kolkata**.
-                  </p>
-                  <div className="grid grid-cols-2 gap-6 pt-6">
-                    <div className="p-6 bg-white/5 rounded-2xl border border-white/5">
-                      <p className="text-3xl font-black text-white mb-1">100+</p>
-                      <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Knowledge Nodes</p>
-                    </div>
-                    <div className="p-6 bg-white/5 rounded-2xl border border-white/5">
-                      <p className="text-3xl font-black text-white mb-1">2026</p>
-                      <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Global Standards</p>
-                    </div>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    {newsList.slice(0, 3).map((news, i) => (
+                      <a key={i} href={news.link} target="_blank" rel="noopener noreferrer" className="p-8 bg-slate-900/40 border border-white/5 rounded-2xl hover:border-emerald-500/50 hover:bg-slate-900/60 transition-all group">
+                        <p className="text-white font-bold mb-4 leading-tight group-hover:text-emerald-400 transition-colors">{news.title}</p>
+                        {news.link && <span className="text-emerald-500 text-[10px] font-black uppercase tracking-widest">Read Full Intelligence →</span>}
+                      </a>
+                    ))}
                   </div>
                 </div>
 
-              </div>
-            </div>
-          </section>
-
-          {/* --- ANIMATED MENTORSHIP & EMAIL ROUTING TERMINAL --- */}
-          <section id="career-guidance" className="py-32 px-6 bg-[#020617] relative overflow-hidden border-t border-emerald-500/30">
-            {/* Cyber Grid Background */}
-            <div className="absolute inset-0 opacity-[0.03] pointer-events-none"
-                 style={{ backgroundImage: 'linear-gradient(#10b981 1px, transparent 1px), linear-gradient(90deg, #10b981 1px, transparent 1px)', backgroundSize: '30px 30px' }}></div>
-
-            <div className="max-w-7xl mx-auto relative z-10">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-                
-                {/* 1. THE VISUAL: LIVE STATUS TERMINAL */}
-                <div className="relative p-1 bg-gradient-to-br from-emerald-500/20 to-blue-500/20 rounded-[32px]">
-                  <div className="bg-[#030712] rounded-[30px] p-10 border border-white/5 relative overflow-hidden">
-                    <div className="flex items-center gap-3 mb-8">
-                      <div className="h-3 w-3 rounded-full bg-emerald-500 animate-ping"></div>
-                      <span className="text-[10px] font-black text-emerald-500 uppercase tracking-[0.4em]">Mentor_Allocation_Active</span>
-                    </div>
-
-                    <h3 className="text-3xl font-black text-white mb-6 tracking-tighter uppercase leading-none">
-                      Join Our 1:1 Session <br /> <span className="text-emerald-500">& Get Expert Help For</span>
-                    </h3>
-
-                    <div className="space-y-6 mb-10">
-                      {[
-                        "Resume Review & Optimization",
-                        "Right Strategy to Apply",
-                        "How to get more Interview calls",
-                        "End-to-End Interview Preparation",
-                        "Specialized for AML/KYC Roles"
-                      ].map((text, i) => (
-                        <div key={i} className="flex items-start gap-4 group">
-                          <span className="text-emerald-500 font-black mt-1 group-hover:translate-x-1 transition-transform">&gt;</span>
-                          <p className="text-sm text-slate-400 font-bold uppercase tracking-tight">{text}</p>
+                {/* --- THE NEURAL INTELLIGENCE CORE --- */}
+                <div className="py-20 bg-[#020617] relative overflow-hidden border border-white/5 rounded-3xl">
+                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-emerald-500/5 blur-[120px] rounded-full pointer-events-none"></div>
+                  <div className="max-w-7xl mx-auto relative z-10 px-6">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+                      <div className="relative h-[450px] w-full bg-black/40 rounded-3xl border border-white/5 overflow-hidden flex items-center justify-center group">
+                        <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'linear-gradient(#334155 1px, transparent 1px), linear-gradient(90deg, #334155 1px, transparent 1px)', backgroundSize: '30px 30px' }}></div>
+                        <div className="relative z-20">
+                          <div className="h-24 w-24 bg-emerald-500/10 border-2 border-emerald-500 rounded-full flex items-center justify-center animate-pulse shadow-[0_0_50px_rgba(16,185,129,0.3)]">
+                            <svg className="w-10 h-10 text-emerald-500 animate-spin-slow" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+                            </svg>
+                          </div>
                         </div>
-                      ))}
-                    </div>
+                        <div className="absolute inset-0 z-10">
+                          {[...Array(6)].map((_, i) => (
+                            <div key={i} className="absolute h-1 w-12 bg-gradient-to-r from-transparent via-emerald-500 to-transparent rounded-full animate-data-stream opacity-40" style={{ top: `${20 + (i * 15)}%`, left: '-10%', animationDelay: `${i * 0.8}s` }}></div>
+                          ))}
+                          {[...Array(6)].map((_, i) => (
+                            <div key={i+6} className="absolute h-1 w-12 bg-gradient-to-r from-transparent via-blue-500 to-transparent rounded-full animate-data-stream-reverse opacity-40" style={{ top: `${15 + (i * 15)}%`, right: '-10%', animationDelay: `${i * 1.2}s` }}></div>
+                          ))}
+                        </div>
+                        <div className="absolute top-10 left-10 p-3 bg-black/60 border border-emerald-500/20 rounded-lg backdrop-blur-md animate-float">
+                          <p className="text-[8px] font-black text-emerald-500 uppercase tracking-widest">AML</p>
+                          <p className="text-xs font-bold text-white uppercase">DECODE</p>
+                        </div>
+                        <div className="absolute bottom-10 right-10 p-3 bg-black/60 border border-blue-500/20 rounded-lg backdrop-blur-md animate-float-delayed">
+                          <p className="text-[8px] font-black text-blue-500 uppercase tracking-widest">Verification</p>
+                          <p className="text-xs font-bold text-white uppercase">99.8% Match</p>
+                        </div>
+                      </div>
 
-                    {/* Animated Status Bar */}
-                    <div className="w-full h-1 bg-slate-800 rounded-full overflow-hidden">
-                      <div className="h-full bg-emerald-500 w-2/3 animate-data-stream"></div>
+                      <div className="space-y-8">
+                        <div className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-500/10 border border-emerald-500/20 rounded-lg">
+                          <span className="h-2 w-2 rounded-full bg-emerald-500 animate-ping"></span>
+                          <span className="text-[10px] font-black text-emerald-500 uppercase tracking-[0.3em]">Operational Protocol</span>
+                        </div>
+                        <h2 className="text-5xl font-black text-white tracking-tighter leading-none">
+                          THE ENGINE OF <br />
+                          <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-blue-500">COMPLIANCE.</span>
+                        </h2>
+                        <p className="text-lg text-slate-400 leading-relaxed max-w-lg">
+                          AML_DECODE is built on the philosophy of **precision over volume**. Our internal engine 
+                          processes complex regulatory frameworks from **RBI** and **FATF**, translating them into 
+                          actionable intelligence for the modern specialist.
+                        </p>
+                        <div className="flex flex-col gap-4 sm:flex-row">
+                          <button onClick={() => setActiveView('notes')} className="px-10 py-4 bg-emerald-600 hover:bg-emerald-500 text-black font-black text-xs uppercase tracking-widest rounded-xl transition-all shadow-[0_0_30px_rgba(16,185,129,0.2)]">
+                            Explore Learning
+                          </button>
+                          <button onClick={() => setActiveView('quiz')} className="px-10 py-4 bg-slate-800/50 border border-white/10 text-white font-black text-xs uppercase tracking-widest rounded-xl hover:bg-slate-700 transition-all">
+                            Take Assessment
+                          </button>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
 
-                {/* 2. THE CONTENT: DIRECT INTAKE ROUTING */}
-                <div className="space-y-8">
-                  <h2 className="text-5xl font-black text-white leading-none tracking-tighter">
-                    One Stop Career <br />
-                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-blue-500">Guidance with Our Expert</span>
-                  </h2>
-
-                  <p className="text-lg text-slate-400 leading-relaxed">
-                    Our mentorship sessions are highly exclusive and tailored to your specific career path in 
-                    **KYC, AML, and Transaction Monitoring**. To ensure the right mentor match, we process 
-                    all requests through our **Secure Intelligence Desk**.
-                  </p>
-
-                  <div className="p-6 bg-emerald-500/5 border border-emerald-500/20 rounded-2xl">
-                    <p className="text-xs font-black text-emerald-500 uppercase tracking-widest mb-2">Instructions</p>
-                    <p className="text-sm text-slate-300 italic">
-                      "Click below to Book the Session. Mention your current role and 
-                      the program you are interested in."
-                    </p>
+                {/* --- THE INTELLIGENCE CONSTELLATION --- */}
+                <div className="py-20 border border-white/5 rounded-3xl relative overflow-hidden">
+                  <div className="absolute inset-0 z-0 opacity-20">
+                    <div className="absolute top-1/4 left-1/4 w-72 h-72 bg-emerald-500/10 blur-[100px] animate-pulse"></div>
+                    <div className="absolute bottom-1/4 right-1/4 w-72 h-72 bg-blue-500/10 blur-[100px] animate-pulse [animation-delay:2s]"></div>
                   </div>
+                  <div className="max-w-7xl mx-auto relative z-10 px-6">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                      <div className="relative h-[500px] w-full bg-slate-900/20 rounded-[40px] border border-white/5 flex items-center justify-center group overflow-hidden">
+                        <svg className="absolute inset-0 w-full h-full opacity-30" viewBox="0 0 400 400">
+                          <path d="M100,100 L300,300 M300,100 L100,300 M200,50 L200,350 M50,200 L350,200" stroke="#10b981" strokeWidth="0.5" fill="none" className="animate-draw" />
+                        </svg>
+                        <div className="relative w-full h-full">
+                          {[
+                            { label: 'KYC Logic', pos: 'top-[15%] left-[20%]', color: 'emerald' },
+                            { label: 'AML Framework', pos: 'top-[15%] right-[20%]', color: 'blue' },
+                            { label: 'SAR Reporting', pos: 'bottom-[20%] left-[25%]', color: 'emerald' },
+                            { label: 'Sanctions', pos: 'bottom-[25%] right-[20%]', color: 'blue' },
+                            { label: 'EDD Reviews', pos: 'top-[50%] left-[10%]', color: 'emerald' },
+                            { label: 'Transaction Monitoring', pos: 'top-[45%] right-[5%]', color: 'blue' }
+                          ].map((node, i) => (
+                            <div key={i} className={`absolute ${node.pos} p-4 bg-black/60 border border-slate-800 rounded-2xl backdrop-blur-xl animate-float shadow-2xl transition-all`} style={{ animationDelay: `${i * 0.5}s` }}>
+                              <div className="flex items-center gap-3">
+                                <div className={`h-2 w-2 rounded-full bg-${node.color}-500 animate-pulse`}></div>
+                                <span className="text-[10px] font-black text-white uppercase tracking-widest">{node.label}</span>
+                              </div>
+                            </div>
+                          ))}
+                          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+                            <div className="h-24 w-24 bg-emerald-500 border-4 border-black rounded-full flex items-center justify-center shadow-[0_0_60px_rgba(16,185,129,0.4)] animate-bounce-slow">
+                              <span className="text-black font-black text-sm uppercase tracking-tighter">DECODE</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
 
-                  <button 
-                    onClick={() => {
-                      const subject = encodeURIComponent("Mentorship Intake Request - [Your Name]");
-                      const body = encodeURIComponent("Hello AML_DECODE Team,\n\nI am interested in a 1:1 mentorship session. Here are my details:\n\nCurrent Role:\nLocation:\nProgram of Interest (Resume/Interview/Full Prep):\n\nPlease guide me on the next steps.");
-                      window.location.href = `mailto:alerts@amldecode.in?subject=${subject}&body=${body}`;
-                    }}
-                    className="group relative px-12 py-5 bg-emerald-600 hover:bg-emerald-500 text-black font-black text-xs uppercase tracking-widest rounded-xl transition-all shadow-[0_0_40px_rgba(16,185,129,0.2)]"
-                  >
-                    <span className="relative z-10 flex items-center gap-3">
-                      Book Your Slot Now
-                      <span className="group-hover:translate-x-2 transition-transform">&rarr;</span>
-                    </span>
-                  </button>
+                      <div className="space-y-8">
+                        <div className="inline-flex items-center gap-2 px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 rounded-full">
+                          <span className="text-[10px] font-black text-emerald-500 uppercase tracking-widest">Intelligence Hub</span>
+                        </div>
+                        <h2 className="text-5xl font-black text-white leading-none tracking-tighter">
+                          WHERE DATA <br />
+                          BECOMES <span className="text-emerald-500">EXPERTISE.</span>
+                        </h2>
+                        <p className="text-lg text-slate-400 leading-relaxed">
+                          The **AML_DECODE** architecture is built to mirror the professional journey. 
+                          We connect the dots between complex **Regulatory Directions** and practical 
+                          **Interview Intelligence**, providing a 360° view of the financial crime landscape 
+                          in hubs like **Bengaluru** and **Kolkata**.
+                        </p>
+                        <div className="grid grid-cols-2 gap-6 pt-6">
+                          <div className="p-6 bg-white/5 rounded-2xl border border-white/5">
+                            <p className="text-3xl font-black text-white mb-1">100+</p>
+                            <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Knowledge Nodes</p>
+                          </div>
+                          <div className="p-6 bg-white/5 rounded-2xl border border-white/5">
+                            <p className="text-3xl font-black text-white mb-1">2026</p>
+                            <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Global Standards</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* --- ANIMATED MENTORSHIP SECTION --- */}
+                <div id="career-guidance" className="py-12 bg-[#020617] rounded-3xl border border-emerald-500/30 relative overflow-hidden">
+                  <div className="max-w-7xl mx-auto z-10 relative px-6">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                      <div className="relative p-1 bg-gradient-to-br from-emerald-500/20 to-blue-500/20 rounded-[32px]">
+                        <div className="bg-[#030712] rounded-[30px] p-10 border border-white/5 relative overflow-hidden">
+                          <div className="flex items-center gap-3 mb-8">
+                            <div className="h-3 w-3 rounded-full bg-emerald-500 animate-ping"></div>
+                            <span className="text-[10px] font-black text-emerald-500 uppercase tracking-[0.4em]">Mentor_Allocation_Active</span>
+                          </div>
+                          <h3 className="text-3xl font-black text-white mb-6 tracking-tighter uppercase leading-none">
+                            Join Our 1:1 Session <br /> <span className="text-emerald-500">& Get Expert Help For</span>
+                          </h3>
+                          <div className="space-y-6 mb-10">
+                            {[
+                              "Resume Review & Optimization",
+                              "Right Strategy to Apply",
+                              "How to get more Interview calls",
+                              "End-to-End Interview Preparation",
+                              "Specialized for AML/KYC Roles"
+                            ].map((text, i) => (
+                              <div key={i} className="flex items-start gap-4 group">
+                                <span className="text-emerald-500 font-black mt-1 group-hover:translate-x-1 transition-transform">&gt;</span>
+                                <p className="text-sm text-slate-400 font-bold uppercase tracking-tight">{text}</p>
+                              </div>
+                            ))}
+                          </div>
+                          <div className="w-full h-1 bg-slate-800 rounded-full overflow-hidden">
+                            <div className="h-full bg-emerald-500 w-2/3 animate-data-stream"></div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="space-y-8">
+                        <h2 className="text-5xl font-black text-white leading-none tracking-tighter">
+                          One Stop Career <br />
+                          <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-blue-500">Guidance with Our Expert</span>
+                        </h2>
+                        <p className="text-lg text-slate-400 leading-relaxed">
+                          Our mentorship sessions are highly exclusive and tailored to your specific career path in 
+                          **KYC, AML, and Transaction Monitoring**. To ensure the right mentor match, we process 
+                          all requests through our **Secure Intelligence Desk**.
+                        </p>
+                        <div className="p-6 bg-emerald-500/5 border border-emerald-500/20 rounded-2xl">
+                          <p className="text-xs font-black text-emerald-500 uppercase tracking-widest mb-2">Instructions</p>
+                          <p className="text-sm text-slate-300 italic">
+                            "Click below to Book the Session. Mention your current role and the program you are interested in."
+                          </p>
+                        </div>
+                        <button 
+                          onClick={() => {
+                            const subject = encodeURIComponent("Mentorship Intake Request - [Your Name]");
+                            const body = encodeURIComponent("Hello AML_DECODE Team,\n\nI am interested in a 1:1 mentorship session. Here are my details:\n\nCurrent Role:\nLocation:\nProgram of Interest (Resume/Interview/Full Prep):\n\nPlease guide me on the next steps.");
+                            window.location.href = `mailto:alerts@amldecode.in?subject=${subject}&body=${body}`;
+                          }}
+                          className="group relative px-12 py-5 bg-emerald-600 hover:bg-emerald-500 text-black font-black text-xs uppercase tracking-widest rounded-xl transition-all shadow-[0_0_40px_rgba(16,185,129,0.2)]"
+                        >
+                          <span className="relative z-10 flex items-center gap-3">
+                            Book Your Slot Now
+                            <span className="group-hover:translate-x-2 transition-transform">&rarr;</span>
+                          </span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
               </div>
-            </div>
-          </section>
+            </section>
+
+          </div>
         </main>
       )}
 
