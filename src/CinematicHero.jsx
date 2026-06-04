@@ -77,9 +77,15 @@ ctx.fillStyle = 'rgba(251, 191, 36, 0.6)'; // Brighter Gold/Amber       ctx.begi
       
       <div className="hero-background-layer">
         <canvas ref={canvasRef} className="absolute inset-0 opacity-40" />
-        <h1 className="hero-brand-text" style={{ color: 'rgba(251, 191, 36, 0.08)' }}>
-          DECODE<br/>COMPLIANCE
-        </h1>
+        <h1 
+  className="hero-brand-text animate-text-glow" 
+  style={{ 
+    color: 'rgba(251, 191, 36, 0.45)', // Increased opacity for visibility
+    letterSpacing: '0.15em' 
+  }}
+>
+  DECODE<br/>COMPLIANCE
+</h1>
       </div>
 
       <div className="pillar-wrapper">

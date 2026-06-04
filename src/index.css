@@ -571,11 +571,46 @@ button {
 }
 
 .hero-brand-text {
-  font-size: 12vw;
+  font-size: 10vw;
   font-weight: 900;
-  color: rgba(255, 255, 255, 0.05);
   text-transform: uppercase;
-  letter-spacing: -0.05em;
-  line-height: 0.8;
+  line-height: 0.9;
   text-align: center;
+  
+  /* 1. REQUIRED: Make text transparent so the gradient background shows */
+  color: transparent;
+  background-clip: text;
+  -webkit-background-clip: text;
+
+  /* 2. CRT SCANLINE EFFECT */
+  background-image: linear-gradient(
+    rgba(251, 191, 36, 0.6) 50%, 
+    rgba(217, 119, 6, 0.2) 50%
+  );
+  background-size: 100% 4px;
+
+  /* 3. LAYERED GLOW */
+  text-shadow: 
+    0 0 10px rgba(217, 119, 6, 0.4),
+    0 0 30px rgba(217, 119, 6, 0.2);
+    
+  transition: all 0.5s ease-in-out;
+  position: relative;
+  z-index: 5;
+}
+
+/* 4. CLEANER PULSE ANIMATION */
+.animate-text-glow {
+  animation: text-pulse 4s ease-in-out infinite;
+}
+
+@keyframes text-pulse {
+  0%, 100% { 
+    opacity: 0.7;
+    transform: scale(1);
+  }
+  50% { 
+    opacity: 1;
+    transform: scale(1.02); /* Slight scale is smoother than filter-drop-shadow in keyframes */
+  }
 }
