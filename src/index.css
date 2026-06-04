@@ -510,8 +510,8 @@ button {
   flex: 1;
   height: 100%;
   background-color: #030712;
-  /* Thin lines between pillars create that technical shutter look */
-  border-right: 1px solid rgba(16, 185, 129, 0.08);
+  /* Changed border to a subtle brown tint */
+  border-right: 1px solid rgba(120, 53, 15, 0.15); 
   transform-origin: center;
 }
 
@@ -550,8 +550,9 @@ button {
 .intelligence-grid-section {
   position: relative;
   z-index: 10;
-  background-color: #030712; /* Solid background so hero isn't visible behind it */
-  box-shadow: 0 -50px 100px rgba(0,0,0,0.5); /* Shadow to create the "above" depth */
+  background-color: #030712;
+  /* Shadow with a deep brown glow instead of black */
+  box-shadow: 0 -50px 100px rgba(120, 53, 15, 0.1); 
 }
 
 .pillar-wrapper {
