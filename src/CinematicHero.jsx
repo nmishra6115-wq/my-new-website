@@ -78,7 +78,7 @@ ctx.fillStyle = 'rgba(251, 191, 36, 0.6)'; // Brighter Gold/Amber       ctx.begi
       <div className="hero-background-layer">
         <canvas ref={canvasRef} className="absolute inset-0 opacity-40" />
         <h1 className="hero-brand-text" style={{ color: 'rgba(251, 191, 36, 0.08)' }}>
-          AML<br/>DECODE
+          DECODE<br/>COMPLIANCE
         </h1>
       </div>
 
