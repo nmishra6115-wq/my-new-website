@@ -8,46 +8,50 @@ gsap.registerPlugin(ScrollTrigger);
 const CinematicHero = () => {
   const sectionRef = useRef(null);
   const canvasRef = useRef(null);
-  const triggerRef = useRef(null);
 
   useEffect(() => {
-    // 1. PINNING & COMPOUND SCROLL TIMELINE
+    // 1. SEQUENTIAL SCROLL TIMELINE (Matching the video timing)
     const scrollTl = gsap.timeline({
       scrollTrigger: {
         trigger: sectionRef.current,
         start: "top top",
-        end: "+=100%", // Scroll distance for the animation to complete
+        end: "+=150%", // Increased scroll distance so the sequence has breathing room
         pin: true,
-        pinSpacing: false, // Allows the next section to slide over
-        scrub: 1, // Smoothly links animation progress to scroll wheel
+        pinSpacing: false, // Allows the bento grid section to slide over it smoothly at the end
+        scrub: 1, // Locks the animation progress directly to the scrollbar position
       }
     });
 
-    // Animate everything together on scroll
+    // Clear any default timelines to prevent overlapping bugs
+    scrollTl.scrollTrigger.refresh();
+
+    // --- SEQUENTIAL ANIMATION STEPS ---
     scrollTl
-      // A. Wrap up the text (Scale it down as you scroll)
-      .to(".hero-brand-text", {
-        scale: 0.3,
-        opacity: 0,
-        duration: 1,
-        ease: "power2.inOut"
-      }, 0)
-      // B. Reveal the center button smoothly right after the text shrinks
-      .fromTo(".hero-popup-btn", 
-        { scale: 0.5, opacity: 0 },
-        { scale: 1, opacity: 1, duration: 0.5, ease: "back.out(1.7)" },
-        0.5
-      )
-      // C. Shutter the pillars away
+      // STEP 1: The pillars slide open/vanish first to reveal the screen
       .to(".reveal-pillar", {
         scaleY: 0,
         opacity: 0,
         duration: 1,
-        ease: "expo.inOut",
-        stagger: { amount: 0.5, from: "center" }
-      }, 0);
+        ease: "power2.inOut",
+        stagger: { amount: 0.4, from: "center" }
+      })
+      
+      // STEP 2: As you scroll more, the text starts to wrap up/shrink
+      .to(".hero-brand-text", {
+        scale: 0.2,
+        opacity: 0,
+        duration: 1,
+        ease: "power3.inOut"
+      }, "+=0.2") // Adds a slight delay after pillars finish before text starts shrinking
+      
+      // STEP 3: Right as the text finishes shrinking, the button cleanly pops up in its place
+      .fromTo(".hero-popup-btn", 
+        { scale: 0.4, opacity: 0 },
+        { scale: 1, opacity: 1, duration: 0.6, ease: "back.out(2)" },
+        "-=0.3" // Starts slightly before the text is completely invisible for a smooth handoff
+      );
 
-    // 2. NEURAL CANVAS BACKGROUND
+    // 2. HIGH-VISIBILITY NEURAL CANVAS BACKGROUND
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
     let nodes = [];
@@ -107,18 +111,19 @@ const CinematicHero = () => {
       <div className="hero-background-layer flex flex-col items-center justify-center relative w-full h-full">
         <canvas ref={canvasRef} className="absolute inset-0 opacity-40" />
         
-        {/* Animated Wrapper Text */}
+        {/* Absolute positioning keeps text centered during scaling */}
         <h1 
-          className="hero-brand-text absolute" 
+          className="hero-brand-text absolute text-center select-none" 
           style={{ 
             color: 'rgba(251, 191, 36, 0.45)', 
-            letterSpacing: '0.15em' 
+            letterSpacing: '0.15em',
+            willChange: 'transform, opacity' // Optimizes browser rendering for smooth scaling
           }}
         >
           DECODE<br/>COMPLIANCE
         </h1>
 
-        {/* NEW: Pinned Popup Button that reveals on scroll */}
+        {/* Center Popup Button */}
         <button 
           onClick={() => {
             const nextSection = document.querySelector('.intelligence-grid-section');
