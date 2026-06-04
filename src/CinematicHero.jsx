@@ -94,11 +94,11 @@ const CinematicHero = () => {
 </h1>
       </div>
 
-     <div className="pillar-wrapper">
-  {[...Array(20)].map((_, i) => (
-    <div key={i} className="reveal-pillar" />
-  ))}
-</div>
+      <div className="pillar-wrapper">
+        {[...Array(20)].map((_, i) => (
+          <div key={i} className="reveal-pillar border-r border-amber-600/20" />
+        ))}
+      </div>
 
       {/* Brighter Vignette */}
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#030712] z-30 pointer-events-none" />
