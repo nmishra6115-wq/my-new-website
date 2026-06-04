@@ -471,7 +471,9 @@ export default function App() {
                       </div>
 
                       <p className="text-2xl md:text-3xl font-bold text-white mb-8 leading-tight">
-                        "A client name matches a Sanctions List. DOB and Nationality match, but the middle name has a minor spelling difference. What is the protocol?"
+                        "A cross-border corporate payment originating from an offshore tech hub is flagged by your monitoring system. The beneficiary entity is perfectly clean on all global sanctions watchlists. However, upon deep-dive routing analysis, you discover that the transaction utilizes a nested correspondent banking structure, and one of the downstream, non-account-holding intermediary transit banks listed in the SWIFT MT103 tracking strings is a financial institution that was placed under selective sectorial sanctions exactly 48 hours ago. The transaction value is under the standard regulatory reporting threshold.
+
+                         What is the correct protocol?"
                       </p>
 
                       <div className="flex flex-wrap gap-4 mb-6">
@@ -486,7 +488,7 @@ export default function App() {
                               : 'bg-slate-800/50 border border-white/10 text-slate-300 hover:bg-emerald-600 hover:text-black hover:border-emerald-500/50'
                           }`}
                         >
-                          ENHANCED DUE DILIGENCE (EDD)
+                          Freeze Asset & File an Immediate STR/SAR
                         </button>
 
                         <button 
@@ -500,7 +502,7 @@ export default function App() {
                               : 'bg-slate-800/50 border border-white/10 text-slate-300 hover:bg-emerald-600 hover:text-black hover:border-emerald-500/50'
                           }`}
                         >
-                          IMMEDIATE DISMISSAL
+                          Execute Payment & Log Internally
                         </button>
                       </div>
 
@@ -520,8 +522,8 @@ export default function App() {
                               </p>
                               <p className="text-xs font-mono leading-relaxed">
                                 {challengeSelected === 'edd' 
-                                  ? "CORRECT: Minor spelling variations (fuzzy matching) are common in sanctions evasion. Matching DOB and Nationality makes this a high-probability hit that requires Enhanced Due Diligence (EDD) before clearing."
-                                  : "INCORRECT: Dismissing a match with identical DOB and Nationality based solely on a middle-name misspelling is a high-risk compliance failure. You must escalate for EDD."}
+                                  ? "CORRECT: In sanctions compliance, there is no monetary threshold; processing even a minor amount through a sanctioned intermediary bank is a strict liability violation. Illicit networks routinely utilize nested correspondent banking structures to exploit filtering blind spots. Immediate asset restraint and regulatory escalation (SAR/STR) are mandatory to mitigate systemic exposure."
+                                  : "INCORRECT: Clearing a transaction that contains a sanctioned entity anywhere in its processing path—regardless of asset size or clean ordering/beneficiary profiles—constitutes a severe compliance breach. Sanctions regulations carry strict liability, meaning lack of intent or low transaction value offers no legal safe harbor."}
                               </p>
                             </div>
                           </div>
