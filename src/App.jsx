@@ -470,7 +470,7 @@ export default function App() {
                         )}
                       </div>
 
-                      <p className="text-2xl md:text-3xl font-bold text-white mb-8 leading-tight">
+                      <p className="text-lg md:text-xl font-bold text-white mb-8 leading-tight">
                         "A cross-border corporate payment originating from an offshore tech hub is flagged by your monitoring system. The beneficiary entity is perfectly clean on all global sanctions watchlists. However, upon deep-dive routing analysis, you discover that the transaction utilizes a nested correspondent banking structure, and one of the downstream, non-account-holding intermediary transit banks listed in the SWIFT MT103 tracking strings is a financial institution that was placed under selective sectorial sanctions exactly 48 hours ago. The transaction value is under the standard regulatory reporting threshold.
 
                          What is the correct protocol?"
