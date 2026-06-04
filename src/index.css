@@ -620,3 +620,15 @@ button {
     transform: scale(1.02); /* Slight scale is smoother than filter-drop-shadow in keyframes */
   }
 }
+.hero-background-layer {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 5;
+}
+
+.hero-popup-btn {
+  pointer-events: auto; /* Ensures button stays clickable when it pops up */
+}
