@@ -10,37 +10,43 @@ const CinematicHero = () => {
   const canvasRef = useRef(null);
 
   useEffect(() => {
-    // 1. PINNING & OCEAN VANISHING LOGIC
+    // 1. PINNING & SCROLL VANISHING TIMELINE
     const scrollTl = gsap.timeline({
       scrollTrigger: {
         trigger: sectionRef.current,
         start: "top top",
         end: "+=100%", 
         pin: true,
-        pinSpacing: false, // Next section slides directly over it
-        scrub: 1, // Smoothly tracks your scrollbar
+        pinSpacing: false, // Next section slides over it
+        scrub: 1, // Smoothly tracks your scroll position
       }
     });
 
-    // The entire hero content sinks down and fades away ("vanishing in ocean")
-    scrollTl.to(".hero-background-layer, .pillar-wrapper", {
-      y: 150, // Sinks downward smoothly
-      opacity: 0, // Fades out into the dark background
+    // Slides the Hero text UPWARDS out of view through the navbar area
+    scrollTl.to(".hero-brand-text", {
+      y: -150, 
+      opacity: 0,
       duration: 1,
       ease: "power1.inOut"
     }, 0);
 
-    // The Design Arrow with "Explore Learning" pops up immediately on scroll...
+    // Slowly fades out the background canvas grid
+    scrollTl.to(canvasRef.current, {
+      opacity: 0,
+      duration: 1
+    }, 0);
+
+    // The bridge element shows up initially...
     scrollTl.fromTo(".scroll-explore-arrow", 
-      { opacity: 0, y: -20 },
-      { opacity: 1, y: 0, duration: 0.3 }, 
+      { opacity: 1, y: 0 },
+      { opacity: 1, duration: 0.7 }, 
       0
     );
 
-    // ...and vanishes completely right at the end when you reach the main section
+    // ...and DISAPPEARS completely right as the Hero finishes sliding past the Nav Bar
     scrollTl.to(".scroll-explore-arrow", {
       opacity: 0,
-      y: 30,
+      y: -50, // Pulls up slightly as it vanishes
       duration: 0.3
     }, 0.7);
 
@@ -50,7 +56,7 @@ const CinematicHero = () => {
     let nodes = [];
     const resize = () => {
       canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight; // Full screen height
+      canvas.height = window.innerHeight; 
     };
     const initNodes = () => {
       nodes = Array.from({ length: 40 }, () => ({
@@ -94,7 +100,7 @@ const CinematicHero = () => {
     window.addEventListener('resize', resize);
     resize(); initNodes(); draw();
 
-    // 3. PILLAR REVEAL (Kept exactly as it was)
+    // 3. PILLAR REVEAL
     const tl = gsap.timeline({ repeat: -1, yoyo: true, repeatDelay: 1.5 });
     tl.to(".reveal-pillar", {
       scaleY: 0,
@@ -106,17 +112,19 @@ const CinematicHero = () => {
 
     return () => {
       window.removeEventListener('resize', resize);
-      ScrollTrigger.getAll().forEach(t => t.kill()); // Cleanup
+      ScrollTrigger.getAll().forEach(t => t.kill()); 
     };
   }, []);
 
  return (
-    <div className="hero-visual-container relative" ref={sectionRef}>
+    <div className="hero-visual-container relative w-full h-[100vh] overflow-hidden bg-[#030712]" ref={sectionRef}>
       
-      <div className="hero-background-layer">
-        <canvas ref={canvasRef} className="absolute inset-0 opacity-40" />
+      {/* Absolute Centered Hero Layer */}
+      <div className="absolute inset-0 flex flex-col items-center justify-center z-10">
+        <canvas ref={canvasRef} className="absolute inset-0 opacity-40 pointer-events-none" />
+        
         <h1 
-          className="hero-brand-text animate-text-glow" 
+          className="hero-brand-text animate-text-glow text-center select-none relative z-20" 
           style={{ 
             color: 'rgba(251, 191, 36, 0.45)', 
             letterSpacing: '0.15em' 
@@ -126,24 +134,25 @@ const CinematicHero = () => {
         </h1>
       </div>
 
-      {/* NEW: Design Arrow with text that pops up on scroll and vanishes at the main content */}
-      <div className="scroll-explore-arrow opacity-0 absolute bottom-12 left-1/2 -translate-x-1/2 z-40 flex flex-col items-center gap-2 pointer-events-none">
-        <span className="text-[10px] font-black text-amber-500 uppercase tracking-[0.3em] bg-black/60 px-4 py-2 border border-amber-500/20 rounded-full backdrop-blur-md shadow-xl">
+      {/* PLACED IN BETWEEN: Placed perfectly at the baseline interface separating Hero viewport and Content */}
+      <div className="scroll-explore-arrow absolute bottom-6 left-1/2 -translate-x-1/2 z-40 flex flex-col items-center gap-1.5 pointer-events-none">
+        <span className="text-[10px] font-black text-amber-500 uppercase tracking-[0.3em] bg-black/80 px-4 py-2 border border-amber-500/20 rounded-full backdrop-blur-md shadow-2xl">
           Explore Learning
         </span>
-        <svg className="w-6 h-6 text-amber-500 animate-bounce mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className="w-5 h-5 text-amber-500 animate-bounce mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
         </svg>
       </div>
 
-      <div className="pillar-wrapper">
+      {/* Shutter Pillars */}
+      <div className="pillar-wrapper absolute inset-0 z-30 pointer-events-none">
         {[...Array(20)].map((_, i) => (
           <div key={i} className="reveal-pillar border-r border-amber-600/20" />
         ))}
       </div>
 
-      {/* Brighter Vignette */}
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#030712] z-30 pointer-events-none" />
+      {/* Bottom Vignette Shield */}
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#030712] z-20 pointer-events-none" />
     </div>
   );
 };
