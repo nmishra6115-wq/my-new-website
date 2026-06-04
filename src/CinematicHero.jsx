@@ -35,21 +35,27 @@ const CinematicHero = () => {
       }));
     };
     const draw = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      nodes.forEach((node, i) => {
-        node.x += node.vx; node.y += node.vy;
-        if (node.x < 0 || node.x > canvas.width) node.vx *= -1;
-        if (node.y < 0 || node.y > canvas.height) node.vy *= -1;
-ctx.fillStyle = 'rgba(251, 191, 36, 0.6)'; // Brighter Gold/Amber       ctx.beginPath(); ctx.arc(node.x, node.y, 1.2, 0, Math.PI * 2); ctx.fill();
-        for (let j = i + 1; j < nodes.length; j++) {
-          const dist = Math.hypot(node.x - nodes[j].x, node.y - nodes[j].y);
-          if (dist < 150) {
-            ctx.strokeStyle = `rgba(180, 83, 9, ${0.2 * (1 - dist / 150)})`; // Copper connecting lines
-            ctx.lineWidth = 0.5;
-            ctx.beginPath(); ctx.moveTo(node.x, node.y); ctx.lineTo(nodes[j].x, nodes[j].y); ctx.stroke();
-          }
-        }
-      });
+     ctx.fillStyle = 'rgba(251, 191, 36, 0.8)'; 
+    ctx.beginPath(); 
+    ctx.arc(node.x, node.y, 2, 0, Math.PI * 2); // Increased radius to 2
+    ctx.fill();
+
+    for (let j = i + 1; j < nodes.length; j++) {
+      const dist = Math.hypot(node.x - nodes[j].x, node.y - nodes[j].y);
+      if (dist < 180) {
+        // INCREASED OPACITY: from 0.15 to 0.4
+        ctx.strokeStyle = `rgba(251, 191, 36, ${0.4 * (1 - dist / 180)})`;
+        
+        // INCREASED THICKNESS: from 0.8 to 1.5
+        ctx.lineWidth = 1.5; 
+        
+        ctx.beginPath(); 
+        ctx.moveTo(node.x, node.y); 
+        ctx.lineTo(nodes[j].x, nodes[j].y); 
+        ctx.stroke();
+      }
+    }
+  
       requestAnimationFrame(draw);
     };
 
@@ -88,11 +94,11 @@ ctx.fillStyle = 'rgba(251, 191, 36, 0.6)'; // Brighter Gold/Amber       ctx.begi
 </h1>
       </div>
 
-      <div className="pillar-wrapper">
-        {[...Array(20)].map((_, i) => (
-          <div key={i} className="reveal-pillar border-r border-amber-600/20" />
-        ))}
-      </div>
+     <div className="pillar-wrapper">
+  {[...Array(20)].map((_, i) => (
+    <div key={i} className="reveal-pillar" />
+  ))}
+</div>
 
       {/* Brighter Vignette */}
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#030712] z-30 pointer-events-none" />

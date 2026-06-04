@@ -566,7 +566,13 @@ button {
   flex: 1;
   height: 100%;
   background-color: #030712;
-  border-right: 1px solid rgba(16, 185, 129, 0.08);
+  
+  /* HIGH VISIBILITY LINE */
+  border-right: 2px solid rgba(251, 191, 36, 0.5); 
+  
+  /* ADDS THE BLOOM/GLOW TO THE LINE */
+  box-shadow: 2px 0 15px rgba(217, 119, 6, 0.3);
+  
   transform-origin: center;
 }
 
