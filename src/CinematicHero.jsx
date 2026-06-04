@@ -10,7 +10,7 @@ const CinematicHero = () => {
   const canvasRef = useRef(null);
 
   useEffect(() => {
-    // 1. PINNING & SCROLL VANISHING TIMELINE
+    // 1. PINNING & UNIFIED MOVING TIMELINE
     const scrollTl = gsap.timeline({
       scrollTrigger: {
         trigger: sectionRef.current,
@@ -22,9 +22,9 @@ const CinematicHero = () => {
       }
     });
 
-    // Slides the Hero text UPWARDS out of view through the navbar area
-    scrollTl.to(".hero-brand-text", {
-      y: -150, 
+    // Slides the ENTIRE core wrapper (text + arrow together) UPWARDS out of view
+    scrollTl.to(".hero-core-moving-wrapper", {
+      y: -180, 
       opacity: 0,
       duration: 1,
       ease: "power1.inOut"
@@ -36,19 +36,6 @@ const CinematicHero = () => {
       duration: 1
     }, 0);
 
-    // The bridge element shows up initially...
-    scrollTl.fromTo(".scroll-explore-arrow", 
-      { opacity: 1, y: 0 },
-      { opacity: 1, duration: 0.7 }, 
-      0
-    );
-
-    // ...and DISAPPEARS completely right as the Hero finishes sliding past the Nav Bar
-    scrollTl.to(".scroll-explore-arrow", {
-      opacity: 0,
-      y: -50, // Pulls up slightly as it vanishes
-      duration: 0.3
-    }, 0.7);
 
     // 2. NEURAL CANVAS BACKGROUND
     const canvas = canvasRef.current;
@@ -119,29 +106,38 @@ const CinematicHero = () => {
  return (
     <div className="hero-visual-container relative w-full h-[100vh] overflow-hidden bg-[#030712]" ref={sectionRef}>
       
-      {/* Absolute Centered Hero Layer */}
-      <div className="absolute inset-0 flex flex-col items-center justify-center z-10">
-        <canvas ref={canvasRef} className="absolute inset-0 opacity-40 pointer-events-none" />
-        
-        <h1 
-          className="hero-brand-text animate-text-glow text-center select-none relative z-20" 
-          style={{ 
-            color: 'rgba(251, 191, 36, 0.45)', 
-            letterSpacing: '0.15em' 
-          }}
-        >
-          DECODE<br/>COMPLIANCE
-        </h1>
-      </div>
+      {/* Background Canvas Layer */}
+      <canvas ref={canvasRef} className="absolute inset-0 opacity-40 pointer-events-none z-0" />
 
-      {/* PLACED IN BETWEEN: Placed perfectly at the baseline interface separating Hero viewport and Content */}
-      <div className="scroll-explore-arrow absolute bottom-6 left-1/2 -translate-x-1/2 z-40 flex flex-col items-center gap-1.5 pointer-events-none">
-        <span className="text-[10px] font-black text-amber-500 uppercase tracking-[0.3em] bg-black/80 px-4 py-2 border border-amber-500/20 rounded-full backdrop-blur-md shadow-2xl">
-          Explore Learning
-        </span>
-        <svg className="w-5 h-5 text-amber-500 animate-bounce mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-        </svg>
+      {/* Main Container Layer */}
+      <div className="absolute inset-0 flex flex-col items-center justify-center z-10">
+        
+        {/* UNIFIED CONTAINER: Both elements live inside this box so they move and vanish as one piece */}
+        <div className="hero-core-moving-wrapper flex flex-col items-center justify-center text-center relative">
+          
+          {/* Main Hero Title Text */}
+          <h1 
+            className="hero-brand-text animate-text-glow select-none" 
+            style={{ 
+              color: 'rgba(251, 191, 36, 0.45)', 
+              letterSpacing: '0.15em' 
+            }}
+          >
+            DECODE<br/>COMPLIANCE
+          </h1>
+
+          {/* Connected Bridge Tag: Sits right under the text baseline */}
+          <div className="scroll-explore-arrow flex flex-col items-center gap-1.5 mt-8 pointer-events-none">
+            <span className="text-[10px] font-black text-amber-500 uppercase tracking-[0.3em] bg-black/80 px-4 py-2 border border-amber-500/20 rounded-full backdrop-blur-md shadow-2xl">
+              Explore Learning
+            </span>
+            <svg className="w-5 h-5 text-amber-500 animate-bounce mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+            </svg>
+          </div>
+
+        </div>
+
       </div>
 
       {/* Shutter Pillars */}
