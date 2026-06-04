@@ -1,5 +1,7 @@
 export const jobOpenings = [
   // Bengaluru
+    { company: "Transak", role: "Senior Analyst / Analyst, KYB Operations", location: "Bengaluru", link: "https://careers.transak.com/p/2d3a30cb7a1501-senior-analyst-analyst-kyb-operations" },
+
   { company: "Revolut", role: "FinCrime Analyst (Investigator)", location: "Remote", link: "https://www.revolut.com/careers/position/fin-crime-analyst-investigator-672e3cb1-28d8-4aa7-8e4c-2149d9b8c82b/" },
     { company: "IBM", role: "PROCESS DELIVERY SPECIALIST-RISK & COMPLIANCE ", location: "Bengaluru", link: "https://careers.ibm.com/en_US/careers/JobDetail?jobId=117131&source=SN_LinkedIn" },
     { company: "Accenture ", role: " Risk and Compliance Associate ", location: "Bengaluru", link: "https://www.accenture.com/in-en/careers/jobdetails?id=R00330824_en&src=LINKEDINJP" },
