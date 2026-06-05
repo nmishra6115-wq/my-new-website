@@ -183,7 +183,18 @@ export default function App() {
       tag: "COMPLIANCE" 
     }
   ]);
-
+// Helper function to check if a node item is under 4 days old (96 hours)
+  const isNewlyAdded = (dateString) => {
+    if (!dateString) return false;
+    const itemDate = new Date(dateString);
+    const currentDate = new Date();
+    
+    // Total milliseconds separation divided by hours/days factor
+    const diffInTime = currentDate.getTime() - itemDate.getTime();
+    const diffInDays = diffInTime / (1000 * 3600 * 24);
+    
+    return diffInDays >= 0 && diffInDays <= 4;
+  };
   const [isTestStarted, setIsTestStarted] = useState(false);
   const [isTestComplete, setIsTestComplete] = useState(false);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -941,7 +952,7 @@ export default function App() {
   </div>
 )}
             
-          {activeView === 'jobs' && (
+        {activeView === 'jobs' && (
   <div className="space-y-12 animate-view-entry max-w-6xl mx-auto pb-20">
     
     {/* HEADER TERMINAL NODES */}
@@ -956,7 +967,7 @@ export default function App() {
           Current <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-emerald-400">Job Openings</span>
         </h1>
         <p className="text-xs text-slate-400 max-w-md font-medium leading-relaxed">
-          Search for the suitable jobs and Apply.
+          Search for suitable jobs and apply. New entries automatically stay pinned to the top for 4 days.
         </p>
       </div>
 
@@ -977,7 +988,7 @@ export default function App() {
       </div>
     </div>
 
-    {/* STREAM 1: SECURE DIRECT PATHWAYS (Recruiter uploaded files & Peer Submissions) */}
+    {/* STREAM 1: SECURE DIRECT PATHWAYS (HR Uploads & Peer Submissions) */}
     <div className="space-y-4">
       <div className="flex items-center gap-3 px-2">
         <div className="h-2 w-2 rounded-full bg-purple-500 animate-ping"></div>
@@ -985,55 +996,79 @@ export default function App() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* COMBINED RECRUITER UPLOAD FEED */}
+        
+        {/* A. HR DASHBOARD UPLOADS FEED (Sorted automatically by age) */}
         {partnerFiles
           .filter(f => selectedLocation === 'All' || f.name.toLowerCase().includes(selectedLocation.toLowerCase()))
-          .map((f, i) => (
-            <div key={`partner-${i}`} className="group relative p-6 bg-slate-900/30 border border-purple-500/20 rounded-2xl backdrop-blur-md hover:border-purple-500/50 transition-all duration-300 flex flex-col justify-between gap-6 hover:shadow-[0_0_25px_rgba(147,51,234,0.1)]">
-              <div>
-                <div className="flex justify-between items-start mb-2">
-                  <span className="text-[9px] font-black text-purple-400 bg-purple-500/10 border border-purple-500/20 px-2 py-0.5 rounded uppercase tracking-widest">Verified Profile Document</span>
-                  <span className="text-[10px] text-slate-600 font-bold font-mono">ID: {f.id?.slice(0,8) || 'SYSTEM'}</span>
+          .sort((a, b) => {
+            const aNew = isNewlyAdded(a.created_at) ? 1 : 0;
+            const bNew = isNewlyAdded(b.created_at) ? 1 : 0;
+            return bNew - aNew;
+          })
+          .map((f, i) => {
+            const isNew = isNewlyAdded(f.created_at);
+            return (
+              <div key={`partner-${i}`} className={`group relative p-6 bg-slate-900/30 border rounded-2xl backdrop-blur-md transition-all duration-300 flex flex-col justify-between gap-6 ${isNew ? 'border-amber-500/60 shadow-[0_0_20px_rgba(245,158,11,0.1)] bg-amber-500/[0.02]' : 'border-purple-500/20 hover:border-purple-500/50 hover:shadow-[0_0_25px_rgba(147,51,234,0.1)]'}`}>
+                <div>
+                  <div className="flex justify-between items-start mb-2 gap-2">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="text-[9px] font-black text-purple-400 bg-purple-500/10 border border-purple-500/20 px-2 py-0.5 rounded uppercase tracking-widest">Verified Profile Document</span>
+                      {isNew && <span className="text-[8px] font-black bg-amber-500 text-black px-1.5 py-0.5 rounded tracking-widest animate-pulse">NEWLY ADDED</span>}
+                    </div>
+                    <span className="text-[10px] text-slate-600 font-bold font-mono shrink-0">ID: {f.id?.slice(0,8) || 'SYSTEM'}</span>
+                  </div>
+                  <h3 className="text-base font-bold text-slate-100 group-hover:text-purple-300 transition-colors">{f.name}</h3>
+                  {f.recruiter_email && (
+                    <p className="text-xs text-slate-500 mt-1 font-mono truncate">Desk: {f.recruiter_email}</p>
+                  )}
                 </div>
-                <h3 className="text-base font-bold text-slate-100 group-hover:text-purple-300 transition-colors">{f.name}</h3>
-                {f.recruiter_email && (
-                  <p className="text-xs text-slate-500 mt-1 font-mono truncate">Desk: {f.recruiter_email}</p>
-                )}
+                <div className="grid grid-cols-2 gap-2 pt-2 border-t border-slate-800/60">
+                  <button onClick={() => window.open(f.url, '_blank')} className="py-2.5 bg-black/40 border border-slate-800 text-slate-400 hover:text-white hover:border-slate-700 rounded-xl transition-all font-bold text-xs uppercase tracking-wider">
+                    View Document
+                  </button>
+                  {f.recruiter_email && (
+                    <a href={`mailto:${f.recruiter_email}?subject=Inquiry regarding Compliance Placement`} onClick={() => trackEmailClick(f.id)} className="py-2.5 bg-purple-600 hover:bg-purple-500 text-white text-center rounded-xl font-bold text-xs uppercase tracking-wider transition-all shadow-md shadow-purple-900/30">
+                      Email HR Desk
+                    </a>
+                  )}
+                </div>
               </div>
-              <div className="grid grid-cols-2 gap-2 pt-2 border-t border-slate-800/60">
-                <button onClick={() => window.open(f.url, '_blank')} className="py-2.5 bg-black/40 border border-slate-800 text-slate-400 hover:text-white hover:border-slate-700 rounded-xl transition-all font-bold text-xs uppercase tracking-wider">
-                  View Document
-                </button>
-                {f.recruiter_email && (
-                  <a href={`mailto:${f.recruiter_email}?subject=Inquiry regarding Compliance Placement`} onClick={() => trackEmailClick(f.id)} className="py-2.5 bg-purple-600 hover:bg-purple-500 text-white text-center rounded-xl font-bold text-xs uppercase tracking-wider transition-all shadow-md shadow-purple-900/30">
-                    Email HR Desk
-                  </a>
-                )}
-              </div>
-            </div>
-          ))}
+            );
+          })}
 
-        {/* COMBINED PEER REFERRALS SUBMISSIONS FEED */}
-        {submissions.map((sub, i) => (
-          <div key={`sub-${i}`} className="group relative p-6 bg-slate-900/30 border border-emerald-500/20 rounded-2xl backdrop-blur-md hover:border-emerald-500/50 transition-all duration-300 flex flex-col justify-between gap-6 hover:shadow-[0_0_25px_rgba(16,185,129,0.1)]">
-            <div>
-              <div className="flex justify-between items-start mb-2">
-                <span className="text-[9px] font-black text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded uppercase tracking-widest">Active Peer Referral</span>
-                <span className="text-[10px] text-slate-600 font-bold font-mono">READY</span>
+        {/* B. PEER REFERRAL SUBMISSIONS FEED (Sorted automatically by age) */}
+        {submissions
+          .sort((a, b) => {
+            const aNew = isNewlyAdded(a.created_at) ? 1 : 0;
+            const bNew = isNewlyAdded(b.created_at) ? 1 : 0;
+            return bNew - aNew;
+          })
+          .map((sub, i) => {
+            const isNew = isNewlyAdded(sub.created_at);
+            return (
+              <div key={`sub-${i}`} className={`group relative p-6 bg-slate-900/30 border rounded-2xl backdrop-blur-md transition-all duration-300 flex flex-col justify-between gap-6 ${isNew ? 'border-amber-500/60 shadow-[0_0_20px_rgba(245,158,11,0.1)] bg-amber-500/[0.02]' : 'border-emerald-500/20 hover:border-emerald-500/50 hover:shadow-[0_0_25px_rgba(16,185,129,0.1)]'}`}>
+                <div>
+                  <div className="flex justify-between items-start mb-2">
+                    <div className="flex items-center gap-2">
+                      <span className="text-[9px] font-black text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded uppercase tracking-widest">Active Peer Referral</span>
+                      {isNew && <span className="text-[8px] font-black bg-amber-500 text-black px-1.5 py-0.5 rounded tracking-widest animate-pulse">NEWLY ADDED</span>}
+                    </div>
+                    <span className="text-[10px] text-slate-600 font-bold font-mono">READY</span>
+                  </div>
+                  <h3 className="text-lg font-bold text-slate-100">{sub.role || 'Compliance Professional'}</h3>
+                  <p className="text-xs text-emerald-400 font-bold uppercase tracking-tight mt-1">{sub.company || 'Top Tier Firm'}</p>
+                  <p className="text-xs text-slate-500 mt-2">Submitted by: <span className="text-slate-300 font-medium">{sub.name}</span></p>
+                </div>
+                <a href={`mailto:${sub.email}?subject=AML/KYC Internal Referral Channel`} className="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-black text-center rounded-xl font-black text-xs uppercase tracking-widest transition-all shadow-md shadow-emerald-900/20">
+                  Request Referral
+                </a>
               </div>
-              <h3 className="text-lg font-bold text-slate-100">{sub.role || 'Compliance Professional'}</h3>
-              <p className="text-xs text-emerald-400 font-bold uppercase tracking-tight mt-1">{sub.company || 'Top Tier Firm'}</p>
-              <p className="text-xs text-slate-500 mt-2">Submitted by: <span className="text-slate-300 font-medium">{sub.name}</span></p>
-            </div>
-            <a href={`mailto:${sub.email}?subject=AML/KYC Internal Referral Channel`} className="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-black text-center rounded-xl font-black text-xs uppercase tracking-widest transition-all shadow-md shadow-emerald-900/20">
-              Request Referral
-            </a>
-          </div>
-        ))}
+            );
+          })}
       </div>
     </div>
 
-    {/* STREAM 2: CORE ECOSYSTEM OPENINGS */}
+    {/* STREAM 2: CORE ECOSYSTEM OPENINGS (Local VS Code jobOpenings data) */}
     <div className="space-y-4">
       <div className="flex items-center gap-3 px-2 pt-4">
         <div className="h-2 w-2 rounded-full bg-indigo-500 animate-pulse"></div>
@@ -1043,30 +1078,46 @@ export default function App() {
       <div className="bg-black/40 rounded-3xl border border-slate-800 overflow-hidden divide-y divide-slate-800/60 shadow-2xl">
         {jobOpenings
           .filter(job => selectedLocation === 'All' || job.location === selectedLocation)
-          .map((job, idx) => (
-            <div key={`job-${idx}`} className="p-6 hover:bg-slate-900/20 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 transition-all duration-300 group">
-              <div className="space-y-1">
-                <p className="text-emerald-400 text-[10px] font-black uppercase tracking-widest">{job.company}</p>
-                <h2 className="text-lg font-bold text-white group-hover:text-indigo-400 transition-colors duration-300">{job.role}</h2>
-                <div className="flex items-center gap-4 text-xs text-slate-500">
-                  <span className="flex items-center gap-1">
-                    <svg className="w-3.5 h-3.5 shrink-0 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-                    {job.location}
-                  </span>
-                  <span className="font-mono text-[10px] px-2 py-0.5 bg-slate-800 rounded text-slate-400 uppercase tracking-tighter">Node_Active</span>
+          // Sorts local VS code file configurations automatically
+          .sort((a, b) => {
+            const aNew = isNewlyAdded(a.createdAt) ? 1 : 0;
+            const bNew = isNewlyAdded(b.createdAt) ? 1 : 0;
+            return bNew - aNew;
+          })
+          .map((job, idx) => {
+            const isNew = isNewlyAdded(job.createdAt);
+            return (
+              <div key={`job-${idx}`} className={`p-6 hover:bg-slate-900/20 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 transition-all duration-300 group ${isNew ? 'bg-amber-500/[0.03] border-l-2 border-l-amber-500' : ''}`}>
+                <div className="space-y-1">
+                  <div className="flex items-center gap-3">
+                    <p className="text-emerald-400 text-[10px] font-black uppercase tracking-widest">{job.company}</p>
+                    {isNew && (
+                      <span className="text-[8px] font-black bg-amber-500 text-black px-1.5 py-0.5 rounded tracking-widest animate-pulse">
+                        NEWLY ADDED
+                      </span>
+                    )}
+                  </div>
+                  <h2 className="text-lg font-bold text-white group-hover:text-indigo-400 transition-colors duration-300">{job.role}</h2>
+                  <div className="flex items-center gap-4 text-xs text-slate-500">
+                    <span className="flex items-center gap-1">
+                      <svg className="w-3.5 h-3.5 shrink-0 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                      {job.location}
+                    </span>
+                    <span className="font-mono text-[10px] px-2 py-0.5 bg-slate-800 rounded text-slate-400 uppercase tracking-tighter">Node_Active</span>
+                  </div>
                 </div>
+                
+                <a 
+                  href={job.link} 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="w-full sm:w-auto px-6 py-3 bg-slate-900 hover:bg-indigo-600 text-slate-300 hover:text-white font-black text-xs uppercase tracking-widest rounded-xl border border-slate-800 hover:border-indigo-400/30 transition-all duration-300 shadow-inner group-hover:translate-x-1 sm:group-hover:translate-x-0"
+                >
+                  Launch Application &rarr;
+                </a>
               </div>
-              
-              <a 
-                href={job.link} 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="w-full sm:w-auto px-6 py-3 bg-slate-900 hover:bg-indigo-600 text-slate-300 hover:text-white font-black text-xs uppercase tracking-widest rounded-xl border border-slate-800 hover:border-indigo-400/30 transition-all duration-300 shadow-inner group-hover:translate-x-1 sm:group-hover:translate-x-0"
-              >
-                Launch Application &rarr;
-              </a>
-            </div>
-          ))}
+            );
+          })}
         
         {jobOpenings.filter(job => selectedLocation === 'All' || job.location === selectedLocation).length === 0 && (
           <div className="p-16 text-center text-slate-600 text-sm font-medium italic bg-slate-900/10">
