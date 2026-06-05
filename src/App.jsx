@@ -183,7 +183,8 @@ export default function App() {
       tag: "COMPLIANCE" 
     }
   ]);
-// Helper function to check if a node item is under 4 days old (96 hours)
+  
+  // Helper function to check if a node item is under 4 days old (96 hours)
   const isNewlyAdded = (dateString) => {
     if (!dateString) return false;
     const itemDate = new Date(dateString);
@@ -195,6 +196,7 @@ export default function App() {
     
     return diffInDays >= 0 && diffInDays <= 4;
   };
+  
   const [isTestStarted, setIsTestStarted] = useState(false);
   const [isTestComplete, setIsTestComplete] = useState(false);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -229,7 +231,7 @@ export default function App() {
     }
   };
 
- const handleChallenge = (option) => {
+  const handleChallenge = (option) => {
     if (isChallengeLocked) return;
     setChallengeSelected(option);
     setIsChallengeLocked(true);
@@ -279,15 +281,15 @@ export default function App() {
           <div className="flex items-center justify-between h-24">
             
             <div className="group flex items-center gap-3 cursor-pointer">
-<img 
-  src="/logo.png" 
-  alt="AML_DECODE Logo" 
-  className="h-9 w-auto animate-pulse-emerald drop-shadow-[0_0_8px_rgba(16,185,129,0.3)]"
-/>
-  <span className="text-white font-black tracking-tighter opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-    
-  </span>
-</div>
+              <img 
+                src="/logo.png" 
+                alt="AML_DECODE Logo" 
+                className="h-9 w-auto animate-pulse-emerald drop-shadow-[0_0_8px_rgba(16,185,129,0.3)]"
+              />
+              <span className="text-white font-black tracking-tighter opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                
+              </span>
+            </div>
 
             <div className="hidden lg:flex items-center gap-2 flex-grow justify-center">
               {[
@@ -306,27 +308,23 @@ export default function App() {
                 </button>
                 
               ))}
-<button
-  onClick={() => {
-    // 1. Clear any active modals to reveal the home page
-    setActiveView(null); 
-    
-    // 2. Small delay to allow the React state to clear the modal view
-    setTimeout(() => {
-      const element = document.getElementById('career-guidance');
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth' });
-        // 3. Trigger the glow animation state
-        setHighlightCareer(true);
-        // 4. Remove glow after 4 seconds
-        setTimeout(() => setHighlightCareer(false), 4000);
-      }
-    }, 150); // Increased delay for better reliability
-  }}
-  className="px-6 py-3 rounded-lg text-[14px] font-bold uppercase tracking-widest text-slate-400 hover:text-white transition-all"
->
-  Career Guidance
-</button>
+              <button
+                onClick={() => {
+                  setActiveView(null); 
+                  
+                  setTimeout(() => {
+                    const element = document.getElementById('career-guidance');
+                    if (element) {
+                      element.scrollIntoView({ behavior: 'smooth' });
+                      setHighlightCareer(true);
+                      setTimeout(() => setHighlightCareer(false), 4000);
+                    }
+                  }, 150);
+                }}
+                className="px-6 py-3 rounded-lg text-[14px] font-bold uppercase tracking-widest text-slate-400 hover:text-white transition-all"
+              >
+                Career Guidance
+              </button>
               <div className="relative group px-6 py-3 cursor-pointer">
                 <span className="text-[14px] font-bold text-slate-400 group-hover:text-white uppercase tracking-widest flex items-center gap-2">
                   Resources <svg className="w-4 h-4 transition-transform group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7" strokeWidth="3" /></svg>
@@ -402,31 +400,30 @@ export default function App() {
               </button>
             ))}
             <button 
-    onClick={() => { 
-      setActiveView(null); 
-      setIsMenuOpen(false); // Close the menu first
-      setHighlightCareer(true);
-      setTimeout(() => {
-        const element = document.getElementById('career-guidance');
-        if (element) element.scrollIntoView({ behavior: 'smooth' });
-      }, 100);
-      setTimeout(() => setHighlightCareer(false), 4000);
-    }} 
-    className="group relative w-full text-left py-6 px-4 rounded-xl border border-transparent hover:border-emerald-500/20 hover:bg-emerald-500/5 transition-all"
-  >
-    <div className="flex items-center justify-between">
-      <div className="flex items-center gap-4">
-        <span className="text-[8px] font-black text-slate-600 tracking-tighter">0{navItems.length + 1}</span>
-        <span className="text-xl font-black uppercase tracking-tighter text-slate-300 group-hover:text-emerald-400">
-          Career Guidance
-        </span>
-      </div>
-      <svg className="w-5 h-5 text-emerald-500 opacity-0 group-hover:opacity-100 -translate-x-4 group-hover:translate-x-0 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeWidth="3" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-      </svg>
-    </div>
-  </button>
-
+              onClick={() => { 
+                setActiveView(null); 
+                setIsMenuOpen(false); 
+                setHighlightCareer(true);
+                setTimeout(() => {
+                  const element = document.getElementById('career-guidance');
+                  if (element) element.scrollIntoView({ behavior: 'smooth' });
+                }, 100);
+                setTimeout(() => setHighlightCareer(false), 4000);
+              }} 
+              className="group relative w-full text-left py-6 px-4 rounded-xl border border-transparent hover:border-emerald-500/20 hover:bg-emerald-500/5 transition-all"
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <span className="text-[8px] font-black text-slate-600 tracking-tighter">0{navItems.length + 1}</span>
+                  <span className="text-xl font-black uppercase tracking-tighter text-slate-300 group-hover:text-emerald-400">
+                    Career Guidance
+                  </span>
+                </div>
+                <svg className="w-5 h-5 text-emerald-500 opacity-0 group-hover:opacity-100 -translate-x-4 group-hover:translate-x-0 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeWidth="3" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                </svg>
+              </div>
+            </button>
           </div>
 
           <div className="p-8 border-t border-white/5 bg-black/40">
@@ -443,7 +440,8 @@ export default function App() {
           </div>
         </div>
       )}
-{/* HOME PAGE */}
+
+      {/* HOME PAGE */}
       {!activeView && (
         <main className="flex-grow bg-[#030712] overflow-x-hidden">
           <div className="relative w-full">
@@ -483,7 +481,6 @@ export default function App() {
 
                       <p className="text-lg md:text-xl font-bold text-white mb-8 leading-tight">
                         "A cross-border corporate payment originating from an offshore tech hub is flagged by your monitoring system. The beneficiary entity is perfectly clean on all global sanctions watchlists. However, upon deep-dive routing analysis, you discover that the transaction utilizes a nested correspondent banking structure, and one of the downstream, non-account-holding intermediary transit banks listed in the SWIFT MT103 tracking strings is a financial institution that was placed under selective sectorial sanctions exactly 48 hours ago. The transaction value is under the standard regulatory reporting threshold.
-
                          What is the correct protocol?"
                       </p>
 
@@ -816,1028 +813,1013 @@ export default function App() {
           </button>
           
           <div key={activeView} className="animate-view-entry max-w-7xl mx-auto text-white">
-           {activeView === 'notes' && (
-  <div className="space-y-8 animate-view-entry max-w-7xl mx-auto pb-20">
-    
-    {/* INTEL HEADER BLOCK */}
-    <div className="relative p-6 rounded-2xl bg-slate-900/40 border border-slate-800 backdrop-blur-md flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-      <div className="space-y-1">
-        <div className="inline-flex items-center gap-2 px-2.5 py-0.5 bg-emerald-500/10 border border-emerald-500/20 rounded-full">
-          <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-          <span className="text-[9px] font-black text-emerald-400 uppercase tracking-widest">AML_DECODE</span>
-        </div>
-        <h1 className="text-2xl font-black text-white uppercase tracking-tight">Interview Ready Notes</h1>
-      </div>
-      <div className="text-left sm:text-right shrink-0">
-        <p className="text-[10px] font-mono font-black text-slate-500 uppercase tracking-wider"></p>
-        <p className="text-xs font-bold text-emerald-500 font-mono"></p>
-      </div>
-    </div>
-
-    {/* CORE DISCOVERY TERMINAL LAYOUT */}
-    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-      
-      {/* LEFT NAVIGATION COLUMN: Responsive Switcher */}
-      <div className="lg:col-span-4 shrink-0">
-        
-        {/* MOBILE ONLY: Topic Selector Dropdown (Visible on screens < 1024px) */}
-        <div className="lg:hidden mb-4 relative group">
-          <div className="absolute left-4 top-1/2 -translate-y-1/2 text-emerald-500 pointer-events-none">
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M4 6h16M4 12h16m-7 6h7" />
-            </svg>
-          </div>
-          <select 
-            value={pageIndex}
-            onChange={(e) => {
-              setPageIndex(parseInt(e.target.value));
-              if (contentRef.current) contentRef.current.scrollTop = 0;
-            }}
-            className="w-full bg-slate-900 border border-slate-700 text-white pl-12 pr-10 py-4 rounded-xl font-mono text-xs uppercase tracking-widest outline-none focus:border-emerald-500 appearance-none shadow-xl"
-          >
-            {notesContent.map((item, idx) => (
-              <option key={idx} value={idx}>
-                NODE_0{idx + 1}: {item.title}
-              </option>
-            ))}
-          </select>
-          <div className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none">
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M19 9l-7 7-7-7" />
-            </svg>
-          </div>
-        </div>
-
-        {/* DESKTOP ONLY: Vertical Scroll Strip (Visible on screens > 1024px) */}
-        <div className="hidden lg:flex lg:flex-col gap-2 overflow-y-auto pr-2 lg:max-h-[65vh] custom-scrollbar">
-          {notesContent.map((item, idx) => {
-            const isActive = pageIndex === idx;
-            return (
-              <button 
-                key={idx} 
-                onClick={() => { 
-                  setPageIndex(idx); 
-                  if (contentRef.current) contentRef.current.scrollTop = 0; 
-                }} 
-                className={`w-full text-left p-4 rounded-xl border font-mono uppercase tracking-tight transition-all duration-300 shrink-0 relative overflow-hidden group
-                  ${isActive 
-                    ? "bg-gradient-to-r from-emerald-500/20 to-slate-900/40 border-emerald-500 text-white shadow-lg shadow-emerald-950/20" 
-                    : "bg-slate-900/20 border-slate-800/80 text-slate-400 hover:text-slate-200 hover:border-slate-700 hover:bg-slate-900/40"
-                  }`}
-              >
-                {/* Active neon pointer line */}
-                {isActive && (
-                  <div className="absolute top-0 left-0 h-full w-[3px] bg-emerald-500"></div>
-                )}
+            {activeView === 'notes' && (
+              <div className="space-y-8 animate-view-entry max-w-7xl mx-auto pb-20">
                 
-                <div className="flex items-center justify-between gap-3">
-                  <div className="truncate">
-                    <p className="text-[8px] font-black text-slate-500 group-hover:text-slate-400 tracking-widest mb-0.5">NODE_0{idx + 1}</p>
-                    <p className="text-xs font-bold truncate tracking-tight">{item.title}</p>
+                {/* INTEL HEADER BLOCK */}
+                <div className="relative p-6 rounded-2xl bg-slate-900/40 border border-slate-800 backdrop-blur-md flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                  <div className="space-y-1">
+                    <div className="inline-flex items-center gap-2 px-2.5 py-0.5 bg-emerald-500/10 border border-emerald-500/20 rounded-full">
+                      <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                      <span className="text-[9px] font-black text-emerald-400 uppercase tracking-widest">AML_DECODE</span>
+                    </div>
+                    <h1 className="text-2xl font-black text-white uppercase tracking-tight">Interview Ready Notes</h1>
                   </div>
-                  <span className={`text-[10px] font-bold font-mono transition-transform duration-300 group-hover:translate-x-1 shrink-0 ${isActive ? 'text-emerald-400' : 'text-slate-600'}`}>
-                    &rarr;
-                  </span>
                 </div>
-              </button>
-            );
-          })}
-        </div>
-      </div>
 
-      {/* RIGHT DISPLAY VIEWPORT: Content Reader Canvas */}
-      <div className="lg:col-span-8 bg-black/40 border border-slate-800 rounded-2xl flex flex-col overflow-hidden shadow-2xl h-[60vh] lg:h-[65vh]">
-        
-        {/* Viewport Control Tab */}
-        <div className="px-6 py-4 bg-slate-900/30 border-b border-slate-800/80 flex justify-between items-center shrink-0">
-          <div className="flex items-center gap-2 font-mono text-[10px] font-black text-slate-500 tracking-widest uppercase">
-            <span className="hidden sm:inline">Core Data Layer</span>
-            <span className="hidden sm:inline">//</span>
-            <span className="text-slate-400 truncate max-w-[200px] sm:max-w-none">
-              {notesContent[pageIndex]?.title}
-            </span>
-          </div>
-          <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse shrink-0"></div>
-        </div>
+                {/* CORE DISCOVERY TERMINAL LAYOUT */}
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                  
+                  {/* LEFT NAVIGATION COLUMN: Responsive Switcher */}
+                  <div className="lg:col-span-4 shrink-0">
+                    
+                    {/* MOBILE ONLY: Topic Selector Dropdown */}
+                    <div className="lg:hidden mb-4 relative group">
+                      <div className="absolute left-4 top-1/2 -translate-y-1/2 text-emerald-500 pointer-events-none">
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M4 6h16M4 12h16m-7 6h7" />
+                        </svg>
+                      </div>
+                      <select 
+                        value={pageIndex}
+                        onChange={(e) => {
+                          setPageIndex(parseInt(e.target.value));
+                          if (contentRef.current) contentRef.current.scrollTop = 0;
+                        }}
+                        className="w-full bg-slate-900 border border-slate-700 text-white pl-12 pr-10 py-4 rounded-xl font-mono text-xs uppercase tracking-widest outline-none focus:border-emerald-500 appearance-none shadow-xl"
+                      >
+                        {notesContent.map((item, idx) => (
+                          <option key={idx} value={idx}>
+                            NODE_0{idx + 1}: {item.title}
+                          </option>
+                        ))}
+                      </select>
+                      <div className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none">
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M19 9l-7 7-7-7" />
+                        </svg>
+                      </div>
+                    </div>
 
-        {/* Scrollable Document Text Body */}
-        <div 
-          ref={contentRef} 
-          className="flex-grow overflow-y-auto p-6 md:p-8 custom-scrollbar space-y-6 bg-gradient-to-b from-transparent to-slate-950/20"
-        >
-          <div className="space-y-2 border-b border-slate-800/60 pb-4">
-            <h2 className="text-xl md:text-3xl font-black text-white tracking-tight uppercase leading-snug">
-              {notesContent[pageIndex]?.title}
-            </h2>
-            <p className="text-[10px] font-mono text-emerald-500/80 uppercase tracking-widest font-bold">
-              Classification: Technical Field Intelligence
-            </p>
-          </div>
+                    {/* DESKTOP ONLY: Vertical Scroll Strip */}
+                    <div className="hidden lg:flex lg:flex-col gap-2 overflow-y-auto pr-2 lg:max-h-[65vh] custom-scrollbar">
+                      {notesContent.map((item, idx) => {
+                        const isActive = pageIndex === idx;
+                        return (
+                          <button 
+                            key={idx} 
+                            onClick={() => { 
+                              setPageIndex(idx); 
+                              if (contentRef.current) contentRef.current.scrollTop = 0; 
+                            }} 
+                            className={`w-full text-left p-4 rounded-xl border font-mono uppercase tracking-tight transition-all duration-300 shrink-0 relative overflow-hidden group
+                              ${isActive 
+                                ? "bg-gradient-to-r from-emerald-500/20 to-slate-900/40 border-emerald-500 text-white shadow-lg shadow-emerald-950/20" 
+                                : "bg-slate-900/20 border-slate-800/80 text-slate-400 hover:text-slate-200 hover:border-slate-700 hover:bg-slate-900/40"
+                              }`}
+                          >
+                            {isActive && (
+                              <div className="absolute top-0 left-0 h-full w-[3px] bg-emerald-500"></div>
+                            )}
+                            
+                            <div className="flex items-center justify-between gap-3">
+                              <div className="truncate">
+                                <p className="text-[8px] font-black text-slate-500 group-hover:text-slate-400 tracking-widest mb-0.5">NODE_0{idx + 1}</p>
+                                <p className="text-xs font-bold truncate tracking-tight">{item.title}</p>
+                              </div>
+                              <span className={`text-[10px] font-bold font-mono transition-transform duration-300 group-hover:translate-x-1 shrink-0 ${isActive ? 'text-emerald-400' : 'text-slate-600'}`}>
+                                &rarr;
+                              </span>
+                            </div>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
 
-          <p className="whitespace-pre-wrap leading-relaxed text-slate-300 text-sm md:text-base font-medium tracking-normal antialiased">
-            {notesContent[pageIndex]?.body}
-          </p>
-        </div>
+                  {/* RIGHT DISPLAY VIEWPORT: Content Reader Canvas */}
+                  <div className="lg:col-span-8 bg-black/40 border border-slate-800 rounded-2xl flex flex-col overflow-hidden shadow-2xl h-[60vh] lg:h-[65vh]">
+                    <div className="px-6 py-4 bg-slate-900/30 border-b border-slate-800/80 flex justify-between items-center shrink-0">
+                      <div className="flex items-center gap-2 font-mono text-[10px] font-black text-slate-500 tracking-widest uppercase">
+                        <span className="hidden sm:inline">Core Data Layer</span>
+                        <span className="hidden sm:inline">//</span>
+                        <span className="text-slate-400 truncate max-w-[200px] sm:max-w-none">
+                          {notesContent[pageIndex]?.title}
+                        </span>
+                      </div>
+                      <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse shrink-0"></div>
+                    </div>
 
-        {/* Viewport Bottom Status Bar */}
-        <div className="px-6 py-3 bg-black/60 border-t border-slate-800/40 font-mono text-[9px] text-slate-500 font-bold uppercase tracking-widest flex justify-between items-center shrink-0">
-          <span>End of Content</span>
-          <span className="font-mono text-emerald-500/60"></span>
-        </div>
+                    <div 
+                      ref={contentRef} 
+                      className="flex-grow overflow-y-auto p-6 md:p-8 custom-scrollbar space-y-6 bg-gradient-to-b from-transparent to-slate-950/20"
+                    >
+                      <div className="space-y-2 border-b border-slate-800/60 pb-4">
+                        <h2 className="text-xl md:text-3xl font-black text-white tracking-tight uppercase leading-snug">
+                          {notesContent[pageIndex]?.title}
+                        </h2>
+                        <p className="text-[10px] font-mono text-emerald-500/80 uppercase tracking-widest font-bold">
+                          Classification: Technical Field Intelligence
+                        </p>
+                      </div>
 
-      </div>
+                      <p className="whitespace-pre-wrap leading-relaxed text-slate-300 text-sm md:text-base font-medium tracking-normal antialiased">
+                        {notesContent[pageIndex]?.body}
+                      </p>
+                    </div>
 
-    </div>
+                    <div className="px-6 py-3 bg-black/60 border-t border-slate-800/40 font-mono text-[9px] text-slate-500 font-bold uppercase tracking-widest flex justify-between items-center shrink-0">
+                      <span>End of Content</span>
+                    </div>
+                  </div>
 
-  </div>
-)}
+                </div>
+              </div>
+            )}
             
-        {activeView === 'jobs' && (
-  <div className="space-y-12 animate-view-entry max-w-6xl mx-auto pb-20">
-    
-    {/* HEADER TERMINAL NODES */}
-    <div className="relative p-8 rounded-3xl bg-slate-900/40 border border-slate-800 backdrop-blur-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-6 overflow-hidden">
-      <div className="absolute top-0 right-0 w-96 h-96 bg-indigo-500/5 blur-[80px] rounded-full pointer-events-none"></div>
-      <div className="space-y-2">
-        <div className="inline-flex items-center gap-2 px-3 py-1 bg-indigo-500/10 border border-indigo-500/20 rounded-full">
-          <span className="h-1.5 w-1.5 rounded-full bg-indigo-400 animate-pulse"></span>
-          <span className="text-[9px] font-black text-indigo-400 uppercase tracking-widest">AML_DECODE</span>
-        </div>
-        <h1 className="text-3xl font-black text-white tracking-tighter uppercase">
-          Current <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-emerald-400">Job Openings</span>
-        </h1>
-        <p className="text-xs text-slate-400 max-w-md font-medium leading-relaxed">
-          Search for suitable jobs and apply. New entries automatically stay pinned to the top for 4 days.
-        </p>
-      </div>
-
-      {/* FILTER TERMINAL STRIP */}
-      <div className="flex flex-wrap gap-1.5 p-1.5 bg-black/60 border border-slate-800 rounded-2xl w-full md:w-auto">
-        {['All', 'Bengaluru', 'Kolkata', 'Gurugram', 'Remote'].map((loc) => (
-          <button
-            key={loc}
-            onClick={() => setSelectedLocation(loc)}
-            className={`flex-grow md:flex-grow-0 px-4 py-2 text-[10px] md:text-xs font-black uppercase tracking-wider rounded-xl transition-all duration-300
-              ${selectedLocation === loc 
-                ? "bg-indigo-600 border border-indigo-400/30 text-white shadow-lg shadow-indigo-600/20" 
-                : "text-slate-500 hover:text-slate-300 bg-transparent"}`}
-          >
-            {loc}
-          </button>
-        ))}
-      </div>
-    </div>
-
-    {/* STREAM 1: SECURE DIRECT PATHWAYS (HR Uploads & Peer Submissions) */}
-    <div className="space-y-4">
-      <div className="flex items-center gap-3 px-2">
-        <div className="h-2 w-2 rounded-full bg-purple-500 animate-ping"></div>
-        <h2 className="text-xs font-black text-purple-400 uppercase tracking-[0.25em]">Direct Recruiter Streams &amp; Referrals</h2>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        
-        {/* A. HR DASHBOARD UPLOADS FEED (Sorted automatically by age) */}
-        {partnerFiles
-          .filter(f => selectedLocation === 'All' || f.name.toLowerCase().includes(selectedLocation.toLowerCase()))
-          .sort((a, b) => {
-            const aNew = isNewlyAdded(a.created_at) ? 1 : 0;
-            const bNew = isNewlyAdded(b.created_at) ? 1 : 0;
-            return bNew - aNew;
-          })
-          .map((f, i) => {
-            const isNew = isNewlyAdded(f.created_at);
-            return (
-              <div key={`partner-${i}`} className={`group relative p-6 bg-slate-900/30 border rounded-2xl backdrop-blur-md transition-all duration-300 flex flex-col justify-between gap-6 ${isNew ? 'border-amber-500/60 shadow-[0_0_20px_rgba(245,158,11,0.1)] bg-amber-500/[0.02]' : 'border-purple-500/20 hover:border-purple-500/50 hover:shadow-[0_0_25px_rgba(147,51,234,0.1)]'}`}>
-                <div>
-                  <div className="flex justify-between items-start mb-2 gap-2">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <span className="text-[9px] font-black text-purple-400 bg-purple-500/10 border border-purple-500/20 px-2 py-0.5 rounded uppercase tracking-widest">Verified Profile Document</span>
-                      {isNew && <span className="text-[8px] font-black bg-amber-500 text-black px-1.5 py-0.5 rounded tracking-widest animate-pulse">NEWLY ADDED</span>}
+            {activeView === 'jobs' && (
+              <div className="space-y-12 animate-view-entry max-w-6xl mx-auto pb-20">
+                
+                {/* HEADER TERMINAL NODES */}
+                <div className="relative p-8 rounded-3xl bg-slate-900/40 border border-slate-800 backdrop-blur-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-6 overflow-hidden">
+                  <div className="absolute top-0 right-0 w-96 h-96 bg-indigo-500/5 blur-[80px] rounded-full pointer-events-none"></div>
+                  <div className="space-y-2">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 bg-indigo-500/10 border border-indigo-500/20 rounded-full">
+                      <span className="h-1.5 w-1.5 rounded-full bg-indigo-400 animate-pulse"></span>
+                      <span className="text-[9px] font-black text-indigo-400 uppercase tracking-widest">AML_DECODE</span>
                     </div>
-                    <span className="text-[10px] text-slate-600 font-bold font-mono shrink-0">ID: {f.id?.slice(0,8) || 'SYSTEM'}</span>
+                    <h1 className="text-3xl font-black text-white tracking-tighter uppercase">
+                      Current <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-emerald-400">Job Openings</span>
+                    </h1>
+                    <p className="text-xs text-slate-400 max-w-md font-medium leading-relaxed">
+                      Search for suitable jobs and apply. New entries automatically stay pinned to the top for 4 days.
+                    </p>
                   </div>
-                  <h3 className="text-base font-bold text-slate-100 group-hover:text-purple-300 transition-colors">{f.name}</h3>
-                  {f.recruiter_email && (
-                    <p className="text-xs text-slate-500 mt-1 font-mono truncate">Desk: {f.recruiter_email}</p>
-                  )}
-                </div>
-                <div className="grid grid-cols-2 gap-2 pt-2 border-t border-slate-800/60">
-                  <button onClick={() => window.open(f.url, '_blank')} className="py-2.5 bg-black/40 border border-slate-800 text-slate-400 hover:text-white hover:border-slate-700 rounded-xl transition-all font-bold text-xs uppercase tracking-wider">
-                    View Document
-                  </button>
-                  {f.recruiter_email && (
-                    <a href={`mailto:${f.recruiter_email}?subject=Inquiry regarding Compliance Placement`} onClick={() => trackEmailClick(f.id)} className="py-2.5 bg-purple-600 hover:bg-purple-500 text-white text-center rounded-xl font-bold text-xs uppercase tracking-wider transition-all shadow-md shadow-purple-900/30">
-                      Email HR Desk
-                    </a>
-                  )}
-                </div>
-              </div>
-            );
-          })}
 
-        {/* B. PEER REFERRAL SUBMISSIONS FEED (Sorted automatically by age) */}
-        {submissions
-          .sort((a, b) => {
-            const aNew = isNewlyAdded(a.created_at) ? 1 : 0;
-            const bNew = isNewlyAdded(b.created_at) ? 1 : 0;
-            return bNew - aNew;
-          })
-          .map((sub, i) => {
-            const isNew = isNewlyAdded(sub.created_at);
-            return (
-              <div key={`sub-${i}`} className={`group relative p-6 bg-slate-900/30 border rounded-2xl backdrop-blur-md transition-all duration-300 flex flex-col justify-between gap-6 ${isNew ? 'border-amber-500/60 shadow-[0_0_20px_rgba(245,158,11,0.1)] bg-amber-500/[0.02]' : 'border-emerald-500/20 hover:border-emerald-500/50 hover:shadow-[0_0_25px_rgba(16,185,129,0.1)]'}`}>
-                <div>
-                  <div className="flex justify-between items-start mb-2">
-                    <div className="flex items-center gap-2">
-                      <span className="text-[9px] font-black text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded uppercase tracking-widest">Active Peer Referral</span>
-                      {isNew && <span className="text-[8px] font-black bg-amber-500 text-black px-1.5 py-0.5 rounded tracking-widest animate-pulse">NEWLY ADDED</span>}
-                    </div>
-                    <span className="text-[10px] text-slate-600 font-bold font-mono">READY</span>
+                  {/* FILTER TERMINAL STRIP */}
+                  <div className="flex flex-wrap gap-1.5 p-1.5 bg-black/60 border border-slate-800 rounded-2xl w-full md:w-auto">
+                    {['All', 'Bengaluru', 'Kolkata', 'Gurugram', 'Remote'].map((loc) => (
+                      <button
+                        key={loc}
+                        onClick={() => setSelectedLocation(loc)}
+                        className={`flex-grow md:flex-grow-0 px-4 py-2 text-[10px] md:text-xs font-black uppercase tracking-wider rounded-xl transition-all duration-300
+                          ${selectedLocation === loc 
+                            ? "bg-indigo-600 border border-indigo-400/30 text-white shadow-lg shadow-indigo-600/20" 
+                            : "text-slate-500 hover:text-slate-300 bg-transparent"}`}
+                      >
+                        {loc}
+                      </button>
+                    ))}
                   </div>
-                  <h3 className="text-lg font-bold text-slate-100">{sub.role || 'Compliance Professional'}</h3>
-                  <p className="text-xs text-emerald-400 font-bold uppercase tracking-tight mt-1">{sub.company || 'Top Tier Firm'}</p>
-                  <p className="text-xs text-slate-500 mt-2">Submitted by: <span className="text-slate-300 font-medium">{sub.name}</span></p>
                 </div>
-                <a href={`mailto:${sub.email}?subject=AML/KYC Internal Referral Channel`} className="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-black text-center rounded-xl font-black text-xs uppercase tracking-widest transition-all shadow-md shadow-emerald-900/20">
-                  Request Referral
-                </a>
-              </div>
-            );
-          })}
-      </div>
-    </div>
 
-    {/* STREAM 2: CORE ECOSYSTEM OPENINGS (Local VS Code jobOpenings data) */}
-    <div className="space-y-4">
-      <div className="flex items-center gap-3 px-2 pt-4">
-        <div className="h-2 w-2 rounded-full bg-indigo-500 animate-pulse"></div>
-        <h2 className="text-xs font-black text-indigo-400 uppercase tracking-[0.25em]">Live Core Network Openings</h2>
-      </div>
+                {/* STREAM 1: SECURE DIRECT PATHWAYS */}
+                <div className="space-y-4">
+                  <div className="flex items-center gap-3 px-2">
+                    <div className="h-2 w-2 rounded-full bg-purple-500 animate-ping"></div>
+                    <h2 className="text-xs font-black text-purple-400 uppercase tracking-[0.25em]">Direct Recruiter Streams &amp; Referrals</h2>
+                  </div>
 
-      <div className="bg-black/40 rounded-3xl border border-slate-800 overflow-hidden divide-y divide-slate-800/60 shadow-2xl">
-        {jobOpenings
-          .filter(job => selectedLocation === 'All' || job.location === selectedLocation)
-          // Sorts local VS code file configurations automatically
-          .sort((a, b) => {
-            const aNew = isNewlyAdded(a.createdAt) ? 1 : 0;
-            const bNew = isNewlyAdded(b.createdAt) ? 1 : 0;
-            return bNew - aNew;
-          })
-          .map((job, idx) => {
-            const isNew = isNewlyAdded(job.createdAt);
-            return (
-              <div key={`job-${idx}`} className={`p-6 hover:bg-slate-900/20 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 transition-all duration-300 group ${isNew ? 'bg-amber-500/[0.03] border-l-2 border-l-amber-500' : ''}`}>
-                <div className="space-y-1">
-                  <div className="flex items-center gap-3">
-                    <p className="text-emerald-400 text-[10px] font-black uppercase tracking-widest">{job.company}</p>
-                    {isNew && (
-                      <span className="text-[8px] font-black bg-amber-500 text-black px-1.5 py-0.5 rounded tracking-widest animate-pulse">
-                        NEWLY ADDED
-                      </span>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    
+                    {/* A. HR DASHBOARD UPLOADS FEED */}
+                    {partnerFiles
+                      .filter(f => selectedLocation === 'All' || f.name.toLowerCase().includes(selectedLocation.toLowerCase()))
+                      .sort((a, b) => {
+                        const aNew = isNewlyAdded(a.created_at) ? 1 : 0;
+                        const bNew = isNewlyAdded(b.created_at) ? 1 : 0;
+                        return bNew - aNew;
+                      })
+                      .map((f, i) => {
+                        const isNew = isNewlyAdded(f.created_at);
+                        return (
+                          <div key={`partner-${i}`} className={`group relative p-6 bg-slate-900/30 border rounded-2xl backdrop-blur-md transition-all duration-300 flex flex-col justify-between gap-6 ${isNew ? 'border-amber-500/60 shadow-[0_0_20px_rgba(245,158,11,0.1)] bg-amber-500/[0.02]' : 'border-purple-500/20 hover:border-purple-500/50 hover:shadow-[0_0_25px_rgba(147,51,234,0.1)]'}`}>
+                            <div>
+                              <div className="flex justify-between items-start mb-2 gap-2">
+                                <div className="flex flex-wrap items-center gap-2">
+                                  <span className="text-[9px] font-black text-purple-400 bg-purple-500/10 border border-purple-500/20 px-2 py-0.5 rounded uppercase tracking-widest">Verified Profile Document</span>
+                                  {isNew && <span className="text-[8px] font-black bg-amber-500 text-black px-1.5 py-0.5 rounded tracking-widest animate-pulse">NEWLY ADDED</span>}
+                                </div>
+                                <span className="text-[10px] text-slate-600 font-bold font-mono shrink-0">ID: {f.id?.slice(0,8) || 'SYSTEM'}</span>
+                              </div>
+                              <h3 className="text-base font-bold text-slate-100 group-hover:text-purple-300 transition-colors">{f.name}</h3>
+                              {f.recruiter_email && (
+                                <p className="text-xs text-slate-500 mt-1 font-mono truncate">Desk: {f.recruiter_email}</p>
+                              )}
+                            </div>
+                            <div className="grid grid-cols-2 gap-2 pt-2 border-t border-slate-800/60">
+                              <button onClick={() => window.open(f.url, '_blank')} className="py-2.5 bg-black/40 border border-slate-800 text-slate-400 hover:text-white hover:border-slate-700 rounded-xl transition-all font-bold text-xs uppercase tracking-wider">
+                                View Document
+                              </button>
+                              {f.recruiter_email && (
+                                <a href={`mailto:${f.recruiter_email}?subject=Inquiry regarding Compliance Placement`} onClick={() => trackEmailClick(f.id)} className="py-2.5 bg-purple-600 hover:bg-purple-500 text-white text-center rounded-xl font-bold text-xs uppercase tracking-wider transition-all shadow-md shadow-purple-900/30">
+                                  Email HR Desk
+                                </a>
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })}
+
+                    {/* B. PEER REFERRAL SUBMISSIONS FEED */}
+                    {submissions
+                      .sort((a, b) => {
+                        const aNew = isNewlyAdded(a.created_at) ? 1 : 0;
+                        const bNew = isNewlyAdded(b.created_at) ? 1 : 0;
+                        return bNew - aNew;
+                      })
+                      .map((sub, i) => {
+                        const isNew = isNewlyAdded(sub.created_at);
+                        return (
+                          <div key={`sub-${i}`} className={`group relative p-6 bg-slate-900/30 border rounded-2xl backdrop-blur-md transition-all duration-300 flex flex-col justify-between gap-6 ${isNew ? 'border-amber-500/60 shadow-[0_0_20px_rgba(245,158,11,0.1)] bg-amber-500/[0.02]' : 'border-emerald-500/20 hover:border-emerald-500/50 hover:shadow-[0_0_25px_rgba(16,185,129,0.1)]'}`}>
+                            <div>
+                              <div className="flex justify-between items-start mb-2">
+                                <div className="flex items-center gap-2">
+                                  <span className="text-[9px] font-black text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded uppercase tracking-widest">Active Peer Referral</span>
+                                  {isNew && <span className="text-[8px] font-black bg-amber-500 text-black px-1.5 py-0.5 rounded tracking-widest animate-pulse">NEWLY ADDED</span>}
+                                </div>
+                                <span className="text-[10px] text-slate-600 font-bold font-mono">READY</span>
+                              </div>
+                              <h3 className="text-lg font-bold text-slate-100">{sub.role || 'Compliance Professional'}</h3>
+                              <p className="text-xs text-emerald-400 font-bold uppercase tracking-tight mt-1">{sub.company || 'Top Tier Firm'}</p>
+                              <p className="text-xs text-slate-500 mt-2">Submitted by: <span className="text-slate-300 font-medium">{sub.name}</span></p>
+                            </div>
+                            <a href={`mailto:${sub.email}?subject=AML/KYC Internal Referral Channel`} className="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-black text-center rounded-xl font-black text-xs uppercase tracking-widest transition-all shadow-md shadow-emerald-900/20">
+                              Request Referral
+                            </a>
+                          </div>
+                        );
+                      })}
+                  </div>
+                </div>
+
+                {/* STREAM 2: CORE ECOSYSTEM OPENINGS */}
+                <div className="space-y-4">
+                  <div className="flex items-center gap-3 px-2 pt-4">
+                    <div className="h-2 w-2 rounded-full bg-indigo-500 animate-pulse"></div>
+                    <h2 className="text-xs font-black text-indigo-400 uppercase tracking-[0.25em]">Live Core Network Openings</h2>
+                  </div>
+
+                  <div className="bg-black/40 rounded-3xl border border-slate-800 overflow-hidden divide-y divide-slate-800/60 shadow-2xl">
+                    {jobOpenings
+                      .filter(job => selectedLocation === 'All' || job.location === selectedLocation)
+                      .sort((a, b) => {
+                        const aNew = isNewlyAdded(a.createdAt) ? 1 : 0;
+                        const bNew = isNewlyAdded(b.createdAt) ? 1 : 0;
+                        return bNew - aNew;
+                      })
+                      .map((job, idx) => {
+                        const isNew = isNewlyAdded(job.createdAt);
+                        return (
+                          <div key={`job-${idx}`} className={`p-6 hover:bg-slate-900/20 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 transition-all duration-300 group ${isNew ? 'bg-amber-500/[0.03] border-l-2 border-l-amber-500' : ''}`}>
+                            <div className="space-y-1">
+                              <div className="flex items-center gap-3">
+                                <p className="text-emerald-400 text-[10px] font-black uppercase tracking-widest">{job.company}</p>
+                                {isNew && (
+                                  <span className="text-[8px] font-black bg-amber-500 text-black px-1.5 py-0.5 rounded tracking-widest animate-pulse">
+                                    NEWLY ADDED
+                                  </span>
+                                )}
+                              </div>
+                              <h2 className="text-lg font-bold text-white group-hover:text-indigo-400 transition-colors duration-300">{job.role}</h2>
+                              <div className="flex items-center gap-4 text-xs text-slate-500">
+                                <span className="flex items-center gap-1">
+                                  <svg className="w-3.5 h-3.5 shrink-0 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                                  {job.location}
+                                </span>
+                                <span className="font-mono text-[10px] px-2 py-0.5 bg-slate-800 rounded text-slate-400 uppercase tracking-tighter">Node_Active</span>
+                              </div>
+                            </div>
+                            
+                            <a 
+                              href={job.link} 
+                              target="_blank" 
+                              rel="noopener noreferrer" 
+                              className="w-full sm:w-auto px-6 py-3 bg-slate-900 hover:bg-indigo-600 text-slate-300 hover:text-white font-black text-xs uppercase tracking-widest rounded-xl border border-slate-800 hover:border-indigo-400/30 transition-all duration-300 shadow-inner group-hover:translate-x-1 sm:group-hover:translate-x-0"
+                            >
+                              Launch Application &rarr;
+                            </a>
+                          </div>
+                        );
+                      })}
+                    
+                    {jobOpenings.filter(job => selectedLocation === 'All' || job.location === selectedLocation).length === 0 && (
+                      <div className="p-16 text-center text-slate-600 text-sm font-medium italic bg-slate-900/10">
+                        No live core openings logged under target node context: {selectedLocation}.
+                      </div>
                     )}
                   </div>
-                  <h2 className="text-lg font-bold text-white group-hover:text-indigo-400 transition-colors duration-300">{job.role}</h2>
-                  <div className="flex items-center gap-4 text-xs text-slate-500">
-                    <span className="flex items-center gap-1">
-                      <svg className="w-3.5 h-3.5 shrink-0 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-                      {job.location}
-                    </span>
-                    <span className="font-mono text-[10px] px-2 py-0.5 bg-slate-800 rounded text-slate-400 uppercase tracking-tighter">Node_Active</span>
-                  </div>
                 </div>
-                
-                <a 
-                  href={job.link} 
-                  target="_blank" 
-                  rel="noopener noreferrer" 
-                  className="w-full sm:w-auto px-6 py-3 bg-slate-900 hover:bg-indigo-600 text-slate-300 hover:text-white font-black text-xs uppercase tracking-widest rounded-xl border border-slate-800 hover:border-indigo-400/30 transition-all duration-300 shadow-inner group-hover:translate-x-1 sm:group-hover:translate-x-0"
+
+              </div>
+            )}
+            
+            {activeView === 'referralForm' && (
+              <div className="max-w-3xl mx-auto animate-view-entry pb-20 px-4">
+                <div className="mb-10 space-y-3 text-center sm:text-left">
+                  <div className="inline-flex items-center gap-2 px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 rounded-full">
+                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span className="text-[9px] font-black text-emerald-500 uppercase tracking-[0.2em]">AML_DECODE</span>
+                  </div>
+                  <h1 className="text-3xl font-black text-white uppercase tracking-tighter">
+                    Initialize <span className="text-emerald-500">Referral</span>
+                  </h1>
+                  <p className="text-xs text-slate-400 font-mono">
+                    Contribute to the network intelligence pool by submitting active internal opportunities.
+                  </p>
+                </div>
+
+                <form 
+                  className="p-1 bg-gradient-to-br from-emerald-500/20 to-slate-800/40 rounded-[32px] shadow-2xl"
+                  onSubmit={async (e) => { 
+                    e.preventDefault(); 
+                    const formData = {
+                      name: e.target[0].value,
+                      email: e.target[1].value,
+                      company: e.target[2].value,
+                      role: e.target[3].value
+                    };
+                    const { error } = await supabase.from('submissions').insert([formData]); 
+                    if(!error) {
+                      alert("TRANSMISSION SUCCESSFUL: Referral Node Logged."); 
+                      setActiveView('jobs'); 
+                    } else {
+                      alert("CRITICAL ERROR: Connection Terminated.");
+                    }
+                  }}
                 >
-                  Launch Application &rarr;
-                </a>
-              </div>
-            );
-          })}
-        
-        {jobOpenings.filter(job => selectedLocation === 'All' || job.location === selectedLocation).length === 0 && (
-          <div className="p-16 text-center text-slate-600 text-sm font-medium italic bg-slate-900/10">
-            No live core openings logged under target node context: {selectedLocation}.
-          </div>
-        )}
-      </div>
-    </div>
+                  <div className="bg-[#030712] rounded-[30px] p-6 sm:p-10 space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Full Name</label>
+                        <input 
+                          className="w-full p-4 bg-black/40 border border-slate-800 rounded-2xl text-white font-mono text-sm focus:border-emerald-500 outline-none transition-all placeholder:text-slate-700" 
+                          placeholder="e.g. Nitesh Mishra" 
+                          required 
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Email Address</label>
+                        <input 
+                          type="email"
+                          className="w-full p-4 bg-black/40 border border-slate-800 rounded-2xl text-white font-mono text-sm focus:border-emerald-500 outline-none transition-all placeholder:text-slate-700" 
+                          placeholder="verified@email.com" 
+                          required 
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Company / Firm</label>
+                        <input 
+                          className="w-full p-4 bg-black/40 border border-slate-800 rounded-2xl text-white font-mono text-sm focus:border-emerald-500 outline-none transition-all placeholder:text-slate-700" 
+                          placeholder="e.g. KPMG Global Services" 
+                          required 
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Target Role</label>
+                        <input 
+                          className="w-full p-4 bg-black/40 border border-slate-800 rounded-2xl text-white font-mono text-sm focus:border-emerald-500 outline-none transition-all placeholder:text-slate-700" 
+                          placeholder="e.g. AML Specialist" 
+                          required 
+                        />
+                      </div>
+                    </div>
 
-  </div>
-)}
-      {activeView === 'referralForm' && (
-  <div className="max-w-3xl mx-auto animate-view-entry pb-20 px-4">
-    
-    {/* FORM HEADER */}
-    <div className="mb-10 space-y-3 text-center sm:text-left">
-      <div className="inline-flex items-center gap-2 px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 rounded-full">
-        <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-        <span className="text-[9px] font-black text-emerald-500 uppercase tracking-[0.2em]">AML_DECODE</span>
-      </div>
-      <h1 className="text-3xl font-black text-white uppercase tracking-tighter">
-        Initialize <span className="text-emerald-500">Referral</span>
-      </h1>
-      <p className="text-xs text-slate-400 font-mono">
-        Contribute to the network intelligence pool by submitting active internal opportunities.
-      </p>
-    </div>
+                    <div className="pt-4 flex items-start gap-3">
+                      <input type="checkbox" required className="mt-1 accent-emerald-500" />
+                      <p className="text-[10px] text-slate-500 leading-relaxed font-medium">
+                        I confirm this is a valid professional referral and I authorize the AML_DECODE network to display this information to verified specialists.
+                      </p>
+                    </div>
 
-    {/* SUBMISSION CONSOLE */}
-    <form 
-      className="p-1 bg-gradient-to-br from-emerald-500/20 to-slate-800/40 rounded-[32px] shadow-2xl"
-      onSubmit={async (e) => { 
-        e.preventDefault(); 
-        const formData = {
-          name: e.target[0].value,
-          email: e.target[1].value,
-          company: e.target[2].value,
-          role: e.target[3].value
-        };
-        const { error } = await supabase.from('submissions').insert([formData]); 
-        if(!error) {
-          alert("TRANSMISSION SUCCESSFUL: Referral Node Logged."); 
-          setActiveView('jobs'); 
-        } else {
-          alert("CRITICAL ERROR: Connection Terminated.");
-        }
-      }}
-    >
-      <div className="bg-[#030712] rounded-[30px] p-6 sm:p-10 space-y-6">
-        
-        {/* INPUT GRID */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="space-y-2">
-            <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Full Name</label>
-            <input 
-              className="w-full p-4 bg-black/40 border border-slate-800 rounded-2xl text-white font-mono text-sm focus:border-emerald-500 outline-none transition-all placeholder:text-slate-700" 
-              placeholder="e.g. Nitesh Mishra" 
-              required 
-            />
-          </div>
-          <div className="space-y-2">
-            <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Email Address</label>
-            <input 
-              type="email"
-              className="w-full p-4 bg-black/40 border border-slate-800 rounded-2xl text-white font-mono text-sm focus:border-emerald-500 outline-none transition-all placeholder:text-slate-700" 
-              placeholder="verified@email.com" 
-              required 
-            />
-          </div>
-          <div className="space-y-2">
-            <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Company / Firm</label>
-            <input 
-              className="w-full p-4 bg-black/40 border border-slate-800 rounded-2xl text-white font-mono text-sm focus:border-emerald-500 outline-none transition-all placeholder:text-slate-700" 
-              placeholder="e.g. KPMG Global Services" 
-              required 
-            />
-          </div>
-          <div className="space-y-2">
-            <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Target Role</label>
-            <input 
-              className="w-full p-4 bg-black/40 border border-slate-800 rounded-2xl text-white font-mono text-sm focus:border-emerald-500 outline-none transition-all placeholder:text-slate-700" 
-              placeholder="e.g. AML Specialist" 
-              required 
-            />
-          </div>
-        </div>
-
-        {/* COMPLIANCE CHECKBOX */}
-        <div className="pt-4 flex items-start gap-3">
-          <input type="checkbox" required className="mt-1 accent-emerald-500" />
-          <p className="text-[10px] text-slate-500 leading-relaxed font-medium">
-            I confirm this is a valid professional referral and I authorize the AML_DECODE network to display this information to verified specialists.
-          </p>
-        </div>
-
-        {/* SUBMIT BUTTON */}
-        <button 
-          type="submit" 
-          className="group w-full py-5 bg-emerald-600 hover:bg-emerald-500 text-black font-black uppercase tracking-[0.3em] text-xs rounded-2xl transition-all shadow-[0_0_30px_rgba(16,185,129,0.2)] active:scale-95 flex items-center justify-center gap-3"
-        >
-          Execute Submission 
-          <span className="group-hover:translate-x-2 transition-transform">&rarr;</span>
-        </button>
-
-        {/* SYSTEM STATUS BAR */}
-        <div className="pt-6 border-t border-white/5 flex justify-between items-center">
-          <div className="flex gap-2">
-            <div className="h-1 w-8 bg-emerald-500/40 rounded-full"></div>
-            <div className="h-1 w-8 bg-emerald-500/20 rounded-full"></div>
-            <div className="h-1 w-8 bg-emerald-500/10 rounded-full"></div>
-          </div>
-          <span className="text-[9px] font-bold text-slate-600 uppercase tracking-tighter"></span>
-        </div>
-      </div>
-    </form>
-
-  </div>
-)}      
-{activeView === 'available' && (
-  <div className="space-y-8 animate-view-entry max-w-5xl mx-auto pb-20 px-4">
-    
-    {/* MODE HEADER */}
-    <div className="relative p-8 rounded-3xl bg-emerald-500/5 border border-emerald-500/20 backdrop-blur-xl overflow-hidden">
-      <div className="absolute -top-10 -left-10 w-40 h-40 bg-emerald-600/10 blur-[50px] rounded-full"></div>
-      <div className="relative z-10 flex flex-col md:flex-row justify-between items-center gap-6 text-center md:text-left">
-        <div className="space-y-2">
-          <div className="inline-flex items-center gap-2 px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 rounded-full">
-            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-            <span className="text-[9px] font-black text-emerald-500 uppercase tracking-widest">AML_DECODE</span>
-          </div>
-          <h1 className="text-3xl font-black text-white uppercase tracking-tighter">
-            Available <span className="text-emerald-500">Network Referrals</span>
-          </h1>
-          <p className="text-xs text-slate-400 font-mono max-w-md">
-            Direct pipelines to Tier-1 firms shared by verified specialists within the AML_DECODE ecosystem.
-          </p>
-        </div>
-        <div className="shrink-0 py-3 px-6 bg-black/40 border border-white/5 rounded-2xl">
-          <p className="text-[9px] font-black text-slate-500 uppercase mb-1 text-center">Active Referral</p>
-          <p className="text-2xl font-black text-emerald-400 font-mono text-center">{submissions.length}</p>
-        </div>
-      </div>
-    </div>
-
-    {/* REFERRAL NODES GRID */}
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-      {submissions.length > 0 ? (
-        submissions.map((sub, i) => (
-          <div 
-            key={i} 
-            className="group relative p-6 bg-slate-900/40 border border-slate-800 rounded-[24px] hover:border-emerald-500/40 transition-all duration-500 flex flex-col justify-between gap-6 overflow-hidden shadow-xl"
-          >
-            {/* Animated background pulse */}
-            <div className="absolute inset-0 bg-emerald-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
-            
-            <div className="relative z-10 space-y-4">
-              <div className="flex justify-between items-start">
-                <div className="p-2 bg-emerald-500/10 rounded-lg border border-emerald-500/20">
-                  <svg className="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                  </svg>
-                </div>
-                <div className="text-right">
-                  <p className="text-[8px] font-black text-slate-600 uppercase tracking-widest">Node_Status</p>
-                  <p className="text-[10px] font-bold text-emerald-500 font-mono">ENCRYPTED_READY</p>
-                </div>
-              </div>
-
-              <div className="space-y-1">
-                <p className="text-[10px] font-black text-emerald-500 uppercase tracking-widest">{sub.company || 'Confidential Firm'}</p>
-                <h3 className="text-xl font-bold text-white leading-tight group-hover:text-emerald-400 transition-colors">
-                  {sub.role || 'Compliance Associate'}
-                </h3>
-                <div className="flex items-center gap-2 pt-1">
-                  <div className="h-1.5 w-1.5 rounded-full bg-slate-700 group-hover:bg-emerald-500 transition-colors"></div>
-                  <p className="text-xs text-slate-400 font-medium">Source: <span className="text-slate-200">{sub.name}</span></p>
-                </div>
-              </div>
-            </div>
-
-            <div className="relative z-10 flex gap-2 pt-4 border-t border-slate-800/60">
-              <a 
-                href={`mailto:${sub.email}?subject=Referral Inquiry: ${sub.role} at ${sub.company}`}
-                className="flex-grow py-3.5 bg-emerald-600 hover:bg-emerald-500 text-black font-black text-xs uppercase tracking-widest rounded-xl text-center transition-all shadow-lg shadow-emerald-900/20 active:scale-95"
-              >
-                Request Referral 
-              </a>
-            </div>
-          </div>
-        ))
-      ) : (
-        <div className="col-span-full py-24 text-center bg-slate-900/20 rounded-[32px] border-2 border-dashed border-slate-800">
-          <p className="text-slate-500 font-mono text-sm uppercase tracking-[0.3em]">No Peer Referral Nodes Detected</p>
-        </div>
-      )}
-    </div>
-
-    {/* FOOTER TIP */}
-    <div className="p-6 bg-white/5 rounded-2xl border border-white/5 flex items-center gap-4">
-      <div className="h-10 w-10 shrink-0 bg-indigo-500/10 rounded-full flex items-center justify-center text-indigo-400">
-        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-      </div>
-      <p className="text-[11px] text-slate-400 leading-relaxed">
-        <span className="text-white font-bold uppercase">Pro Tip:</span> Mention your specific expertise in <span className="text-emerald-500">Transaction Monitoring</span> or <span className="text-emerald-500">Sanctions Screening</span> when reaching out to referrers to increase your success rate.
-      </p>
-    </div>
-
-  </div>
-)}            
-          {activeView === 'contribute' && (
-  <div className="max-w-4xl mx-auto animate-view-entry pb-20 px-4">
-    
-    {/* DASHBOARD HEADER */}
-    <div className="relative p-8 rounded-3xl bg-[#0b1c2e]/80 border border-emerald-500/30 backdrop-blur-xl mb-8 overflow-hidden shadow-2xl">
-      <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-600/5 blur-[100px] rounded-full"></div>
-      <div className="relative z-10 flex flex-col md:flex-row justify-between items-center gap-6">
-        <div className="space-y-2">
-          <div className="inline-flex items-center gap-2 px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 rounded-full">
-            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-ping"></span>
-            <span className="text-[9px] font-black text-emerald-500 uppercase tracking-widest">Authorized Access Only</span>
-          </div>
-          <h1 className="text-3xl font-black text-white uppercase tracking-tighter">
-            HR <span className="text-emerald-500">Command Center</span>
-          </h1>
-          <p className="text-xs text-slate-400 font-mono">Terminal for verified partners to deploy referral intelligence.</p>
-        </div>
-        
-        {isAuthorized && (
-          <button 
-            onClick={() => setIsAuthorized(false)}
-            className="px-4 py-2 bg-red-500/10 border border-red-500/30 text-red-400 text-[10px] font-black uppercase rounded-lg hover:bg-red-500 hover:text-white transition-all"
-          >
-            Terminate Session
-          </button>
-        )}
-      </div>
-    </div>
-
-    {/* AUTHENTICATION GATE */}
-    {!isAuthorized ? (
-      <div className="bg-slate-900/40 border border-slate-800 p-10 rounded-[32px] max-w-md mx-auto shadow-2xl">
-        <div className="space-y-6">
-          <div className="space-y-2 text-center">
-            <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Protocol Login</p>
-            <h2 className="text-xl font-bold text-white">Identity Verification</h2>
-          </div>
-          <div className="space-y-4">
-            <input 
-              type="email" 
-              placeholder="Partner Email" 
-              value={email} 
-              onChange={(e) => setEmail(e.target.value)} 
-              className="w-full p-4 bg-black border border-slate-800 rounded-2xl text-white font-mono text-sm focus:border-emerald-500 outline-none transition-all" 
-            />
-            <input 
-              type="password" 
-              placeholder="Security Key" 
-              value={password} 
-              onChange={(e) => setPassword(e.target.value)} 
-              className="w-full p-4 bg-black border border-slate-800 rounded-2xl text-white font-mono text-sm focus:border-emerald-500 outline-none transition-all" 
-            />
-            <button 
-              onClick={async () => { 
-                const { error } = await supabase.auth.signInWithPassword({ email, password }); 
-                if (!error) setIsAuthorized(true); 
-                else alert("ACCESS DENIED: Credentials Rejected."); 
-              }} 
-              className="w-full py-4 bg-emerald-600 hover:bg-emerald-500 text-black font-black uppercase tracking-widest text-xs rounded-2xl transition-all shadow-lg"
-            >
-              Verify Identity
-            </button>
-          </div>
-        </div>
-      </div>
-    ) : (
-      /* AUTHORIZED UPLOAD PANEL */
-      <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
-        <div className="md:col-span-8 bg-slate-900/40 border border-slate-800 p-8 rounded-[32px] space-y-8">
-          <div className="space-y-4">
-            <h3 className="text-lg font-bold text-white flex items-center gap-3">
-              <span className="h-6 w-1 bg-emerald-500 rounded-full"></span>
-              Deploy Intelligence Node
-            </h3>
-            <div className="space-y-2">
-              <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Assigned Recruiter Desk</label>
-              <input 
-                type="email" 
-                placeholder="hr@firm.com" 
-                value={recruiterEmail} 
-                onChange={(e) => setRecruiterEmail(e.target.value)} 
-                className="w-full p-4 bg-black border border-slate-800 rounded-2xl text-white font-mono text-sm focus:border-emerald-500 outline-none transition-all" 
-              />
-            </div>
-            
-            <div className="relative group">
-<input 
-  type="file" 
-  id="hrFileInput" 
-  className="hidden" 
-  onChange={(e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setSelectedFile(file);
-      const display = document.getElementById('fileNameDisplay');
-      if (display) display.innerText = `READY: ${file.name}`;
-    }
-  }} 
-/>              
-              <label htmlFor="hrFileInput" className="cursor-pointer block p-12 border-2 border-dashed border-slate-800 rounded-[24px] bg-black/40 text-center hover:border-emerald-500/50 transition-all group-hover:bg-emerald-500/5">
-                <svg className="w-10 h-10 text-slate-600 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" /></svg>
-                <p className="text-sm font-bold text-slate-400 uppercase tracking-widest">Select Intelligence File</p>
-                <p id="fileNameDisplay" className="mt-4 text-emerald-500 text-xs font-mono font-black"></p>
-              </label>
-            </div>
-
-           <button 
-  disabled={isLoading || !selectedFile || !recruiterEmail} 
-  onClick={async () => {
-    try {
-      setIsLoading(true);
-      
-      // 1. Generate a clean, unique path for the file inside your bucket
-      const fileExt = selectedFile.name.split('.').pop();
-      const fileName = `${Math.random()}.${fileExt}`;
-      const filePath = `hr_uploads/${fileName}`;
-
-      // 2. Upload the raw binary file to your Supabase Storage bucket named 'intelligence'
-      const { error: uploadError } = await supabase.storage
-        .from('intelligence')
-        .upload(filePath, selectedFile);
-
-      if (uploadError) throw uploadError;
-
-      // 3. Retrieve the permanent public URL for the newly deployed asset
-      const { data: { publicUrl } } = supabase.storage
-        .from('intelligence')
-        .getPublicUrl(filePath);
-
-      // 4. Create a tracking reference log in your 'partner_files' database table
-      const { error: dbError } = await supabase
-        .from('partner_files')
-        .insert([
-          { 
-            name: selectedFile.name, 
-            url: publicUrl, 
-            recruiter_email: recruiterEmail 
-          }
-        ]);
-
-      if (dbError) throw dbError;
-
-      alert("DEPLOYMENT SUCCESSFUL: Intelligence Node synced with Network Stream.");
-      
-      // 5. Clean up local terminal states and sync views
-      setSelectedFile(null);
-      setRecruiterEmail("");
-      const display = document.getElementById('fileNameDisplay');
-      if (display) display.innerText = "";
-      setActiveView('network'); // Shifts view straight to active streams to check the document
-
-    } catch (err) {
-      console.error("Critical submission failure:", err);
-      alert(`CRITICAL ERROR: Submission rejected. Reason: ${err.message || err}`);
-    } finally {
-      setIsLoading(false);
-    }
-  }} 
-  className="w-full py-5 bg-emerald-600 hover:bg-emerald-500 text-black font-black uppercase tracking-[0.2em] text-xs rounded-2xl transition-all shadow-lg shadow-emerald-900/20 disabled:opacity-50"
->
-  {isLoading ? "TRANSMITTING DATA..." : "Execute Deployment"}
-</button>
-          </div>
-        </div>
-
-        {/* SIDEBAR ANALYTICS */}
-        <div className="md:col-span-4 space-y-6">
-          <div className="p-6 bg-black/60 border border-slate-800 rounded-[24px] space-y-4">
-            <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Active Stats</h4>
-            <div className="space-y-4">
-              <div className="flex justify-between items-center">
-                <span className="text-xs text-slate-400">Your Uploads</span>
-                <span className="text-sm font-black text-emerald-400">{partnerFiles.length}</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-xs text-slate-400">Global Reach</span>
-                <span className="text-sm font-black text-purple-400">ACTIVE</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    )}
-  </div>
-)}
-
-           {activeView === 'network' && (
-  <div className="space-y-8 animate-view-entry max-w-7xl mx-auto pb-20 px-4 sm:px-6">
-    
-    {/* HUB HEADER: Neural Connection Theme */}
-    <div className="relative p-8 rounded-3xl bg-[#0b1c2e]/60 border border-purple-500/20 backdrop-blur-xl overflow-hidden shadow-2xl">
-      <div className="absolute top-0 right-0 w-64 h-64 bg-purple-600/10 blur-[100px] rounded-full"></div>
-      <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-        <div className="space-y-2">
-          <div className="inline-flex items-center gap-2 px-3 py-1 bg-purple-500/10 border border-purple-500/30 rounded-full">
-            <span className="h-1.5 w-1.5 rounded-full bg-purple-400 animate-ping"></span>
-            <span className="text-[9px] font-black text-purple-400 uppercase tracking-[0.2em]">AML_DECODE</span>
-          </div>
-          <h1 className="text-3xl md:text-4xl font-black text-white tracking-tighter uppercase leading-none">
-            Active <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-indigo-400">Network Jobs</span>
-          </h1>
-          <p className="text-xs text-slate-400 max-w-md font-medium leading-relaxed font-mono">
-            Exclusive career nodes sourced directly from verified HR partners and internal network referrals.
-          </p>
-        </div>
-        
-        {/* NETWORK STATS BOX */}
-        <div className="flex gap-4 p-4 bg-black/40 border border-white/5 rounded-2xl">
-          <div className="text-center px-4 border-r border-white/10">
-            <p className="text-[10px] font-black text-slate-500 uppercase">Available</p>
-            <p className="text-xl font-black text-purple-400">{partnerFiles.length}</p>
-          </div>
-          <div className="text-center px-4">
-            <p className="text-[10px] font-black text-slate-500 uppercase">Active</p>
-            <p className="text-xl font-black text-emerald-400">LIVE</p>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    {/* MAIN CONTENT GRID */}
-    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-      
-      {/* LEFT: INTERACTIVE FILTER (Visible on Desktop) */}
-      <div className="hidden lg:block lg:col-span-3 space-y-6 sticky top-28">
-        <div className="p-6 bg-slate-900/40 border border-slate-800 rounded-2xl space-y-4">
-          <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Filter Stream</h3>
-          <div className="space-y-2">
-            {['All Jobs', 'HR Uploads', 'Referral Docs'].map((filter) => (
-              <button key={filter} className="w-full text-left px-4 py-3 rounded-xl border border-transparent hover:border-purple-500/30 hover:bg-purple-500/5 text-xs font-bold text-slate-400 hover:text-purple-400 transition-all">
-                {filter}
-              </button>
-            ))}
-          </div>
-        </div>
-        
-        <div className="p-6 bg-gradient-to-br from-purple-900/20 to-indigo-900/20 border border-purple-500/10 rounded-2xl">
-          <p className="text-[9px] font-black text-purple-400 uppercase mb-2">Notice</p>
-          <p className="text-[11px] text-slate-400 italic leading-relaxed">
-            Internal referral files are updated every 24 hours. Contact HR directly using the "Email HR" function.
-          </p>
-        </div>
-      </div>
-
-      {/* RIGHT: DYNAMIC CARDS FEED */}
-      <div className="lg:col-span-9 grid grid-cols-1 md:grid-cols-2 gap-4">
-        {partnerFiles.length > 0 ? (
-          partnerFiles.map((f, i) => (
-            <div 
-              key={i} 
-              className="group relative p-6 bg-[#030712] border border-slate-800 rounded-3xl hover:border-purple-500/50 transition-all duration-500 hover:shadow-[0_0_40px_rgba(168,85,247,0.15)] flex flex-col justify-between gap-8 overflow-hidden animate-slide-up"
-              style={{ animationDelay: `${i * 0.1}s` }}
-            >
-              {/* Background Accent Lines */}
-              <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-purple-500/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-              
-              <div className="space-y-4 relative z-10">
-                <div className="flex justify-between items-start">
-                  <div className="p-2.5 bg-purple-500/10 rounded-xl border border-purple-500/20">
-                    <svg className="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                    </svg>
+                    <button 
+                      type="submit" 
+                      className="group w-full py-5 bg-emerald-600 hover:bg-emerald-500 text-black font-black uppercase tracking-[0.3em] text-xs rounded-2xl transition-all shadow-[0_0_30px_rgba(16,185,129,0.2)] active:scale-95 flex items-center justify-center gap-3"
+                    >
+                      Execute Submission 
+                      <span className="group-hover:translate-x-2 transition-transform">&rarr;</span>
+                    </button>
                   </div>
-                  <span className="text-[9px] font-black text-slate-600 font-mono tracking-tighter uppercase">Entry_{i + 1004}</span>
+                </form>
+              </div>
+            )}      
+            
+            {activeView === 'available' && (
+              <div className="space-y-8 animate-view-entry max-w-5xl mx-auto pb-20 px-4">
+                
+                {/* MODE HEADER */}
+                <div className="relative p-8 rounded-3xl bg-emerald-500/5 border border-emerald-500/20 backdrop-blur-xl overflow-hidden">
+                  <div className="absolute -top-10 -left-10 w-40 h-40 bg-emerald-600/10 blur-[50px] rounded-full"></div>
+                  <div className="relative z-10 flex flex-col md:flex-row justify-between items-center gap-6 text-center md:text-left">
+                    <div className="space-y-2">
+                      <div className="inline-flex items-center gap-2 px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 rounded-full">
+                        <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                        <span className="text-[9px] font-black text-emerald-500 uppercase tracking-widest">AML_DECODE</span>
+                      </div>
+                      <h1 className="text-3xl font-black text-white uppercase tracking-tighter">
+                        Available <span className="text-emerald-500">Network Referrals</span>
+                      </h1>
+                      <p className="text-xs text-slate-400 font-mono max-w-md">
+                        Direct pipelines to Tier-1 firms shared by verified specialists within the AML_DECODE ecosystem.
+                      </p>
+                    </div>
+                    <div className="shrink-0 py-3 px-6 bg-black/40 border border-white/5 rounded-2xl">
+                      <p className="text-[9px] font-black text-slate-500 uppercase mb-1 text-center">Active Referral</p>
+                      <p className="text-2xl font-black text-emerald-400 font-mono text-center">{submissions.length}</p>
+                    </div>
+                  </div>
                 </div>
 
-                <div>
-                  <h3 className="text-lg font-bold text-white group-hover:text-purple-300 transition-colors leading-tight">
-                    {f.name}
-                  </h3>
-                  {f.recruiter_email && (
-                    <div className="mt-2 flex items-center gap-2">
-                      <div className="h-1 w-1 rounded-full bg-emerald-500"></div>
-                      <span className="text-[10px] text-purple-400 font-bold uppercase tracking-tight truncate">
-                        Recruiter: {f.recruiter_email}
-                      </span>
+                {/* REFERRAL NODES GRID */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {submissions.length > 0 ? (
+                    submissions
+                      .sort((a, b) => {
+                        const aNew = isNewlyAdded(a.created_at) ? 1 : 0;
+                        const bNew = isNewlyAdded(b.created_at) ? 1 : 0;
+                        return bNew - aNew;
+                      })
+                      .map((sub, i) => {
+                        const isNew = isNewlyAdded(sub.created_at);
+                        return (
+                          <div 
+                            key={i} 
+                            className={`group relative p-6 bg-slate-900/40 border rounded-[24px] transition-all duration-500 flex flex-col justify-between gap-6 overflow-hidden shadow-xl
+                              ${isNew ? 'border-amber-500/60 bg-amber-500/[0.02] shadow-[0_0_25px_rgba(245,158,11,0.1)]' : 'border-slate-800 hover:border-emerald-500/40'}`}
+                          >
+                            <div className="absolute inset-0 bg-emerald-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+                            
+                            <div className="relative z-10 space-y-4">
+                              <div className="flex justify-between items-start">
+                                <div className="p-2.5 bg-emerald-500/10 rounded-xl border border-emerald-500/20">
+                                  <svg className="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                                  </svg>
+                                </div>
+                                <div className="text-right">
+                                  <p className="text-[8px] font-black text-slate-600 uppercase tracking-widest">Node_Status</p>
+                                  <p className="text-[10px] font-bold text-emerald-500 font-mono">ENCRYPTED_READY</p>
+                                </div>
+                              </div>
+
+                              <div className="space-y-1">
+                                <div className="flex flex-wrap items-center gap-2">
+                                  <p className="text-[10px] font-black text-emerald-500 uppercase tracking-widest">{sub.company || 'Confidential Firm'}</p>
+                                  {isNew && <span className="text-[8px] font-black bg-amber-500 text-black px-1.5 py-0.5 rounded tracking-widest animate-pulse">NEWLY ADDED</span>}
+                                </div>
+                                <h3 className="text-xl font-bold text-white leading-tight group-hover:text-emerald-400 transition-colors">
+                                  {sub.role || 'Compliance Associate'}
+                                </h3>
+                                <div className="flex items-center gap-2 pt-1">
+                                  <div className="h-1.5 w-1.5 rounded-full bg-slate-700 group-hover:bg-emerald-500 transition-colors"></div>
+                                  <p className="text-xs text-slate-400 font-medium">Source: <span className="text-slate-200">{sub.name}</span></p>
+                                </div>
+                              </div>
+                            </div>
+
+                            <div className="relative z-10 flex gap-2 pt-4 border-t border-slate-800/60">
+                              <a 
+                                href={`mailto:${sub.email}?subject=Referral Inquiry: ${sub.role} at ${sub.company}`}
+                                className="flex-grow py-3.5 bg-emerald-600 hover:bg-emerald-500 text-black font-black text-xs uppercase tracking-widest rounded-xl text-center transition-all shadow-lg shadow-emerald-900/20 active:scale-95"
+                              >
+                                Request Referral 
+                              </a>
+                            </div>
+                          </div>
+                        );
+                      })
+                  ) : (
+                    <div className="col-span-full py-24 text-center bg-slate-900/20 rounded-[32px] border-2 border-dashed border-slate-800">
+                      <p className="text-slate-500 font-mono text-sm uppercase tracking-[0.3em]">No Peer Referral Nodes Detected</p>
                     </div>
                   )}
                 </div>
               </div>
-
-              {/* ACTION ROW */}
-              <div className="flex items-center gap-2 pt-4 border-t border-slate-800/50 relative z-10">
-                <button 
-                  onClick={() => window.open(f.url, '_blank')}
-                  className="flex-grow py-3 px-4 bg-slate-900 border border-slate-800 hover:border-purple-500/50 text-slate-300 hover:text-white rounded-xl font-bold text-xs uppercase transition-all flex items-center justify-center gap-2"
-                >
-                  View Intel
-                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
-                </button>
+            )}            
+            
+            {activeView === 'contribute' && (
+              <div className="max-w-4xl mx-auto animate-view-entry pb-20 px-4">
                 
-                {f.recruiter_email && (
-                  <a 
-                    href={`mailto:${f.recruiter_email}?subject=Inquiry: ${f.name} (via AML_DECODE)`}
-                    onClick={() => trackEmailClick(f.id)}
-                    className="p-3 bg-purple-600 hover:bg-purple-500 text-white rounded-xl transition-all shadow-lg shadow-purple-900/20 group/btn"
-                  >
-                    <svg className="w-5 h-5 group-hover/btn:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                    </svg>
-                  </a>
+                {/* DASHBOARD HEADER */}
+                <div className="relative p-8 rounded-3xl bg-[#0b1c2e]/80 border border-emerald-500/30 backdrop-blur-xl mb-8 overflow-hidden shadow-2xl">
+                  <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-600/5 blur-[100px] rounded-full"></div>
+                  <div className="relative z-10 flex flex-col md:flex-row justify-between items-center gap-6">
+                    <div className="space-y-2">
+                      <div className="inline-flex items-center gap-2 px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 rounded-full">
+                        <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-ping"></span>
+                        <span className="text-[9px] font-black text-emerald-500 uppercase tracking-widest">Authorized Access Only</span>
+                      </div>
+                      <h1 className="text-3xl font-black text-white uppercase tracking-tighter">
+                        HR <span className="text-emerald-500">Command Center</span>
+                      </h1>
+                      <p className="text-xs text-slate-400 font-mono">Terminal for verified partners to deploy referral intelligence.</p>
+                    </div>
+                    
+                    {isAuthorized && (
+                      <button 
+                        onClick={() => setIsAuthorized(false)}
+                        className="px-4 py-2 bg-red-500/10 border border-red-500/30 text-red-400 text-[10px] font-black uppercase rounded-lg hover:bg-red-500 hover:text-white transition-all"
+                      >
+                        Terminate Session
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                {/* AUTHENTICATION GATE */}
+                {!isAuthorized ? (
+                  <div className="bg-slate-900/40 border border-slate-800 p-10 rounded-[32px] max-w-md mx-auto shadow-2xl">
+                    <div className="space-y-6">
+                      <div className="space-y-2 text-center">
+                        <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Protocol Login</p>
+                        <h2 className="text-xl font-bold text-white">Identity Verification</h2>
+                      </div>
+                      <div className="space-y-4">
+                        <input 
+                          type="email" 
+                          placeholder="Partner Email" 
+                          value={email} 
+                          onChange={(e) => setEmail(e.target.value)} 
+                          className="w-full p-4 bg-black border border-slate-800 rounded-2xl text-white font-mono text-sm focus:border-emerald-500 outline-none transition-all" 
+                        />
+                        <input 
+                          type="password" 
+                          placeholder="Security Key" 
+                          value={password} 
+                          onChange={(e) => setPassword(e.target.value)} 
+                          className="w-full p-4 bg-black border border-slate-800 rounded-2xl text-white font-mono text-sm focus:border-emerald-500 outline-none transition-all" 
+                        />
+                        <button 
+                          onClick={async () => { 
+                            const { error } = await supabase.auth.signInWithPassword({ email, password }); 
+                            if (!error) setIsAuthorized(true); 
+                            else alert("ACCESS DENIED: Credentials Rejected."); 
+                          }} 
+                          className="w-full py-4 bg-emerald-600 hover:bg-emerald-500 text-black font-black uppercase tracking-widest text-xs rounded-2xl transition-all shadow-lg"
+                        >
+                          Verify Identity
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  /* AUTHORIZED UPLOAD PANEL */
+                  <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
+                    <div className="md:col-span-8 bg-slate-900/40 border border-slate-800 p-8 rounded-[32px] space-y-8">
+                      <div className="space-y-4">
+                        <h3 className="text-lg font-bold text-white flex items-center gap-3">
+                          <span className="h-6 w-1 bg-emerald-500 rounded-full"></span>
+                          Deploy Intelligence Node
+                        </h3>
+                        <div className="space-y-2">
+                          <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Assigned Recruiter Desk</label>
+                          <input 
+                            type="email" 
+                            placeholder="hr@firm.com" 
+                            value={recruiterEmail} 
+                            onChange={(e) => setRecruiterEmail(e.target.value)} 
+                            className="w-full p-4 bg-black border border-slate-800 rounded-2xl text-white font-mono text-sm focus:border-emerald-500 outline-none transition-all" 
+                          />
+                        </div>
+                        
+                        <div className="relative group">
+                          <input 
+                            type="file" 
+                            id="hrFileInput" 
+                            className="hidden" 
+                            onChange={(e) => {
+                              const file = e.target.files[0];
+                              if (file) {
+                                setSelectedFile(file);
+                                const display = document.getElementById('fileNameDisplay');
+                                if (display) display.innerText = `READY: ${file.name}`;
+                              }
+                            }} 
+                          />              
+                          <label htmlFor="hrFileInput" className="cursor-pointer block p-12 border-2 border-dashed border-slate-800 rounded-[24px] bg-black/40 text-center hover:border-emerald-500/50 transition-all group-hover:bg-emerald-500/5">
+                            <svg className="w-10 h-10 text-slate-600 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" /></svg>
+                            <p className="text-sm font-bold text-slate-400 uppercase tracking-widest">Select Intelligence File</p>
+                            <p id="fileNameDisplay" className="mt-4 text-emerald-500 text-xs font-mono font-black"></p>
+                          </label>
+                        </div>
+
+                        <button 
+                          disabled={isLoading || !selectedFile || !recruiterEmail} 
+                          onClick={async () => {
+                            try {
+                              setIsLoading(true);
+                              
+                              // 1. Generate a clean, unique path for the file inside your bucket
+                              const fileExt = selectedFile.name.split('.').pop();
+                              const fileName = `${Math.random()}.${fileExt}`;
+                              const filePath = `hr_uploads/${fileName}`;
+
+                              // 2. Upload the raw binary file to your Supabase Storage bucket named 'intelligence'
+                              const { error: uploadError } = await supabase.storage
+                                .from('intelligence')
+                                .upload(filePath, selectedFile);
+
+                              if (uploadError) throw uploadError;
+
+                              // 3. Retrieve the permanent public URL for the newly deployed asset
+                              const { data: { publicUrl } } = supabase.storage
+                                .from('intelligence')
+                                .getPublicUrl(filePath);
+
+                              // 4. Create a tracking reference log in your 'partner_files' database table
+                              const { error: dbError } = await supabase
+                                .from('partner_files')
+                                .insert([
+                                  { 
+                                    name: selectedFile.name, 
+                                    url: publicUrl, 
+                                    recruiter_email: recruiterEmail 
+                                  }
+                                ]);
+
+                              if (dbError) throw dbError;
+
+                              alert("DEPLOYMENT SUCCESSFUL: Intelligence Node synced with Network Stream.");
+                              
+                              // 5. Clean up local terminal states and sync views
+                              setSelectedFile(null);
+                              setRecruiterEmail("");
+                              const display = document.getElementById('fileNameDisplay');
+                              if (display) display.innerText = "";
+                              setActiveView('network');
+
+                            } catch (err) {
+                              console.error("Critical submission failure:", err);
+                              alert(`CRITICAL ERROR: Submission rejected. Reason: ${err.message || err}`);
+                            } finally {
+                              setIsLoading(false);
+                            }
+                          }} 
+                          className="w-full py-5 bg-emerald-600 hover:bg-emerald-500 text-black font-black uppercase tracking-[0.2em] text-xs rounded-2xl transition-all shadow-lg shadow-emerald-900/20 disabled:opacity-50"
+                        >
+                          {isLoading ? "TRANSMITTING DATA..." : "Execute Deployment"}
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* SIDEBAR ANALYTICS */}
+                    <div className="md:col-span-4 space-y-6">
+                      <div className="p-6 bg-black/60 border border-slate-800 rounded-[24px] space-y-4">
+                        <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Active Stats</h4>
+                        <div className="space-y-4">
+                          <div className="flex justify-between items-center">
+                            <span className="text-xs text-slate-400">Your Uploads</span>
+                            <span className="text-sm font-black text-emerald-400">{partnerFiles.length}</span>
+                          </div>
+                          <div className="flex justify-between items-center">
+                            <span className="text-xs text-slate-400">Global Reach</span>
+                            <span className="text-sm font-black text-purple-400">ACTIVE</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 )}
               </div>
+            )}
 
-              {/* Hover Glow Effect */}
-              <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
-            </div>
-          ))
-        ) : (
-          <div className="col-span-full py-20 text-center bg-slate-900/20 rounded-3xl border border-dashed border-slate-800">
-            <div className="mb-4 inline-block p-4 bg-slate-800/50 rounded-full text-slate-600">
-              <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-            </div>
-            <p className="text-slate-500 font-mono text-sm uppercase tracking-widest">No Intelligence Nodes Found in Current Stream</p>
-          </div>
-        )}
-      </div>
+            {activeView === 'network' && (
+              <div className="space-y-8 animate-view-entry max-w-7xl mx-auto pb-20 px-4 sm:px-6">
+                
+                {/* HUB HEADER: Neural Connection Theme */}
+                <div className="relative p-8 rounded-3xl bg-[#0b1c2e]/60 border border-purple-500/20 backdrop-blur-xl overflow-hidden shadow-2xl">
+                  <div className="absolute top-0 right-0 w-64 h-64 bg-purple-600/10 blur-[100px] rounded-full"></div>
+                  <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                    <div className="space-y-2">
+                      <div className="inline-flex items-center gap-2 px-3 py-1 bg-purple-500/10 border border-purple-500/30 rounded-full">
+                        <span className="h-1.5 w-1.5 rounded-full bg-purple-400 animate-ping"></span>
+                        <span className="text-[9px] font-black text-purple-400 uppercase tracking-[0.2em]">AML_DECODE</span>
+                      </div>
+                      <h1 className="text-3xl md:text-4xl font-black text-white tracking-tighter uppercase leading-none">
+                        Active <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-indigo-400">Network Jobs</span>
+                      </h1>
+                      <p className="text-xs text-slate-400 max-w-md font-medium leading-relaxed font-mono">
+                        Exclusive career nodes sourced directly from verified HR partners and internal network referrals.
+                      </p>
+                    </div>
+                    
+                    {/* NETWORK STATS BOX */}
+                    <div className="flex gap-4 p-4 bg-black/40 border border-white/5 rounded-2xl">
+                      <div className="text-center px-4 border-r border-white/10">
+                        <p className="text-[10px] font-black text-slate-500 uppercase">Available</p>
+                        <p className="text-xl font-black text-purple-400">{partnerFiles.length}</p>
+                      </div>
+                      <div className="text-center px-4">
+                        <p className="text-[10px] font-black text-slate-500 uppercase">Active</p>
+                        <p className="text-xl font-black text-emerald-400">LIVE</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
 
-    </div>
-  </div>
-)}
+                {/* MAIN CONTENT GRID */}
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                  
+                  {/* LEFT: INTERACTIVE FILTER */}
+                  <div className="hidden lg:block lg:col-span-3 space-y-6 sticky top-28">
+                    <div className="p-6 bg-slate-900/40 border border-slate-800 rounded-2xl space-y-4">
+                      <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Filter Stream</h3>
+                      <div className="space-y-2">
+                        {['All Jobs', 'HR Uploads', 'Referral Docs'].map((filter) => (
+                          <button key={filter} className="w-full text-left px-4 py-3 rounded-xl border border-transparent hover:border-purple-500/30 hover:bg-purple-500/5 text-xs font-bold text-slate-400 hover:text-purple-400 transition-all">
+                            {filter}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                    
+                    <div className="p-6 bg-gradient-to-br from-purple-900/20 to-indigo-900/20 border border-purple-500/10 rounded-2xl">
+                      <p className="text-[9px] font-black text-purple-400 uppercase mb-2">Notice</p>
+                      <p className="text-[11px] text-slate-400 italic leading-relaxed">
+                        Internal referral files are updated every 24 hours. Contact HR directly using the "Email HR" function.
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* RIGHT: DYNAMIC CARDS FEED */}
+                  <div className="lg:col-span-9 grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {partnerFiles.length > 0 ? (
+                      partnerFiles
+                        .sort((a, b) => {
+                          const aNew = isNewlyAdded(a.created_at) ? 1 : 0;
+                          const bNew = isNewlyAdded(b.created_at) ? 1 : 0;
+                          return bNew - aNew;
+                        })
+                        .map((f, i) => {
+                          const isNew = isNewlyAdded(f.created_at);
+                          return (
+                            <div 
+                              key={i} 
+                              className={`group relative p-6 bg-[#030712] border rounded-3xl transition-all duration-500 hover:shadow-[0_0_40px_rgba(168,85,247,0.15)] flex flex-col justify-between gap-8 overflow-hidden animate-slide-up
+                                ${isNew ? 'border-amber-500/60 shadow-[0_0_30px_rgba(245,158,11,0.15)] bg-amber-500/[0.01]' : 'border-slate-800 hover:border-purple-500/50'}`}
+                              style={{ animationDelay: `${i * 0.1}s` }}
+                            >
+                              {/* Background Accent Lines */}
+                              <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-purple-500/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                              
+                              <div className="space-y-4 relative z-10">
+                                <div className="flex justify-between items-start">
+                                  <div className="p-2.5 bg-purple-500/10 rounded-xl border border-purple-500/20">
+                                    <svg className="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                    </svg>
+                                  </div>
+                                  <div className="flex items-center gap-2">
+                                    {isNew && <span className="text-[8px] font-black bg-amber-500 text-black px-1.5 py-0.5 rounded tracking-widest animate-pulse">NEWLY ADDED</span>}
+                                    <span className="text-[9px] font-black text-slate-600 font-mono tracking-tighter uppercase">Entry_{i + 1004}</span>
+                                  </div>
+                                </div>
+
+                                <div>
+                                  <h3 className="text-lg font-bold text-white group-hover:text-purple-300 transition-colors leading-tight">
+                                    {f.name}
+                                  </h3>
+                                  {f.recruiter_email && (
+                                    <div className="mt-2 flex items-center gap-2">
+                                      <div className="h-1 w-1 rounded-full bg-emerald-500"></div>
+                                      <span className="text-[10px] text-purple-400 font-bold uppercase tracking-tight truncate">
+                                        Recruiter: {f.recruiter_email}
+                                      </span>
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+
+                              {/* ACTION ROW */}
+                              <div className="flex items-center gap-2 pt-4 border-t border-slate-800/50 relative z-10">
+                                <button 
+                                  onClick={() => window.open(f.url, '_blank')}
+                                  className="flex-grow py-3 px-4 bg-slate-900 border border-slate-800 hover:border-purple-500/50 text-slate-300 hover:text-white rounded-xl font-bold text-xs uppercase transition-all flex items-center justify-center gap-2"
+                                >
+                                  View Intel
+                                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
+                                </button>
+                                
+                                {f.recruiter_email && (
+                                  <a 
+                                    href={`mailto:${f.recruiter_email}?subject=Inquiry: ${f.name} (via AML_DECODE)`}
+                                    onClick={() => trackEmailClick(f.id)}
+                                    className="p-3 bg-purple-600 hover:bg-purple-500 text-white rounded-xl transition-all shadow-lg shadow-purple-900/20 group/btn"
+                                  >
+                                    <svg className="w-5 h-5 group-hover/btn:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                    </svg>
+                                  </a>
+                                )}
+                              </div>
+
+                              {/* Hover Glow Effect */}
+                              <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+                            </div>
+                          );
+                        })
+                    ) : (
+                      <div className="col-span-full py-20 text-center bg-slate-900/20 rounded-3xl border border-dashed border-slate-800">
+                        <div className="mb-4 inline-block p-4 bg-slate-800/50 rounded-full text-slate-600">
+                          <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                        </div>
+                        <p className="text-slate-500 font-mono text-sm uppercase tracking-widest">No Intelligence Nodes Found in Current Stream</p>
+                      </div>
+                    )}
+                  </div>
+
+                </div>
+              </div>
+            )}
 
             {/* --- UNIFIED ASSESSMENT TERMINAL --- */}
-            {/* --- UNIFIED ASSESSMENT TERMINAL (COMPACT RESPONSIVE FIX) --- */}
-{activeView === 'quiz' && (
-  <div className="flex flex-col h-[85vh] bg-[#030712] overflow-hidden rounded-3xl border border-emerald-500/20 shadow-2xl animate-view-entry">
-    
-    {/* PHASE 1: REGISTRATION GATE & CATEGORY SELECTOR */}
-    {!isTestStarted ? (
-      <div className="flex-grow flex flex-col items-center justify-center p-4 md:p-8 text-center bg-[radial-gradient(circle_at_center,rgba(16,185,129,0.1),transparent)] overflow-y-auto no-scrollbar">
-        <div className="space-y-2 mb-4 shrink-0">
-          <div className="inline-flex items-center gap-2 px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 rounded-full">
-            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-            <span className="text-[9px] font-black text-emerald-500 uppercase tracking-widest">System Readiness: 100%</span>
-          </div>
-          <h2 className="text-2xl md:text-4xl font-black text-white tracking-tighter uppercase leading-none">
-            Intelligence <br /> <span className="text-emerald-500">Assessment Portal</span>
-          </h2>
-        </div>
+            {activeView === 'quiz' && (
+              <div className="flex flex-col h-[85vh] bg-[#030712] overflow-hidden rounded-3xl border border-emerald-500/20 shadow-2xl animate-view-entry">
+                
+                {/* PHASE 1: REGISTRATION GATE & CATEGORY SELECTOR */}
+                {!isTestStarted ? (
+                  <div className="flex-grow flex flex-col items-center justify-center p-4 md:p-8 text-center bg-[radial-gradient(circle_at_center,rgba(16,185,129,0.1),transparent)] overflow-y-auto no-scrollbar">
+                    <div className="space-y-2 mb-4 shrink-0">
+                      <div className="inline-flex items-center gap-2 px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 rounded-full">
+                        <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                        <span className="text-[9px] font-black text-emerald-500 uppercase tracking-widest">System Readiness: 100%</span>
+                      </div>
+                      <h2 className="text-2xl md:text-4xl font-black text-white tracking-tighter uppercase leading-none">
+                        Intelligence <br /> <span className="text-emerald-500">Assessment Portal</span>
+                      </h2>
+                    </div>
 
-        {/* COMPACT CATEGORY SELECTOR LAYER */}
-        <div className="w-full max-w-sm space-y-2 shrink-0">
-          <p className="text-[9px] font-black text-slate-500 uppercase tracking-[0.2em]">Select Assessment Node</p>
-          <div className="grid grid-cols-1 gap-1.5">
-            {['KYC Basics', 'AML Advanced', 'Transaction Monitoring'].map((cat) => (
-              <button
-                key={cat}
-                onClick={() => setSelectedCategory(cat)}
-                className={`py-2.5 md:py-3 px-4 rounded-xl border font-bold transition-all uppercase text-[10px] md:text-xs tracking-wider
-                  ${selectedCategory === cat 
-                    ? "bg-emerald-500/20 border-emerald-500 text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.2)]" 
-                    : "bg-black/40 border-slate-800 text-slate-500 hover:border-slate-700"}`}
-              >
-                {cat}
-              </button>
-            ))}
-          </div>
-        </div>
+                    {/* COMPACT CATEGORY SELECTOR LAYER */}
+                    <div className="w-full max-w-sm space-y-2 shrink-0">
+                      <p className="text-[9px] font-black text-slate-500 uppercase tracking-[0.2em]">Select Assessment Node</p>
+                      <div className="grid grid-cols-1 gap-1.5">
+                        {['KYC Basics', 'AML Advanced', 'Transaction Monitoring'].map((cat) => (
+                          <button
+                            key={cat}
+                            onClick={() => setSelectedCategory(cat)}
+                            className={`py-2.5 md:py-3 px-4 rounded-xl border font-bold transition-all uppercase text-[10px] md:text-xs tracking-wider
+                              ${selectedCategory === cat 
+                                ? "bg-emerald-500/20 border-emerald-500 text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.2)]" 
+                                : "bg-black/40 border-slate-800 text-slate-500 hover:border-slate-700"}`}
+                          >
+                            {cat}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
 
-        {/* USER REGISTRATION & SUBMIT */}
-        <div className="w-full max-w-sm space-y-3 pt-4 shrink-0">
-          <input 
-            type="text" 
-            placeholder="ENTER FULL NAME" 
-            value={userName}
-            onChange={(e) => setUserName(e.target.value)}
-            className="w-full p-3.5 bg-black/60 border border-slate-800 rounded-xl text-white font-mono text-xs font-bold text-center placeholder:text-slate-600 focus:border-emerald-500 outline-none transition-all"
-          />
-          <button 
-            disabled={!userName.trim()}
-            onClick={async () => {
-              try {
-                const { error } = await supabase
-                  .from('assessment_logs')
-                  .insert([{ 
-                    full_name: userName, 
-                    category: selectedCategory, 
-                    started_at: new Date().toISOString() 
-                  }]);
-                if (!error) setIsTestStarted(true);
-                else console.error("Database Error:", error);
-              } catch (err) {
-                setIsTestStarted(true);
-              }
-            }}
-            className="w-full py-3.5 bg-emerald-600 hover:bg-emerald-500 disabled:bg-slate-800 disabled:text-slate-500 text-black font-black text-xs uppercase tracking-widest rounded-xl transition-all shadow-[0_0_20px_rgba(16,185,129,0.2)]"
-          >
-            Initialize {selectedCategory.split(' ')[0]} Test
-          </button>
-        </div>
-      </div>
-    ) : !isTestComplete ? (
-      /* PHASE 2: INTERACTIVE QUESTION ENGINE */
-      <div className="flex flex-col h-full animate-view-entry">
-        {/* Progress Tracker */}
-        <div className="p-4 md:p-6 bg-[#0b1c2e] border-b border-emerald-500/20 flex justify-between items-center shrink-0">
-          <div className="flex items-center gap-4">
-            <span className="text-[10px] font-black text-emerald-500 uppercase tracking-widest">
-              Node {currentQuestionIndex + 1} / {testData.length}
-            </span>
-            <div className="h-1 w-20 md:w-24 bg-slate-800 rounded-full overflow-hidden">
-              <div 
-                className="h-full bg-emerald-500 transition-all duration-500" 
-                style={{ width: `${testData.length > 0 ? ((currentQuestionIndex + 1) / testData.length) * 100 : 0}%` }}
-              ></div>
-            </div>
-          </div>
-          <div className="px-2.5 py-1 bg-emerald-500/10 border border-emerald-500/20 rounded text-[10px] font-bold text-emerald-400 uppercase">
-            Score: {quizScore}
-          </div>
-        </div>
+                    {/* USER REGISTRATION & SUBMIT */}
+                    <div className="w-full max-w-sm space-y-3 pt-4 shrink-0">
+                      <input 
+                        type="text" 
+                        placeholder="ENTER FULL NAME" 
+                        value={userName}
+                        onChange={(e) => setUserName(e.target.value)}
+                        className="w-full p-3.5 bg-black/60 border border-slate-800 rounded-xl text-white font-mono text-xs font-bold text-center placeholder:text-slate-600 focus:border-emerald-500 outline-none transition-all"
+                      />
+                      <button 
+                        disabled={!userName.trim()}
+                        onClick={async () => {
+                          try {
+                            const { error } = await supabase
+                              .from('assessment_logs')
+                              .insert([{ 
+                                full_name: userName, 
+                                category: selectedCategory, 
+                                started_at: new Date().toISOString() 
+                              }]);
+                            if (!error) setIsTestStarted(true);
+                            else console.error("Database Error:", error);
+                          } catch (err) {
+                            setIsTestStarted(true);
+                          }
+                        }}
+                        className="w-full py-3.5 bg-emerald-600 hover:bg-emerald-500 disabled:bg-slate-800 disabled:text-slate-500 text-black font-black text-xs uppercase tracking-widest rounded-xl transition-all shadow-[0_0_20px_rgba(16,185,129,0.2)]"
+                      >
+                        Initialize {selectedCategory.split(' ')[0]} Test
+                      </button>
+                    </div>
+                  </div>
+                ) : !isTestComplete ? (
+                  /* PHASE 2: INTERACTIVE QUESTION ENGINE */
+                  <div className="flex flex-col h-full animate-view-entry">
+                    {/* Progress Tracker */}
+                    <div className="p-4 md:p-6 bg-[#0b1c2e] border-b border-emerald-500/20 flex justify-between items-center shrink-0">
+                      <div className="flex items-center gap-4">
+                        <span className="text-[10px] font-black text-emerald-500 uppercase tracking-widest">
+                          Node {currentQuestionIndex + 1} / {testData.length}
+                        </span>
+                        <div className="h-1 w-20 md:w-24 bg-slate-800 rounded-full overflow-hidden">
+                          <div 
+                            className="h-full bg-emerald-500 transition-all duration-500" 
+                            style={{ width: `${testData.length > 0 ? ((currentQuestionIndex + 1) / testData.length) * 100 : 0}%` }}
+                          ></div>
+                        </div>
+                      </div>
+                      <div className="px-2.5 py-1 bg-emerald-500/10 border border-emerald-500/20 rounded text-[10px] font-bold text-emerald-400 uppercase">
+                        Score: {quizScore}
+                      </div>
+                    </div>
 
-        {/* Question Area */}
-        <div className="flex-grow flex flex-col justify-center p-4 md:p-12 overflow-y-auto custom-scrollbar">
-          <div key={currentQuestionIndex} className="max-w-xl mx-auto w-full space-y-6 animate-slide-up">
-            <h3 className="text-base md:text-xl font-bold text-white leading-snug text-center md:text-left">
-              {testData[currentQuestionIndex]?.question}
-            </h3>
-            <div className="space-y-2.5">
-              {testData[currentQuestionIndex]?.options.map((opt, i) => {
-                const isSelected = selectedOption === opt;
-                const isLocked = !!selectedOption;
-                const isCorrect = opt === testData[currentQuestionIndex].correct_answer;
+                    {/* Question Area */}
+                    <div className="flex-grow flex flex-col justify-center p-4 md:p-12 overflow-y-auto custom-scrollbar">
+                      <div key={currentQuestionIndex} className="max-w-xl mx-auto w-full space-y-6 animate-slide-up">
+                        <h3 className="text-base md:text-xl font-bold text-white leading-snug text-center md:text-left">
+                          {testData[currentQuestionIndex]?.question}
+                        </h3>
+                        <div className="space-y-2.5">
+                          {testData[currentQuestionIndex]?.options.map((opt, i) => {
+                            const isSelected = selectedOption === opt;
+                            const isLocked = !!selectedOption;
+                            const isCorrect = opt === testData[currentQuestionIndex].correct_answer;
 
-                let btnStyle = "border-slate-800 bg-black/40 text-slate-400 hover:border-emerald-500/50";
-                if (isSelected) {
-                  btnStyle = isCorrect ? "border-emerald-500 bg-emerald-500/20 text-emerald-400 shadow-md" : "border-red-500 bg-red-500/20 text-red-400";
-                }
+                            let btnStyle = "border-slate-800 bg-black/40 text-slate-400 hover:border-emerald-500/50";
+                            if (isSelected) {
+                              btnStyle = isCorrect ? "border-emerald-500 bg-emerald-500/20 text-emerald-400 shadow-md" : "border-red-500 bg-red-500/20 text-red-400";
+                            }
 
-                return (
-                  <button
-                    key={i}
-                    disabled={isLocked}
-                    onClick={() => {
-                      setSelectedOption(opt);
-                      if (opt === testData[currentQuestionIndex].correct_answer) setQuizScore(prev => prev + 10);
-                    }}
-                    className={`w-full text-left p-4 rounded-xl border font-bold text-xs md:text-sm transition-all transform active:scale-[0.99] ${btnStyle}`}
-                  >
-                    {opt}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        </div>
+                            return (
+                              <button
+                                key={i}
+                                disabled={isLocked}
+                                onClick={() => {
+                                  setSelectedOption(opt);
+                                  if (opt === testData[currentQuestionIndex].correct_answer) setQuizScore(prev => prev + 10);
+                                }}
+                                className={`w-full text-left p-4 rounded-xl border font-bold text-xs md:text-sm transition-all transform active:scale-[0.99] ${btnStyle}`}
+                              >
+                                {opt}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    </div>
 
-        {/* Footer Nav */}
-        <div className="p-4 bg-[#0b1c2e]/50 border-t border-emerald-500/10 flex justify-end shrink-0">
-          {selectedOption && (
-            <button
-              onClick={() => {
-                if (currentQuestionIndex < testData.length - 1) {
-                  setCurrentQuestionIndex(prev => prev + 1);
-                  setSelectedOption(null);
-                } else {
-                  setIsTestComplete(true);
-                }
-              }}
-              className="px-6 py-3 bg-emerald-600 hover:bg-emerald-500 text-black font-black text-xs uppercase tracking-widest rounded-xl transition-all shadow-lg"
-            >
-              {currentQuestionIndex === testData.length - 1 ? "FINALIZE RESULTS" : "NEXT NODE →"}
-            </button>
-          )}
-        </div>
-      </div>
-    ) : (
-      /* PHASE 3: FINAL RESULTS & TAGGING */
-      <div className="flex-grow flex flex-col items-center justify-center p-6 text-center space-y-6 overflow-y-auto no-scrollbar">
-        <div className="bg-slate-900 border-2 border-emerald-500/30 p-6 rounded-full w-36 h-36 flex flex-col items-center justify-center shadow-2xl shrink-0">
-          <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-0.5">Final Score</p>
-          <p className="text-4xl font-black text-white leading-none">{quizScore}</p>
-        </div>
+                    {/* Footer Nav */}
+                    <div className="p-4 bg-[#0b1c2e]/50 border-t border-emerald-500/10 flex justify-end shrink-0">
+                      {selectedOption && (
+                        <button
+                          onClick={() => {
+                            if (currentQuestionIndex < testData.length - 1) {
+                              setCurrentQuestionIndex(prev => prev + 1);
+                              setSelectedOption(null);
+                            } else {
+                              setIsTestComplete(true);
+                            }
+                          }}
+                          className="px-6 py-3 bg-emerald-600 hover:bg-emerald-500 text-black font-black text-xs uppercase tracking-widest rounded-xl transition-all shadow-lg"
+                        >
+                          {currentQuestionIndex === testData.length - 1 ? "FINALIZE RESULTS" : "NEXT NODE →"}
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                ) : (
+                  /* PHASE 3: FINAL RESULTS & TAGGING */
+                  <div className="flex-grow flex flex-col items-center justify-center p-6 text-center space-y-6 overflow-y-auto no-scrollbar">
+                    <div className="bg-slate-900 border-2 border-emerald-500/30 p-6 rounded-full w-36 h-36 flex flex-col items-center justify-center shadow-2xl shrink-0">
+                      <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-0.5">Final Score</p>
+                      <p className="text-4xl font-black text-white leading-none">{quizScore}</p>
+                    </div>
 
-        <div className="space-y-2 shrink-0">
-          <h2 className="text-xl md:text-2xl font-black text-white uppercase tracking-tighter">
-            Expertise: <br />
-            <span className={quizScore >= 400 ? "text-emerald-400" : quizScore >= 250 ? "text-indigo-400" : "text-amber-500"}>
-              {quizScore >= 400 ? "DEPTH KNOWLEDGE" : quizScore >= 250 ? "AVERAGE KNOWLEDGE" : "IMPROVEMENT NEEDED"}
-            </span>
-          </h2>
-          <p className="text-slate-400 text-xs max-w-xs mx-auto italic">
-            Assessment complete for {userName}. Record logged in Portal.
-          </p>
-        </div>
+                    <div className="space-y-2 shrink-0">
+                      <h2 className="text-xl md:text-2xl font-black text-white uppercase tracking-tighter">
+                        Expertise: <br />
+                        <span className={quizScore >= 400 ? "text-emerald-400" : quizScore >= 250 ? "text-indigo-400" : "text-amber-500"}>
+                          {quizScore >= 400 ? "DEPTH KNOWLEDGE" : quizScore >= 250 ? "AVERAGE KNOWLEDGE" : "IMPROVEMENT NEEDED"}
+                        </span>
+                      </h2>
+                      <p className="text-slate-400 text-xs max-w-xs mx-auto italic">
+                        Assessment complete for {userName}. Record logged in Portal.
+                      </p>
+                    </div>
 
-        <button 
-          onClick={async () => {
-            try {
-              await supabase.from('assessment_logs').update({ 
-                final_score: quizScore, 
-                expertise_tag: quizScore >= 400 ? "Depth" : quizScore >= 250 ? "Average" : "Improvement",
-                completed_at: new Date().toISOString() 
-              }).eq('full_name', userName);
-            } catch (err) {
-              console.error("Final Save Failed");
-            }
-            setIsTestStarted(false); 
-            setIsTestComplete(false); 
-            setCurrentQuestionIndex(0); 
-            setQuizScore(0); 
-            setUserName("");
-          }}
-          className="px-8 py-4 bg-white text-black font-black text-xs uppercase tracking-widest rounded-xl hover:bg-emerald-500 transition-all shadow-xl shrink-0"
-        >
-          Submit & Close Terminal
-        </button>
-      </div>
-    )}
-  </div>
-)}
+                    <button 
+                      onClick={async () => {
+                        try {
+                          await supabase.from('assessment_logs').update({ 
+                            final_score: quizScore, 
+                            expertise_tag: quizScore >= 400 ? "Depth" : quizScore >= 250 ? "Average" : "Improvement",
+                            completed_at: new Date().toISOString() 
+                          }).eq('full_name', userName);
+                        } catch (err) {
+                          console.error("Final Save Failed");
+                        }
+                        setIsTestStarted(false); 
+                        setIsTestComplete(false); 
+                        setCurrentQuestionIndex(0); 
+                        setQuizScore(0); 
+                        setUserName("");
+                      }}
+                      className="px-8 py-4 bg-white text-black font-black text-xs uppercase tracking-widest rounded-xl hover:bg-emerald-500 transition-all shadow-xl shrink-0"
+                    >
+                      Submit & Close Terminal
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
             
             {activeView === 'privacy' && (
               <div className="p-8 bg-slate-900 border border-slate-800 rounded animate-view-entry">
@@ -1942,18 +1924,18 @@ export default function App() {
 
             <div className="flex items-center gap-8">
               {/* LinkedIn Icon Link */}
-              <a href="" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-[#0077b5] transition-all duration-300 transform hover:scale-135 hover:rotate-6">
+              <a href="" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-[#0077b5] transition-all duration-300 transform scale-100 hover:scale-110">
                 <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.761 0 5-2.239 5-5v-14c0-2.761-2.239-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
               </a>
 
               {/* Twitter Icon Link */}
-              <a href="" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-white transition-all duration-300 transform hover:scale-135 hover:-rotate-6">
+              <a href="" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-white transition-all duration-300 transform scale-100 hover:scale-110">
                 <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/></svg>
               </a>
 
               {/* Instagram Icon Link */}
-              <a href="" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-[#e4405f] transition-all duration-300 transform hover:scale-135 hover:rotate-12">
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 1.173.055 1.805.249 2.227.415.563.22.964.482 1.385.904.422.421.684.822.904 1.385.166.422.36 1.054.415 2.227.058 1.266.07 1.646.07 4.85s-.012 3.584-.07 4.85c-.055 1.173-.249 1.805-.415 2.227-.22.563-.482.964-.904 1.385-.421.421-.822.684-1.385.904-.422.166-1.054.36-2.227.415-1.266.058-1.646.07-4.85.07s-3.584-.012-4.85-.07c-1.173-.055-1.805-.249-2.227-.415-.563-.22-.964-.482-1.385-.904-.421-.421-.684-.822-.904-1.385-.166-.422-.36-1.054-.415-2.227-.058-1.266-.07-1.646-.07-4.85s.012-3.584.07-4.85c.055-1.173.249-1.805.415-2.227.22-.563.482-.964.904-1.385.421-.421.822-.684 1.385-.904.422-.166 1.054-.36 2.227-.415 1.266-.058 1.646-.07 4.85-.07zm0 1.442c-3.136 0-3.509.012-4.75.068-1.077.05-1.662.23-2.052.383-.518.201-.887.44-1.275.828s-.627.757-.828 1.275c-.153.39-.333.975-.383 2.052-.056 1.241-.068 1.614-.068 4.75s.012 3.509.068 4.75c.05 1.077.23 1.662.383 2.052.201.518.44.887.828 1.275s.757.627 1.275.828c.39.153.975.333 2.052.383 1.241.056 1.614.068 4.75.068s3.509-.012 4.75-.068c1.077-.05 1.662-.23 2.052-.383.518-.201.887-.44 1.275-.828s.627-.757.828-1.275c.153-.39.333-.975.383-2.052.056-1.241.068-1.614.068-4.75s-.012-3.509-.068-4.75c-.05-1.077-.23-1.662-.383-2.052-.201-.518-.44-.887-.828-1.275s-.757-.627-1.275-.828c-.39-.153-.975-.333-2.052-.383-1.241-.056-1.614-.068-4.75-.068zm0 3.64a4.755 4.755 0 1 0 0 9.51 4.755 4.755 0 0 0 0-9.51zm0 1.442a3.313 3.313 0 1 1 0 6.626 3.313 3.313 0 0 1 0-6.626zm5.35-4.832a1.11 1.11 0 1 1-2.22 0 1.11 1.11 0 0 1 2.22 0z"/></svg>
+              <a href="" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-[#e4405f] transition-all duration-300 transform scale-100 hover:scale-110">
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 1.173.055 1.805.249 2.227.415.563.22.964.482 1.385.904.422.421.684.822.904 1.385.166.422.36 1.054.415 2.227.058 1.266.07 1.646.07 4.85s-.012 3.584-.07 4.85c-.055 1.173-.249 1.805-.415 2.227-.22.563-.482.964-.904 1.385-.421.421-.822.684-1.385.904-.422.166-1.054.36-2.227.415-1.266.058-1.646.07-4.85.07s-3.584-.012-4.85-.07c-1.173-.055-1.805-.249-2.227-.415-.563-.22-.964-.482-1.385-.904-.421-.421-.684-.822-.904-1.385-.166-.422-.36-1.054-.415-2.227-.058-1.266-.07-1.646-.07-4.85s.012-3.584.07-4.85c.055-1.173.249-1.805.415-2.227.22-.563.482-.964.904-1.385.421-.421.822-.684 1.385-.904.422-.166 1.11 0 1.11 0z"/></svg>
               </a>
             </div>
           </div>
