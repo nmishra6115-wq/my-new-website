@@ -1,6 +1,6 @@
 export const jobOpenings = [
   // Bengaluru
-    { company: "Transak", role: "Senior Analyst / Analyst, KYB Operations", location: "Bengaluru", link: "https://careers.transak.com/p/2d3a30cb7a1501-senior-analyst-analyst-kyb-operations" },
+    { company: "Transak", role: "Senior Analyst / Analyst, KYB Operations", location: "Bengaluru", link: "https://careers.transak.com/p/2d3a30cb7a1501-senior-analyst-analyst-kyb-operations" ,createdAt: "2026-06-06" },
     { company: "Payoneer", role: "RFI Risk Analyst", location: "Bengaluru", link: "https://www.payoneer.com/careers/position/7410549/?gh_jid=7410549&gh_src=11e459421" ,createdAt: "2026-06-06" }, // ✓ CORRECT: Strict straight quotes},
     { company: "JPMorgan Chase Bank", role: "Financial Crime Operations Associate", location: "Bengaluru", link: "https://jpmc.fa.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1001/job/210751287" ,createdAt: "2026-06-06" }, // ✓ CORRECT: Strict straight quotes},
 
