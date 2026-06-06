@@ -2,220 +2,224 @@ import React, { useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
-// Register ScrollTrigger lifecycle plugin
 gsap.registerPlugin(ScrollTrigger);
 
 const CinematicHero = () => {
-  const sectionRef = useRef(null);
-  const canvasRef = useRef(null);
-  const mouseRef = useRef({ x: 0, y: 0, targetX: 0, targetY: 0 });
+  const containerRef = useRef(null);
+  const matrixCanvasRef = useRef(null);
+  const perspectiveWrapperRef = useRef(null);
 
   useEffect(() => {
-    // 1. LIVE PARALLAX POINTER TRACKING
-    const handleMouseMove = (e) => {
-      mouseRef.current.targetX = e.clientX;
-      mouseRef.current.targetY = e.clientY;
-    };
-    window.addEventListener('mousemove', handleMouseMove);
+    // 1. IMMERSIVE PERSPECTIVE TRACKING (Mouse Tilt)
+    const handleSpatialTilt = (e) => {
+      const { clientX, clientY } = e;
+      const moveX = (clientX - window.innerWidth / 2) / (window.innerWidth / 2);
+      const moveY = (clientY - window.innerHeight / 2) / (window.innerHeight / 2);
 
-    // 2. TIMELINE MASTER CONTROL: EXTENDED 3D DEPTH HAND-OFF
+      // Tilts the entire central architecture in 3D space based on mouse physics
+      gsap.to(perspectiveWrapperRef.current, {
+        rotateY: moveX * 12,
+        rotateX: -moveY * 12,
+        duration: 0.8,
+        ease: "power2.out"
+      });
+
+      // Ambient counter-drift for background depth
+      gsap.to(matrixCanvasRef.current, {
+        x: -moveX * 25,
+        y: -moveY * 25,
+        duration: 1.2,
+        ease: "power1.out"
+      });
+    };
+
+    window.addEventListener('mousemove', handleSpatialTilt);
+
+    // 2. THE CHRONO-SCROLL HORIZON WARP (Timeline)
     const scrollTl = gsap.timeline({
       scrollTrigger: {
-        trigger: sectionRef.current,
+        trigger: containerRef.current,
         start: "top top",
-        end: "+=120%", 
+        end: "+=130%",
         pin: true,
-        pinSpacing: false, 
-        scrub: 1, 
+        pinSpacing: false,
+        scrub: 1.2,
       }
     });
 
-    // Anamorphic focus fade: scales text down, increases track spacing, and blurs outward like a lens defocusing
-    scrollTl.to(".hero-core-moving-wrapper", {
-      scale: 0.85,
-      letterSpacing: "0.3em",
-      filter: "blur(8px)",
-      y: -140,
-      opacity: 0,
-      duration: 1,
-      ease: "power2.inOut"
-    }, 0);
+    scrollTl
+      // Compress track spacing while pulling elements away in Z-depth
+      .to(".cinematic-core-title", {
+        transformPerspective: 1200,
+        rotateX: 45, // Tilts backward into the screen horizon
+        scale: 0.65,
+        letterSpacing: "-0.05em",
+        filter: "blur(12px)",
+        opacity: 0,
+        y: -100,
+        duration: 1,
+        ease: "power2.inOut"
+      }, 0)
+      // The bridge component stretches down into the grid canvas as it vanishes
+      .to(".cinematic-bridge-tag", {
+        scaleY: 1.5,
+        letterSpacing: "0.5em",
+        opacity: 0,
+        y: 80,
+        duration: 0.8,
+        ease: "power1.in"
+      }, 0)
+      // Background space grid collapses inward toward the center focus point
+      .to(matrixCanvasRef.current, {
+        opacity: 0,
+        scale: 0.8,
+        duration: 1,
+        ease: "power2.inOut"
+      }, 0);
 
-    // Fades ambient flare elements cleanly out of scope
-    scrollTl.to(".cinematic-anamorphic-flare", {
-      opacity: 0,
-      scaleX: 0,
-      duration: 0.7,
-      ease: "power1.in"
-    }, 0);
-
-    // Smooth camera fade out on the background network lines
-    scrollTl.to(canvasRef.current, {
-      opacity: 0,
-      scale: 1.1,
-      duration: 1,
-      ease: "power1.inOut"
-    }, 0);
-
-    // 3. DYNAMIC INTERACTIVE NEURAL ENGINE CANVAS
-    const canvas = canvasRef.current;
+    // 3. FLUID DATA NET BACKGROUND (Canvas Engine)
+    const canvas = matrixCanvasRef.current;
     const ctx = canvas.getContext('2d');
-    let nodes = [];
-    
-    const resize = () => {
+    let dynamicStreams = [];
+
+    const adjustCanvasFrames = () => {
       canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight; 
+      canvas.height = window.innerHeight;
     };
 
-    const initNodes = () => {
-      nodes = Array.from({ length: 45 }, () => ({
+    const buildTelemetryClusters = () => {
+      dynamicStreams = Array.from({ length: 25 }, () => ({
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
-        baseX: Math.random() * canvas.width,
-        baseY: Math.random() * canvas.height,
-        vx: (Math.random() - 0.5) * 0.3,
-        vy: (Math.random() - 0.5) * 0.3,
-        size: Math.random() * 1.5 + 1
+        length: Math.random() * 120 + 60,
+        speed: Math.random() * 1.5 + 0.5,
+        opacity: Math.random() * 0.4 + 0.1,
+        width: Math.random() * 1.5 + 0.5
       }));
     };
 
-    const draw = () => {
+    const drawTelemetryHorizon = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      // Structural target crosshair background guidelines
+      ctx.strokeStyle = 'rgba(251, 191, 36, 0.03)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(canvas.width / 2, 0); ctx.lineTo(canvas.width / 2, canvas.height);
+      ctx.moveTo(0, canvas.height / 2); ctx.lineTo(canvas.width, canvas.height / 2);
+      ctx.stroke();
 
-      // Smooth mouse interpolation logic
-      const m = mouseRef.current;
-      m.x += (m.targetX - m.x) * 0.08;
-      m.y += (m.targetY - m.y) * 0.08;
-
-      nodes.forEach((node, i) => {
-        // Continuous linear vector float
-        node.x += node.vx;
-        node.y += node.vy;
-
-        // Interactive gravity field: nodes drift slightly toward the cursor position
-        if (m.x > 0 && m.y > 0) {
-          const dx = m.x - node.x;
-          const dy = m.y - node.y;
-          const distToMouse = Math.hypot(dx, dy);
-          if (distToMouse < 250) {
-            const force = (250 - distToMouse) / 250;
-            node.x += (dx / distToMouse) * force * 0.6;
-            node.y += (dy / distToMouse) * force * 0.6;
-          }
+      // Rendering structural light vectors flowing vertically downwards
+      dynamicStreams.forEach((stream) => {
+        stream.y += stream.speed;
+        if (stream.y > canvas.height) {
+          stream.y = -stream.length;
+          stream.x = Math.random() * canvas.width;
         }
 
-        // Boundary reflection collision checks
-        if (node.x < 0 || node.x > canvas.width) node.vx *= -1;
-        if (node.y < 0 || node.y > canvas.height) node.vy *= -1;
+        const gradient = ctx.createLinearGradient(stream.x, stream.y, stream.x, stream.y + stream.length);
+        gradient.addColorStop(0, 'transparent');
+        gradient.addColorStop(0.5, `rgba(251, 191, 36, ${stream.opacity})`);
+        gradient.addColorStop(1, 'transparent');
 
-        // Draw core node cluster points
-        ctx.fillStyle = 'rgba(251, 191, 36, 0.65)'; 
-        ctx.beginPath(); 
-        ctx.arc(node.x, node.y, node.size, 0, Math.PI * 2); 
-        ctx.fill();
-
-        // Connect proximity data vector paths
-        for (let j = i + 1; j < nodes.length; j++) {
-          const dist = Math.hypot(node.x - nodes[j].x, node.y - nodes[j].y);
-          if (dist < 160) {
-            ctx.strokeStyle = `rgba(251, 191, 36, ${0.28 * (1 - dist / 160)})`;
-            ctx.lineWidth = 0.8; 
-            ctx.beginPath(); 
-            ctx.moveTo(node.x, node.y); 
-            ctx.lineTo(nodes[j].x, nodes[j].y); 
-            ctx.stroke();
-          }
-        }
+        ctx.strokeStyle = gradient;
+        ctx.lineWidth = stream.width;
+        ctx.beginPath();
+        ctx.moveTo(stream.x, stream.y);
+        ctx.lineTo(stream.x, stream.y + stream.length);
+        ctx.stroke();
       });
-  
-      requestAnimationFrame(draw);
+
+      requestAnimationFrame(drawTelemetryHorizon);
     };
 
-    window.addEventListener('resize', resize);
-    resize(); initNodes(); draw();
+    window.addEventListener('resize', adjustCanvasFrames);
+    adjustCanvasFrames(); buildTelemetryClusters(); drawTelemetryHorizon();
 
-    // 4. PRE-SET RECURSIVE SHUTTER PILLARS CYCLE
-    const tl = gsap.timeline({ repeat: -1, yoyo: true, repeatDelay: 2.0 });
-    tl.to(".reveal-pillar", {
-      scaleY: 0,
+    // 4. CHRONO SEQUENTIAL GRID PARTITION TRIGGER
+    const revealTl = gsap.timeline({ repeat: -1, yoyo: true, repeatDelay: 2.5 });
+    revealTl.to(".cinematic-grid-blade", {
+      scaleX: 0,
       opacity: 0,
-      duration: 1.6,
-      ease: "expo.inOut",
-      stagger: { amount: 1.2, from: "center" }
+      duration: 1.4,
+      ease: "power4.inOut",
+      stagger: { amount: 0.8, from: "start" }
     });
 
     return () => {
-      window.removeEventListener('resize', resize);
-      window.removeEventListener('mousemove', handleMouseMove);
-      ScrollTrigger.getAll().forEach(t => t.kill()); 
+      window.removeEventListener('resize', adjustCanvasFrames);
+      window.removeEventListener('mousemove', handleSpatialTilt);
+      ScrollTrigger.getAll().forEach(t => t.kill());
     };
   }, []);
 
   return (
-    <div className="hero-visual-container relative w-full h-[100vh] overflow-hidden bg-[#02050d]" ref={sectionRef}>
+    <div 
+      className="hero-visual-container relative w-full h-[100vh] overflow-hidden bg-[#01040a] flex flex-col justify-between" 
+      ref={containerRef}
+      style={{ perspective: '1000px' }}
+    >
       
-      {/* SCOPE OVERLAY LAYER 1: CRT SCANLINES & INTERFERENCE GLITCH */}
-      <div className="absolute inset-0 z-20 pointer-events-none opacity-[0.03] bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[size:100%_4px,6px_100%]" />
+      {/* BACKGROUND GRAPH VECTORS */}
+      <canvas ref={matrixCanvasRef} className="absolute inset-0 z-0 pointer-events-none opacity-50 scale-105" />
 
-      {/* SCOPE OVERLAY LAYER 2: CINEMATIC NOISE GRAIN */}
-      <div className="absolute inset-0 z-20 pointer-events-none opacity-[0.015] bg-[radial-gradient(#fff_1px,transparent_1px)] bg-[size:24px_24px] mix-blend-overlay" />
+      {/* STRATIFIED VIEWPORT INTERFERENCE FRAMES */}
+      <div className="absolute inset-x-0 top-0 h-[20vh] bg-gradient-to-b from-[#01040a] to-transparent z-20 pointer-events-none" />
+      <div className="absolute inset-x-0 bottom-0 h-[25vh] bg-gradient-to-t from-[#030712] to-transparent z-20 pointer-events-none" />
 
-      {/* Background Matrix Canvas */}
-      <canvas ref={canvasRef} className="absolute inset-0 opacity-[0.35] pointer-events-none z-0 scale-105" />
-
-      {/* Main Focus Container Field */}
-      <div className="absolute inset-0 flex flex-col items-center justify-center z-10">
+      {/* THE 3D MOVEMENT CANVAS */}
+      <div 
+        ref={perspectiveWrapperRef} 
+        className="absolute inset-0 flex flex-col items-center justify-center z-10 w-full h-full"
+        style={{ transformStyle: 'preserve-3d' }}
+      >
         
-        {/* LIGHT ARTIFACT: Anamorphic Horizontal Flare Element */}
-        <div className="cinematic-anamorphic-flare absolute w-[120vw] h-[1px] bg-gradient-to-r from-transparent via-amber-500/40 to-transparent blur-[2px] z-0 pointer-events-none transform -rotate-1 translate-y-[-20px] scale-x-110" />
-        <div className="cinematic-anamorphic-flare absolute w-[70vw] h-[4px] bg-gradient-to-r from-transparent via-amber-400/20 to-transparent blur-[6px] z-0 pointer-events-none transform -rotate-1 translate-y-[-20px]" />
-
-        {/* CORE ACTION MODULE OVERLAY BOX */}
-        <div className="hero-core-moving-wrapper flex flex-col items-center justify-center text-center relative z-10 select-none px-4">
+        <div className="hero-core-moving-wrapper flex flex-col items-center justify-center text-center relative select-none">
           
-          {/* Main Hero Title Typography: Dual Layer Depth shadows */}
+          {/* COLOSSAL ARCHITECTURAL TYPOGRAPHY */}
           <h1 
-            className="hero-brand-text font-black text-6xl md:text-8xl tracking-[0.18em] leading-[1.1] transition-all duration-300 relative select-none uppercase text-transparent bg-clip-text bg-gradient-to-b from-[#fffbf0] via-[#fbbf24]/70 to-[#92400e]/30"
+            className="cinematic-core-title font-black text-7xl md:text-9xl tracking-[-0.02em] leading-[0.9] text-transparent bg-clip-text bg-gradient-to-b from-white via-slate-200 to-slate-500"
             style={{ 
-              filter: 'drop-shadow(0 0 12px rgba(251, 191, 36, 0.15)) drop-shadow(0 20px 40px rgba(0,0,0,0.7))',
-              willChange: 'transform, filter, letter-spacing'
+              filter: 'blur(0.2px) drop-shadow(0 30px 60px rgba(0,0,0,0.9))',
+              transformStyle: 'preserve-3d'
             }}
           >
-            DECODE<br/>COMPLIANCE
+            DECODE<br/>
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-amber-200 to-amber-500 font-extrabold tracking-[0.04em]">
+              COMPLIANCE
+            </span>
           </h1>
 
-          {/* Connected Bridge Tag Unit */}
-          <div className="scroll-explore-arrow flex flex-col items-center gap-2 mt-12 pointer-events-none">
-            <span className="text-[9px] font-black text-amber-400/90 uppercase tracking-[0.35em] bg-[#040a17]/90 px-5 py-2.5 border border-amber-500/20 rounded-full backdrop-blur-xl shadow-[0_20px_40px_rgba(0,0,0,0.6)] relative overflow-hidden group">
-              <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full animate-data-stream" style={{ animationDuration: '3s' }} />
+          {/* SUSPENDED INTERACTIVE CONTROLLER REVEALER */}
+          <div className="cinematic-bridge-tag flex flex-col items-center gap-3 mt-16 pointer-events-none">
+            <div className="text-[10px] font-bold text-amber-500 uppercase tracking-[0.45em] bg-black/40 px-6 py-3 border border-amber-500/10 rounded-xl backdrop-blur-md shadow-2xl relative overflow-hidden">
               Explore Learning
-            </span>
-            <div className="flex flex-col items-center opacity-70">
-              <svg className="w-4 h-4 text-amber-500 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-              </svg>
+              <div className="absolute bottom-0 left-0 h-[1px] w-full bg-gradient-to-r from-transparent via-amber-400 to-transparent animate-pulse" />
             </div>
+            <svg className="w-4 h-4 text-amber-500 opacity-60 animate-bounce mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M19 13l-7 7m0 0l-7-7m7 7V3" />
+            </svg>
           </div>
 
         </div>
 
       </div>
 
-      {/* High-Fidelity Mechanical Shutter Pillars */}
-      <div className="pillar-wrapper absolute inset-0 z-30 pointer-events-none mix-blend-luminosity">
-        {[...Array(24)].map((_, i) => (
+      {/* HORIZONTAL SYSTEM PARTITIONS SHUTTER BLADES */}
+      <div className="absolute inset-0 z-30 pointer-events-none flex flex-col h-full w-full">
+        {[...Array(6)].map((_, i) => (
           <div 
             key={i} 
-            className="reveal-pillar border-r bg-[#02050d] border-amber-500/[0.04]"
+            className="cinematic-grid-blade flex-grow w-full bg-[#01040a] border-b border-white/[0.01] origin-left"
             style={{ 
-              boxShadow: 'inset -1px 0 0 rgba(0, 0, 0, 0.8), 1px 0 0 rgba(255, 255, 255, 0.01)'
-            }} 
+              boxShadow: '0 4px 30px rgba(0, 0, 0, 0.4)'
+            }}
           />
         ))}
       </div>
 
-      {/* Atmospheric Perimeter Vignette & Bottom Depth Shield */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_30%,rgba(2,5,13,0.7)_80%),linear-gradient(to_bottom,rgba(2,5,13,0.4)_0%,transparent_30%,transparent_70%,#030712_100%)] z-20 pointer-events-none" />
+      {/* AMBIENT SCREEN EDGE TINT */}
+      <div className="absolute inset-0 border-[24px] border-[#01040a] z-40 pointer-events-none opacity-40 mix-blend-multiply" />
     </div>
   );
 };
