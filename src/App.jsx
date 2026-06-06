@@ -937,7 +937,7 @@ export default function App() {
               </div>
             )}
             
-            {activeView === 'jobs' && (
+           {activeView === 'jobs' && (
               <div className="space-y-12 animate-view-entry max-w-6xl mx-auto pb-20">
                 
                 {/* HEADER TERMINAL NODES */}
@@ -973,87 +973,7 @@ export default function App() {
                   </div>
                 </div>
 
-                {/* STREAM 1: SECURE DIRECT PATHWAYS */}
-                <div className="space-y-4">
-                  <div className="flex items-center gap-3 px-2">
-                    <div className="h-2 w-2 rounded-full bg-purple-500 animate-ping"></div>
-                    <h2 className="text-xs font-black text-purple-400 uppercase tracking-[0.25em]">Direct Recruiter Streams &amp; Referrals</h2>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    
-                    {/* A. HR DASHBOARD UPLOADS FEED */}
-                    {partnerFiles
-                      .filter(f => selectedLocation === 'All' || f.name.toLowerCase().includes(selectedLocation.toLowerCase()))
-                      .sort((a, b) => {
-                        const aNew = isNewlyAdded(a.created_at) ? 1 : 0;
-                        const bNew = isNewlyAdded(b.created_at) ? 1 : 0;
-                        return bNew - aNew;
-                      })
-                      .map((f, i) => {
-                        const isNew = isNewlyAdded(f.created_at);
-                        return (
-                          <div key={`partner-${i}`} className={`group relative p-6 bg-slate-900/30 border rounded-2xl backdrop-blur-md transition-all duration-300 flex flex-col justify-between gap-6 ${isNew ? 'border-amber-500/60 shadow-[0_0_20px_rgba(245,158,11,0.1)] bg-amber-500/[0.02]' : 'border-purple-500/20 hover:border-purple-500/50 hover:shadow-[0_0_25px_rgba(147,51,234,0.1)]'}`}>
-                            <div>
-                              <div className="flex justify-between items-start mb-2 gap-2">
-                                <div className="flex flex-wrap items-center gap-2">
-                                  <span className="text-[9px] font-black text-purple-400 bg-purple-500/10 border border-purple-500/20 px-2 py-0.5 rounded uppercase tracking-widest">Verified Profile Document</span>
-                                  {isNew && <span className="text-[8px] font-black bg-amber-500 text-black px-1.5 py-0.5 rounded tracking-widest animate-pulse">NEWLY ADDED</span>}
-                                </div>
-                                <span className="text-[10px] text-slate-600 font-bold font-mono shrink-0">ID: {f.id?.slice(0,8) || 'SYSTEM'}</span>
-                              </div>
-                              <h3 className="text-base font-bold text-slate-100 group-hover:text-purple-300 transition-colors">{f.name}</h3>
-                              {f.recruiter_email && (
-                                <p className="text-xs text-slate-500 mt-1 font-mono truncate">Desk: {f.recruiter_email}</p>
-                              )}
-                            </div>
-                            <div className="grid grid-cols-2 gap-2 pt-2 border-t border-slate-800/60">
-                              <button onClick={() => window.open(f.url, '_blank')} className="py-2.5 bg-black/40 border border-slate-800 text-slate-400 hover:text-white hover:border-slate-700 rounded-xl transition-all font-bold text-xs uppercase tracking-wider">
-                                View Document
-                              </button>
-                              {f.recruiter_email && (
-                                <a href={`mailto:${f.recruiter_email}?subject=Inquiry regarding Compliance Placement`} onClick={() => trackEmailClick(f.id)} className="py-2.5 bg-purple-600 hover:bg-purple-500 text-white text-center rounded-xl font-bold text-xs uppercase tracking-wider transition-all shadow-md shadow-purple-900/30">
-                                  Email HR Desk
-                                </a>
-                              )}
-                            </div>
-                          </div>
-                        );
-                      })}
-
-                    {/* B. PEER REFERRAL SUBMISSIONS FEED */}
-                    {submissions
-                      .sort((a, b) => {
-                        const aNew = isNewlyAdded(a.created_at) ? 1 : 0;
-                        const bNew = isNewlyAdded(b.created_at) ? 1 : 0;
-                        return bNew - aNew;
-                      })
-                      .map((sub, i) => {
-                        const isNew = isNewlyAdded(sub.created_at);
-                        return (
-                          <div key={`sub-${i}`} className={`group relative p-6 bg-slate-900/30 border rounded-2xl backdrop-blur-md transition-all duration-300 flex flex-col justify-between gap-6 ${isNew ? 'border-amber-500/60 shadow-[0_0_20px_rgba(245,158,11,0.1)] bg-amber-500/[0.02]' : 'border-emerald-500/20 hover:border-emerald-500/50 hover:shadow-[0_0_25px_rgba(16,185,129,0.1)]'}`}>
-                            <div>
-                              <div className="flex justify-between items-start mb-2">
-                                <div className="flex items-center gap-2">
-                                  <span className="text-[9px] font-black text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded uppercase tracking-widest">Active Peer Referral</span>
-                                  {isNew && <span className="text-[8px] font-black bg-amber-500 text-black px-1.5 py-0.5 rounded tracking-widest animate-pulse">NEWLY ADDED</span>}
-                                </div>
-                                <span className="text-[10px] text-slate-600 font-bold font-mono">READY</span>
-                              </div>
-                              <h3 className="text-lg font-bold text-slate-100">{sub.role || 'Compliance Professional'}</h3>
-                              <p className="text-xs text-emerald-400 font-bold uppercase tracking-tight mt-1">{sub.company || 'Top Tier Firm'}</p>
-                              <p className="text-xs text-slate-500 mt-2">Submitted by: <span className="text-slate-300 font-medium">{sub.name}</span></p>
-                            </div>
-                            <a href={`mailto:${sub.email}?subject=AML/KYC Internal Referral Channel`} className="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-black text-center rounded-xl font-black text-xs uppercase tracking-widest transition-all shadow-md shadow-emerald-900/20">
-                              Request Referral
-                            </a>
-                          </div>
-                        );
-                      })}
-                  </div>
-                </div>
-
-                {/* STREAM 2: CORE ECOSYSTEM OPENINGS */}
+                {/* STREAM ENGINE: CORE ECOSYSTEM OPENINGS (Exclusively Local VS Code jobOpenings Data) */}
                 <div className="space-y-4">
                   <div className="flex items-center gap-3 px-2 pt-4">
                     <div className="h-2 w-2 rounded-full bg-indigo-500 animate-pulse"></div>
