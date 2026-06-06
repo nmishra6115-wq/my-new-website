@@ -13,7 +13,5 @@ export const jobOpenings = [
   // Mumbai
   { company: "Teamware Solution", role: "KYC Analyst", location: "Bengaluru", link: "https://sl1nk.com/zmhv6q5" },
 
-    { company: "ADWEALTH STOCK BROKING PVT. LTD.", role: " KYC Analyst", location: "Kolkata", link: "https://l1nq.com/kv10br6" },
-      { company: "EvonTech", role: "AML Analyst", location: "Remote", link: "send email to ethi.sharma@evontech.com" },
   
 ];
