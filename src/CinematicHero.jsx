@@ -6,197 +6,129 @@ gsap.registerPlugin(ScrollTrigger);
 
 const CinematicHero = () => {
   const containerRef = useRef(null);
-  const matrixCanvasRef = useRef(null);
-  const perspectiveWrapperRef = useRef(null);
+  const viewportRef = useRef(null);
 
   useEffect(() => {
-    // 1. IMMERSIVE PERSPECTIVE TRACKING (Mouse Tilt)
-    const handleSpatialTilt = (e) => {
-      const { clientX, clientY } = e;
-      const moveX = (clientX - window.innerWidth / 2) / (window.innerWidth / 2);
-      const moveY = (clientY - window.innerHeight / 2) / (window.innerHeight / 2);
+    // 1. THE RECURSIVE DIRECTORS TIMELINE
+    const directorTl = gsap.timeline({
+      scrollTrigger: {
+        trigger: containerRef.current,
+        start: "top top",
+        end: "+=150%", // Long tracking shot depth
+        pin: true,
+        pinSpacing: false, // Smooth transition handover
+        scrub: 1, // Locks camera velocity directly to trackpad fingers
+      }
+    });
 
-      // Tilts the entire central architecture in 3D space based on mouse physics
-      gsap.to(perspectiveWrapperRef.current, {
-        rotateY: moveX * 12,
-        rotateX: -moveY * 12,
+    directorTl
+      // Frame 1: Focus pull. The text drifts forward, spreading its characters outward
+      .to(".camera-text-primary", {
+        z: 300,
+        scale: 1.4,
+        letterSpacing: "0.4em",
+        filter: "blur(10px)",
+        opacity: 0,
+        duration: 1,
+        ease: "power2.in"
+      }, 0)
+      // Frame 2: The anchor line is crushed under the acceleration of the camera tracking past it
+      .to(".camera-text-secondary", {
+        z: 150,
+        scale: 1.1,
+        letterSpacing: "0.25em",
+        filter: "blur(6px)",
+        opacity: 0,
         duration: 0.8,
-        ease: "power2.out"
-      });
+        ease: "power2.in"
+      }, 0.1)
+      // Frame 3: The interface gate flares open as the camera slices through the tracking marker lines
+      .to(".hud-vector-blade-left", { x: "-60vw", opacity: 0, duration: 0.9, ease: "expo.inOut" }, 0)
+      .to(".hud-vector-blade-right", { x: "60vw", opacity: 0, duration: 0.9, ease: "expo.inOut" }, 0)
+      // Frame 4: Ambient volumetric smoke and noise variables dissolve
+      .to(".cinematic-atmosphere-layer", {
+        opacity: 0,
+        background: "rgba(3, 7, 18, 1)", // Dims into clean background space
+        duration: 1
+      }, 0);
 
-      // Ambient counter-drift for background depth
-      gsap.to(matrixCanvasRef.current, {
-        x: -moveX * 25,
-        y: -moveY * 25,
-        duration: 1.2,
+    // 2. PARALLAX DRIFT (Subtle structural inertia mimicking a camera crane movement)
+    const runCameraSway = (e) => {
+      const scaleX = (e.clientX - window.innerWidth / 2) / window.innerWidth;
+      const scaleY = (e.clientY - window.innerHeight / 2) / window.innerHeight;
+
+      gsap.to(".cinematic-camera-lens-rig", {
+        x: scaleX * 45,
+        y: scaleY * 45,
+        rotationY: scaleX * 8,
+        rotationX: -scaleY * 8,
+        duration: 1.5,
         ease: "power1.out"
       });
     };
 
-    window.addEventListener('mousemove', handleSpatialTilt);
-
-    // 2. THE CHRONO-SCROLL HORIZON WARP (Timeline)
-    const scrollTl = gsap.timeline({
-      scrollTrigger: {
-        trigger: containerRef.current,
-        start: "top top",
-        end: "+=130%",
-        pin: true,
-        pinSpacing: false,
-        scrub: 1.2,
-      }
-    });
-
-    scrollTl
-      // Compress track spacing while pulling elements away in Z-depth
-      .to(".cinematic-core-title", {
-        transformPerspective: 1200,
-        rotateX: 45, // Tilts backward into the screen horizon
-        scale: 0.65,
-        letterSpacing: "-0.05em",
-        filter: "blur(12px)",
-        opacity: 0,
-        y: -100,
-        duration: 1,
-        ease: "power2.inOut"
-      }, 0)
-      // The bridge component stretches down into the grid canvas as it vanishes
-      .to(".cinematic-bridge-tag", {
-        scaleY: 1.5,
-        letterSpacing: "0.5em",
-        opacity: 0,
-        y: 80,
-        duration: 0.8,
-        ease: "power1.in"
-      }, 0)
-      // Background space grid collapses inward toward the center focus point
-      .to(matrixCanvasRef.current, {
-        opacity: 0,
-        scale: 0.8,
-        duration: 1,
-        ease: "power2.inOut"
-      }, 0);
-
-    // 3. FLUID DATA NET BACKGROUND (Canvas Engine)
-    const canvas = matrixCanvasRef.current;
-    const ctx = canvas.getContext('2d');
-    let dynamicStreams = [];
-
-    const adjustCanvasFrames = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    };
-
-    const buildTelemetryClusters = () => {
-      dynamicStreams = Array.from({ length: 25 }, () => ({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        length: Math.random() * 120 + 60,
-        speed: Math.random() * 1.5 + 0.5,
-        opacity: Math.random() * 0.4 + 0.1,
-        width: Math.random() * 1.5 + 0.5
-      }));
-    };
-
-    const drawTelemetryHorizon = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      
-      // Structural target crosshair background guidelines
-      ctx.strokeStyle = 'rgba(251, 191, 36, 0.03)';
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.moveTo(canvas.width / 2, 0); ctx.lineTo(canvas.width / 2, canvas.height);
-      ctx.moveTo(0, canvas.height / 2); ctx.lineTo(canvas.width, canvas.height / 2);
-      ctx.stroke();
-
-      // Rendering structural light vectors flowing vertically downwards
-      dynamicStreams.forEach((stream) => {
-        stream.y += stream.speed;
-        if (stream.y > canvas.height) {
-          stream.y = -stream.length;
-          stream.x = Math.random() * canvas.width;
-        }
-
-        const gradient = ctx.createLinearGradient(stream.x, stream.y, stream.x, stream.y + stream.length);
-        gradient.addColorStop(0, 'transparent');
-        gradient.addColorStop(0.5, `rgba(251, 191, 36, ${stream.opacity})`);
-        gradient.addColorStop(1, 'transparent');
-
-        ctx.strokeStyle = gradient;
-        ctx.lineWidth = stream.width;
-        ctx.beginPath();
-        ctx.moveTo(stream.x, stream.y);
-        ctx.lineTo(stream.x, stream.y + stream.length);
-        ctx.stroke();
-      });
-
-      requestAnimationFrame(drawTelemetryHorizon);
-    };
-
-    window.addEventListener('resize', adjustCanvasFrames);
-    adjustCanvasFrames(); buildTelemetryClusters(); drawTelemetryHorizon();
-
-    // 4. CHRONO SEQUENTIAL GRID PARTITION TRIGGER
-    const revealTl = gsap.timeline({ repeat: -1, yoyo: true, repeatDelay: 2.5 });
-    revealTl.to(".cinematic-grid-blade", {
-      scaleX: 0,
-      opacity: 0,
-      duration: 1.4,
-      ease: "power4.inOut",
-      stagger: { amount: 0.8, from: "start" }
-    });
-
+    window.addEventListener('mousemove', runCameraSway);
     return () => {
-      window.removeEventListener('resize', adjustCanvasFrames);
-      window.removeEventListener('mousemove', handleSpatialTilt);
+      window.removeEventListener('mousemove', runCameraSway);
       ScrollTrigger.getAll().forEach(t => t.kill());
     };
   }, []);
 
   return (
     <div 
-      className="hero-visual-container relative w-full h-[100vh] overflow-hidden bg-[#01040a] flex flex-col justify-between" 
-      ref={containerRef}
-      style={{ perspective: '1000px' }}
+      ref={containerRef} 
+      className="relative w-full h-[100vh] bg-[#02040a] overflow-hidden flex items-center justify-center select-none"
+      style={{ perspective: '1200px' }}
     >
       
-      {/* BACKGROUND GRAPH VECTORS */}
-      <canvas ref={matrixCanvasRef} className="absolute inset-0 z-0 pointer-events-none opacity-50 scale-105" />
+      {/* ATMOSPHERIC LAYER 1: ANAMORPHIC FLARES AND VOLUMETRIC GRAIN */}
+      <div className="cinematic-atmosphere-layer absolute inset-0 z-10 pointer-events-none transition-all duration-300 bg-[radial-gradient(circle_at_center,rgba(251,191,36,0.06)_0%,transparent_70%)] mix-blend-screen" />
+      <div className="absolute inset-0 z-20 pointer-events-none bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.4)_50%)] bg-[size:100%_4px] opacity-20" />
 
-      {/* STRATIFIED VIEWPORT INTERFERENCE FRAMES */}
-      <div className="absolute inset-x-0 top-0 h-[20vh] bg-gradient-to-b from-[#01040a] to-transparent z-20 pointer-events-none" />
-      <div className="absolute inset-x-0 bottom-0 h-[25vh] bg-gradient-to-t from-[#030712] to-transparent z-20 pointer-events-none" />
+      {/* HORIZONTAL ANAMORPHIC STREAK ARTIFACT */}
+      <div className="absolute top-[48vh] inset-x-0 h-[2px] bg-gradient-to-r from-transparent via-amber-500/30 to-transparent blur-[1px] z-10 pointer-events-none transform -rotate-1" />
 
-      {/* THE 3D MOVEMENT CANVAS */}
+      {/* DYNAMIC CAM RIG ENGINE CONTAINER */}
       <div 
-        ref={perspectiveWrapperRef} 
-        className="absolute inset-0 flex flex-col items-center justify-center z-10 w-full h-full"
+        ref={viewportRef}
+        className="cinematic-camera-lens-rig absolute inset-0 flex flex-col items-center justify-center w-full h-full z-10"
         style={{ transformStyle: 'preserve-3d' }}
       >
         
-        <div className="hero-core-moving-wrapper flex flex-col items-center justify-center text-center relative select-none">
+        {/* STRUCTURAL CORE GRAPH TRACKING LINES */}
+        <div className="absolute w-[450px] h-[450px] border border-amber-500/[0.03] rounded-full z-0 pointer-events-none animate-spin-slow" />
+        <div className="absolute w-[650px] h-[650px] border border-dashed border-amber-500/[0.015] rounded-full z-0 pointer-events-none animate-spin-reverse" />
+
+        <div className="hero-core-moving-wrapper flex flex-col items-center justify-center text-center relative" style={{ transformStyle: 'preserve-3d' }}>
           
-          {/* COLOSSAL ARCHITECTURAL TYPOGRAPHY */}
+          {/* CAMERA TEXT ELEMENT 1: PRIMARY MATRIX STRING */}
           <h1 
-            className="cinematic-core-title font-black text-7xl md:text-9xl tracking-[-0.02em] leading-[0.9] text-transparent bg-clip-text bg-gradient-to-b from-white via-slate-200 to-slate-500"
+            className="camera-text-primary font-black text-7xl md:text-9xl tracking-[0.15em] leading-none text-transparent bg-clip-text bg-gradient-to-b from-white via-slate-300 to-slate-600 mb-2 uppercase"
             style={{ 
-              filter: 'blur(0.2px) drop-shadow(0 30px 60px rgba(0,0,0,0.9))',
-              transformStyle: 'preserve-3d'
+              filter: 'drop-shadow(0 20px 50px rgba(0,0,0,0.9))',
+              willChange: 'transform, filter, opacity, letter-spacing'
             }}
           >
-            DECODE<br/>
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-amber-200 to-amber-500 font-extrabold tracking-[0.04em]">
-              COMPLIANCE
-            </span>
+            DECODE
           </h1>
 
-          {/* SUSPENDED INTERACTIVE CONTROLLER REVEALER */}
-          <div className="cinematic-bridge-tag flex flex-col items-center gap-3 mt-16 pointer-events-none">
-            <div className="text-[10px] font-bold text-amber-500 uppercase tracking-[0.45em] bg-black/40 px-6 py-3 border border-amber-500/10 rounded-xl backdrop-blur-md shadow-2xl relative overflow-hidden">
-              Explore Learning
-              <div className="absolute bottom-0 left-0 h-[1px] w-full bg-gradient-to-r from-transparent via-amber-400 to-transparent animate-pulse" />
-            </div>
-            <svg className="w-4 h-4 text-amber-500 opacity-60 animate-bounce mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          {/* CAMERA TEXT ELEMENT 2: SECONDARY FOCUS ANCHOR */}
+          <h2 
+            className="camera-text-secondary font-extrabold text-3xl md:text-5xl tracking-[0.4em] text-transparent bg-clip-text bg-gradient-to-r from-amber-500 via-amber-200 to-amber-600 uppercase pl-[0.4em]"
+            style={{ 
+              filter: 'drop-shadow(0 10px 20px rgba(251,191,36,0.15))',
+              willChange: 'transform, filter, opacity, letter-spacing'
+            }}
+          >
+            COMPLIANCE
+          </h2>
+
+          {/* BRIDGE UNIT SIGNIFIER */}
+          <div className="scroll-explore-arrow flex flex-col items-center gap-2 mt-16 opacity-40">
+            <span className="text-[9px] font-black text-amber-400 uppercase tracking-[0.4em] bg-black/60 px-5 py-2.5 border border-white/5 rounded-full backdrop-blur-md">
+              Start Learning
+            </span>
+            <svg className="w-4 h-4 text-amber-500 animate-bounce mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M19 13l-7 7m0 0l-7-7m7 7V3" />
             </svg>
           </div>
@@ -205,21 +137,20 @@ const CinematicHero = () => {
 
       </div>
 
-      {/* HORIZONTAL SYSTEM PARTITIONS SHUTTER BLADES */}
-      <div className="absolute inset-0 z-30 pointer-events-none flex flex-col h-full w-full">
-        {[...Array(6)].map((_, i) => (
-          <div 
-            key={i} 
-            className="cinematic-grid-blade flex-grow w-full bg-[#01040a] border-b border-white/[0.01] origin-left"
-            style={{ 
-              boxShadow: '0 4px 30px rgba(0, 0, 0, 0.4)'
-            }}
-          />
-        ))}
+      {/* HISTORIC HUD MECHANICAL GATE BLADES */}
+      <div className="absolute inset-y-0 left-0 w-[50vw] bg-gradient-to-r from-[#02040a] via-[#02040a]/95 to-transparent z-30 hud-vector-blade-left pointer-events-none border-r border-amber-500/[0.02]" />
+      <div className="absolute inset-y-0 right-0 w-[50vw] bg-gradient-to-l from-[#02040a] via-[#02040a]/95 to-transparent z-30 hud-vector-blade-right pointer-events-none border-l border-amber-500/[0.02]" />
+
+      {/* MATRIX FRAME BOUNDARY BARS */}
+      <div className="absolute top-0 inset-x-0 h-12 bg-[#02040a] z-40 border-b border-white/[0.02] flex items-center px-8 justify-between text-[8px] tracking-[0.25em] text-slate-600 font-bold font-mono">
+        <span></span>
+        <span></span>
+      </div>
+      <div className="absolute bottom-0 inset-x-0 h-12 bg-[#02040a] z-40 border-t border-white/[0.02] flex items-center px-8 justify-between text-[8px] tracking-[0.25em] text-slate-600 font-bold font-mono">
+        <span></span>
+        <span></span>
       </div>
 
-      {/* AMBIENT SCREEN EDGE TINT */}
-      <div className="absolute inset-0 border-[24px] border-[#01040a] z-40 pointer-events-none opacity-40 mix-blend-multiply" />
     </div>
   );
 };
