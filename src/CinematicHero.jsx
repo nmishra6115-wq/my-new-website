@@ -197,12 +197,12 @@ const CinematicHero = () => {
             COMPLIANCE
           </h2>
 
-          {/* SUSPENDED INTERFACE BRIDGE علامت */}
+          {/* SUSPENDED INTERFACE BRIDGE */}
           <div className="scroll-explore-arrow flex flex-col items-center gap-2.5 mt-20 opacity-40">
             <span className="text-[9px] font-black text-amber-400 uppercase tracking-[0.4em] bg-black/50 px-6 py-3 border border-white/5 rounded-full backdrop-blur-md relative overflow-hidden">
               Start Learning
               <div className="absolute bottom-0 left-0 h-[1px] w-full bg-gradient-to-r from-transparent via-amber-400 to-transparent" />
-            </div>
+            </span>
             <svg className="w-4 h-4 text-amber-500 animate-bounce mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M19 13l-7 7m0 0l-7-7m7 7V3" />
             </svg>
