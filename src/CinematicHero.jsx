@@ -64,7 +64,7 @@ const CinematicHero = () => {
         <div className="cartoon-title-block lg:col-span-7 space-y-6 text-center lg:text-left order-2 lg:order-1">
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-500/10 border-2 border-emerald-500/30 rounded-full">
             <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="text-[11px] font-black tracking-widest text-emerald-400 uppercase">Interactive Terminal Live</span>
+            <span className="text-[11px] font-black tracking-widest text-emerald-400 uppercase"></span>
           </div>
 
           <h1 className="text-5xl md:text-7xl font-black tracking-tight leading-none text-white uppercase select-none">
@@ -87,23 +87,24 @@ const CinematicHero = () => {
         </div>
 
         {/* RIGHT COLUMN: THE CARTOON CHARACTER ANIMATION STAGE */}
-        <div className="cartoon-character-stage lg:col-span-5 flex justify-center order-1 lg:order-2 relative group">
-          
-          {/* Decorative Glowing Backdrop Frame */}
-          <div className="absolute inset-0 bg-gradient-to-tr from-emerald-500/20 to-amber-500/20 rounded-full filter blur-xl scale-95 opacity-50 group-hover:opacity-80 transition-opacity duration-500" />
-          
-          {/* THE CARTOON CHARACTER PLAYER FRAME */}
-          <div className="w-full max-w-[380px] md:max-w-[450px] relative z-10 transition-transform duration-500 group-hover:scale-105">
-            <Player
-              autoplay
-              loop
-              // High-fidelity, open-source compliance/investigation vector character json asset
-              src="https://lottie.host/1715456b-fbd5-42a1-bdc2-f1d2df0f6580/QY6M8v12uA.json"
-              style={{ width: '100%', height: 'auto' }}
-            />
-          </div>
+    {/* RIGHT COLUMN: THE CARTOON CHARACTER ANIMATION STAGE */}
+<div className="cartoon-character-stage lg:col-span-5 flex justify-center order-1 lg:order-2 relative group min-h-[350px] min-w-[300px]">
+  
+  {/* Decorative Glowing Backdrop Frame */}
+  <div className="absolute inset-0 bg-gradient-to-tr from-emerald-500/10 to-amber-500/10 rounded-full filter blur-2xl scale-95 opacity-60 group-hover:opacity-80 transition-opacity duration-500" />
+  
+  {/* THE CARTOON CHARACTER PLAYER FRAME - Hardcoded sizing to prevent rendering collapse */}
+  <div className="w-[320px] h-[320px] md:w-[420px] md:h-[420px] relative z-10 flex items-center justify-center transition-transform duration-500 group-hover:scale-105">
+    <Player
+      autoplay
+      loop
+      src="https://lottie.host/1715456b-fbd5-42a1-bdc2-f1d2df0f6580/QY6M8v12uA.json"
+      className="w-full h-full object-contain"
+      style={{ width: '100%', height: '100%' }}
+    />
+  </div>
 
-        </div>
+</div>
 
       </div>
 
