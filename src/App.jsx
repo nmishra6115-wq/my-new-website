@@ -20,7 +20,7 @@ function QuizItem({ item, onCorrect }) {
   const isCorrect = selected === item.correct_answer;
 
   return (
-    <div className={`mb-12 p-8 bg-white/[0.01] border transition-all duration-500 rounded-lg ${isLocked ? (isCorrect ? 'border-amber-500 shadow-[0_0_30px_rgba(251,191,36,0.05)]' : 'border-red-500/30') : 'border-white/5'}`}>
+    <div className={`mb-12 p-8 bg-white/[0.01] border transition-all duration-500 rounded-xl ${isLocked ? (isCorrect ? 'border-amber-500 shadow-[0_0_30px_rgba(251,191,36,0.1)]' : 'border-red-500/30') : 'border-white/5'}`}>
       
       {/* 1. Question Header: Bold and Professional */}
       <div className="pb-6 border-b border-white/[0.05]">
@@ -45,7 +45,7 @@ function QuizItem({ item, onCorrect }) {
               
               let buttonStyle = "border-white/10 bg-transparent text-slate-300 hover:border-amber-400/40";
               if (isLocked) {
-                if (isThisCorrect) buttonStyle = "border-amber-500 bg-amber-500/5 text-amber-400";
+                if (isCorrect && isThisCorrect) buttonStyle = "border-amber-500 bg-amber-500/10 text-amber-400";
                 else if (isThisSelected && !isThisCorrect) buttonStyle = "border-red-500/40 bg-red-500/5 text-red-400";
                 else buttonStyle = "border-white/5 bg-transparent text-slate-600 opacity-40";
               }
@@ -130,7 +130,7 @@ function SubscribeModal() {
         <button onClick={handleClose} className="absolute top-4 right-4 text-slate-500 hover:text-white transition-colors p-1">✕</button>
         
         <div className="space-y-2">
-          <h2 className="text-3xl font-light text-white tracking-tight uppercase font-serif">Stay Updated</h2>
+          <h2 className="text-2xl font-light text-white tracking-tight uppercase font-serif">Stay Updated</h2>
           <p className="text-slate-400 text-sm leading-relaxed font-medium">
             Subscribe to get daily AML/KYC job alerts from Bengaluru, Kolkata, and beyond directly in your inbox.
           </p>
@@ -226,8 +226,6 @@ export default function App() {
         .from('partner_files')
         .update({ click_count: (currentData?.click_count || 0) + 1 })
         .eq('id', fileId);
-        
-      console.log(`Analytics: Click logged for file ID ${fileId}`);
     } catch (err) {
       console.error("Analytics error:", err);
     }
@@ -277,42 +275,21 @@ export default function App() {
   return (
     <div className="text-slate-200 font-sans min-h-screen flex flex-col relative bg-[#040712] antialiased">
       
-      {/* HIGH-END MINIMALIST BRAND NAVBAR HEADER */}
+      {/* HIGH-END MINIMAL TOP NAVBAR */}
       <nav className="sticky top-0 left-0 w-full z-50 bg-[#040712]/70 backdrop-blur-xl border-b border-white/[0.01]">
         <div className="max-w-7xl mx-auto px-8 md:px-16 h-24 flex items-center justify-between">
-          
           <div onClick={() => setActiveView(null)} className="cursor-pointer">
-            <img 
-              src="/logo.png" 
-              alt="AML_DECODE Logo" 
-              className="h-5 w-auto object-contain mix-blend-difference filter brightness-105" 
-            />
+            <img src="/logo.png" alt="AML_DECODE Logo" className="h-5 w-auto object-contain" />
           </div>
 
           <div className="hidden lg:flex items-center gap-10 font-bold text-[11px] tracking-[0.3em] uppercase text-slate-400">
-            {/* Split map handles original array allocations into agency structural headings */}
             {navItems.slice(0, 2).map((item) => (
               <button key={item.id} onClick={() => setActiveView(item.id)} className={`transition-colors ${activeView === item.id ? "text-amber-400" : "hover:text-white"}`}>{item.label}</button>
             ))}
             {navItems.slice(5, 7).map((item) => (
               <button key={item.id} onClick={() => setActiveView(item.id)} className={`transition-colors ${activeView === item.id ? "text-amber-400" : "hover:text-white"}`}>{item.label}</button>
             ))}
-            <button
-              onClick={() => {
-                setActiveView(null); 
-                setTimeout(() => {
-                  const element = document.getElementById('career-guidance');
-                  if (element) {
-                    element.scrollIntoView({ behavior: 'smooth' });
-                    setHighlightCareer(true);
-                    setTimeout(() => setHighlightCareer(false), 4000);
-                  }
-                }, 100);
-              }}
-              className="hover:text-white transition-colors"
-            >
-              Career Guidance
-            </button>
+            <button onClick={() => { setActiveView(null); setTimeout(() => { document.getElementById('career-guidance')?.scrollIntoView({ behavior: 'smooth' }); }, 100); }} className="hover:text-white transition-colors">Career Guidance</button>
             <div className="relative group cursor-pointer">
               <span className="hover:text-white flex items-center gap-1.5 transition-colors">Pipelines</span>
               <div className="absolute top-full right-0 w-56 bg-slate-950 border border-white/5 rounded-xl py-2 mt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all shadow-3xl">
@@ -329,24 +306,24 @@ export default function App() {
         </div>
       </nav>
 
-      {/* MOBILE RESPONSIVE LAYER SHEET MENU */}
+      {/* MOBILE MENU SHEET */}
       {isMenuOpen && (
-        <div className="lg:hidden fixed inset-0 z-[100] bg-[#040712] flex flex-col p-12 justify-center space-y-6 animate-fade-in">
-          <button onClick={() => setIsMenuOpen(false)} className="absolute top-10 right-10 text-white text-2xl p-2">✕</button>
+        <div className="lg:hidden fixed inset-0 z-[100] bg-[#040712] flex flex-col p-10 justify-center space-y-6 animate-fade-in">
+          <button onClick={() => setIsMenuOpen(false)} className="absolute top-8 right-8 text-white text-2xl p-2">✕</button>
           {navItems.map((item) => (
             <button key={item.id} onClick={() => setActiveView(item.id) || setIsMenuOpen(false)} className="text-3xl font-serif text-left uppercase text-white hover:text-amber-400 transition-colors">{item.label}</button>
           ))}
         </div>
       )}
 
-      {/* CORE TOP-DOWN WEBSITE CONTAINER STACK FLOW */}
+      {/* TOP-DOWN LAYOUT FLOW VIEWPORT */}
       {!activeView && (
         <main className="flex-grow w-full">
           <CinematicHero />
 
           <section className="max-w-7xl mx-auto px-8 md:px-16 py-36 space-y-36 bg-[#040712]">
             
-            {/* ASYMMETRIC TEXT COMPOSITION BLOCK: EX-ESSAY LAYER REBUILD */}
+            {/* NOBL HOVER STRUCTURE: ASYMMETRIC CONTENT BLOCK */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-start">
               <div className="lg:col-span-4 sticky top-40 space-y-4">
                 <span className="text-[10px] font-bold tracking-[0.4em] text-amber-500 uppercase block">Capabilities // Case Study</span>
@@ -358,8 +335,7 @@ export default function App() {
 
               <div className="lg:col-span-8 space-y-12">
                 <p className="text-xl md:text-2xl font-serif font-light text-slate-200 leading-relaxed max-w-3xl">
-                  "A cross-border corporate payment originating from an offshore tech hub is flagged by your monitoring system. The beneficiary entity is perfectly clean on all global sanctions watchlists. However, upon deep-dive routing analysis, you discover that the transaction utilizes a nested correspondent banking structure, and one of the downstream, non-account-holding intermediary transit banks listed in the SWIFT MT103 tracking strings is a financial institution that was placed under selective sectorial sanctions exactly 48 hours ago. The transaction value is under the standard regulatory reporting threshold.
-                   What is the correct protocol?"
+                  "A cross-border corporate payment originating from an offshore tech hub is flagged by your monitoring system. The beneficiary entity is perfectly clean on all global sanctions watchlists. However, upon deep-dive routing analysis, you discover that the transaction utilizes a nested correspondent banking structure, and one of the downstream, non-account-holding intermediary transit banks listed in the SWIFT MT103 tracking strings is a financial institution that was placed under selective sectorial sanctions exactly 48 hours ago. The transaction value is under the standard regulatory reporting threshold. What is the correct protocol?"
                 </p>
                 
                 <div className="space-y-4 max-w-xl pt-2">
@@ -373,25 +349,24 @@ export default function App() {
 
                 {isChallengeLocked && (
                   <div className="pt-6 text-sm text-slate-400 font-serif italic space-y-1 animate-fade-in max-w-2xl">
-                    <p className="text-[9px] uppercase tracking-widest text-amber-500 font-bold not-italic">Mitigation Review Matrix</p>
+                    <p className="text-[9px] uppercase tracking-widest text-amber-500 font-bold not-italic">Oversight Briefing</p>
                     <p>{challengeSelected === 'edd' ? "CORRECT: In sanctions compliance, there is no monetary threshold; processing even a minor amount through a sanctioned intermediary bank is a strict liability violation. Illicit networks routinely utilize nested correspondent banking structures to exploit filtering blind spots. Immediate asset restraint and regulatory escalation (SAR/STR) are mandatory to mitigate systemic exposure." : "INCORRECT: Clearing a transaction that contains a sanctioned entity anywhere in its processing path—regardless of asset size or clean ordering/beneficiary profiles—constitutes a severe compliance breach. Sanctions regulations carry strict liability, meaning lack of intent or low transaction value offers no legal safe harbor."}</p>
                   </div>
                 )}
 
-                {/* SPATIAL VECTOR STAT LINES */}
+                {/* STAT VECTORS */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-12 pt-12 border-t border-white/[0.04]">
-                  {[{ area: 'Bengaluru Vector Hub', delta: '+14% Strategic Movement Acceleration' }, { area: 'Kolkata Vector Hub', delta: 'Corporate Strategy Allocation Aligned' }].map((pulse, i) => (
+                  {[{ area: 'Bengaluru Vector Desk', status: '+14% Core Placement Drift' }, { area: 'Kolkata Vector Desk', status: 'Executive Sourcing Alignment Active' }].map((pulse, i) => (
                     <div key={i} className="space-y-1">
-                      <span className="text-[9px] uppercase font-bold tracking-widest text-slate-500 block">Regional Pulse Context</span>
-                      <h4 className="text-xl font-serif font-light text-white">{pulse.area}</h4>
-                      <p className="text-xs text-slate-400 font-medium pt-0.5">{pulse.delta}</p>
+                      <span className="text-[9px] uppercase font-bold tracking-widest text-slate-500">{pulse.area}</span>
+                      <h4 className="text-xl font-serif font-light text-white">{pulse.status}</h4>
                     </div>
                   ))}
                 </div>
               </div>
             </div>
 
-            {/* VOLUMETRIC TICKER BROADCAST BANNER */}
+            {/* HORIZONTAL CONTINUOUS MARQUEE BAND */}
             <div className="w-full bg-white/[0.01] border-y border-white/[0.02] py-8 overflow-hidden">
               <div className="text-[11px] font-medium text-slate-500 uppercase tracking-[0.4em] flex gap-20 whitespace-nowrap animate-marquee">
                 <span>• METHODOLOGY ADJUST CHANNELS ALIGNING IN REGARD TO RBI MANDATE SHIFTS</span>
@@ -400,7 +375,7 @@ export default function App() {
               </div>
             </div>
 
-            {/* COGNITIVE ANALYSIS TEXTBOOK SHOWCASE SECTION */}
+            {/* HIGH-END MINIMALIST SYLLABUS DISCOVERY HIGHLIGHT */}
             <div className="py-16 border-t border-white/[0.02] grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
               <div className="lg:col-span-7 space-y-6">
                 <span className="text-[10px] font-bold tracking-[0.4em] text-amber-500 uppercase block">Methodology Focus</span>
@@ -418,7 +393,7 @@ export default function App() {
               </div>
             </div>
 
-            {/* STRATEGIC MENTORSHIP PLAN INTAKE SECTION */}
+            {/* CAREER GUIDANCE COMPOSITION TRACK */}
             <div id="career-guidance" className={`py-16 border-t border-white/[0.02] grid grid-cols-1 lg:grid-cols-12 gap-16 transition-all duration-500 ${highlightCareer ? 'bg-white/[0.02] rounded-2xl p-6' : ''}`}>
               <div className="lg:col-span-4 space-y-4">
                 <span className="text-[10px] font-bold tracking-[0.4em] text-amber-500 uppercase block">Consultation Registry Open</span>
@@ -452,14 +427,14 @@ export default function App() {
         </main>
       )}
 
-      {/* FULL RESPONSIVE SUBPAGE DIRECTORY SHEET FRAMEWORKS */}
+      {/* FULL WIDTH DYNAMIC ABSTRACT SUB-VIEW SHEETS */}
       {activeView && (
         <main className="flex-grow pt-44 max-w-7xl mx-auto px-10 w-full pb-32 animate-fade-in">
           <button onClick={() => setActiveView(null) || setQuizScore(0) || setCurrentQuestionIndex(0) || setIsTestStarted(false) || setIsTestComplete(false) || setUserName("") || setSelectedOption(null)} className="text-xs font-medium tracking-[0.3em] text-amber-500 hover:text-white transition-colors uppercase mb-16 block">
             &larr; Return to Workspace Overview
           </button>
 
-          {/* INTERNAL VIEW CANVAS: TEXTBOOK INDEX READER */}
+          {/* INNER LAYER TRACK SHEET: SYLLABUS DIRECTORY NOTES */}
           {activeView === 'notes' && (
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-start">
               <div className="lg:col-span-4 flex flex-col gap-4 sticky top-44 max-h-[65vh] overflow-y-auto pr-2 custom-scrollbar">
@@ -479,13 +454,13 @@ export default function App() {
             </div>
           )}
 
-          {/* INTERNAL VIEW CANVAS: CORPORATE PLACEMENTS POOLS */}
+          {/* INNER LAYER TRACK SHEET: PLACEMENTS FEED LIST */}
           {activeView === 'jobs' && (
             <div className="space-y-16 max-w-4xl">
               <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 pb-6 border-b border-white/[0.04]">
                 <div>
                   <h1 className="text-4xl font-serif font-light text-white uppercase tracking-tight">Active Opportunities</h1>
-                  <p className="text-xs text-slate-500 font-medium mt-1">Filter track coordinates to isolate placement thresholds.</p>
+                  <p className="text-xs text-slate-500 font-medium mt-1">Filter track coordinates to narrow profiling parameters.</p>
                 </div>
                 <div className="flex flex-wrap gap-4 text-xs font-bold uppercase tracking-widest text-slate-500">
                   {['All', 'Bengaluru', 'Kolkata', 'Gurugram', 'Remote'].map((loc) => (
@@ -510,7 +485,7 @@ export default function App() {
             </div>
           )}
 
-          {/* INTERNAL VIEW CANVAS: EXAMINATION TESTING SYSTEMS LOOP */}
+          {/* INNER LAYER TRACK SHEET: SYSTEM ASSESSMENT LOOP DESK */}
           {activeView === 'quiz' && (
             <div className="max-w-3xl">
               {!isTestStarted ? (
@@ -554,7 +529,7 @@ export default function App() {
             </div>
           )}
 
-          {/* INTERNAL VIEW CANVAS: REFERRAL SYSTEM INSERTIONS */}
+          {/* INNER LAYER TRACK SHEET: SYNC REFERRAL FORM REGISTRY */}
           {activeView === 'referralForm' && (
             <div className="max-w-2xl">
               <h1 className="text-3xl font-serif font-light text-white uppercase tracking-tight pb-6 border-b border-white/[0.04] mb-10">Referral Insertion Form</h1>
@@ -572,7 +547,7 @@ export default function App() {
             </div>
           )}
 
-          {/* INTERNAL VIEW CANVAS: NET PIPELINES STREAM ROSTER */}
+          {/* INNER LAYER TRACK SHEET: REFERRAL POOLS FEED */}
           {activeView === 'available' && (
             <div className="space-y-12 max-w-4xl">
               <h1 className="text-4xl font-serif font-light text-white uppercase tracking-tight pb-6 border-b border-white/[0.04]">Available Pipelines</h1>
@@ -590,7 +565,7 @@ export default function App() {
                         <div key={i} className={`space-y-4 pb-6 border-b border-white/[0.02] relative ${isNew ? 'border-amber-500/30' : ''}`}>
                           <div>
                             <span className="text-[10px] font-bold tracking-widest text-amber-500 uppercase block mb-1">
-                              {sub.company || 'Enterprise Firm'} {isNew && <span className="text-[8px] bg-amber-500 text-black px-1.5 ml-2 rounded tracking-widest animate-pulse font-sans">NEW</span>}
+                              {sub.company || 'Enterprise Desk'} {isNew && <span className="text-[8px] bg-amber-500 text-black px-1.5 ml-2 rounded tracking-widest animate-pulse font-sans">NEW</span>}
                             </span>
                             <h3 className="text-xl font-bold text-white tracking-tight">{sub.role || 'Compliance Specialist'}</h3>
                             <p className="text-xs text-slate-500 font-medium pt-1">Sourced via reference: {sub.name}</p>
@@ -608,16 +583,16 @@ export default function App() {
             </div>
           )}
 
-          {/* INTERNAL VIEW CANVAS: HR COMMAND PANEL GATES */}
+          {/* INNER LAYER TRACK SHEET: RECRUITER CLEARANCE PASS DOOR */}
           {activeView === 'contribute' && (
             <div className="max-w-md">
               {!isAuthorized ? (
                 <div className="space-y-6">
-                  <h2 className="text-3xl font-serif font-light text-white uppercase tracking-tight">Intake Verification Desk</h2>
+                  <h2 className="text-3xl font-serif font-light text-white uppercase tracking-tight">Identity Access Desk</h2>
                   <div className="space-y-4">
                     <input type="email" placeholder="Verification Email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full pb-2 bg-transparent border-b border-white/20 text-white outline-none text-sm font-medium focus:border-amber-500 transition-colors" />
                     <input type="password" placeholder="Passkey Key" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full pb-2 bg-transparent border-b border-white/20 text-white outline-none text-sm font-medium focus:border-amber-500 transition-colors" />
-                    <button onClick={async () => { const { error } = await supabase.auth.signInWithPassword({ email, password }); if (!error) setIsAuthorized(true); else alert("Identity failure parameters."); }} className="w-full py-4 border border-white text-white font-bold uppercase tracking-widest text-xs hover:bg-white hover:text-black transition-colors">Request Identity Clearance</button>
+                    <button onClick={async () => { const { error } = await supabase.auth.signInWithPassword({ email, password }); if (!error) setIsAuthorized(true); else alert("Identity credentials failure."); }} className="w-full py-4 border border-white text-white font-bold uppercase tracking-widest text-xs hover:bg-white hover:text-black transition-colors">Request Identity Clearance</button>
                   </div>
                 </div>
               ) : (
@@ -631,7 +606,7 @@ export default function App() {
             </div>
           )}
 
-          {/* INTERNAL VIEW CANVAS: PARTNER FILES DIRECTORY STORAGE */}
+          {/* INNER LAYER TRACK SHEET: PARTNER DOCUMENT NET LISTINGS */}
           {activeView === 'network' && (
             <div className="space-y-12 max-w-4xl">
               <h1 className="text-4xl font-serif font-light text-white uppercase tracking-tight pb-6 border-b border-white/[0.04]">Placement Registries</h1>
@@ -653,7 +628,7 @@ export default function App() {
                             {f.recruiter_email && <p className="text-xs text-amber-500 font-serif italic mt-1">Desk Auth Reference: {f.recruiter_email}</p>}
                           </div>
                           <div className="flex gap-4">
-                            <button onClick={() => window.open(f.url, '_blank')} className="text-xs font-bold uppercase tracking-widest text-white border-b border-white pb-0.5 hover:text-amber-400 hover:border-amber-400 transition-all">Download Document &rarr;</button>
+                            <button onClick={() => window.open(f.url, '_blank')} className="text-xs font-bold uppercase tracking-widest text-white border-b border-white pb-0.5 hover:text-amber-400 hover:border-amber-400 transition-all">Download Document Intel &rarr;</button>
                             {f.recruiter_email && <a href={`mailto:${f.recruiter_email}?subject=Inquiry: ${f.name} (via AML_DECODE)`} onClick={() => trackEmailClick(f.id)} className="text-xs font-bold uppercase tracking-widest text-slate-500 hover:text-white transition-colors">Email HR</a>}
                           </div>
                         </div>
@@ -668,7 +643,7 @@ export default function App() {
             </div>
           )}
 
-          {/* REGULATORY POLICY STATICS MATRIX */}
+          {/* CORE SYSTEM GENERAL STATIC UTILITIES HANDLING */}
           {['privacy', 'terms', 'faq', 'contact'].includes(activeView) && (
             <div className="max-w-2xl leading-relaxed text-slate-400 font-serif font-light text-base whitespace-pre-wrap space-y-8 animate-fade-in">
               {activeView === 'privacy' && privacyPolicy.body}
@@ -685,7 +660,7 @@ export default function App() {
         </main>
       )}
 
-      {/* REFINED ARCHITECTURAL FOOTER */}
+      {/* CORE SYSTEM LANDING WEB INTERFACE BASE FOOTER */}
       <footer className="bg-transparent border-t border-white/[0.02] pt-24 pb-12 w-full mt-auto">
         <div className="max-w-7xl mx-auto px-10 grid grid-cols-1 md:grid-cols-12 gap-16 mb-16">
           <div className="md:col-span-6 space-y-4">
@@ -708,7 +683,7 @@ export default function App() {
         </div>
         <div className="max-w-7xl mx-auto px-10 pt-8 border-t border-white/[0.01] flex justify-between items-center text-[9px] font-bold text-slate-600 uppercase tracking-[0.3em]">
           <span>© 2026 AML_DECODE</span>
-          <span>Design by Nitesh Mishra</span>
+          <span>ECOSYSTEM ALLOCATION ACTIVE</span>
         </div>
       </footer>
 
