@@ -693,31 +693,48 @@ export default function App() {
       )}
 
       {/* RESTRAINED EDITORIAL DESIGN ACADEMY FOOTER MAP */}
-      <footer className="bg-slate-900/10 text-white border-t border-white/[0.03] pt-16 pb-8 mt-auto relative">
-        <div className="max-w-7xl mx-auto px-8 grid grid-cols-1 md:grid-cols-12 gap-12 mb-12">
-          <div className="md:col-span-6 space-y-4">
-            <img src="/logo.png" alt="AML_DECODE" className="h-8 w-auto object-contain filter brightness-110" />
-            <p className="text-xs leading-relaxed text-slate-500 max-w-sm font-medium">
-              AMLDecode is a premium, story-driven financial intelligence academy offering advanced training matrices across transaction verification, monitoring frameworks, and KYC analytics paths.
-            </p>
-          </div>
-          <div className="md:col-span-3 space-y-3 text-xs font-bold uppercase tracking-widest">
-            <p className="text-amber-500 font-black text-[10px]">Directory</p>
-            <button onClick={() => setActiveView('faq')} className="block text-slate-400 hover:text-white transition-colors">FAQ</button>
-            <button onClick={() => setActiveView('contact')} className="block text-slate-400 hover:text-white transition-colors">Contact</button>
-            <button onClick={() => setActiveView('notes')} className="block text-slate-400 hover:text-white transition-colors">Notes Hub</button>
-          </div>
-          <div className="md:col-span-3 space-y-3 text-xs font-bold uppercase tracking-widest">
-            <p className="text-amber-500 font-black text-[10px]">Legal Protection</p>
-            <button onClick={() => setActiveView('privacy')} className="block text-slate-400 hover:text-white transition-colors">Privacy Policy</button>
-            <button onClick={() => setActiveView('terms')} className="block text-slate-400 hover:text-white transition-colors">Terms of Service</button>
-          </div>
-        </div>
-        <div className="max-w-7xl mx-auto px-8 border-t border-white/[0.02] pt-6 flex justify-between items-center text-[10px] font-bold text-slate-600 uppercase tracking-widest">
-          <span>© 2026 AML_DECODE</span>
-          <span>Design by Nitesh Mishra</span>
-        </div>
-      </footer>
+     {/* HIGH-END MINIMALIST FOOTER SECTION */}
+<footer className="w-full bg-[#fbfbf8] border-t border-black/[0.03] pt-24 pb-12 mt-auto">
+  <div className="max-w-7xl mx-auto px-8 md:px-14 grid grid-cols-1 md:grid-cols-12 gap-12 mb-16">
+    
+    {/* Brand Descriptor Block */}
+    <div className="md:col-span-6 space-y-4">
+      <img src="/logo.png" alt="AML_DECODE" className="h-6 w-auto object-contain brightness-0" />
+      <p className="text-sm leading-relaxed text-slate-500 max-w-sm font-medium">
+        AMLDecode is a premium, story-driven financial intelligence academy offering advanced training matrices across transaction verification, monitoring frameworks, and KYC analytics paths.
+      </p>
+    </div>
+
+    {/* Navigation Links Column */}
+    <div className="md:col-span-3 space-y-4 text-xs font-bold uppercase tracking-widest text-slate-800">
+      <p className="text-amber-600 font-black text-[10px] tracking-[0.2em]">Directory</p>
+      <div className="flex flex-col gap-3">
+        <button onClick={() => setActiveView('faq')} className="block text-slate-600 hover:text-black text-left font-semibold transition-colors">FAQ</button>
+        <button onClick={() => setActiveView('contact')} className="block text-slate-600 hover:text-black text-left font-semibold transition-colors">Contact</button>
+        <button onClick={() => setActiveView('notes')} className="block text-slate-600 hover:text-black text-left font-semibold transition-colors">Notes Hub</button>
+      </div>
+    </div>
+
+    {/* Legal & Compliance Column */}
+    <div className="md:col-span-3 space-y-4 text-xs font-bold uppercase tracking-widest text-slate-800">
+      <p className="text-amber-600 font-black text-[10px] tracking-[0.2em]">Legal & Compliance</p>
+      <div className="flex flex-col gap-3">
+        <button onClick={() => setActiveView('privacy')} className="block text-slate-600 hover:text-black text-left font-semibold transition-colors">Privacy Policy</button>
+        <button onClick={() => setActiveView('terms')} className="block text-slate-600 hover:text-black text-left font-semibold transition-colors">Terms of Service</button>
+      </div>
+    </div>
+
+  </div>
+
+  {/* Base Attribution Row */}
+  <div className="max-w-7xl mx-auto px-8 md:px-14 border-t border-black/[0.04] pt-8 flex flex-col sm:flex-row justify-between items-center gap-4 text-[11px] font-bold text-slate-400 uppercase tracking-widest">
+    <div className="flex items-center gap-2">
+      <span className="h-1.5 w-1.5 rounded-full bg-slate-300 inline-block" />
+      <span>© 2026 AML_DECODE</span>
+    </div>
+    <span className="text-slate-500 font-medium">Design by Nitesh Mishra</span>
+  </div>
+</footer>
 
       <SubscribeModal />
     </div>
