@@ -190,69 +190,102 @@ export default function App() {
   return (
     <div className="text-slate-200 font-sans min-h-screen flex flex-col relative bg-[#020408] antialiased">
       
-      {/* PREMIUM EDITORIAL HEADER GLOBAL NAVIGATION */}
-      <nav className="sticky top-0 z-50 w-full bg-[#020408]/90 backdrop-blur-xl border-b border-white/[0.02]">
-        <div className="max-w-7xl mx-auto px-8">
-          <div className="flex items-center justify-between h-24">
-            
-            {/* Logo Anchor */}
-            <div onClick={() => setActiveView(null)} className="flex items-center gap-3 cursor-pointer">
-              <img src="/logo.png" alt="AML_DECODE" className="h-8 w-auto filter brightness-110 drop-shadow-[0_4px_12px_rgba(255,255,255,0.05)]" />
-            </div>
+    
+               {/* FLOATING CAPSULE NAVIGATION HEADER */}
+<div className="w-full flex justify-center py-6 px-4 bg-[#040712] sticky top-0 z-50">
+  <nav className="w-full max-w-7xl h-20 bg-[#fbfbf8] rounded-full shadow-[0_15px_40px_rgba(0,0,0,0.15)] border border-black/[0.03] px-3 flex items-center justify-between">
+    
+    {/* LEFT SIDE: Brand Logo Asset */}
+    <div 
+      onClick={() => setActiveView(null)} 
+      className="flex items-center gap-3 pl-6 cursor-pointer shrink-0"
+    >
+      <img 
+        src="/logo.png" 
+        alt="AML_DECODE Logo" 
+        className="h-6 w-auto object-contain brightness-0" 
+      />
+    </div>
 
-            {/* Premium Text Navigation Rows */}
-            <div className="hidden lg:flex items-center gap-4 flex-grow justify-center font-bold text-xs tracking-[0.2em] uppercase">
-              {[
-                { label: 'Notes', id: 'notes' },
-                { label: ' Jobs', id: 'jobs' },
-                { label: 'Network Jobs', id: 'network' },
-                { label: 'Knowledge test', id: 'quiz' }
-              ].map((item) => (
-                <button
-                  key={item.id}
-                  onClick={() => setActiveView(item.id)}
-                  className={`px-5 py-2.5 rounded-full transition-all ${activeView === item.id ? "text-amber-400 bg-white/[0.03]" : "text-slate-400 hover:text-white"}`}
-                >
-                  {item.label}
-                </button>
-              ))}
-              <button
-                onClick={() => {
-                  setActiveView(null);
-                  setTimeout(() => {
-                    document.getElementById('career-guidance')?.scrollIntoView({ behavior: 'smooth' });
-                  }, 150);
-                }}
-                className="px-5 py-2.5 text-slate-400 hover:text-white transition-all"
-              >
-                Career Guidance
-              </button>
-              <div className="relative group px-5 py-2.5 cursor-pointer">
-                <span className="text-slate-400 group-hover:text-white flex items-center gap-1.5 transition-colors">
-                  Resources <svg className="w-3 h-3 transition-transform group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7" strokeWidth="2.5" /></svg>
-                </span>
-                <div className="absolute top-full left-0 w-64 bg-slate-900 border border-white/10 rounded-xl mt-2 py-3 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all shadow-xl z-50">
-                  {[{ label: 'Submit Network Referral', id: 'referralForm' }, { label: 'Available Referrals Pool', id: 'available' }].map((sub) => (
-                    <button key={sub.id} onClick={() => setActiveView(sub.id)} className="w-full text-left px-5 py-3 text-[11px] font-bold text-slate-400 hover:bg-white/[0.02] hover:text-amber-400 uppercase tracking-widest">
-                      {sub.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
+    {/* CENTER SIDE: Minimalist Text Connections Link Arrays */}
+    <div className="hidden lg:flex items-center gap-8 text-[12px] font-bold tracking-[0.18em] text-[#111111] uppercase">
+      {[
+        { label: 'Notes', id: 'notes' },
+        { label: 'Jobs', id: 'jobs' },
+        { label: 'Network Jobs', id: 'network' },
+        { label: 'Knowledge Test', id: 'quiz' }
+      ].map((item) => (
+        <button
+          key={item.id}
+          onClick={() => setActiveView(item.id)}
+          className={`transition-colors flex items-center gap-1 py-2 ${
+            activeView === item.id 
+              ? "text-amber-600 font-extrabold" 
+              : "text-slate-700 hover:text-black font-semibold"
+          }`}
+        >
+          <span>{item.label}</span>
+          <span className="text-[9px] opacity-40 font-sans tracking-normal">&#x25BC;</span>
+        </button>
+      ))}
 
-            <div className="hidden lg:block ml-4">
-              <button onClick={() => setActiveView('contribute')} className="px-7 py-3 bg-gradient-to-b from-amber-400 to-amber-600 text-black text-[11px] font-black uppercase tracking-widest rounded-lg transition-all shadow-md">
-                RECRUITER DESK
-              </button>
-            </div>
+      <button
+        onClick={() => {
+          setActiveView(null);
+          setTimeout(() => {
+            document.getElementById('career-guidance')?.scrollIntoView({ behavior: 'smooth' });
+          }, 150);
+        }}
+        className="text-slate-700 hover:text-black font-semibold transition-colors"
+      >
+        Career Guidance
+      </button>
 
-            <button className="lg:hidden text-amber-500 p-2" onClick={() => setIsMenuOpen(!isMenuOpen)}>
-              <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeWidth="2.5" d={isMenuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"} /></svg>
+      {/* Dropdown resources array wrapper links */}
+      <div className="relative group py-2 cursor-pointer">
+        <span className="text-slate-700 group-hover:text-black font-semibold flex items-center gap-1 transition-colors">
+          Resources <span className="text-[9px] opacity-40 font-sans tracking-normal">&#x25BC;</span>
+        </span>
+        <div className="absolute top-full left-1/2 -translate-x-1/2 w-60 bg-white border border-slate-100 rounded-2xl mt-2 py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all shadow-[0_20px_40px_rgba(0,0,0,0.12)] z-50">
+          {[
+            { label: 'Submit Network Referral', id: 'referralForm' }, 
+            { label: 'Available Referrals Pool', id: 'available' }
+          ].map((sub) => (
+            <button 
+              key={sub.id} 
+              onClick={() => setActiveView(sub.id)} 
+              className="w-full text-left px-5 py-3 text-[11px] font-bold text-slate-600 hover:bg-slate-50 hover:text-black uppercase tracking-wider"
+            >
+              {sub.label}
             </button>
-          </div>
+          ))}
         </div>
-      </nav>
+      </div>
+    </div>
+
+    {/* RIGHT SIDE: Heavy High-Contrast Action Element */}
+    <div className="hidden lg:block shrink-0">
+      <button 
+        onClick={() => setActiveView('contribute')} 
+        className="h-14 px-8 bg-[#111111] hover:bg-black text-white text-[11px] font-bold uppercase tracking-[0.25em] rounded-full transition-all flex items-center justify-center shadow-inner"
+      >
+        RECRUITER DESK
+      </button>
+    </div>
+
+    {/* MOBILE RESPONSIVE HAMBURGER ACTION ANCHOR */}
+    <button 
+      className="lg:hidden text-black pr-6 p-2 transition-transform active:scale-95 shrink-0" 
+      onClick={() => setIsMenuOpen(!isMenuOpen)}
+    >
+      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeWidth="2.5" d={isMenuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"} />
+      </svg>
+    </button>
+
+  </nav>
+</div>
+               
 
       {/* MOBILE FULL NAVIGATION OVERLAY */}
       {isMenuOpen && (
