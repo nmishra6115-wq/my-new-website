@@ -470,7 +470,7 @@ export default function App() {
       {/* DETACHED DYNAMIC CORE VIEWS TERMINAL */}
       {activeView && (
         <div className="fixed inset-0 z-[100] bg-[#020408] p-12 overflow-y-auto custom-scrollbar">
-          <button onClick={() => setActiveView(null) || setQuizScore(0)} className="text-amber-400 font-bold tracking-widest text-xs mb-10 block hover:text-white transition-colors">&larr; DISMISS VIEW</button>
+          <button onClick={() => setActiveView(null) || setQuizScore(0)} className="text-amber-400 font-bold tracking-widest text-xs mb-10 block hover:text-white transition-colors">&larr; Back to HomePage</button>
           
           <div key={activeView} className="max-w-7xl mx-auto text-white animate-fade-in">
             
@@ -581,7 +581,7 @@ export default function App() {
                     </div>
                     {selectedOption && (
                       <button onClick={() => currentQuestionIndex < testData.length - 1 ? setCurrentQuestionIndex(prev => prev + 1) || setSelectedOption(null) : setIsTestComplete(true)} className="px-8 py-3.5 bg-white text-black font-black text-xs uppercase tracking-widest rounded-xl ml-auto block">
-                        {currentQuestionIndex === testData.length - 1 ? "Complete Exam" : "Advance Node &rarr;"}
+                        {currentQuestionIndex === testData.length - 1 ? "Complete Exam" : "Next"}
                       </button>
                     )}
                   </div>
