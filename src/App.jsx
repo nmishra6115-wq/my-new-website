@@ -161,8 +161,20 @@ export default function App() {
   const [userName, setUserName] = useState("");
   const [selectedOption, setSelectedOption] = useState(null);
   const [quizScore, setQuizScore] = useState(0);
+  const [isTestStarted, setIsTestStarted] = useState(false);
+  const [isTestComplete, setIsTestComplete] = useState(false); 
+  
   const [testData, setTestData] = useState([]);
   const contentRef = useRef(null);
+
+  const navigateTo = (view) => {
+  setActiveView(view);
+  setIsTestStarted(false);
+  setIsTestComplete(false);
+  setQuizScore(0);
+  setCurrentQuestionIndex(0);
+  setSelectedOption(null);
+};
 
   const isNewlyAdded = (dateString) => {
     if (!dateString) return false;
@@ -311,7 +323,7 @@ export default function App() {
             ))}
           </div>
           <div className="text-center text-[9px] font-bold tracking-widest text-slate-600 uppercase border-t border-white/[0.04] pt-6">
-            AML DECODE INTEL SUITE // © 2026
+            
           </div>
         </div>
       )}
