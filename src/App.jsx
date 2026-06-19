@@ -200,8 +200,7 @@ export default function App() {
   }, [selectedCategory]);
 
   return (
-    <div className="text-slate-200 font-sans min-h-screen flex flex-col relative bg-[#020408] antialiased">
-      
+<div className="text-slate-900 font-sans min-h-screen flex flex-col relative bg-[#fbfbf8] antialiased">      
     
                {/* FLOATING CAPSULE NAVIGATION HEADER */}
 <div className="w-full flex justify-center py-6 px-4 bg-[#040712] sticky top-0 z-50">
