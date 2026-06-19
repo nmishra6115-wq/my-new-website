@@ -304,7 +304,7 @@ export default function App() {
             <button onClick={() => setIsMenuOpen(false)} className="text-slate-400 p-2 text-2xl">✕</button>
           </div>
           <div className="flex flex-col gap-2 font-serif my-auto">
-            {[{ label: 'Syllabus Tracks', id: 'notes' }, { label: 'Active Placements', id: 'jobs' }, { label: 'Referral Center', id: 'available' }, { label: 'Knowledge Exams', id: 'quiz' }].map((item, i) => (
+            {[{ label: 'Notes', id: 'notes' }, { label: 'Jobs', id: 'jobs' }, { label: 'Referral Jobs', id: 'available' }, { label: 'Knowledge Test', id: 'quiz' }].map((item, i) => (
               <button key={item.id} onClick={() => { setActiveView(item.id); setIsMenuOpen(false); }} className="text-3xl font-bold text-left py-4 text-white hover:text-amber-400 transition-colors uppercase tracking-tight">
                 {item.label}
               </button>
