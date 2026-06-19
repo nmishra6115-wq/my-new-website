@@ -268,8 +268,8 @@ export default function App() {
         </span>
         <div className="absolute top-full left-1/2 -translate-x-1/2 w-60 bg-white border border-slate-100 rounded-2xl mt-2 py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all shadow-[0_20px_40px_rgba(0,0,0,0.12)] z-50">
           {[
-            { label: 'Submit Network Referral', id: 'referralForm' }, 
-            { label: 'Available Referrals Pool', id: 'available' }
+            { label: 'Submit Referral', id: 'referralForm' }, 
+            { label: 'Available Referrals', id: 'available' }
           ].map((sub) => (
             <button 
               key={sub.id} 
@@ -315,7 +315,8 @@ export default function App() {
             <button onClick={() => setIsMenuOpen(false)} className="text-slate-400 p-2 text-2xl">✕</button>
           </div>
           <div className="flex flex-col gap-2 font-serif my-auto">
-            {[{ label: 'Notes', id: 'notes' }, { label: 'Jobs', id: 'jobs' }, { label: 'Referral Jobs', id: 'available' }, { label: 'Knowledge Test', id: 'quiz' }].map((item, i) => (
+            {[{ label: 'Notes', id: 'notes' }, { label: 'Jobs', id: 'jobs' }, { label: 'Referral Jobs', id: 'available' }, { label: 'Knowledge Test', id: 'quiz' }, { label: 'Submit Network Referral', id: 'referralForm' }, { label: 'Recuiter Desk', id: 'contribute' }, 
+            { label: 'Available Referrals', id: 'available' },].map((item, i) => (
               <button key={item.id} onClick={() => { setActiveView(item.id); setIsMenuOpen(false); }} className="text-3xl font-bold text-left py-4 text-white hover:text-amber-400 transition-colors uppercase tracking-tight">
                 {item.label}
               </button>
