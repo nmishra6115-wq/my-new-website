@@ -481,7 +481,48 @@ export default function App() {
           </section>
         </main>
       )}
+{/* VIEW MODULE: KNOWLEDGE TEST / QUIZ */}
+{activeView === 'quiz' && (
+  <div className="space-y-8 max-w-4xl mx-auto pb-20">
+    <div className="border-b border-white/[0.04] pb-6">
+      <span className="text-[10px] font-black tracking-widest text-amber-500 uppercase">Interactive Assessment</span>
+      <h1 className="text-4xl font-black text-white font-serif uppercase tracking-tight mt-1">Knowledge Test</h1>
+    </div>
 
+    {/* Category Selection Tabs */}
+    <div className="flex gap-2 overflow-x-auto pb-2">
+      {['KYC Basics', 'AML Frameworks', 'Sanctions & PEPs', 'Transaction Monitoring'].map((cat) => (
+        <button
+          key={cat}
+          onClick={() => setSelectedCategory(cat)}
+          className={`px-4 py-2 text-xs font-bold uppercase rounded-xl transition-all whitespace-nowrap ${
+            selectedCategory === cat
+              ? 'bg-amber-500 text-black shadow-md'
+              : 'bg-white/5 border border-white/10 text-slate-300 hover:text-white'
+          }`}
+        >
+          {cat}
+        </button>
+      ))}
+    </div>
+
+    {/* Display Questions or Empty Fallback */}
+    {isLoading ? (
+      <p className="text-slate-400 text-sm">Loading assessment modules...</p>
+    ) : testData && testData.length > 0 ? (
+      testData.map((item, idx) => (
+        <QuizItem key={item.id || idx} item={item} onCorrect={() => setQuizScore((prev) => prev + 1)} />
+      ))
+    ) : (
+      <div className="p-8 bg-slate-900/40 border border-white/10 rounded-2xl text-center space-y-3">
+        <p className="text-white font-bold text-lg">No questions found for "{selectedCategory}"</p>
+        <p className="text-slate-400 text-sm">
+          Check your Supabase <code className="text-amber-400 bg-black/40 px-2 py-1 rounded">quiz_questions</code> table to make sure rows exist with <code className="text-amber-400 bg-black/40 px-2 py-1 rounded">category = '{selectedCategory}'</code>.
+        </p>
+      </div>
+    )}
+  </div>
+)}
       {/* DETACHED DYNAMIC CORE VIEWS TERMINAL */}
       {activeView && (
         <div className="fixed inset-0 z-[100] bg-[#020408] p-6 md:p-12 overflow-y-auto custom-scrollbar">
