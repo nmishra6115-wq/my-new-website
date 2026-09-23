@@ -534,17 +534,27 @@ export default function App() {
                   </div>
 
                   {/* Note Content Viewer */}
-                  <div className="lg:col-span-8 p-8 md:p-12 bg-slate-900/30 border border-white/10 rounded-2xl min-h-[400px]">
-                    <span className="text-xs font-black text-amber-400 uppercase tracking-widest block mb-2">
-                      Module {pageIndex + 1} of {notesContent.length}
-                    </span>
-                    <h2 className="text-2xl font-bold text-white mb-6 uppercase tracking-tight">
-                      {notesContent[pageIndex]?.title}
-                    </h2>
-                    <div className="prose prose-invert max-w-none text-slate-300 text-sm md:text-base leading-relaxed space-y-4">
-                      {notesContent[pageIndex]?.content}
-                    </div>
-                  </div>
+                  {/* Note Content Viewer */}
+<div className="lg:col-span-8 p-8 md:p-12 bg-slate-900/30 border border-white/10 rounded-2xl min-h-[400px]">
+  <span className="text-xs font-black text-amber-400 uppercase tracking-widest block mb-2">
+    Module {pageIndex + 1} of {notesContent.length}
+  </span>
+  <h2 className="text-2xl font-bold text-white mb-6 uppercase tracking-tight">
+    {notesContent[pageIndex]?.title || "Untitled Module"}
+  </h2>
+  
+  <div className="prose prose-invert max-w-none text-slate-300 text-sm md:text-base leading-relaxed space-y-4">
+    {notesContent[pageIndex]?.content ? (
+      typeof notesContent[pageIndex].content === 'string' ? (
+        <p>{notesContent[pageIndex].content}</p>
+      ) : (
+        notesContent[pageIndex].content
+      )
+    ) : (
+      <p className="text-slate-500 italic">No detailed content available for this module yet.</p>
+    )}
+  </div>
+</div>
                 </div>
               </div>
             )}
