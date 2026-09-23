@@ -102,12 +102,16 @@ function SubscribeModal() {
 
   const handleSubscribe = async (e) => {
     e.preventDefault();
-    const { error } = await supabase.from('subscribers').insert([{ email }]);
-    if (!error) {
-      alert("Registration Saved. Your daily career intelligence reports are active.");
-      setIsOpen(false);
-    } else {
-      alert(error.code === "23505" ? "This account profile is already active!" : "Error: " + error.message);
+    try {
+      const { error } = await supabase.from('subscribers').insert([{ email }]);
+      if (!error) {
+        alert("Registration Saved. Your daily career intelligence reports are active.");
+        setIsOpen(false);
+      } else {
+        alert(error.code === "23505" ? "This account profile is already active!" : "Error: " + error.message);
+      }
+    } catch (err) {
+      alert("Network error: Unable to complete request.");
     }
   };
 
@@ -559,10 +563,10 @@ export default function App() {
                     <button
                       key={cat}
                       onClick={() => setSelectedCategory(cat)}
-                      className={`px-4 py-2 text-xs font-bold uppercase rounded-xl transition-all whitespace-nowrap ${
+                      className={`px-4 py-2 text-xs font-bold uppercase rounded-lg border transition-all whitespace-nowrap ${
                         selectedCategory === cat
-                          ? 'bg-amber-500 text-black shadow-md'
-                          : 'bg-white/5 border border-white/10 text-slate-300 hover:text-white'
+                          ? 'bg-amber-500/20 border-amber-500 text-amber-400'
+                          : 'bg-white/[0.02] border-white/5 text-slate-400 hover:border-white/20'
                       }`}
                     >
                       {cat}
@@ -570,19 +574,21 @@ export default function App() {
                   ))}
                 </div>
 
-                {/* Display Questions or Empty Fallback */}
                 {isLoading ? (
-                  <p className="text-slate-400 text-sm">Loading assessment modules...</p>
-                ) : testData && testData.length > 0 ? (
-                  testData.map((item, idx) => (
-                    <QuizItem key={item.id || idx} item={item} onCorrect={() => setQuizScore((prev) => prev + 1)} />
-                  ))
+                  <div className="p-12 text-center text-slate-500 font-bold uppercase text-xs">Loading Knowledge Modules...</div>
+                ) : testData.length === 0 ? (
+                  <div className="p-12 bg-slate-900/20 border border-white/5 rounded-xl text-center text-slate-400 text-sm font-medium">
+                    No questions available under category: <span className="text-amber-400 font-bold">{selectedCategory}</span>
+                  </div>
                 ) : (
-                  <div className="p-8 bg-slate-900/40 border border-white/10 rounded-2xl text-center space-y-3">
-                    <p className="text-white font-bold text-lg">No questions found for "{selectedCategory}"</p>
-                    <p className="text-slate-400 text-sm">
-                      Check your Supabase <code className="text-amber-400 bg-black/40 px-2 py-1 rounded">quiz_questions</code> table to make sure rows exist with <code className="text-amber-400 bg-black/40 px-2 py-1 rounded">category = '{selectedCategory}'</code>.
-                    </p>
+                  <div className="space-y-6">
+                    {testData.map((item, index) => (
+                      <QuizItem 
+                        key={item.id || index} 
+                        item={item} 
+                        onCorrect={() => setQuizScore((prev) => prev + 1)} 
+                      />
+                    ))}
                   </div>
                 )}
               </div>
@@ -591,7 +597,6 @@ export default function App() {
           </div>
         </div>
       )}
-
     </div>
   );
 }
