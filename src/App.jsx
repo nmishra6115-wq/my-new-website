@@ -607,6 +607,55 @@ export default function App() {
           </div>
         </div>
       )}
+       {/* HIGH-END MINIMALIST FOOTER SECTION */}
+<footer className="w-full bg-[#fbfbf8] border-t border-black/[0.03] pt-24 pb-12 mt-auto">
+  <div className="max-w-7xl mx-auto px-8 md:px-14 grid grid-cols-1 md:grid-cols-12 gap-12 mb-16">
+    
+    {/* Brand Descriptor Block */}
+    <div className="md:col-span-6 space-y-4">
+      {/* Footer logo updated to match header SVG style */}
+      <div className="flex items-center gap-3">
+        <svg className="h-6 w-6 text-[#111111]" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 12 10 10-4.48 10-12S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+        </svg>
+        <span className="text-lg font-bold tracking-tight text-[#111111] font-sans">AML_DECODE</span>
+      </div>
+      <p className="text-sm leading-relaxed text-slate-500 max-w-sm font-medium">
+        AMLDecode is a premium, story-driven financial intelligence academy offering advanced training matrices across transaction verification, monitoring frameworks, and KYC analytics paths.
+      </p>
+    </div>
+
+    {/* Navigation Links Column */}
+    <div className="md:col-span-3 space-y-4 text-xs font-bold uppercase tracking-widest text-slate-800">
+      <p className="text-amber-600 font-black text-[10px] tracking-[0.2em]">Directory</p>
+      <div className="flex flex-col gap-3">
+        <button onClick={() => setActiveView('faq')} className="block text-slate-600 hover:text-black text-left font-semibold transition-colors">FAQ</button>
+        <button onClick={() => setActiveView('contact')} className="block text-slate-600 hover:text-black text-left font-semibold transition-colors">Contact</button>
+        <button onClick={() => setActiveView('notes')} className="block text-slate-600 hover:text-black text-left font-semibold transition-colors">Notes Hub</button>
+      </div>
+    </div>
+
+    {/* Legal & Compliance Column */}
+    <div className="md:col-span-3 space-y-4 text-xs font-bold uppercase tracking-widest text-slate-800">
+      <p className="text-amber-600 font-black text-[10px] tracking-[0.2em]">Legal & Compliance</p>
+      <div className="flex flex-col gap-3">
+        <button onClick={() => setActiveView('privacy')} className="block text-slate-600 hover:text-black text-left font-semibold transition-colors">Privacy Policy</button>
+        <button onClick={() => setActiveView('terms')} className="block text-slate-600 hover:text-black text-left font-semibold transition-colors">Terms of Service</button>
+      </div>
+    </div>
+
+  </div>
+
+  {/* Base Attribution Row */}
+  <div className="max-w-7xl mx-auto px-8 md:px-14 border-t border-black/[0.04] pt-8 flex flex-col sm:flex-row justify-between items-center gap-4 text-[11px] font-bold text-slate-400 uppercase tracking-widest">
+    <div className="flex items-center gap-2">
+      <span className="h-1.5 w-1.5 rounded-full bg-slate-300 inline-block" />
+      <span>© 2026 AML_DECODE</span>
+    </div>
+    <span className="text-slate-500 font-medium">Design by Nitesh Mishra</span>
+  </div>
+</footer>
+
     </div>
   );
 }
