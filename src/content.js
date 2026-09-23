@@ -3,7 +3,7 @@
 export const notesContent = [
   {
     title: "What is KYC?",
-    body: `Definition: Know Your Customer (KYC) is a mandatory regulatory process used by financial institutions to verify the identity of customers and assess their risk profile before and during the business relationship.
+    content: `Definition: Know Your Customer (KYC) is a mandatory regulatory process used by financial institutions to verify the identity of customers and assess their risk profile before and during the business relationship.
     
     Core Objectives: Identity verification, preventing fraud, and mitigating money laundering/terrorist financing risks.
     
@@ -47,7 +47,7 @@ Regulatory Awareness: Mention that you stay updated on FATF guidelines and local
   },
   {
     title: "What is AML",
-    body: `Anti-Money Laundering (AML) refers to the comprehensive set of laws, regulations, and procedures designed to prevent criminals from disguising illegally obtained funds as legitimate income.
+   content: `Anti-Money Laundering (AML) refers to the comprehensive set of laws, regulations, and procedures designed to prevent criminals from disguising illegally obtained funds as legitimate income.
 
     1. The Three Stages of Money Laundering
 Money laundering typically occurs in three distinct phases. Understanding these is essential for any compliance professional.
@@ -89,7 +89,7 @@ Regulatory Technology (RegTech): AML is increasingly automated. Familiarity with
   },
   {
     title: "What is CDD",
-    body: ` Customer Due Diligence (CDD) is the process of verifying who your customer is and assessing the risk they pose to your business. Think of it as a background check for every customer you sign on.
+   content: ` Customer Due Diligence (CDD) is the process of verifying who your customer is and assessing the risk they pose to your business. Think of it as a background check for every customer you sign on.
 
 If KYC is the "what" (identifying them), CDD is the "how deep" (assessing their risk).
 The 4 Steps of the CDD Process
@@ -138,7 +138,7 @@ III. Builds Trust: It ensures you are doing business with legitimate people, pro
   },
   {
     title: "Types of Due Dilligence",
-    body: `In Anti-Money Laundering (AML) compliance, due diligence is the "how much" of your KYC process. We use a Risk-Based Approach (RBA), which means we adjust the intensity of our investigation based on the risk a client poses. 
+   content: `In Anti-Money Laundering (AML) compliance, due diligence is the "how much" of your KYC process. We use a Risk-Based Approach (RBA), which means we adjust the intensity of our investigation based on the risk a client poses. 
     
     There are three main levels of Customer Due Diligence (CDD), ranging from the lightest to the most rigorous.  
     
@@ -181,7 +181,7 @@ If asked to compare these, emphasize the "Risk-Based Approach":
   },
   {
     title: "Source of Funds (SOF) & Source of Wealth (SOW)",
-    body: ` In the world of AML, Source of Funds (SoF) and Source of Wealth (SoW) are the two most important documents you will ever request from a high-risk client. They are your primary defense against "dirty" money entering the bank.
+   content: ` In the world of AML, Source of Funds (SoF) and Source of Wealth (SoW) are the two most important documents you will ever request from a high-risk client. They are your primary defense against "dirty" money entering the bank.
     
     1. Source of Funds (SoF) — "The Present"
 
@@ -234,7 +234,7 @@ If asked, "When would you request SoW over SoF?", be precise:
   },
   {
     title: "What is EDD",
-    body: `Enhanced Due Diligence (EDD) is the "supercharged" version of the Standard Due Diligence (CDD) we just discussed. You trigger EDD when a customer or transaction presents a significantly higher risk of money laundering or terrorist financing.
+   content: `Enhanced Due Diligence (EDD) is the "supercharged" version of the Standard Due Diligence (CDD) we just discussed. You trigger EDD when a customer or transaction presents a significantly higher risk of money laundering or terrorist financing.
     
     When do you trigger EDD? (The "Red Flags")
 You don't apply EDD to everyone (it’s expensive and slow). You only use it in specific scenarios:
@@ -282,7 +282,7 @@ You send the full file to your Senior Manager for approval before saying "Yes."
   },
   {
     title: "Customer Risk Rating",
-    body: `Customer Risk Rating (CRR) is the process of assigning a "risk score" to a customer to determine how much scrutiny (Due Diligence) they require. It is the core of the Risk-Based Approach (RBA).
+    content: `Customer Risk Rating (CRR) is the process of assigning a "risk score" to a customer to determine how much scrutiny (Due Diligence) they require. It is the core of the Risk-Based Approach (RBA).
 
 In simple terms: The higher the risk, the more "investigative" work you must do to ensure they aren't using your services for money laundering.
 
@@ -341,7 +341,7 @@ If a customer is a "Politically Exposed Person (PEP)" who just moved their busin
   },
   {
   title: "Customer Risk factor",
-  body: `To effectively assess a customer’s risk, you must evaluate specific Risk Factors. In the financial industry, these are the variables that determine whether a customer is flagged for standard review or sent to the Enhanced Due Diligence (EDD) team for an investigation.
+ content: `To effectively assess a customer’s risk, you must evaluate specific Risk Factors. In the financial industry, these are the variables that determine whether a customer is flagged for standard review or sent to the Enhanced Due Diligence (EDD) team for an investigation.
   
   1. Geographic Risk Factors
 Geography is often the first "filter" in any risk engine.
@@ -447,7 +447,7 @@ When the interviewer asks, "How do you use Risk Factors?", use the "Interplay" e
 },
 {
     title: "What is PEP",
-    body: `A Politically Exposed Person (PEP) is an individual who is, or has been, entrusted with a prominent public function.  
+    content: `A Politically Exposed Person (PEP) is an individual who is, or has been, entrusted with a prominent public function.  
     
     Because of their position and influence, PEPs have higher access to public funds and decision-making power, which makes them more vulnerable to being targeted for bribery, corruption, or money laundering. In AML compliance, being a PEP does not mean they have committed a crime; it simply means they represent a higher risk and require Enhanced Due Diligence (EDD).  
     
@@ -495,7 +495,7 @@ Do you feel confident explaining these categories now? We could try a quick quiz
   },
   {
     title: "Sanction Screening",
-    body: `Sanctions Screening is a critical AML process where financial institutions compare their customers, transactions, and trade partners against government-maintained "blacklists." 
+   content: `Sanctions Screening is a critical AML process where financial institutions compare their customers, transactions, and trade partners against government-maintained "blacklists." 
     If a match is found, the institution must immediately stop the activity and, in many cases, freeze the assets and report the match to the authorities.
 
 Sanctions are political or economic tools used by countries and organizations (like the UN, EU, or US OFAC) to pressure governments or individuals to change their behavior (e.g., stopping human rights abuses, terrorism, or illegal nuclear programs).
@@ -539,7 +539,7 @@ What if it was a True Hit? If the directors of "Global Logistics Pvt Ltd" were t
   },
   {
     title: "Customer Risk Rating Levels",
-    body: `Customer Risk Rating (CRR) is the scoring mechanism that determines how much "detective work" you need to perform on a customer. In compliance, we group these into tiers to decide if the customer is a routine task or a high-priority investigation.
+   content: `Customer Risk Rating (CRR) is the scoring mechanism that determines how much "detective work" you need to perform on a customer. In compliance, we group these into tiers to decide if the customer is a routine task or a high-priority investigation.
     
     Understanding the Levels in Practice
 I. Low Risk (The "Baseline"): These are your standard customers—like a local salaried employee with a clear tax record and a simple residential address. You confirm their identity once, and the automated monitoring system watches for major deviations.
@@ -559,7 +559,7 @@ The Goal of Segmentation: Explain that CRR isn't about rejecting customers; it�
   },
   {
     title: "Sanction List",
-    body: `A Sanctions List is a government-regulated "Do Not Serve" list of individuals, entities (companies/groups), or countries that a financial institution is legally prohibited from doing business with. These lists are used as a primary tool to exert political or economic pressure to prevent terrorism, human rights abuses, and illegal weapons proliferation.
+   content: `A Sanctions List is a government-regulated "Do Not Serve" list of individuals, entities (companies/groups), or countries that a financial institution is legally prohibited from doing business with. These lists are used as a primary tool to exert political or economic pressure to prevent terrorism, human rights abuses, and illegal weapons proliferation.
     
     
     Who creates these lists?
@@ -612,7 +612,7 @@ If asked, "What is the most important thing about Sanctions Lists?", explain the
   },
   {
     title: "SDN VS NON-SDN",
-    body: `In the world of AML compliance, the distinction between SDN (Specially Designated Nationals) and Non-SDN sanctions lists is the difference between a "total freeze" and a "targeted restriction."
+   content: `In the world of AML compliance, the distinction between SDN (Specially Designated Nationals) and Non-SDN sanctions lists is the difference between a "total freeze" and a "targeted restriction."
     
     1. SDN (Specially Designated Nationals)The SDN List is the "blunt hammer" of sanctions. If an individual, entity, or vessel is on this list, they are considered a direct threat to national security or foreign policy.  
     
@@ -638,7 +638,7 @@ If asked, "What is the most important thing about Sanctions Lists?", explain the
   },
   {
     title: "False Hit & True hit",
-    body: `In AML compliance, screening systems act like a "digital guard." They compare your customers and their transactions against massive, complex global watchlists. Because names can be spelled in many ways, or because many people share the same name, these systems are designed to be "cautious"—they would rather flag a potential match and have you check it than let a criminal slip through.
+   content: `In AML compliance, screening systems act like a "digital guard." They compare your customers and their transactions against massive, complex global watchlists. Because names can be spelled in many ways, or because many people share the same name, these systems are designed to be "cautious"—they would rather flag a potential match and have you check it than let a criminal slip through.
 
 This leads to the two most common outcomes in your daily work: True Hits and False Positives (False Hits).
 
@@ -684,7 +684,7 @@ If an interviewer asks, "How do you handle the high volume of alerts caused by F
   },
   {
     title: "Adverse Media Screening",
-    body: `Adverse Media Screening (also known as "Negative News Screening") is the process of searching public sources—such as news articles, blogs, court filings, and regulatory announcements—to identify negative or unfavorable information about a customer or business.  While sanctions lists tell you who is already flagged by the government, Adverse Media tells you about risks that haven't been officially sanctioned yet. It is your "early warning system." 
+    content: `Adverse Media Screening (also known as "Negative News Screening") is the process of searching public sources—such as news articles, blogs, court filings, and regulatory announcements—to identify negative or unfavorable information about a customer or business.  While sanctions lists tell you who is already flagged by the government, Adverse Media tells you about risks that haven't been officially sanctioned yet. It is your "early warning system." 
     
     1. Why it is critical
     
@@ -737,7 +737,7 @@ If an interviewer asks, "How do you handle the high volume of alerts caused by F
   },
   {
     title: "Ultimate Beneficial Owner (UBO)",
-    body: `The Ultimate Beneficial Owner (UBO) is the "real person" behind a company or legal entity.  In compliance, it is not enough to know the name of the company you are doing business with. You must find the natural person (a human being) who ultimately owns or controls it.
+    content: `The Ultimate Beneficial Owner (UBO) is the "real person" behind a company or legal entity.  In compliance, it is not enough to know the name of the company you are doing business with. You must find the natural person (a human being) who ultimately owns or controls it.
     
     
     Why does UBO matter?
@@ -784,7 +784,7 @@ framework:Trace the Chain: "I don't stop at the first layer. I trace the ownersh
  },
  {
     title: "Ownership Structure",
-    body: `Ownership Structure in an AML context refers to the legal architecture of a business entity. In money laundering, criminals often create "layered" or "complex" ownership structures to hide the Ultimate Beneficial Owner (UBO)—the actual person who controls the funds.
+   content: `Ownership Structure in an AML context refers to the legal architecture of a business entity. In money laundering, criminals often create "layered" or "complex" ownership structures to hide the Ultimate Beneficial Owner (UBO)—the actual person who controls the funds.
     
     
     
@@ -856,7 +856,7 @@ If an interviewer asks, "How do you handle complex ownership structures?", use t
   },
   {
     title: "Complex Ownership Structures",
-    body: ` In AML, Complex Ownership Structures are legal setups designed to make it difficult to identify the person who actually owns or controls a company. They are not always illegal, but they are a massive Red Flag because they are the preferred tool for hiding illicit funds.
+   content: ` In AML, Complex Ownership Structures are legal setups designed to make it difficult to identify the person who actually owns or controls a company. They are not always illegal, but they are a massive Red Flag because they are the preferred tool for hiding illicit funds.
     
     
     What makes a structure "Complex"?
@@ -908,7 +908,7 @@ If asked, "How do you deal with complex corporate structures?", use this expert 
   },
   {
     title: "Control Vs Ownership",
-    body: `In Anti-Money Laundering (AML) and compliance, "Ownership" and "Control" are the two pillars used to identify the Ultimate Beneficial Owner (UBO). While they often overlap, they are distinct concepts that you must evaluate separately.
+   content: `In Anti-Money Laundering (AML) and compliance, "Ownership" and "Control" are the two pillars used to identify the Ultimate Beneficial Owner (UBO). While they often overlap, they are distinct concepts that you must evaluate separately.
     
     
     1. Ownership (The "Financial" Pillar)
@@ -967,7 +967,7 @@ If an interviewer asks, "How do you differentiate between ownership and control?
  },
  {
     title: "Entity & Types Of Entity",
-    body: `In the context of AML (Anti-Money Laundering) and KYC (Know Your Business), an entity is a legal structure—other than a natural person—that can enter into contracts, hold assets, and conduct financial transactions.
+    content: `In the context of AML (Anti-Money Laundering) and KYC (Know Your Business), an entity is a legal structure—other than a natural person—that can enter into contracts, hold assets, and conduct financial transactions.
 
 When a bank onboards a corporate client, they are not just looking at a person; they are evaluating an "Entity."
 
@@ -1036,7 +1036,7 @@ When asked about entity types, impress the interviewer by highlighting Risk-Base
   },
   {
     title: "Money Laundering $ It's Stages",
-    body: `Money Laundering is the illegal process of making "dirty money"—funds generated from criminal activities like drug trafficking, terrorism, corruption, or fraud—appear "clean" or legitimate. By passing the money through various financial systems, criminals disguise its original source so it can be used without attracting the attention of law enforcement.
+    content: `Money Laundering is the illegal process of making "dirty money"—funds generated from criminal activities like drug trafficking, terrorism, corruption, or fraud—appear "clean" or legitimate. By passing the money through various financial systems, criminals disguise its original source so it can be used without attracting the attention of law enforcement.
     
     
     The Three Stages of Money Laundering
@@ -1073,7 +1073,7 @@ When asked about these stages in an interview, don't just memorize the definitio
   },
   {
     title: "Regulatory Bodies",
-    body: `1. FATF (Financial Action Task Force)
+   content: `1. FATF (Financial Action Task Force)
 What it is: The global "watchdog" for money laundering and terrorist financing. It is an intergovernmental organization that sets the international standards (the "FATF Recommendations") that countries are expected to implement.
 
 What it did: It created the global blueprint for AML/CFT regimes. It also maintains the "Grey List" (countries under increased monitoring) and "Black List" (high-risk jurisdictions). If a country is blacklisted, international banks become extremely reluctant to process transactions involving that nation, effectively isolating them from the global financial system.
@@ -1105,7 +1105,7 @@ When asked about these, show you know the Hierarchy of Compliance:
   },
   {
     title: "Pillars of Financial Crime Investigation",
-    body: `1. Terrorism Financing (TF) : Unlike money laundering, where the goal is to hide the money’s origin to enjoy it, terrorism financing is about providing funds to support illegal activities.  The Core Difference: Money laundering focuses on the source of the funds (making dirty money look clean). Terrorism financing focuses on the destination and purpose (ensuring money reaches a group for a harmful goal). Interestingly, the funds used for terrorism can actually be "clean" (e.g., legitimate donations or personal savings).  Example: An individual collects donations for a fake charity or humanitarian group. On the surface, the money looks legitimate, but it is secretly funneled to a terrorist cell to pay for travel, equipment, or training.
+   content: `1. Terrorism Financing (TF) : Unlike money laundering, where the goal is to hide the money’s origin to enjoy it, terrorism financing is about providing funds to support illegal activities.  The Core Difference: Money laundering focuses on the source of the funds (making dirty money look clean). Terrorism financing focuses on the destination and purpose (ensuring money reaches a group for a harmful goal). Interestingly, the funds used for terrorism can actually be "clean" (e.g., legitimate donations or personal savings).  Example: An individual collects donations for a fake charity or humanitarian group. On the surface, the money looks legitimate, but it is secretly funneled to a terrorist cell to pay for travel, equipment, or training.
     
     
     2. Shell Companies : A shell company is a business entity that exists only on paper. It has no significant assets, no physical office, and no employees.  Why they are used: While they have legitimate uses (like holding intellectual property or facilitating corporate mergers), they are "red-flag" entities in AML because they provide a layer of anonymity.How it works: A criminal creates a company in a secrecy-friendly jurisdiction. They then use this "company" to open bank accounts. When money is moved through these accounts, it looks like "business revenue" rather than proceeds from a crime.  Example: A corrupt official wants to hide a bribe. They set up "XYZ Consulting Ltd" in an offshore tax haven. The briber pays "XYZ Consulting" for "advisory services" that were never actually provided. The money now appears to be legitimate consulting income, and the official’s true ownership of the shell company is hidden behind nominee directors.
@@ -1126,7 +1126,7 @@ When discussing these, always emphasize the "Why":
   },
   {
     title: "Transaction Monitoring Core Concept",
-    body: ` Think of Transaction Monitoring as a bank's "digital security guard" that works 24/7. It watches every single transaction for patterns that just don't look right.
+    content: ` Think of Transaction Monitoring as a bank's "digital security guard" that works 24/7. It watches every single transaction for patterns that just don't look right.
 
 1. Transaction Monitoring (The Guard)
 It is the process of reviewing customer transactions to identify activity that deviates from their expected profile.
@@ -1188,7 +1188,7 @@ When asked, "How do you handle an alert?", focus on your process:
   },
   {
     title: "KYC Lifecycle",
-    body: `The KYC (Know Your Customer) Lifecycle is the "cradle-to-grave" process of managing a client's relationship with a financial institution. It ensures that a bank knows exactly who it is dealing with, what they do, and how they use their money.
+    content: `The KYC (Know Your Customer) Lifecycle is the "cradle-to-grave" process of managing a client's relationship with a financial institution. It ensures that a bank knows exactly who it is dealing with, what they do, and how they use their money.
 
 Here is the lifecycle broken down into 4 simple stages, using the example of a new business client:
 
@@ -1226,7 +1226,7 @@ Event-Driven: Because the system flagged those suspicious wires (in stage 3), yo
   },
   {
     title: "Client Onboarding",
-    body: `Client Onboarding is the first step in the customer relationship. It is the process where a bank or financial institution welcomes a new client, verifies who they are, and decides if it is safe to do business with them.
+    content: `Client Onboarding is the first step in the customer relationship. It is the process where a bank or financial institution welcomes a new client, verifies who they are, and decides if it is safe to do business with them.
 
 In the world of compliance, onboarding is not just about "signing up"—it is about Risk Management.
 
@@ -1285,7 +1285,7 @@ If an interviewer asks, "What makes for a successful onboarding process?", say t
   },
   {
     title: "Periodic Review",
-    body: `A Periodic Review (also known as a "KYC Refresh") is a mandatory, recurring compliance check where a financial institution re-evaluates an existing customer to ensure their risk profile is still accurate and their documentation is current.
+    content: `A Periodic Review (also known as a "KYC Refresh") is a mandatory, recurring compliance check where a financial institution re-evaluates an existing customer to ensure their risk profile is still accurate and their documentation is current.
 
 Think of it as a "Compliance Health Check" for an account that has already been opened.
 
@@ -1333,7 +1333,7 @@ If an interviewer asks, "How do you approach a Periodic Review?", highlight your
   },
   {
     title: "Remediation",
-    body: `In the world of AML compliance, Remediation is the process of fixing "broken" or outdated KYC files.
+    content: `In the world of AML compliance, Remediation is the process of fixing "broken" or outdated KYC files.
 
 If a bank realizes that a group of customers has missing information, expired documents, or an outdated risk rating, they launch a Remediation Project to bring those files back up to modern compliance standards.
 
@@ -1379,7 +1379,7 @@ If an interviewer asks, "How do you handle a massive remediation project?", emph
   },
   {
     title: "Escalation Matrix",
-    body: `An Escalation Matrix is essentially a "Who to contact when things get tough" roadmap.
+   content: `An Escalation Matrix is essentially a "Who to contact when things get tough" roadmap.
 
 In a fast-paced environment like AML compliance, you can't waste time wondering who to call when you find a suspicious transaction or an uncooperative client. An escalation matrix takes the guesswork out of the process by clearly mapping out:
 
@@ -1410,7 +1410,7 @@ If an interviewer asks how you feel about escalations, don't say you "don't like
   },
   {
     title: "Tools",
-    body: `In the financial compliance world, these tools are the backbone of day-to-day operations. They are not all the same; they serve different purposes ranging from data collection and screening to end-to-end process management.
+   content: `In the financial compliance world, these tools are the backbone of day-to-day operations. They are not all the same; they serve different purposes ranging from data collection and screening to end-to-end process management.
 
 1. Refinitiv World-Check
 What it is: A global database of "heightened risk" individuals and entities.
@@ -1493,7 +1493,7 @@ If an interviewer asks how these tools interact, describe them as an integrated 
   },
   {
     title: "STR & CTR",
-    body: `In Anti-Money Laundering (AML) compliance, CTR and STR are two primary reporting tools used to detect and prevent financial crime. While both are mandatory, they serve very different purposes.
+   content: `In Anti-Money Laundering (AML) compliance, CTR and STR are two primary reporting tools used to detect and prevent financial crime. While both are mandatory, they serve very different purposes.
 
 1. CTR: Currency Transaction Report
 A CTR is a factual, automated report filed based purely on a dollar/currency threshold.
@@ -1526,7 +1526,7 @@ Interview Tip: When asked about these, always emphasize that CTR is about volume
   },
   {
     title: "Suspicious Activity Report ( SAR )",
-    body: `A Suspicious Activity Report (SAR)—often called a Suspicious Transaction Report (STR) in many countries—is the cornerstone of modern Anti-Money Laundering (AML) compliance.  It is a formal, confidential document that financial institutions and other regulated businesses file with government authorities (like the Financial Intelligence Unit) when they identify transactions or behaviors that seem suspicious or lack a clear, legitimate purpose.  What is the Purpose of a SAR?A SAR is not an accusation of a crime. You are not "reporting a criminal" in the sense of finding them guilty. Instead, you are providing a "tip" to law enforcement that something appears out of the ordinary, potentially indicating:  Money Laundering: Concealing the source of illegal funds.  Terrorist Financing: Moving money to support harmful activities.  Fraud: Including identity theft, account takeovers, or embezzlement.
+   content: `A Suspicious Activity Report (SAR)—often called a Suspicious Transaction Report (STR) in many countries—is the cornerstone of modern Anti-Money Laundering (AML) compliance.  It is a formal, confidential document that financial institutions and other regulated businesses file with government authorities (like the Financial Intelligence Unit) when they identify transactions or behaviors that seem suspicious or lack a clear, legitimate purpose.  What is the Purpose of a SAR?A SAR is not an accusation of a crime. You are not "reporting a criminal" in the sense of finding them guilty. Instead, you are providing a "tip" to law enforcement that something appears out of the ordinary, potentially indicating:  Money Laundering: Concealing the source of illegal funds.  Terrorist Financing: Moving money to support harmful activities.  Fraud: Including identity theft, account takeovers, or embezzlement.
     
     
     Key Characteristics of a SAR 
@@ -1546,7 +1546,7 @@ Interview Tip: When asked about these, always emphasize that CTR is about volume
   },
   {
     title: "How The Risk Assessed",
-    body: `In the financial sector, risk assessment is not a "guess." It is a structured, data-driven process used to determine how much scrutiny a client requires. Banks use a Risk-Based Approach (RBA), which focuses resources on the areas where the risk of money laundering or terrorist financing is highest.
+    content: `In the financial sector, risk assessment is not a "guess." It is a structured, data-driven process used to determine how much scrutiny a client requires. Banks use a Risk-Based Approach (RBA), which focuses resources on the areas where the risk of money laundering or terrorist financing is highest.
 
 The Core Methodology: How the Score is Calculated
 Most banks use a Weighted Scoring Model. They assign values to specific "Risk Indicators." When you onboard a client, the system adds up these values to generate a total Risk Score.
@@ -1605,7 +1605,7 @@ When asked, "How do you personally contribute to risk assessment?", demonstrate 
   },
   {
     title: "Customer Risk Factors",
-    body: `To assess Customer Risk, compliance professionals look for specific "Red Flags" or characteristics that suggest a customer might be more likely to be involved in money laundering or financial crime.
+    content: `To assess Customer Risk, compliance professionals look for specific "Red Flags" or characteristics that suggest a customer might be more likely to be involved in money laundering or financial crime.
 
 Here is how we categorize these risk factors to determine if a customer should be classified as High, Medium, or Low risk:
 
@@ -1642,7 +1642,7 @@ This looks at the individual or the organization itself.
 ];
 export const privacyPolicy = {
   title: "Privacy Policy",
-  body: `Last Updated: May 2026
+  content: `Last Updated: May 2026
 
 1. Data Collection: We collect information you provide, such as names, emails, and professional roles, specifically for referral and AML/KYC compliance purposes.
 2. File Security: All resumes and partner documents are stored securely using Supabase Storage. Access is restricted to authorized personnel.
@@ -1652,7 +1652,7 @@ export const privacyPolicy = {
 };
 export const termsOfService = {
   title: "Terms of Service",
-  body: `Last Updated: May 2026
+  content: `Last Updated: May 2026
 
 1. Acceptance of Terms: By accessing AML_DECODE, you agree to these terms. If you do not agree, please discontinue use of this site.
 2. User Conduct: You agree to use this platform only for lawful purposes. You shall not submit false information, spam, or malicious content, particularly regarding AML/KYC documentation or referral applications.
