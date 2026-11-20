@@ -1,0 +1,58 @@
+﻿:root {
+  --amld-midnight: #081524;
+  --amld-deep-navy: #132B3E;
+  --amld-teal: #21D7C4;
+  --amld-off-white: #F5F8FC;
+  --amld-amber: #F4B860;
+  --amld-surface: #0D1E30;
+  --amld-surface-elevated: #162E45;
+  --amld-border: rgba(245, 248, 252, 0.12);
+  --amld-border-accent: rgba(33, 215, 196, 0.35);
+  --amld-text-primary: #F5F8FC;
+  --amld-text-secondary: #B8C7D9;
+  --amld-text-muted: #7E93AB;
+}
+
+.amld-shell {
+  background-color: var(--amld-midnight);
+  color: var(--amld-text-primary);
+}
+
+.amld-card {
+  background-color: var(--amld-surface);
+  border: 1px solid var(--amld-border);
+  transition: transform 220ms ease, border-color 220ms ease, box-shadow 220ms ease;
+}
+
+.amld-card:hover {
+  border-color: var(--amld-border-accent);
+  box-shadow: 0 14px 32px rgba(4, 11, 20, 0.45);
+}
+
+.amld-btn-primary {
+  background-color: var(--amld-teal);
+  color: var(--amld-midnight);
+  transition: background-color 180ms ease, transform 180ms ease;
+}
+
+.amld-btn-primary:hover {
+  background-color: #38e3d2;
+}
+
+.amld-btn-amber {
+  background-color: var(--amld-amber);
+  color: var(--amld-midnight);
+  transition: background-color 180ms ease, transform 180ms ease;
+}
+
+.amld-btn-amber:hover {
+  background-color: #f8c67c;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .amld-card,
+  .amld-btn-primary,
+  .amld-btn-amber {
+    transition: none !important;
+  }
+}

@@ -1,12 +1,13 @@
-import React, { useState, useEffect, useRef } from 'react';
+﻿import React, { useState, useEffect } from 'react';
+import './design-tokens.css';
 import { supabase } from './supabaseClient';
 import { notesContent, privacyPolicy, termsOfService, faqData, contactContent } from './content';
 import { jobOpenings } from './jobs';
 import { kycNews } from './news';
-import CinematicHero from './CinematicHero';
+import HomepageHub from './components/HomepageHub';
+import SyllabusReader from './components/SyllabusReader';
 
-// PREMIUM ACADEMY QUIZ COMPONENT
-function QuizItem({ item, onCorrect }) {
+function QuizItem({ item, index, onCorrect }) {
   const [selected, setSelected] = useState(null);
   const [isLocked, setIsLocked] = useState(false);
 
@@ -20,21 +21,23 @@ function QuizItem({ item, onCorrect }) {
   const isCorrect = selected === item.correct_answer;
 
   return (
-    <div className={`mb-10 p-0 overflow-hidden bg-slate-900/40 backdrop-blur-xl border rounded-2xl transition-all duration-500 ${isLocked ? (isCorrect ? 'border-amber-500 shadow-[0_0_30px_rgba(251,191,36,0.15)]' : 'border-red-500/50') : 'border-white/5'}`}>
-      
-      {/* Question Header */}
-      <div className="p-6 border-b border-white/[0.04] bg-white/[0.01]">
+    <div className={`mb-6 overflow-hidden bg-[#0D1E30] border rounded-2xl transition-all duration-300 ${isLocked ? (isCorrect ? 'border-[#21D7C4]' : 'border-red-500/50') : 'border-white/10'}`}>
+      <div className="p-6 border-b border-white/10 bg-[#132B3E]/40">
         <div className="flex justify-between items-start gap-4">
-          <h2 className="text-xl font-bold text-white leading-snug">{item.question}</h2>
+          <div>
+            <span className="text-[11px] font-bold uppercase tracking-wider text-[#21D7C4] block mb-1">
+              Question {index + 1}
+            </span>
+            <h2 className="text-lg sm:text-xl font-bold text-[#F5F8FC] leading-snug">{item.question}</h2>
+          </div>
           {isLocked && (
-            <span className={`shrink-0 h-6 w-6 rounded-full flex items-center justify-center text-xs font-black ${isCorrect ? 'bg-amber-500 text-black' : 'bg-red-500 text-white'}`}>
-              {isCorrect ? '✓' : '✕'}
+            <span className={`shrink-0 px-2.5 py-1 rounded-full text-xs font-bold ${isCorrect ? 'bg-[#21D7C4] text-[#081524]' : 'bg-red-500 text-white'}`}>
+              {isCorrect ? 'Correct' : 'Review'}
             </span>
           )}
         </div>
       </div>
 
-      {/* Options Grid */}
       <div className="p-6 space-y-3">
         {(() => {
           try {
@@ -42,620 +45,530 @@ function QuizItem({ item, onCorrect }) {
             return options.map((opt, i) => {
               const isThisSelected = selected === opt;
               const isThisCorrect = opt === item.correct_answer;
-              
-              let buttonStyle = "border-white/5 bg-white/[0.02] text-slate-300 hover:border-amber-500/50";
+
+              let buttonStyle = 'border-white/10 bg-[#081524]/70 text-[#B8C7D9] hover:border-[#21D7C4]/50 hover:text-[#F5F8FC]';
               if (isLocked) {
-                if (isThisCorrect) buttonStyle = "border-amber-500 bg-amber-500/10 text-amber-400";
-                else if (isThisSelected && !isThisCorrect) buttonStyle = "border-red-500 bg-red-500/10 text-red-400";
-                else buttonStyle = "border-white/[0.02] bg-white/[0.01] text-slate-500 opacity-40";
+                if (isThisCorrect) buttonStyle = 'border-[#21D7C4] bg-[#21D7C4]/15 text-[#21D7C4]';
+                else if (isThisSelected && !isThisCorrect) buttonStyle = 'border-red-500 bg-red-500/15 text-red-300';
+                else buttonStyle = 'border-white/5 bg-[#081524]/40 text-slate-500 opacity-60';
               }
 
               return (
-                <button 
-                  key={i} 
-                  disabled={isLocked} 
+                <button
+                  key={i}
+                  type="button"
+                  disabled={isLocked}
                   onClick={() => handleSelect(opt)}
-                  className={`group relative block w-full text-left p-5 border rounded-xl transition-all duration-300 font-bold text-sm md:text-base min-h-[60px] ${buttonStyle}`}
+                  className={`block w-full text-left p-4 border rounded-xl transition-colors font-semibold text-sm ${buttonStyle}`}
                 >
-                  <div className="flex items-center justify-between gap-3">
-                    <span className="flex-grow">{opt}</span>
-                    {!isLocked && <span className="opacity-0 group-hover:opacity-100 text-[10px] text-amber-400 font-black tracking-widest">CHOOSE →</span>}
-                  </div>
+                  {opt}
                 </button>
               );
             });
-          } catch { return <p className="text-red-500">Error: Invalid format</p>; }
+          } catch {
+            return <p className="text-red-400 text-sm">Unable to parse options for this question.</p>;
+          }
         })()}
       </div>
 
-      {/* Rationale Insight Section */}
       {isLocked && (
-        <div className={`p-6 border-t transition-opacity duration-500 ${isCorrect ? 'bg-amber-500/[0.02] border-amber-500/10' : 'bg-slate-900/20 border-white/5'}`}>
-          <div className="flex items-start gap-3">
-            <div className={`mt-1 p-1 rounded-md ${isCorrect ? 'text-amber-400' : 'text-slate-500'}`}>
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            </div>
-            <div>
-              <p className="text-[10px] font-black uppercase tracking-widest mb-1 text-slate-400">Academy Analysis & Core Case Rationale</p>
-              <p className="text-sm text-slate-300 leading-relaxed italic">
-                {item.explanation || "This answer maps straight to corporate compliance criteria executed inside financial centers like Bengaluru and Kolkata."}
-              </p>
-            </div>
-          </div>
+        <div className="p-6 border-t border-white/10 bg-[#081524]/60">
+          <p className="text-xs font-bold uppercase tracking-wider text-[#F4B860] mb-1">Case Rationale</p>
+          <p className="text-sm text-[#B8C7D9] leading-relaxed">
+            {item.explanation || 'Review the compliance framework and risk indicators for this scenario.'}
+          </p>
         </div>
       )}
-    </div>
-  );
-}
-
-// PREMIUM ACADEMY SUBSCRIBE MODAL
-function SubscribeModal() {
-  const [isOpen, setIsOpen] = useState(false);
-  const [email, setEmail] = useState("");
-
-  useEffect(() => {
-    const timer = setTimeout(() => { setIsOpen(true); }, 3000);
-    return () => clearTimeout(timer);
-  }, []);
-
-  const handleSubscribe = async (e) => {
-    e.preventDefault();
-    try {
-      const { error } = await supabase.from('subscribers').insert([{ email }]);
-      if (!error) {
-        alert("Registration Saved. Your daily career intelligence reports are active.");
-        setIsOpen(false);
-      } else {
-        alert(error.code === "23505" ? "This account profile is already active!" : "Error: " + error.message);
-      }
-    } catch (err) {
-      alert("Network error: Unable to complete request.");
-    }
-  };
-
-  if (!isOpen) return null;
-
-  return (
-    <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/85 backdrop-blur-md p-4 animate-fade-in">
-      <div className="bg-slate-900 border border-white/10 p-10 rounded-2xl max-w-md w-full relative shadow-[0_40px_80px_rgba(0,0,0,0.8)]">
-        <button onClick={() => setIsOpen(false)} className="absolute top-5 right-5 text-slate-500 hover:text-white text-md transition-colors">✕</button>
-        
-        <h2 className="text-3xl font-black text-white mb-2 uppercase tracking-tight">Stay Enrolled</h2>
-        <p className="text-slate-400 text-sm mb-6 leading-relaxed font-medium">
-          Receive daily compliance job briefings and executive network updates straight to your mailbox.
-        </p>
-
-        <form onSubmit={handleSubscribe} className="space-y-4">
-          <input 
-            type="email" 
-            required 
-            placeholder="Enter your email address" 
-            className="w-full p-4 bg-black/40 border border-white/5 rounded-xl text-white outline-none focus:border-amber-500 transition-colors text-sm font-medium"
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          <button type="submit" className="w-full py-4 bg-gradient-to-b from-amber-400 to-amber-600 hover:from-amber-300 hover:to-amber-500 text-black font-black uppercase tracking-widest text-xs rounded-xl transition-all shadow-lg">
-            Subscribe Now
-          </button>
-        </form>
-      </div>
     </div>
   );
 }
 
 export default function App() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [activeView, setActiveView] = useState(null);
-  const [selectedFile, setSelectedFile] = useState(null);
-  const [challengeSelected, setChallengeSelected] = useState(null);
-  const [isChallengeLocked, setIsChallengeLocked] = useState(false);
   const [pageIndex, setPageIndex] = useState(0);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [submissions, setSubmissions] = useState([]);
   const [partnerFiles, setPartnerFiles] = useState([]);
-  const [isAuthorized, setIsAuthorized] = useState(false);
   const [newsList, setNewsList] = useState([]);
   const [selectedLocation, setSelectedLocation] = useState('All');
-  const [recruiterEmail, setRecruiterEmail] = useState("");
   const [selectedCategory, setSelectedCategory] = useState('KYC Basics');
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [userName, setUserName] = useState("");
-  const [selectedOption, setSelectedOption] = useState(null);
+  const [faqCategory, setFaqCategory] = useState('All');
   const [quizScore, setQuizScore] = useState(0);
-  const [isTestStarted, setIsTestStarted] = useState(false);
-  const [isTestComplete, setIsTestComplete] = useState(false); 
-  
   const [testData, setTestData] = useState([]);
-  const contentRef = useRef(null);
 
-  // Refs for auto-centering mobile horizontal pill bar
-  const noteScrollContainerRef = useRef(null);
-  const notePillRefs = useRef([]);
+  const [referralName, setReferralName] = useState('');
+  const [referralEmail, setReferralEmail] = useState('');
+  const [referralRole, setReferralRole] = useState('');
+  const [referralNotes, setReferralNotes] = useState('');
+  const [referralStatus, setReferralStatus] = useState('');
 
-  useEffect(() => {
-    if (activeView === 'notes') {
-      const selectedPill = notePillRefs.current[pageIndex];
-      if (selectedPill && noteScrollContainerRef.current) {
-        selectedPill.scrollIntoView({
-          behavior: 'smooth',
-          block: 'nearest',
-          inline: 'center',
-        });
-      }
-    }
-  }, [pageIndex, activeView]);
-
-  const navigateTo = (view) => {
-    setActiveView(view);
-    setIsTestStarted(false);
-    setIsTestComplete(false);
-    setQuizScore(0);
-    setCurrentQuestionIndex(0);
-    setSelectedOption(null);
-  };
-
-  const isNewlyAdded = (dateString) => {
-    if (!dateString) return false;
-    const diffInDays = (new Date().getTime() - new Date(dateString).getTime()) / (1000 * 3600 * 24);
-    return diffInDays >= 0 && diffInDays <= 4;
-  };
+  const [partnerPassword, setPartnerPassword] = useState('');
+  const [isAuthorized, setIsAuthorized] = useState(false);
+  const [partnerError, setPartnerError] = useState('');
 
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
-      const { data: subs } = await supabase.from('submissions').select('*');
-      const { data: files } = await supabase.from('partner_files').select('*');
-      const { data: news } = await supabase.from('news').select('*');
-      const { data: quiz } = await supabase.from('quiz_questions').select('*').eq('category', selectedCategory);
-      
-      if (subs) setSubmissions(subs);
-      if (files) setPartnerFiles(files);
-      setNewsList(news && news.length > 0 ? news : kycNews);
-      if (quiz) setTestData(quiz);
-      setIsLoading(false);
+      try {
+        const { data: subs } = await supabase.from('submissions').select('*');
+        const { data: files } = await supabase.from('partner_files').select('*');
+        const { data: news } = await supabase.from('news').select('*');
+        const { data: quiz } = await supabase.from('quiz_questions').select('*').eq('category', selectedCategory);
+
+        if (subs) setSubmissions(subs);
+        if (files) setPartnerFiles(files);
+        setNewsList(news && news.length > 0 ? news : kycNews);
+        if (quiz) setTestData(quiz);
+      } catch {
+        setNewsList(kycNews);
+      } finally {
+        setIsLoading(false);
+      }
     };
     fetchData();
   }, [selectedCategory]);
 
+  const handleBackHome = () => {
+    setActiveView(null);
+    setQuizScore(0);
+  };
+
+  const handleScrollToGuidance = () => {
+    setActiveView(null);
+    setTimeout(() => {
+      document.getElementById('career-guidance')?.scrollIntoView({ behavior: 'smooth' });
+    }, 120);
+  };
+
+  const handleReferralSubmit = async (e) => {
+    e.preventDefault();
+    setReferralStatus('');
+    try {
+      const { error } = await supabase.from('submissions').insert([
+        {
+          name: referralName,
+          email: referralEmail,
+          role: referralRole,
+          notes: referralNotes,
+        },
+      ]);
+      if (error) {
+        setReferralStatus(error.message || 'Unable to submit referral.');
+      } else {
+        setReferralStatus('Referral submitted.');
+        setReferralName('');
+        setReferralEmail('');
+        setReferralRole('');
+        setReferralNotes('');
+      }
+    } catch {
+      setReferralStatus('Network error while submitting referral.');
+    }
+  };
+
+  const handleRecruiterAuth = async (e) => {
+    e.preventDefault();
+    setPartnerError('');
+    try {
+      const res = await fetch('/api/verify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: partnerPassword }),
+      });
+      const data = await res.json();
+      if (res.ok && data.authorized) {
+        setIsAuthorized(true);
+        setPartnerPassword('');
+      } else {
+        setPartnerError('Authorization failed.');
+      }
+    } catch {
+      setPartnerError('Unable to reach verification endpoint.');
+    }
+  };
+
+  const locations = ['All', ...Array.from(new Set(jobOpenings.map((j) => (j.location || '').trim()).filter(Boolean)))];
+  const filteredJobs =
+    selectedLocation === 'All'
+      ? jobOpenings
+      : jobOpenings.filter((j) => (j.location || '').trim() === selectedLocation);
+
+  const faqCategories = ['All', ...Array.from(new Set(faqData.map((f) => f.category).filter(Boolean)))];
+  const filteredFaqs =
+    faqCategory === 'All' ? faqData : faqData.filter((f) => f.category === faqCategory);
+
+  if (!activeView) {
+    return (
+      <HomepageHub
+        onOpenView={(view) => {
+          setQuizScore(0);
+          setActiveView(view);
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }}
+        onSelectNoteIndex={(idx) => setPageIndex(idx)}
+        onScrollToGuidance={handleScrollToGuidance}
+      />
+    );
+  }
+
+  if (activeView === 'notes') {
+    return (
+      <SyllabusReader
+        notesContent={notesContent}
+        pageIndex={pageIndex}
+        onSelectModule={(idx) => setPageIndex(idx)}
+        onBackHome={handleBackHome}
+      />
+    );
+  }
+
+  const viewBreadcrumbLabel =
+    activeView === 'quiz'
+      ? 'Knowledge Test'
+      : activeView === 'jobs'
+      ? 'Compliance Jobs'
+      : activeView === 'network'
+      ? 'Network & Briefings'
+      : activeView === 'available'
+      ? 'Available Referrals'
+      : activeView === 'referralForm'
+      ? 'Submit Referral'
+      : activeView === 'contribute'
+      ? 'Recruiter Desk'
+      : activeView === 'faq'
+      ? 'FAQ'
+      : activeView === 'contact'
+      ? 'Contact Us'
+      : activeView === 'privacy'
+      ? 'Privacy Policy'
+      : 'Terms of Service';
+
   return (
-    <div className="text-slate-900 font-sans min-h-screen flex flex-col relative bg-[#fbfbf8] antialiased">      
-      <SubscribeModal />
-
-      {/* FLOATING CAPSULE NAVIGATION HEADER */}
-      <div className="w-full flex justify-center py-6 px-4 bg-[#040712] sticky top-0 z-50">
-        <nav className="w-full max-w-7xl h-20 bg-[#fbfbf8] rounded-full shadow-[0_15px_40px_rgba(0,0,0,0.15)] border border-black/[0.03] px-3 flex items-center justify-between">
-          
-          {/* LEFT SIDE: Logo & Branding */}
-          <div 
-            onClick={() => setActiveView(null)} 
-            className="flex items-center gap-3 pl-6 cursor-pointer shrink-0"
-          >
-            <svg 
-              className="h-6 w-6 text-[#111111]" 
-              fill="currentColor" 
-              viewBox="0 0 24 24"
-            >
-              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 12 10 10-4.48 10-12S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
-            </svg>
-            <span className="text-lg font-bold tracking-tight text-[#111111] font-sans">
-              AML_DECODE
-            </span>
-          </div>
-
-          {/* CENTER SIDE: Links */}
-          <div className="hidden lg:flex items-center gap-8 text-[12px] font-bold tracking-[0.18em] text-[#111111] uppercase">
-            {[
-              { label: 'Notes', id: 'notes' },
-              { label: 'Jobs', id: 'jobs' },
-              { label: 'Network Jobs', id: 'network' },
-              { label: 'Knowledge Test', id: 'quiz' }
-            ].map((item) => (
-              <button
-                key={item.id}
-                onClick={() => setActiveView(item.id)}
-                className={`transition-colors flex items-center gap-1 py-2 ${
-                  activeView === item.id 
-                    ? "text-amber-600 font-extrabold" 
-                    : "text-slate-700 hover:text-black font-semibold"
-                }`}
-              >
-                <span>{item.label}</span>
-                <span className="text-[9px] opacity-40 font-sans tracking-normal">&#x25BC;</span>
-              </button>
-            ))}
-
-            <button
-              onClick={() => {
-                setActiveView(null);
-                setTimeout(() => {
-                  document.getElementById('career-guidance')?.scrollIntoView({ behavior: 'smooth' });
-                }, 150);
-              }}
-              className="text-slate-700 hover:text-black font-semibold transition-colors"
-            >
-              Career Guidance
+    <div className="amld-shell min-h-screen flex flex-col">
+      <header className="sticky top-0 z-40 bg-[#081524]/95 backdrop-blur border-b border-[var(--amld-border)]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between gap-4">
+          <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-xs text-[#B8C7D9] truncate">
+            <button type="button" onClick={handleBackHome} className="hover:text-[#21D7C4] font-semibold">
+              Home
             </button>
+            <span className="text-[#7E93AB]">/</span>
+            <span className="text-[#F5F8FC] font-semibold truncate">{viewBreadcrumbLabel}</span>
+          </nav>
 
-            {/* Dropdown */}
-            <div className="relative group py-2 cursor-pointer">
-              <span className="text-slate-700 group-hover:text-black font-semibold flex items-center gap-1 transition-colors">
-                Resources <span className="text-[9px] opacity-40 font-sans tracking-normal">&#x25BC;</span>
-              </span>
-              <div className="absolute top-full left-1/2 -translate-x-1/2 w-60 bg-white border border-slate-100 rounded-2xl mt-2 py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all shadow-[0_20px_40px_rgba(0,0,0,0.12)] z-50">
-                {[
-                  { label: 'Submit Referral', id: 'referralForm' }, 
-                  { label: 'Available Referrals', id: 'available' }
-                ].map((sub) => (
-                  <button 
-                    key={sub.id} 
-                    onClick={() => setActiveView(sub.id)} 
-                    className="w-full text-left px-5 py-3 text-[11px] font-bold text-slate-600 hover:bg-slate-50 hover:text-black uppercase tracking-wider"
+          <button
+            type="button"
+            onClick={() => setActiveView('notes')}
+            className="text-xs font-semibold text-[#21D7C4] hover:underline shrink-0"
+          >
+            Syllabus Notes →
+          </button>
+        </div>
+      </header>
+
+      <main className="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
+        {activeView === 'quiz' && (
+          <div className="space-y-8 max-w-4xl mx-auto">
+            <div className="border-b border-[var(--amld-border)] pb-6 flex flex-wrap items-end justify-between gap-4">
+              <div>
+                <p className="text-xs font-bold uppercase tracking-wider text-[#21D7C4]">Interactive Assessment</p>
+                <h1 className="text-3xl sm:text-4xl font-extrabold text-[#F5F8FC] mt-1">Knowledge Test</h1>
+                <p className="text-sm text-[#B8C7D9] mt-2">
+                  Select a compliance domain to practice scenario and concept questions.
+                </p>
+              </div>
+              <div className="px-4 py-2 rounded-xl bg-[#0D1E30] border border-[var(--amld-border)] text-sm font-bold text-[#F4B860]">
+                Score: {quizScore} / {testData.length || 0}
+              </div>
+            </div>
+
+            <div className="flex gap-2 overflow-x-auto pb-2">
+              {['KYC Basics', 'AML Frameworks', 'Sanctions & PEPs', 'Transaction Monitoring'].map((cat) => (
+                <button
+                  key={cat}
+                  type="button"
+                  onClick={() => {
+                    setSelectedCategory(cat);
+                    setQuizScore(0);
+                  }}
+                  className={`px-4 py-2 text-xs font-bold rounded-lg border transition-colors whitespace-nowrap ${
+                    selectedCategory === cat
+                      ? 'bg-[#21D7C4]/15 border-[#21D7C4] text-[#21D7C4]'
+                      : 'bg-[#0D1E30] border-[var(--amld-border)] text-[#B8C7D9] hover:text-[#F5F8FC]'
+                  }`}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
+
+            {isLoading ? (
+              <div className="p-10 bg-[#0D1E30] border border-[var(--amld-border)] rounded-2xl text-center text-sm text-[#B8C7D9]">
+                Loading questions...
+              </div>
+            ) : testData.length === 0 ? (
+              <div className="p-10 bg-[#0D1E30] border border-[var(--amld-border)] rounded-2xl text-center text-sm text-[#B8C7D9]">
+                No questions found under {selectedCategory}.
+              </div>
+            ) : (
+              <div>
+                {testData.map((item, idx) => (
+                  <QuizItem
+                    key={item.id || idx}
+                    item={item}
+                    index={idx}
+                    onCorrect={() => setQuizScore((prev) => prev + 1)}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        {(activeView === 'jobs' || activeView === 'network' || activeView === 'available') && (
+          <div className="space-y-8">
+            <div className="border-b border-[var(--amld-border)] pb-6 flex flex-wrap items-end justify-between gap-4">
+              <div>
+                <p className="text-xs font-bold uppercase tracking-wider text-[#F4B860]">Career & Intelligence Hub</p>
+                <h1 className="text-3xl sm:text-4xl font-extrabold text-[#F5F8FC] mt-1">
+                  {activeView === 'network'
+                    ? 'Network & Regulatory Briefings'
+                    : activeView === 'available'
+                    ? 'Available Referrals & Submissions'
+                    : 'Compliance Job Openings'}
+                </h1>
+              </div>
+
+              {activeView === 'jobs' && (
+                <div className="flex flex-wrap gap-2">
+                  {locations.map((loc) => (
+                    <button
+                      key={loc}
+                      type="button"
+                      onClick={() => setSelectedLocation(loc)}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-semibold border ${
+                        selectedLocation === loc
+                          ? 'bg-[#21D7C4]/15 border-[#21D7C4] text-[#21D7C4]'
+                          : 'bg-[#0D1E30] border-[var(--amld-border)] text-[#B8C7D9]'
+                      }`}
+                    >
+                      {loc}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {activeView === 'network' ? (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {newsList.map((item, idx) => (
+                  <div key={idx} className="p-6 rounded-2xl bg-[#0D1E30] border border-[var(--amld-border)] flex flex-col justify-between gap-4">
+                    <h2 className="text-base font-bold text-[#F5F8FC]">{item.headline}</h2>
+                    <a
+                      href={item.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-xs font-semibold text-[#21D7C4] hover:underline"
+                    >
+                      Open source →
+                    </a>
+                  </div>
+                ))}
+              </div>
+            ) : activeView === 'available' ? (
+              <div className="p-6 sm:p-8 rounded-2xl bg-[#0D1E30] border border-[var(--amld-border)] space-y-4 max-w-2xl">
+                <p className="text-sm text-[#B8C7D9]">
+                  Submitted referral records: <strong className="text-[#21D7C4]">{submissions.length}</strong> · Partner files: <strong className="text-[#F4B860]">{partnerFiles.length}</strong>
+                </p>
+                <div className="flex flex-wrap gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setActiveView('referralForm')}
+                    className="amld-btn-primary px-4 py-2.5 rounded-xl text-xs font-bold"
                   >
-                    {sub.label}
+                    Submit a Referral
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setActiveView('contribute')}
+                    className="px-4 py-2.5 rounded-xl text-xs font-semibold border border-[var(--amld-border)] text-[#F5F8FC]"
+                  >
+                    Open Recruiter Desk
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {filteredJobs.map((job, idx) => (
+                  <div key={idx} className="p-6 rounded-2xl bg-[#0D1E30] border border-[var(--amld-border)] flex flex-col justify-between gap-4">
+                    <div>
+                      <span className="text-xs font-semibold text-[#F4B860]">{(job.location || '').trim()}</span>
+                      <h2 className="text-base font-bold text-[#F5F8FC] mt-1">{job.role}</h2>
+                      <p className="text-xs text-[#B8C7D9] mt-1">{(job.company || '').trim()}</p>
+                    </div>
+                    <a
+                      href={job.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-xs font-semibold text-[#21D7C4] hover:underline"
+                    >
+                      View job posting →
+                    </a>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        {activeView === 'referralForm' && (
+          <div className="max-w-2xl mx-auto space-y-6">
+            <div className="border-b border-[var(--amld-border)] pb-5">
+              <p className="text-xs font-bold uppercase tracking-wider text-[#F4B860]">Network Intake</p>
+              <h1 className="text-3xl sm:text-4xl font-extrabold text-[#F5F8FC] mt-1">Submit Network Referral</h1>
+            </div>
+            <form onSubmit={handleReferralSubmit} className="p-6 sm:p-8 rounded-2xl bg-[#0D1E30] border border-[var(--amld-border)] space-y-4">
+              <input
+                type="text"
+                required
+                value={referralName}
+                onChange={(e) => setReferralName(e.target.value)}
+                placeholder="Full name"
+                className="w-full px-4 py-3 rounded-xl bg-[#081524] border border-[var(--amld-border)] text-sm text-[#F5F8FC]"
+              />
+              <input
+                type="email"
+                required
+                value={referralEmail}
+                onChange={(e) => setReferralEmail(e.target.value)}
+                placeholder="Email address"
+                className="w-full px-4 py-3 rounded-xl bg-[#081524] border border-[var(--amld-border)] text-sm text-[#F5F8FC]"
+              />
+              <input
+                type="text"
+                required
+                value={referralRole}
+                onChange={(e) => setReferralRole(e.target.value)}
+                placeholder="Target role (e.g., AML Analyst, KYC Specialist)"
+                className="w-full px-4 py-3 rounded-xl bg-[#081524] border border-[var(--amld-border)] text-sm text-[#F5F8FC]"
+              />
+              <textarea
+                rows={4}
+                value={referralNotes}
+                onChange={(e) => setReferralNotes(e.target.value)}
+                placeholder="Experience or referral notes"
+                className="w-full px-4 py-3 rounded-xl bg-[#081524] border border-[var(--amld-border)] text-sm text-[#F5F8FC]"
+              />
+              <button type="submit" className="amld-btn-primary px-6 py-3 rounded-xl text-xs font-bold uppercase tracking-wider">
+                Submit Referral
+              </button>
+              {referralStatus && <p className="text-sm text-[#21D7C4]">{referralStatus}</p>}
+            </form>
+          </div>
+        )}
+
+        {activeView === 'contribute' && (
+          <div className="max-w-xl mx-auto space-y-6">
+            <div className="border-b border-[var(--amld-border)] pb-5">
+              <p className="text-xs font-bold uppercase tracking-wider text-[#21D7C4]">Partner Portal</p>
+              <h1 className="text-3xl sm:text-4xl font-extrabold text-[#F5F8FC] mt-1">Recruiter Desk</h1>
+            </div>
+            {!isAuthorized ? (
+              <form onSubmit={handleRecruiterAuth} className="p-6 sm:p-8 rounded-2xl bg-[#0D1E30] border border-[var(--amld-border)] space-y-4">
+                <p className="text-sm text-[#B8C7D9]">Enter partner access credentials to verify access.</p>
+                <input
+                  type="password"
+                  required
+                  value={partnerPassword}
+                  onChange={(e) => setPartnerPassword(e.target.value)}
+                  placeholder="Access password"
+                  className="w-full px-4 py-3 rounded-xl bg-[#081524] border border-[var(--amld-border)] text-sm text-[#F5F8FC]"
+                />
+                <button type="submit" className="amld-btn-amber px-6 py-3 rounded-xl text-xs font-bold uppercase tracking-wider">
+                  Verify Access
+                </button>
+                {partnerError && <p className="text-sm text-red-400">{partnerError}</p>}
+              </form>
+            ) : (
+              <div className="p-6 sm:p-8 rounded-2xl bg-[#0D1E30] border border-[#21D7C4]/40 space-y-3">
+                <p className="text-base font-bold text-[#21D7C4]">Partner Access Verified</p>
+                <p className="text-sm text-[#B8C7D9]">Submissions count: {submissions.length} · Partner files count: {partnerFiles.length}</p>
+              </div>
+            )}
+          </div>
+        )}
+
+        {activeView === 'faq' && (
+          <div className="max-w-4xl mx-auto space-y-6">
+            <div className="border-b border-[var(--amld-border)] pb-5 flex flex-wrap items-end justify-between gap-4">
+              <div>
+                <p className="text-xs font-bold uppercase tracking-wider text-[#21D7C4]">Platform Guide</p>
+                <h1 className="text-3xl sm:text-4xl font-extrabold text-[#F5F8FC] mt-1">Frequently Asked Questions</h1>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {faqCategories.map((cat) => (
+                  <button
+                    key={cat}
+                    type="button"
+                    onClick={() => setFaqCategory(cat)}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold border ${
+                      faqCategory === cat
+                        ? 'bg-[#21D7C4]/15 border-[#21D7C4] text-[#21D7C4]'
+                        : 'bg-[#0D1E30] border-[var(--amld-border)] text-[#B8C7D9]'
+                    }`}
+                  >
+                    {cat}
                   </button>
                 ))}
               </div>
             </div>
-          </div>
-
-          {/* RIGHT SIDE */}
-          <div className="hidden lg:block shrink-0">
-            <button 
-              onClick={() => setActiveView('contribute')} 
-              className="h-14 px-8 bg-[#111111] hover:bg-black text-white text-[11px] font-bold uppercase tracking-[0.25em] rounded-full transition-all flex items-center justify-center shadow-inner"
-            >
-              RECRUITER DESK
-            </button>
-          </div>
-
-          {/* MOBILE HAMBURGER */}
-          <button 
-            className="lg:hidden text-black pr-6 p-2 transition-transform active:scale-95 shrink-0" 
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-          >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeWidth="2.5" d={isMenuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"} />
-            </svg>
-          </button>
-        </nav>
-      </div>
-
-      {/* MOBILE MENU OVERLAY */}
-      {isMenuOpen && (
-        <div className="lg:hidden fixed inset-0 z-[999] bg-[#020408] flex flex-col p-8 justify-between animate-fade-in">
-          <div className="flex justify-between items-center pb-6 border-b border-white/[0.04]">
-            <span className="text-[10px] font-bold tracking-[0.25em] text-slate-500 uppercase">Academy Navigation Menu</span>
-            <button onClick={() => setIsMenuOpen(false)} className="text-slate-400 p-2 text-2xl">✕</button>
-          </div>
-          <div className="flex flex-col gap-2 font-serif my-auto">
-            {[
-              { label: 'Notes', id: 'notes' },
-              { label: 'Jobs', id: 'jobs' },
-              { label: 'Knowledge Test', id: 'quiz' },
-              { label: 'Submit Network Referral', id: 'referralForm' },
-              { label: 'Recruiter Desk', id: 'contribute' }, 
-              { label: 'Available Referrals', id: 'available' }
-            ].map((item) => (
-              <button 
-                key={item.id} 
-                onClick={() => { setActiveView(item.id); setIsMenuOpen(false); }} 
-                className="text-3xl font-bold text-left py-4 text-white hover:text-amber-400 transition-colors uppercase tracking-tight"
-              >
-                {item.label}
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* LANDING HUB CONTENT */}
-      {!activeView && (
-        <main className="flex-grow bg-[#020408]">
-          <CinematicHero />
-
-          <section className="relative z-10 py-24 px-8 bg-[#020408] max-w-7xl mx-auto space-y-24">
-            
-            {/* DUAL DISPLAY PANEL */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
-              
-              {/* FEATURED CASE CARD */}
-              <div className={`lg:col-span-8 p-12 rounded-3xl bg-slate-900/30 backdrop-blur-xl shadow-2xl relative overflow-hidden transition-all duration-500 border ${isChallengeLocked ? (challengeSelected === 'edd' ? 'border-amber-500/40 shadow-[0_0_40px_rgba(251,191,36,0.1)]' : 'border-red-500/30') : 'border-white/[0.03]'}`}>
-                <div className="flex justify-between items-center mb-6">
-                  <span className="text-[10px] font-black tracking-[0.3em] uppercase text-amber-400">Featured Academy Case Analysis</span>
-                  {isChallengeLocked && <span className={`h-6 w-6 rounded-full flex items-center justify-center text-xs font-black ${challengeSelected === 'edd' ? 'bg-amber-500 text-black' : 'bg-red-500 text-white'}`}>{challengeSelected === 'edd' ? '✓' : '✕'}</span>}
+            <div className="space-y-4">
+              {filteredFaqs.map((faq, idx) => (
+                <div key={idx} className="p-6 rounded-2xl bg-[#0D1E30] border border-[var(--amld-border)]">
+                  <span className="text-xs font-semibold text-[#21D7C4]">{faq.category}</span>
+                  <h2 className="text-base font-bold text-[#F5F8FC] mt-1">{faq.question}</h2>
+                  <p className="text-sm text-[#B8C7D9] mt-2 leading-relaxed">{faq.answer}</p>
                 </div>
-
-                <p className="text-xl md:text-2xl font-bold text-white mb-8 leading-snug tracking-tight font-serif">
-                  "A cross-border corporate payment originating from an offshore tech hub is flagged by your monitoring system. The beneficiary entity is clean on global sanctions watchlists. However, upon deep-dive routing analysis, you discover that the transaction utilizes a nested correspondent banking structure, and one of the listed downstream intermediary transit banks was placed under selective sectorial sanctions exactly 48 hours ago. The asset value sits under standard regulatory thresholds. What is the correct operational protocol?"
-                </p>
-
-                <div className="flex flex-wrap gap-4 mb-8">
-                  <button disabled={isChallengeLocked} onClick={() => { setChallengeSelected('edd'); setIsChallengeLocked(true); }} className="px-8 py-3.5 text-xs font-black rounded-xl bg-white/5 border border-white/10 text-white hover:bg-amber-500 hover:text-black transition-colors uppercase tracking-widest">
-                    Freeze Asset & File SAR/STR
-                  </button>
-                  <button disabled={isChallengeLocked} onClick={() => { setChallengeSelected('dismiss'); setIsChallengeLocked(true); }} className="px-8 py-3.5 text-xs font-black rounded-xl bg-white/5 border border-white/10 text-white hover:bg-amber-500 hover:text-black transition-colors uppercase tracking-widest">
-                    Process Transaction & Log Internally
-                  </button>
-                </div>
-
-                {isChallengeLocked && (
-                  <div className="p-6 bg-white/[0.01] border-l-2 border-amber-500/50 rounded-r-xl space-y-2">
-                    <p className="text-[9px] font-black uppercase tracking-widest text-slate-500">Executive Briefing & Resolution Matrix</p>
-                    <p className="text-sm text-slate-300 leading-relaxed font-medium">
-                      {challengeSelected === 'edd' 
-                        ? "CORRECT STRATEGY: In sanctions screening, asset thresholds do not apply. Processing funds through a sanctioned entity creates strict legal liability. Nested banking paths are intentionally designed to obscure transaction routing. Immediate restriction and regulatory escalation are required."
-                        : "COMPLIANCE FAILURE: Low asset values provide zero legal safe-harbor under global financial regulations. Allowing tracking streams to touch a designated blacklisted intermediary constitutes a direct compliance breach with severe systemic exposure."}
-                    </p>
-                  </div>
-                )}
-              </div>
-
-              {/* REGIONAL PULSE CARD */}
-              <div className="lg:col-span-4 p-12 rounded-3xl bg-slate-900/20 border border-white/[0.03] shadow-xl flex flex-col justify-between">
-                <div>
-                  <span className="text-[10px] font-black tracking-[0.3em] uppercase text-slate-500 block mb-8">Regional Employment Pulse</span>
-                  <div className="space-y-4">
-                    {[{ city: 'Bengaluru Core', metric: '+14% Hiring Blitz', tag: 'CRITICAL' }, { city: 'Kolkata Sector', metric: 'Steady Executive Growth', tag: 'STEADY' }].map((pulse, i) => (
-                      <div key={i} className="p-4 bg-white/[0.02] border border-white/[0.02] rounded-xl flex justify-between items-center hover:border-white/10 transition-colors">
-                        <div>
-                          <p className="text-sm font-bold text-white uppercase tracking-tight">{pulse.city}</p>
-                          <p className="text-[10px] text-slate-400 font-medium pt-0.5">{pulse.metric}</p>
-                        </div>
-                        <span className="text-[9px] font-black text-amber-400 bg-amber-400/5 px-2.5 py-1 rounded-md border border-amber-400/20">{pulse.tag}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-                <p className="text-xs text-slate-500 italic pt-6 leading-relaxed border-t border-white/[0.02] mt-6 text-center">
-                  Heightened international market demands recorded for specialized transactional verification structures.
-                </p>
-              </div>
+              ))}
             </div>
-
-            {/* BROADCAST STRIP */}
-            <div className="p-5 bg-slate-900/50 backdrop-blur-md border border-white/[0.03] rounded-2xl flex items-center overflow-hidden">
-              <span className="text-[10px] font-black text-amber-500 uppercase tracking-widest border-r border-white/10 pr-6 mr-6 shrink-0">Live Bulletins</span>
-              <div className="text-[11px] font-bold text-slate-400 uppercase tracking-[0.2em] flex gap-16 whitespace-nowrap animate-marquee">
-                <span>• RBI updates master compliance framework criteria for financial institutions</span>
-                <span>• Cross-border transaction security requirements updated under 2026 guidelines</span>
-                <span>• Global watchlists register adjustments for high-risk offshore operations</span>
-              </div>
-            </div>
-
-            {/* ENGINE SECTION */}
-            <div className="py-16 border-t border-white/[0.02] grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-              <div className="p-1.5 bg-gradient-to-tr from-white/5 to-transparent rounded-[32px]">
-                <div className="bg-[#020408] rounded-[30px] p-12 text-center h-[350px] flex flex-col items-center justify-center relative overflow-hidden group border border-white/5">
-                  <div className="absolute inset-0 bg-amber-500/[0.02] opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-                  <div className="h-20 w-24 border-2 border-amber-500 rounded-full flex items-center justify-center mb-6 shadow-2xl group-hover:scale-105 transition-transform">
-                    <svg className="w-8 h-8 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" /></svg>
-                  </div>
-                  <p className="text-[9px] font-black text-amber-400 uppercase tracking-widest mb-1">Architecture Frame</p>
-                  <p className="text-xl font-bold text-white uppercase tracking-tight">Active Analytics Sync Ready</p>
-                </div>
-              </div>
-
-              <div className="space-y-6">
-                <span className="text-[10px] font-black tracking-[0.3em] uppercase text-amber-400 bg-white/[0.03] px-3 py-1.5 rounded-md border border-white/5">Educational Standard</span>
-                <h2 className="text-5xl font-black text-white tracking-tight font-serif leading-none">The Engine of Expertise.</h2>
-                <p className="text-slate-400 text-base leading-relaxed font-medium">
-                  AML_DECODE removes the technical clutter, translating heavy, exhaustive financial legislation records into structured, high-conversion learning modules built directly for elite corporate compliance placement thresholds.
-                </p>
-                <div className="pt-4 flex gap-4">
-                  <button onClick={() => setActiveView('notes')} className="px-8 py-3.5 bg-gradient-to-b from-amber-400 to-amber-600 font-black text-xs text-black uppercase tracking-widest rounded-xl shadow-md">
-                    Explore Syllabus
-                  </button>
-                  <button onClick={() => setActiveView('quiz')} className="px-8 py-3.5 bg-white/5 border border-white/10 text-white font-black text-xs uppercase tracking-widest rounded-xl hover:bg-white/10 transition-colors">
-                    Take Assessment
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* MENTORSHIP SECTION */}
-            <div id="career-guidance" className="py-16 border-t border-white/[0.02] grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-              <div className="space-y-6 order-2 lg:order-1">
-                <h2 className="text-5xl font-black text-white tracking-tight font-serif leading-none">Executive Mentorship.</h2>
-                <p className="text-slate-400 text-base leading-relaxed font-medium">
-                  Gain access to specialized 1:1 consultation streams built exclusively to organize resume profiles, clear interview blockades, and solidify advanced technical expertise parameters across international regulatory sectors.
-                </p>
-                <div className="p-6 bg-white/[0.01] border border-white/5 rounded-2xl">
-                  <p className="text-xs font-black text-amber-400 uppercase tracking-wider mb-2">Registration Pathway</p>
-                  <p className="text-sm text-slate-400 italic leading-relaxed">
-                    "Initialize an intake file outlining your current employment criteria and placement goals to trigger active routing assignment."
-                  </p>
-                </div>
-                <button onClick={() => window.location.href = `mailto:alerts@amldecode.in?subject=Intake`} className="px-8 py-4 bg-gradient-to-b from-amber-400 to-amber-600 text-black font-black text-xs uppercase tracking-widest rounded-xl shadow-md flex items-center gap-2">
-                  Request Intake Slot &rarr;
-                </button>
-              </div>
-
-              <div className="p-12 bg-slate-900/20 border border-white/[0.03] rounded-3xl space-y-6 order-1 lg:order-2">
-                <span className="text-[9px] font-black tracking-[0.25em] text-amber-400 uppercase block">Secure Session Modules</span>
-                <div className="space-y-4 font-sans font-bold text-sm text-slate-300">
-                  {["Resume Mapping & Optimization", "Application Flow Strategy", "Interview Target Engineering", "Specialized Framework Reviews"].map((label, index) => (
-                    <div key={index} className="flex items-center gap-3 py-2 border-b border-white/[0.02]">
-                      <span className="text-amber-500 font-light text-base">&#8212;</span>
-                      <span className="uppercase tracking-wide">{label}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-          </section>
-        </main>
-      )}
-
-      {/* DETACHED DYNAMIC CORE VIEWS TERMINAL */}
-      {activeView && (
-        <div className="fixed inset-0 z-[100] bg-[#020408] p-6 md:p-12 overflow-y-auto custom-scrollbar">
-          <button 
-            onClick={() => { setActiveView(null); setQuizScore(0); }} 
-            className="text-amber-400 font-bold tracking-widest text-xs mb-10 block hover:text-white transition-colors"
-          >
-            &larr; Back to HomePage
-          </button>
-          
-          <div key={activeView} className="max-w-7xl mx-auto text-white animate-fade-in">
-            
-            {/* VIEW MODULE: CORE NOTES DISPLAY */}
-            {activeView === 'notes' && (
-              <div className="space-y-8 max-w-7xl mx-auto pb-20">
-                <div className="border-b border-white/[0.04] pb-6">
-                  <span className="text-[10px] font-black tracking-widest text-amber-500 uppercase">Academy Knowledge Core</span>
-                  <h1 className="text-4xl font-black text-white uppercase tracking-tight font-serif mt-1">Syllabus Framework Notes</h1>
-                </div>
-
-                <div className="space-y-6 lg:space-y-0 lg:grid lg:grid-cols-12 gap-8 items-start">
-                  {/* Topic Navigation Selector Bar */}
-                  <div 
-                    ref={noteScrollContainerRef}
-                    className="lg:col-span-4 flex lg:flex-col gap-2 overflow-x-auto lg:overflow-y-auto max-h-none lg:max-h-[65vh] pb-3 lg:pb-0 pr-2 custom-scrollbar shrink-0 snap-x snap-mandatory lg:snap-none"
-                  >
-                    {notesContent.map((item, idx) => (
-                      <button 
-                        key={idx}
-                        ref={(el) => (notePillRefs.current[idx] = el)}
-                        onClick={() => setPageIndex(idx)} 
-                        className={`shrink-0 lg:shrink min-w-[200px] lg:min-w-0 w-auto lg:w-full text-left p-4 lg:p-5 border rounded-xl transition-all duration-300 uppercase snap-start ${
-                          pageIndex === idx 
-                            ? 'bg-amber-500/10 border-amber-500 text-amber-400 font-black' 
-                            : 'bg-white/[0.02] border-white/5 text-slate-400 hover:text-white hover:border-white/20'
-                        }`}
-                      >
-                        <span className="text-[10px] block opacity-50 mb-1">Module {idx + 1}</span>
-                        <span className="text-sm tracking-wide">{item.title}</span>
-                      </button>
-                    ))}
-                  </div>
-
-                  {/* Note Content Viewer */}
-                  {/* Note Content Viewer */}
-<div className="lg:col-span-8 p-8 md:p-12 bg-slate-900/30 border border-white/10 rounded-2xl min-h-[400px]">
-  <span className="text-xs font-black text-amber-400 uppercase tracking-widest block mb-2">
-    Module {pageIndex + 1} of {notesContent.length}
-  </span>
-  <h2 className="text-2xl font-bold text-white mb-6 uppercase tracking-tight">
-    {notesContent[pageIndex]?.title || "Untitled Module"}
-  </h2>
-  
-  <div className="prose prose-invert max-w-none text-slate-300 text-sm md:text-base leading-relaxed space-y-4">
-    {notesContent[pageIndex]?.content ? (
-      typeof notesContent[pageIndex].content === 'string' ? (
-        <p>{notesContent[pageIndex].content}</p>
-      ) : (
-        notesContent[pageIndex].content
-      )
-    ) : (
-      <p className="text-slate-500 italic">No detailed content available for this module yet.</p>
-    )}
-  </div>
-</div>
-                </div>
-              </div>
-            )}
-
-            {/* VIEW MODULE: KNOWLEDGE TEST / QUIZ */}
-            {activeView === 'quiz' && (
-              <div className="space-y-8 max-w-4xl mx-auto pb-20">
-                <div className="border-b border-white/[0.04] pb-6">
-                  <span className="text-[10px] font-black tracking-widest text-amber-500 uppercase">Interactive Assessment</span>
-                  <h1 className="text-4xl font-black text-white font-serif uppercase tracking-tight mt-1">Knowledge Test</h1>
-                </div>
-
-                {/* Category Selection Tabs */}
-                <div className="flex gap-2 overflow-x-auto pb-2">
-                  {['KYC Basics', 'AML Frameworks', 'Sanctions & PEPs', 'Transaction Monitoring'].map((cat) => (
-                    <button
-                      key={cat}
-                      onClick={() => setSelectedCategory(cat)}
-                      className={`px-4 py-2 text-xs font-bold uppercase rounded-lg border transition-all whitespace-nowrap ${
-                        selectedCategory === cat
-                          ? 'bg-amber-500/20 border-amber-500 text-amber-400'
-                          : 'bg-white/[0.02] border-white/5 text-slate-400 hover:border-white/20'
-                      }`}
-                    >
-                      {cat}
-                    </button>
-                  ))}
-                </div>
-
-                {isLoading ? (
-                  <div className="p-12 text-center text-slate-500 font-bold uppercase text-xs">Loading Knowledge Modules...</div>
-                ) : testData.length === 0 ? (
-                  <div className="p-12 bg-slate-900/20 border border-white/5 rounded-xl text-center text-slate-400 text-sm font-medium">
-                    No questions available under category: <span className="text-amber-400 font-bold">{selectedCategory}</span>
-                  </div>
-                ) : (
-                  <div className="space-y-6">
-                    {testData.map((item, index) => (
-                      <QuizItem 
-                        key={item.id || index} 
-                        item={item} 
-                        onCorrect={() => setQuizScore((prev) => prev + 1)} 
-                      />
-                    ))}
-                  </div>
-                )}
-              </div>
-            )}
-
           </div>
-        </div>
-      )}
-       {/* HIGH-END MINIMALIST FOOTER SECTION */}
-<footer className="w-full bg-[#fbfbf8] border-t border-black/[0.03] pt-24 pb-12 mt-auto">
-  <div className="max-w-7xl mx-auto px-8 md:px-14 grid grid-cols-1 md:grid-cols-12 gap-12 mb-16">
-    
-    {/* Brand Descriptor Block */}
-    <div className="md:col-span-6 space-y-4">
-      {/* Footer logo updated to match header SVG style */}
-      <div className="flex items-center gap-3">
-        <svg className="h-6 w-6 text-[#111111]" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 12 10 10-4.48 10-12S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
-        </svg>
-        <span className="text-lg font-bold tracking-tight text-[#111111] font-sans">AML_DECODE</span>
-      </div>
-      <p className="text-sm leading-relaxed text-slate-500 max-w-sm font-medium">
-        AMLDecode is a premium, story-driven financial intelligence academy offering advanced training matrices across transaction verification, monitoring frameworks, and KYC analytics paths.
-      </p>
-    </div>
+        )}
 
-    {/* Navigation Links Column */}
-    <div className="md:col-span-3 space-y-4 text-xs font-bold uppercase tracking-widest text-slate-800">
-      <p className="text-amber-600 font-black text-[10px] tracking-[0.2em]">Directory</p>
-      <div className="flex flex-col gap-3">
-        <button onClick={() => setActiveView('faq')} className="block text-slate-600 hover:text-black text-left font-semibold transition-colors">FAQ</button>
-        <button onClick={() => setActiveView('contact')} className="block text-slate-600 hover:text-black text-left font-semibold transition-colors">Contact</button>
-        <button onClick={() => setActiveView('notes')} className="block text-slate-600 hover:text-black text-left font-semibold transition-colors">Notes Hub</button>
-      </div>
-    </div>
+        {activeView === 'contact' && (
+          <div className="max-w-3xl mx-auto space-y-6">
+            <div className="border-b border-[var(--amld-border)] pb-5">
+              <p className="text-xs font-bold uppercase tracking-wider text-[#21D7C4]">Support & Inquiries</p>
+              <h1 className="text-3xl sm:text-4xl font-extrabold text-[#F5F8FC] mt-1">{contactContent.title}</h1>
+            </div>
+            <div className="p-6 sm:p-8 rounded-2xl bg-[#0D1E30] border border-[var(--amld-border)] text-sm sm:text-base text-[#B8C7D9] leading-relaxed whitespace-pre-line">
+              {contactContent.body}
+            </div>
+          </div>
+        )}
 
-    {/* Legal & Compliance Column */}
-    <div className="md:col-span-3 space-y-4 text-xs font-bold uppercase tracking-widest text-slate-800">
-      <p className="text-amber-600 font-black text-[10px] tracking-[0.2em]">Legal & Compliance</p>
-      <div className="flex flex-col gap-3">
-        <button onClick={() => setActiveView('privacy')} className="block text-slate-600 hover:text-black text-left font-semibold transition-colors">Privacy Policy</button>
-        <button onClick={() => setActiveView('terms')} className="block text-slate-600 hover:text-black text-left font-semibold transition-colors">Terms of Service</button>
-      </div>
-    </div>
+        {activeView === 'privacy' && (
+          <div className="max-w-3xl mx-auto space-y-6">
+            <div className="border-b border-[var(--amld-border)] pb-5">
+              <p className="text-xs font-bold uppercase tracking-wider text-[#F4B860]">Data Governance</p>
+              <h1 className="text-3xl sm:text-4xl font-extrabold text-[#F5F8FC] mt-1">{privacyPolicy.title}</h1>
+            </div>
+            <div className="p-6 sm:p-8 rounded-2xl bg-[#0D1E30] border border-[var(--amld-border)] text-sm sm:text-base text-[#B8C7D9] leading-relaxed whitespace-pre-line">
+              {privacyPolicy.content}
+            </div>
+          </div>
+        )}
 
-  </div>
-
-  {/* Base Attribution Row */}
-  <div className="max-w-7xl mx-auto px-8 md:px-14 border-t border-black/[0.04] pt-8 flex flex-col sm:flex-row justify-between items-center gap-4 text-[11px] font-bold text-slate-400 uppercase tracking-widest">
-    <div className="flex items-center gap-2">
-      <span className="h-1.5 w-1.5 rounded-full bg-slate-300 inline-block" />
-      <span>© 2026 AML_DECODE</span>
-    </div>
-    <span className="text-slate-500 font-medium">Design by Nitesh Mishra</span>
-  </div>
-</footer>
-
+        {activeView === 'terms' && (
+          <div className="max-w-3xl mx-auto space-y-6">
+            <div className="border-b border-[var(--amld-border)] pb-5">
+              <p className="text-xs font-bold uppercase tracking-wider text-[#F4B860]">Platform Terms</p>
+              <h1 className="text-3xl sm:text-4xl font-extrabold text-[#F5F8FC] mt-1">{termsOfService.title}</h1>
+            </div>
+            <div className="p-6 sm:p-8 rounded-2xl bg-[#0D1E30] border border-[var(--amld-border)] text-sm sm:text-base text-[#B8C7D9] leading-relaxed whitespace-pre-line">
+              {termsOfService.content}
+            </div>
+          </div>
+        )}
+      </main>
     </div>
   );
 }
