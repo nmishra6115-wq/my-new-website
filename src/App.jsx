@@ -1,88 +1,64 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import './design-tokens.css';
 import { supabase } from './supabaseClient';
+import { upsertKt2Learner, fetchKt2Attempts, insertKt2Attempt } from './data/kt2SupabaseSync';
 import { notesContent, privacyPolicy, termsOfService, faqData, contactContent } from './content';
-import { jobOpenings } from './jobs';
 import { kycNews } from './news';
 import HomepageHub from './components/HomepageHub';
 import SyllabusReader from './components/SyllabusReader';
+import KnowledgeTestSetup from './components/KnowledgeTestSetup';
+import CareersAiHub from './components/CareersAiHub';
+import LearnerLoginModal from './components/LearnerLoginModal';
+import AssessmentRunner from './components/AssessmentRunner';
+import CaseSimulationRunner from './components/CaseSimulationRunner';
+import SarNarrativeLab from './components/SarNarrativeLab';
+import {
+  buildAssessmentQueue,
+  readStoredRecentAttempts,
+} from './data/knowledgeTestBank';
 
-function QuizItem({ item, index, onCorrect }) {
-  const [selected, setSelected] = useState(null);
-  const [isLocked, setIsLocked] = useState(false);
+class AssessmentErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false, errorMessage: '' };
+  }
 
-  const handleSelect = (option) => {
-    if (isLocked) return;
-    setSelected(option);
-    setIsLocked(true);
-    if (option === item.correct_answer) onCorrect();
-  };
+  static getDerivedStateFromError(error) {
+    return {
+      hasError: true,
+      errorMessage: error?.message || 'Unexpected rendering error in assessment view.',
+    };
+  }
 
-  const isCorrect = selected === item.correct_answer;
-
-  return (
-    <div className={`mb-6 overflow-hidden bg-[#0D1E30] border rounded-2xl transition-all duration-300 ${isLocked ? (isCorrect ? 'border-[#21D7C4]' : 'border-red-500/50') : 'border-white/10'}`}>
-      <div className="p-6 border-b border-white/10 bg-[#132B3E]/40">
-        <div className="flex justify-between items-start gap-4">
-          <div>
-            <span className="text-[11px] font-bold uppercase tracking-wider text-[#21D7C4] block mb-1">
-              Question {index + 1}
-            </span>
-            <h2 className="text-lg sm:text-xl font-bold text-[#F5F8FC] leading-snug">{item.question}</h2>
-          </div>
-          {isLocked && (
-            <span className={`shrink-0 px-2.5 py-1 rounded-full text-xs font-bold ${isCorrect ? 'bg-[#21D7C4] text-[#081524]' : 'bg-red-500 text-white'}`}>
-              {isCorrect ? 'Correct' : 'Review'}
-            </span>
-          )}
-        </div>
-      </div>
-
-      <div className="p-6 space-y-3">
-        {(() => {
-          try {
-            const options = typeof item.options === 'string' ? JSON.parse(item.options) : item.options;
-            return options.map((opt, i) => {
-              const isThisSelected = selected === opt;
-              const isThisCorrect = opt === item.correct_answer;
-
-              let buttonStyle = 'border-white/10 bg-[#081524]/70 text-[#B8C7D9] hover:border-[#21D7C4]/50 hover:text-[#F5F8FC]';
-              if (isLocked) {
-                if (isThisCorrect) buttonStyle = 'border-[#21D7C4] bg-[#21D7C4]/15 text-[#21D7C4]';
-                else if (isThisSelected && !isThisCorrect) buttonStyle = 'border-red-500 bg-red-500/15 text-red-300';
-                else buttonStyle = 'border-white/5 bg-[#081524]/40 text-slate-500 opacity-60';
-              }
-
-              return (
-                <button
-                  key={i}
-                  type="button"
-                  disabled={isLocked}
-                  onClick={() => handleSelect(opt)}
-                  className={`block w-full text-left p-4 border rounded-xl transition-colors font-semibold text-sm ${buttonStyle}`}
-                >
-                  {opt}
-                </button>
-              );
-            });
-          } catch {
-            return <p className="text-red-400 text-sm">Unable to parse options for this question.</p>;
-          }
-        })()}
-      </div>
-
-      {isLocked && (
-        <div className="p-6 border-t border-white/10 bg-[#081524]/60">
-          <p className="text-xs font-bold uppercase tracking-wider text-[#F4B860] mb-1">Case Rationale</p>
-          <p className="text-sm text-[#B8C7D9] leading-relaxed">
-            {item.explanation || 'Review the compliance framework and risk indicators for this scenario.'}
+  render() {
+  if (this.state.hasError) {
+      return (
+        <div className="max-w-3xl mx-auto p-6 sm:p-8 rounded-2xl bg-[#0D1E30] border border-red-400/50 space-y-4">
+          <p className="text-xs font-bold uppercase tracking-wider text-red-300">
+            Assessment View Recovery
           </p>
+          <h2 className="text-xl font-bold text-[#F5F8FC]">
+            Something interrupted this assessment screen
+          </h2>
+          <p className="text-xs text-[#B8C7D9]">{this.state.errorMessage}</p>
+          <button
+            type="button"
+            onClick={() => {
+              this.setState({ hasError: false, errorMessage: '' });
+              if (typeof this.props.onReset === 'function') {
+                this.props.onReset();
+              }
+            }}
+            className="px-4 py-2.5 rounded-xl bg-[#C4A77D] text-[#081C33] text-xs font-extrabold cursor-pointer"
+          >
+            Return to Assessment Setup
+          </button>
         </div>
-      )}
-    </div>
-  );
+      );
+    }
+    return this.props.children;
+  }
 }
-
 export default function App() {
   const [activeView, setActiveView] = useState(null);
   const [pageIndex, setPageIndex] = useState(0);
@@ -90,11 +66,14 @@ export default function App() {
   const [submissions, setSubmissions] = useState([]);
   const [partnerFiles, setPartnerFiles] = useState([]);
   const [newsList, setNewsList] = useState([]);
-  const [selectedLocation, setSelectedLocation] = useState('All');
-  const [selectedCategory, setSelectedCategory] = useState('KYC Basics');
+  const [selectedDomain, setSelectedDomain] = useState('AML/KYC');
+  const [selectedDifficulty, setSelectedDifficulty] = useState('Intermediate');
+  const [selectedCount, setSelectedCount] = useState(10);
+  const [selectedMode, setSelectedMode] = useState('practice');
   const [faqCategory, setFaqCategory] = useState('All');
-  const [quizScore, setQuizScore] = useState(0);
   const [testData, setTestData] = useState([]);
+  const [activeSessionQuestions, setActiveSessionQuestions] = useState(null);
+  const [recentAttempts, setRecentAttempts] = useState(() => readStoredRecentAttempts());
 
   const [referralName, setReferralName] = useState('');
   const [referralEmail, setReferralEmail] = useState('');
@@ -105,32 +84,115 @@ export default function App() {
   const [partnerPassword, setPartnerPassword] = useState('');
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [partnerError, setPartnerError] = useState('');
+const LEARNER_STORAGE_KEY = 'amldecode_kt2_learner_v1';
+    const [learner, setLearner] = useState(() => {
+      try {
+        const raw = window.localStorage.getItem(LEARNER_STORAGE_KEY);
+        return raw ? JSON.parse(raw) : null;
+      } catch {
+        return null;
+      }
+    });
+    const [pendingStartConfig, setPendingStartConfig] = useState(null);
+    const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  
+    const launchAssessmentWithConfig = (config) => {
+      const queue = buildAssessmentQueue({
+        domain: config.domain,
+        difficulty: config.difficulty,
+        count: config.count,
+        supabaseRows: testData,
+      });
+      setActiveSessionQuestions(queue);
+    };
+  
+    const handleRequestStartAssessment = (config) => {
+      if (!learner || !learner.email) {
+        setPendingStartConfig(config);
+        setIsLoginModalOpen(true);
+        return;
+      }
+      launchAssessmentWithConfig(config);
+    };
+  
+      const handleLoginSuccess = (profile, configToStart) => {
+    setLearner(profile);
+    try {
+      window.localStorage.setItem(LEARNER_STORAGE_KEY, JSON.stringify(profile));
+    } catch {
+      // Ignore storage quota errors
+    }
+    upsertKt2Learner(profile);
+    fetchKt2Attempts(profile.email).then((remoteAttempts) => {
+      if (Array.isArray(remoteAttempts) && remoteAttempts.length > 0) {
+        setRecentAttempts(remoteAttempts);
+      }
+    });
+    setIsLoginModalOpen(false);
+    const targetConfig = configToStart || pendingStartConfig;
+    setPendingStartConfig(null);
+    if (targetConfig) {
+      launchAssessmentWithConfig(targetConfig);
+    }
+  };
 
   useEffect(() => {
-    const fetchData = async () => {
+    if (!learner?.email) return;
+    let active = true;
+    fetchKt2Attempts(learner.email).then((remoteAttempts) => {
+      if (active && Array.isArray(remoteAttempts) && remoteAttempts.length > 0) {
+        setRecentAttempts(remoteAttempts);
+      }
+    });
+    return () => {
+      active = false;
+    };
+  }, [learner?.email]);
+
+  const handleRecordAttemptWithSync = (updatedAttempts) => {
+    setRecentAttempts(updatedAttempts);
+    if (Array.isArray(updatedAttempts) && updatedAttempts.length > 0 && learner?.email) {
+      insertKt2Attempt(learner, updatedAttempts[0]);
+    }
+  };
+
+  useEffect(() => {
+    let mounted = true;
+    async function loadPlatformData() {
       setIsLoading(true);
       try {
-        const { data: subs } = await supabase.from('submissions').select('*');
-        const { data: files } = await supabase.from('partner_files').select('*');
-        const { data: news } = await supabase.from('news').select('*');
-        const { data: quiz } = await supabase.from('quiz_questions').select('*').eq('category', selectedCategory);
+        const [{ data: subs }, { data: files }, { data: news }, { data: questions }] =
+          await Promise.all([
+            supabase.from('submissions').select('*').order('created_at', { ascending: false }),
+            supabase.from('partner_files').select('*').order('created_at', { ascending: false }),
+            supabase.from('kyc_news').select('*').order('created_at', { ascending: false }),
+            supabase.from('knowledge_test').select('*'),
+          ]);
 
-        if (subs) setSubmissions(subs);
-        if (files) setPartnerFiles(files);
-        setNewsList(news && news.length > 0 ? news : kycNews);
-        if (quiz) setTestData(quiz);
+        if (!mounted) return;
+        setSubmissions(Array.isArray(subs) ? subs : []);
+        setPartnerFiles(Array.isArray(files) ? files : []);
+        setNewsList(Array.isArray(news) && news.length > 0 ? news : kycNews);
+        setTestData(Array.isArray(questions) ? questions : []);
       } catch {
-        setNewsList(kycNews);
+        if (mounted) {
+          setNewsList(kycNews);
+        }
       } finally {
-        setIsLoading(false);
+        if (mounted) {
+          setIsLoading(false);
+        }
       }
+    }
+    loadPlatformData();
+    return () => {
+      mounted = false;
     };
-    fetchData();
-  }, [selectedCategory]);
+  }, []);
 
   const handleBackHome = () => {
     setActiveView(null);
-    setQuizScore(0);
+    setActiveSessionQuestions(null);
   };
 
   const handleScrollToGuidance = () => {
@@ -187,12 +249,6 @@ export default function App() {
     }
   };
 
-  const locations = ['All', ...Array.from(new Set(jobOpenings.map((j) => (j.location || '').trim()).filter(Boolean)))];
-  const filteredJobs =
-    selectedLocation === 'All'
-      ? jobOpenings
-      : jobOpenings.filter((j) => (j.location || '').trim() === selectedLocation);
-
   const faqCategories = ['All', ...Array.from(new Set(faqData.map((f) => f.category).filter(Boolean)))];
   const filteredFaqs =
     faqCategory === 'All' ? faqData : faqData.filter((f) => f.category === faqCategory);
@@ -201,7 +257,6 @@ export default function App() {
     return (
       <HomepageHub
         onOpenView={(view) => {
-          setQuizScore(0);
           setActiveView(view);
           window.scrollTo({ top: 0, behavior: 'smooth' });
         }}
@@ -242,13 +297,12 @@ export default function App() {
       : activeView === 'privacy'
       ? 'Privacy Policy'
       : 'Terms of Service';
-
   return (
     <div className="amld-shell min-h-screen flex flex-col">
       <header className="sticky top-0 z-40 bg-[#081524]/95 backdrop-blur border-b border-[var(--amld-border)]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between gap-4">
           <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-xs text-[#B8C7D9] truncate">
-            <button type="button" onClick={handleBackHome} className="hover:text-[#21D7C4] font-semibold">
+            <button type="button" onClick={handleBackHome} className="hover:text-[#C4A77D] font-semibold">
               Home
             </button>
             <span className="text-[#7E93AB]">/</span>
@@ -258,104 +312,71 @@ export default function App() {
           <button
             type="button"
             onClick={() => setActiveView('notes')}
-            className="text-xs font-semibold text-[#21D7C4] hover:underline shrink-0"
+            className="text-xs font-semibold text-[#C4A77D] hover:underline shrink-0"
           >
-            Syllabus Notes →
+            Syllabus Notes ?
           </button>
         </div>
       </header>
 
       <main className="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
         {activeView === 'quiz' && (
-          <div className="space-y-8 max-w-4xl mx-auto">
-            <div className="border-b border-[var(--amld-border)] pb-6 flex flex-wrap items-end justify-between gap-4">
-              <div>
-                <p className="text-xs font-bold uppercase tracking-wider text-[#21D7C4]">Interactive Assessment</p>
-                <h1 className="text-3xl sm:text-4xl font-extrabold text-[#F5F8FC] mt-1">Knowledge Test</h1>
-                <p className="text-sm text-[#B8C7D9] mt-2">
-                  Select a compliance domain to practice scenario and concept questions.
-                </p>
-              </div>
-              <div className="px-4 py-2 rounded-xl bg-[#0D1E30] border border-[var(--amld-border)] text-sm font-bold text-[#F4B860]">
-                Score: {quizScore} / {testData.length || 0}
-              </div>
-            </div>
-
-            <div className="flex gap-2 overflow-x-auto pb-2">
-              {['KYC Basics', 'AML Frameworks', 'Sanctions & PEPs', 'Transaction Monitoring'].map((cat) => (
-                <button
-                  key={cat}
-                  type="button"
-                  onClick={() => {
-                    setSelectedCategory(cat);
-                    setQuizScore(0);
-                  }}
-                  className={`px-4 py-2 text-xs font-bold rounded-lg border transition-colors whitespace-nowrap ${
-                    selectedCategory === cat
-                      ? 'bg-[#21D7C4]/15 border-[#21D7C4] text-[#21D7C4]'
-                      : 'bg-[#0D1E30] border-[var(--amld-border)] text-[#B8C7D9] hover:text-[#F5F8FC]'
-                  }`}
-                >
-                  {cat}
-                </button>
-              ))}
-            </div>
-
-            {isLoading ? (
-              <div className="p-10 bg-[#0D1E30] border border-[var(--amld-border)] rounded-2xl text-center text-sm text-[#B8C7D9]">
-                Loading questions...
-              </div>
-            ) : testData.length === 0 ? (
-              <div className="p-10 bg-[#0D1E30] border border-[var(--amld-border)] rounded-2xl text-center text-sm text-[#B8C7D9]">
-                No questions found under {selectedCategory}.
-              </div>
-            ) : (
-              <div>
-                {testData.map((item, idx) => (
-                  <QuizItem
-                    key={item.id || idx}
-                    item={item}
-                    index={idx}
-                    onCorrect={() => setQuizScore((prev) => prev + 1)}
+          <div className="space-y-10">
+            {Array.isArray(activeSessionQuestions) && activeSessionQuestions.length > 0 ? (
+              <AssessmentErrorBoundary onReset={() => setActiveSessionQuestions(null)}>
+                {selectedMode === 'case' ? (
+                  <CaseSimulationRunner
+                    domain={selectedDomain}
+                    difficulty={selectedDifficulty}
+                    onExitToSetup={() => setActiveSessionQuestions(null)}
+                    onAttemptRecorded={handleRecordAttemptWithSync}
                   />
-                ))}
-              </div>
+                ) : selectedMode === 'sar' ? (
+                  <SarNarrativeLab
+                    domain={selectedDomain}
+                    difficulty={selectedDifficulty}
+                    onExitToSetup={() => setActiveSessionQuestions(null)}
+                    onAttemptRecorded={handleRecordAttemptWithSync}
+                  />
+                ) : (
+                  <AssessmentRunner
+                    questions={activeSessionQuestions}
+                    domain={selectedDomain}
+                    difficulty={selectedDifficulty}
+                    mode={selectedMode}
+                    onExitToSetup={() => setActiveSessionQuestions(null)}
+                    onAttemptRecorded={handleRecordAttemptWithSync}
+                  />
+                )}
+              </AssessmentErrorBoundary>
+            ) : (
+              <>
+              <KnowledgeTestSetup
+                selectedDomain={selectedDomain}
+                onSelectDomain={(domain) => {
+                  setSelectedDomain(domain);
+                }}
+                selectedDifficulty={selectedDifficulty}
+                onSelectDifficulty={setSelectedDifficulty}
+                selectedCount={selectedCount}
+                onSelectCount={setSelectedCount}
+                selectedMode={selectedMode}
+                onSelectMode={setSelectedMode}
+                availableCount={testData.length}
+                isLoading={isLoading}
+                recentAttempts={recentAttempts}
+                onStartAssessment={handleRequestStartAssessment}
+              />
+            </>
             )}
           </div>
         )}
-
         {(activeView === 'jobs' || activeView === 'network' || activeView === 'available') && (
           <div className="space-y-8">
             <div className="border-b border-[var(--amld-border)] pb-6 flex flex-wrap items-end justify-between gap-4">
               <div>
-                <p className="text-xs font-bold uppercase tracking-wider text-[#F4B860]">Career & Intelligence Hub</p>
-                <h1 className="text-3xl sm:text-4xl font-extrabold text-[#F5F8FC] mt-1">
-                  {activeView === 'network'
-                    ? 'Network & Regulatory Briefings'
-                    : activeView === 'available'
-                    ? 'Available Referrals & Submissions'
-                    : 'Compliance Job Openings'}
-                </h1>
+                <p className="text-xs font-bold uppercase tracking-wider text-[#F4B860]">Compliance Talent & Insights</p>
               </div>
-
-              {activeView === 'jobs' && (
-                <div className="flex flex-wrap gap-2">
-                  {locations.map((loc) => (
-                    <button
-                      key={loc}
-                      type="button"
-                      onClick={() => setSelectedLocation(loc)}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-semibold border ${
-                        selectedLocation === loc
-                          ? 'bg-[#21D7C4]/15 border-[#21D7C4] text-[#21D7C4]'
-                          : 'bg-[#0D1E30] border-[var(--amld-border)] text-[#B8C7D9]'
-                      }`}
-                    >
-                      {loc}
-                    </button>
-                  ))}
-                </div>
-              )}
             </div>
 
             {activeView === 'network' ? (
@@ -367,9 +388,9 @@ export default function App() {
                       href={item.link}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-xs font-semibold text-[#21D7C4] hover:underline"
+                      className="text-xs font-semibold text-[#C4A77D] hover:underline"
                     >
-                      Open source →
+                      Open source ?
                     </a>
                   </div>
                 ))}
@@ -377,7 +398,7 @@ export default function App() {
             ) : activeView === 'available' ? (
               <div className="p-6 sm:p-8 rounded-2xl bg-[#0D1E30] border border-[var(--amld-border)] space-y-4 max-w-2xl">
                 <p className="text-sm text-[#B8C7D9]">
-                  Submitted referral records: <strong className="text-[#21D7C4]">{submissions.length}</strong> · Partner files: <strong className="text-[#F4B860]">{partnerFiles.length}</strong>
+                  Submitted referral records: <strong className="text-[#C4A77D]">{submissions.length}</strong> � Partner files: <strong className="text-[#F4B860]">{partnerFiles.length}</strong>
                 </p>
                 <div className="flex flex-wrap gap-3">
                   <button
@@ -397,25 +418,7 @@ export default function App() {
                 </div>
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {filteredJobs.map((job, idx) => (
-                  <div key={idx} className="p-6 rounded-2xl bg-[#0D1E30] border border-[var(--amld-border)] flex flex-col justify-between gap-4">
-                    <div>
-                      <span className="text-xs font-semibold text-[#F4B860]">{(job.location || '').trim()}</span>
-                      <h2 className="text-base font-bold text-[#F5F8FC] mt-1">{job.role}</h2>
-                      <p className="text-xs text-[#B8C7D9] mt-1">{(job.company || '').trim()}</p>
-                    </div>
-                    <a
-                      href={job.link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-xs font-semibold text-[#21D7C4] hover:underline"
-                    >
-                      View job posting →
-                    </a>
-                  </div>
-                ))}
-              </div>
+              <CareersAiHub onOpenView={(v) => setActiveView(v)} />
             )}
           </div>
         )}
@@ -461,7 +464,7 @@ export default function App() {
               <button type="submit" className="amld-btn-primary px-6 py-3 rounded-xl text-xs font-bold uppercase tracking-wider">
                 Submit Referral
               </button>
-              {referralStatus && <p className="text-sm text-[#21D7C4]">{referralStatus}</p>}
+              {referralStatus && <p className="text-sm text-[#C4A77D]">{referralStatus}</p>}
             </form>
           </div>
         )}
@@ -469,7 +472,7 @@ export default function App() {
         {activeView === 'contribute' && (
           <div className="max-w-xl mx-auto space-y-6">
             <div className="border-b border-[var(--amld-border)] pb-5">
-              <p className="text-xs font-bold uppercase tracking-wider text-[#21D7C4]">Partner Portal</p>
+              <p className="text-xs font-bold uppercase tracking-wider text-[#C4A77D]">Partner Portal</p>
               <h1 className="text-3xl sm:text-4xl font-extrabold text-[#F5F8FC] mt-1">Recruiter Desk</h1>
             </div>
             {!isAuthorized ? (
@@ -489,9 +492,9 @@ export default function App() {
                 {partnerError && <p className="text-sm text-red-400">{partnerError}</p>}
               </form>
             ) : (
-              <div className="p-6 sm:p-8 rounded-2xl bg-[#0D1E30] border border-[#21D7C4]/40 space-y-3">
-                <p className="text-base font-bold text-[#21D7C4]">Partner Access Verified</p>
-                <p className="text-sm text-[#B8C7D9]">Submissions count: {submissions.length} · Partner files count: {partnerFiles.length}</p>
+              <div className="p-6 sm:p-8 rounded-2xl bg-[#0D1E30] border border-[#C4A77D]/40 space-y-3">
+                <p className="text-base font-bold text-[#C4A77D]">Partner Access Verified</p>
+                <p className="text-sm text-[#B8C7D9]">Submissions count: {submissions.length} � Partner files count: {partnerFiles.length}</p>
               </div>
             )}
           </div>
@@ -501,7 +504,7 @@ export default function App() {
           <div className="max-w-4xl mx-auto space-y-6">
             <div className="border-b border-[var(--amld-border)] pb-5 flex flex-wrap items-end justify-between gap-4">
               <div>
-                <p className="text-xs font-bold uppercase tracking-wider text-[#21D7C4]">Platform Guide</p>
+                <p className="text-xs font-bold uppercase tracking-wider text-[#C4A77D]">Platform Guide</p>
                 <h1 className="text-3xl sm:text-4xl font-extrabold text-[#F5F8FC] mt-1">Frequently Asked Questions</h1>
               </div>
               <div className="flex flex-wrap gap-2">
@@ -512,7 +515,7 @@ export default function App() {
                     onClick={() => setFaqCategory(cat)}
                     className={`px-3 py-1.5 rounded-lg text-xs font-semibold border ${
                       faqCategory === cat
-                        ? 'bg-[#21D7C4]/15 border-[#21D7C4] text-[#21D7C4]'
+                        ? 'bg-[#C4A77D]/15 border-[#C4A77D] text-[#C4A77D]'
                         : 'bg-[#0D1E30] border-[var(--amld-border)] text-[#B8C7D9]'
                     }`}
                   >
@@ -524,7 +527,7 @@ export default function App() {
             <div className="space-y-4">
               {filteredFaqs.map((faq, idx) => (
                 <div key={idx} className="p-6 rounded-2xl bg-[#0D1E30] border border-[var(--amld-border)]">
-                  <span className="text-xs font-semibold text-[#21D7C4]">{faq.category}</span>
+                  <span className="text-xs font-semibold text-[#C4A77D]">{faq.category}</span>
                   <h2 className="text-base font-bold text-[#F5F8FC] mt-1">{faq.question}</h2>
                   <p className="text-sm text-[#B8C7D9] mt-2 leading-relaxed">{faq.answer}</p>
                 </div>
@@ -536,7 +539,7 @@ export default function App() {
         {activeView === 'contact' && (
           <div className="max-w-3xl mx-auto space-y-6">
             <div className="border-b border-[var(--amld-border)] pb-5">
-              <p className="text-xs font-bold uppercase tracking-wider text-[#21D7C4]">Support & Inquiries</p>
+              <p className="text-xs font-bold uppercase tracking-wider text-[#C4A77D]">Support & Inquiries</p>
               <h1 className="text-3xl sm:text-4xl font-extrabold text-[#F5F8FC] mt-1">{contactContent.title}</h1>
             </div>
             <div className="p-6 sm:p-8 rounded-2xl bg-[#0D1E30] border border-[var(--amld-border)] text-sm sm:text-base text-[#B8C7D9] leading-relaxed whitespace-pre-line">
@@ -568,7 +571,32 @@ export default function App() {
             </div>
           </div>
         )}
+            <LearnerLoginModal
+        isOpen={isLoginModalOpen}
+        pendingConfig={pendingStartConfig}
+        initialLearner={learner}
+        onClose={() => {
+          setIsLoginModalOpen(false);
+          setPendingStartConfig(null);
+        }}
+        onLoginSuccess={handleLoginSuccess}
+      />
       </main>
     </div>
   );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

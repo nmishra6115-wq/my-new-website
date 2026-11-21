@@ -1,8 +1,11 @@
-﻿import React, { useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { AcademyBrandMark, IntelligenceCard, SectionHeader, TopicBadge } from './AcademyPrimitives';
+import DailyChallengeCard from './DailyChallengeCard';
 import { notesContent, faqData } from '../content';
 import { jobOpenings } from '../jobs';
 import { kycNews } from '../news';
+import { Sun, Moon } from 'lucide-react';
+import { useThemeMode } from '../hooks/useThemeMode';
 
 const PATHWAY_MATCHERS = [
   { label: 'AML Fundamentals', keywords: ['aml', 'money laundering'] },
@@ -22,9 +25,9 @@ export default function HomepageHub({
   onSelectNoteIndex,
   onScrollToGuidance,
 }) {
+  const { isDark, toggleTheme } = useThemeMode();
   const [searchQuery, setSearchQuery] = useState('');
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [caseChoice, setCaseChoice] = useState(null);
 
   const pathways = useMemo(() => {
     return PATHWAY_MATCHERS.map((p) => {
@@ -85,32 +88,32 @@ export default function HomepageHub({
   const featuredNotes = useMemo(() => notesContent.slice(0, 3), []);
 
   return (
-    <div className="amld-shell min-h-screen flex flex-col">
-      {/* Section 1: Sticky Navigation Bar */}
-      <header className="sticky top-0 z-40 bg-[#081524]/95 backdrop-blur border-b border-[var(--amld-border)]">
+    <div className="min-h-screen flex flex-col bg-[#F8F7F4] dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors">
+      {/* Top Editorial Navigation */}
+      <header className="sticky top-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur border-b border-stone-200 dark:border-slate-800 transition-colors">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
           <button
             type="button"
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-            className="text-left focus:outline-none"
+            className="text-left focus:outline-none cursor-pointer"
           >
-            <AcademyBrandMark />
+            <AcademyBrandMark theme={isDark ? 'dark' : 'light'} />
           </button>
 
-          <nav aria-label="Primary Navigation" className="hidden lg:flex items-center gap-6 text-sm font-medium text-[#B8C7D9]">
-            <button type="button" onClick={() => onOpenView('notes')} className="hover:text-[#21D7C4] transition-colors">
+          <nav aria-label="Primary Navigation" className="hidden lg:flex items-center gap-7 text-sm font-medium text-slate-700 dark:text-slate-300">
+            <button type="button" onClick={() => onOpenView('notes')} className="hover:text-amber-700 transition-colors cursor-pointer">
               Syllabus Notes
             </button>
-            <a href="#pathways" className="hover:text-[#21D7C4] transition-colors">
+            <a href="#pathways" className="hover:text-amber-700 transition-colors">
               Pathways
             </a>
-            <button type="button" onClick={() => onOpenView('quiz')} className="hover:text-[#21D7C4] transition-colors">
+            <button type="button" onClick={() => onOpenView('quiz')} className="hover:text-amber-700 transition-colors cursor-pointer">
               Knowledge Test
             </button>
-            <button type="button" onClick={() => onOpenView('jobs')} className="hover:text-[#21D7C4] transition-colors">
+            <button type="button" onClick={() => onOpenView('jobs')} className="hover:text-amber-700 transition-colors cursor-pointer">
               Jobs
             </button>
-            <button type="button" onClick={onScrollToGuidance} className="hover:text-[#21D7C4] transition-colors">
+            <button type="button" onClick={onScrollToGuidance} className="hover:text-amber-700 transition-colors cursor-pointer">
               Guidance
             </button>
           </nav>
@@ -118,14 +121,23 @@ export default function HomepageHub({
           <div className="hidden lg:flex items-center gap-3">
             <a
               href="#search-hub"
-              className="px-3.5 py-2 rounded-lg text-xs font-semibold border border-[var(--amld-border)] text-[#F5F8FC] hover:border-[#21D7C4]/50 transition-colors"
+              className="px-4 py-2 rounded-full text-xs font-semibold border border-stone-300 dark:border-slate-700 text-slate-800 dark:text-slate-200 hover:border-amber-600 dark:hover:border-amber-500 transition-colors"
             >
               Search
             </a>
             <button
               type="button"
+              onClick={toggleTheme}
+              aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+              title={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+              className="p-2 rounded-full border border-stone-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:border-amber-600 dark:hover:border-amber-500 transition-colors cursor-pointer"
+            >
+              {isDark ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4" />}
+            </button>
+            <button
+              type="button"
               onClick={() => onOpenView('contribute')}
-              className="amld-btn-primary px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider"
+              className="px-4 py-2 rounded-full text-xs font-bold bg-amber-600 text-white hover:bg-amber-700 transition-colors cursor-pointer"
             >
               Recruiter Desk
             </button>
@@ -136,30 +148,30 @@ export default function HomepageHub({
             aria-label="Toggle Menu"
             aria-expanded={mobileOpen}
             onClick={() => setMobileOpen((prev) => !prev)}
-            className="lg:hidden p-2 rounded-lg border border-[var(--amld-border)] text-[#F5F8FC]"
+            className="lg:hidden px-3 py-1.5 rounded-lg text-xs font-semibold border border-stone-300 text-slate-800 cursor-pointer"
           >
             {mobileOpen ? 'Close' : 'Menu'}
           </button>
         </div>
 
         {mobileOpen && (
-          <div className="lg:hidden bg-[#132B3E] border-t border-[var(--amld-border)] px-4 py-4 space-y-2 text-sm">
-            <button type="button" onClick={() => { setMobileOpen(false); onOpenView('notes'); }} className="block w-full text-left py-2 text-[#F5F8FC]">
+          <div className="lg:hidden bg-white border-t border-stone-200 px-4 py-4 space-y-2 text-sm">
+            <button type="button" onClick={() => { setMobileOpen(false); onOpenView('notes'); }} className="block w-full text-left py-2 text-slate-800 hover:text-amber-700 cursor-pointer">
               Syllabus Notes
             </button>
-            <a href="#pathways" onClick={() => setMobileOpen(false)} className="block py-2 text-[#B8C7D9]">
+            <a href="#pathways" onClick={() => setMobileOpen(false)} className="block py-2 text-slate-700 hover:text-amber-700">
               Learning Pathways
             </a>
-            <button type="button" onClick={() => { setMobileOpen(false); onOpenView('quiz'); }} className="block w-full text-left py-2 text-[#F5F8FC]">
+            <button type="button" onClick={() => { setMobileOpen(false); onOpenView('quiz'); }} className="block w-full text-left py-2 text-slate-800 hover:text-amber-700 cursor-pointer">
               Knowledge Test
             </button>
-            <button type="button" onClick={() => { setMobileOpen(false); onOpenView('jobs'); }} className="block w-full text-left py-2 text-[#F5F8FC]">
+            <button type="button" onClick={() => { setMobileOpen(false); onOpenView('jobs'); }} className="block w-full text-left py-2 text-slate-800 hover:text-amber-700 cursor-pointer">
               Jobs
             </button>
-            <button type="button" onClick={() => { setMobileOpen(false); onOpenView('referralForm'); }} className="block w-full text-left py-2 text-[#B8C7D9]">
+            <button type="button" onClick={() => { setMobileOpen(false); onOpenView('referralForm'); }} className="block w-full text-left py-2 text-slate-700 hover:text-amber-700 cursor-pointer">
               Submit Referral
             </button>
-            <button type="button" onClick={() => { setMobileOpen(false); onOpenView('contribute'); }} className="block w-full text-left py-2 text-[#21D7C4] font-semibold">
+            <button type="button" onClick={() => { setMobileOpen(false); onOpenView('contribute'); }} className="block w-full text-left py-2 text-amber-700 font-semibold cursor-pointer">
               Recruiter Desk
             </button>
           </div>
@@ -167,51 +179,38 @@ export default function HomepageHub({
       </header>
 
       <main className="flex-grow">
-        {/* Section 2: Cinematic Hero */}
-        <section className="relative overflow-hidden border-b border-[var(--amld-border)] bg-gradient-to-b from-[#081524] via-[#132B3E]/65 to-[#081524]">
-          <svg
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-0 w-full h-full opacity-20"
-            viewBox="0 0 1200 520"
-            fill="none"
-          >
-            <circle cx="940" cy="180" r="140" stroke="#21D7C4" strokeWidth="1" strokeDasharray="4 6" />
-            <circle cx="940" cy="180" r="70" stroke="#F4B860" strokeWidth="1" opacity="0.7" />
-            <line x1="760" y1="290" x2="940" y2="180" stroke="#21D7C4" strokeWidth="1.2" />
-            <line x1="940" y1="180" x2="1110" y2="330" stroke="#21D7C4" strokeWidth="1.2" />
-            <circle cx="760" cy="290" r="5" fill="#F4B860" />
-            <circle cx="940" cy="180" r="6" fill="#21D7C4" />
-            <circle cx="1110" cy="330" r="5" fill="#21D7C4" />
-          </svg>
-
-          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28">
-            <div className="max-w-3xl space-y-6">
-              <TopicBadge tone="teal">Financial Crime Intelligence Academy</TopicBadge>
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-[#F5F8FC] leading-[1.1]">
+        {/* Warm Editorial Hero */}
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 sm:pt-12">
+          <div className="rounded-3xl bg-gradient-to-br from-[#13294B] via-[#1B365D] to-[#0F213A] text-white px-6 py-12 sm:px-12 sm:py-16 shadow-sm border border-amber-500/20">
+            <div className="max-w-3xl space-y-5">
+              <span className="inline-flex items-center px-3.5 py-1 rounded-full text-xs font-semibold tracking-wide bg-amber-400/15 text-amber-300 border border-amber-400/30">
+                Financial Crime &amp; Compliance Hub
+              </span>
+              <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-white leading-[1.14]">
                 Understand the Risk. Master the Investigation.
               </h1>
-              <p className="text-base sm:text-lg text-[#B8C7D9] leading-relaxed max-w-2xl">
+              <p className="text-sm sm:text-lg text-slate-200 leading-relaxed max-w-2xl">
                 Build practical expertise in AML, KYC, transaction monitoring and financial crime compliance.
               </p>
-              <div className="pt-2 flex flex-wrap gap-4">
+              <div className="pt-2 flex flex-wrap gap-3">
                 <button
                   type="button"
                   onClick={() => onOpenView('notes')}
-                  className="amld-btn-primary px-6 py-3.5 rounded-xl text-sm font-bold"
+                  className="px-5 py-3 rounded-xl text-sm font-bold bg-amber-400 text-slate-950 hover:bg-amber-300 transition-colors cursor-pointer"
                 >
                   Explore Syllabus Notes
                 </button>
                 <button
                   type="button"
                   onClick={() => onOpenView('quiz')}
-                  className="px-6 py-3.5 rounded-xl text-sm font-semibold border border-[var(--amld-border)] bg-[#132B3E]/70 text-[#F5F8FC] hover:border-[#21D7C4]/50 transition-colors"
+                  className="px-5 py-3 rounded-xl text-sm font-semibold bg-white/10 text-white border border-white/20 hover:bg-white/15 transition-colors cursor-pointer"
                 >
                   Take Knowledge Test
                 </button>
                 <button
                   type="button"
                   onClick={() => onOpenView('jobs')}
-                  className="px-6 py-3.5 rounded-xl text-sm font-semibold border border-[#F4B860]/40 text-[#F4B860] hover:bg-[#F4B860]/10 transition-colors"
+                  className="px-5 py-3 rounded-xl text-sm font-semibold text-amber-200 border border-amber-300/40 hover:bg-amber-400/10 transition-colors cursor-pointer"
                 >
                   Browse Compliance Jobs
                 </button>
@@ -220,9 +219,65 @@ export default function HomepageHub({
           </div>
         </section>
 
-        {/* Section 3: Intelligent Search */}
-        <section id="search-hub" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-14">
-          <IntelligenceCard>
+        {/* Three Core Pillars */}
+        <section aria-label="Core Compliance Pillars" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            <div className="rounded-2xl bg-white p-6 border border-stone-200/90 shadow-2xs flex flex-col justify-between gap-4">
+              <div className="space-y-2">
+                <p className="text-xs font-bold uppercase tracking-wider text-amber-700">Practice &amp; Simulation</p>
+                <h2 className="text-lg font-bold text-slate-900">Knowledge Test 2.0</h2>
+                <p className="text-sm text-slate-600 leading-relaxed">
+                  Build confidence across practice drills, timed exam mode, multi-stage case simulations, and SAR narrative feedback.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => onOpenView('quiz')}
+                className="text-sm font-bold text-amber-800 hover:text-amber-950 w-fit cursor-pointer"
+              >
+                Launch Knowledge Test →
+              </button>
+            </div>
+
+            <div className="rounded-2xl bg-white p-6 border border-stone-200/90 shadow-2xs flex flex-col justify-between gap-4">
+              <div className="space-y-2">
+                <p className="text-xs font-bold uppercase tracking-wider text-amber-700">Structured Playbooks</p>
+                <h2 className="text-lg font-bold text-slate-900">AML &amp; KYC Study Notes</h2>
+                <p className="text-sm text-slate-600 leading-relaxed">
+                  Review concise reference modules on CDD, EDD, beneficial ownership, screening, and reporting workflows.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => onOpenView('notes')}
+                className="text-sm font-bold text-amber-800 hover:text-amber-950 w-fit cursor-pointer"
+              >
+                Open Syllabus Notes →
+              </button>
+            </div>
+
+            <div className="rounded-2xl bg-white p-6 border border-stone-200/90 shadow-2xs flex flex-col justify-between gap-4">
+              <div className="space-y-2">
+                <p className="text-xs font-bold uppercase tracking-wider text-amber-700">India-Wide Discovery</p>
+                <h2 className="text-lg font-bold text-slate-900">Careers AI</h2>
+                <p className="text-sm text-slate-600 leading-relaxed">
+                  Discover compliance, AML, KYC, and risk openings across Indian states and union territories.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => onOpenView('jobs')}
+                className="text-sm font-bold text-amber-800 hover:text-amber-950 w-fit cursor-pointer"
+              >
+                Explore Careers AI →
+              </button>
+            </div>
+          </div>
+        </section>
+
+        {/* Clean Repository Search */}
+        <section id="search-hub" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12">
+          <div className="rounded-2xl bg-white p-6 sm:p-7 border border-stone-200 shadow-2xs">
             <SectionHeader
               eyebrow="Search Repository"
               title="Search Existing Modules, FAQs, Jobs & Briefings"
@@ -235,13 +290,13 @@ export default function HomepageHub({
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search e.g. KYC, EDD, UBO, SAR, Bengaluru, FATF..."
                 aria-label="Search existing AMLDecode content"
-                className="flex-grow px-4 py-3 rounded-xl bg-[#081524] border border-[var(--amld-border)] text-[#F5F8FC] placeholder-[#7E93AB] focus:outline-none focus:border-[#21D7C4]"
+                className="flex-grow px-4 py-3 rounded-xl bg-[#F8F7F4] border border-stone-300 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-amber-600 focus:bg-white"
               />
               {hasSearch && (
                 <button
                   type="button"
                   onClick={() => setSearchQuery('')}
-                  className="px-4 py-3 rounded-xl text-xs font-semibold border border-[var(--amld-border)] text-[#B8C7D9] hover:text-[#F5F8FC]"
+                  className="px-4 py-3 rounded-xl text-xs font-semibold border border-stone-300 text-slate-700 hover:bg-stone-100 cursor-pointer"
                 >
                   Clear
                 </button>
@@ -249,14 +304,14 @@ export default function HomepageHub({
             </div>
 
             {hasSearch && (
-              <div className="mt-6 pt-6 border-t border-[var(--amld-border)] space-y-6">
-                <p className="text-xs text-[#B8C7D9]">
-                  Found <strong className="text-[#21D7C4]">{totalMatches}</strong> matching items across existing content.
+              <div className="mt-6 pt-6 border-t border-stone-200 space-y-6">
+                <p className="text-xs text-slate-600">
+                  Found <strong className="text-amber-800">{totalMatches}</strong> matching items across existing content.
                 </p>
 
                 {searchResults.notes.length > 0 && (
                   <div>
-                    <h3 className="text-xs font-bold uppercase tracking-wider text-[#21D7C4] mb-2">Syllabus Notes</h3>
+                    <h3 className="text-xs font-bold uppercase tracking-wider text-amber-800 mb-2">Syllabus Notes</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                       {searchResults.notes.map((n) => (
                         <button
@@ -266,9 +321,9 @@ export default function HomepageHub({
                             onSelectNoteIndex(n.idx);
                             onOpenView('notes');
                           }}
-                          className="text-left p-3.5 rounded-xl bg-[#081524] border border-[var(--amld-border)] hover:border-[#21D7C4]/50 transition-colors"
+                          className="text-left p-3.5 rounded-xl bg-[#F8F7F4] border border-stone-200 hover:border-amber-600/50 transition-colors cursor-pointer"
                         >
-                          <p className="text-sm font-semibold text-[#F5F8FC]">{n.title}</p>
+                          <p className="text-sm font-semibold text-slate-900">{n.title}</p>
                         </button>
                       ))}
                     </div>
@@ -277,7 +332,7 @@ export default function HomepageHub({
 
                 {searchResults.jobs.length > 0 && (
                   <div>
-                    <h3 className="text-xs font-bold uppercase tracking-wider text-[#F4B860] mb-2">Job Openings</h3>
+                    <h3 className="text-xs font-bold uppercase tracking-wider text-amber-800 mb-2">Job Openings</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                       {searchResults.jobs.map((job, i) => (
                         <a
@@ -285,10 +340,10 @@ export default function HomepageHub({
                           href={job.link}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="block p-3.5 rounded-xl bg-[#081524] border border-[var(--amld-border)] hover:border-[#F4B860]/50 transition-colors"
+                          className="block p-3.5 rounded-xl bg-[#F8F7F4] border border-stone-200 hover:border-amber-600/50 transition-colors"
                         >
-                          <p className="text-sm font-semibold text-[#F5F8FC]">{job.role}</p>
-                          <p className="text-xs text-[#B8C7D9] mt-0.5">{job.company} · {job.location}</p>
+                          <p className="text-sm font-semibold text-slate-900">{job.role}</p>
+                          <p className="text-xs text-slate-600 mt-0.5">{job.company} · {job.location}</p>
                         </a>
                       ))}
                     </div>
@@ -297,7 +352,7 @@ export default function HomepageHub({
 
                 {searchResults.news.length > 0 && (
                   <div>
-                    <h3 className="text-xs font-bold uppercase tracking-wider text-[#21D7C4] mb-2">Regulatory Headlines</h3>
+                    <h3 className="text-xs font-bold uppercase tracking-wider text-amber-800 mb-2">Regulatory Headlines</h3>
                     <div className="space-y-2">
                       {searchResults.news.map((item, i) => (
                         <a
@@ -305,7 +360,7 @@ export default function HomepageHub({
                           href={item.link}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="block p-3 rounded-xl bg-[#081524] border border-[var(--amld-border)] text-sm text-[#F5F8FC] hover:border-[#21D7C4]/50"
+                          className="block p-3 rounded-xl bg-[#F8F7F4] border border-stone-200 text-sm font-medium text-slate-900 hover:border-amber-600/50"
                         >
                           {item.headline}
                         </a>
@@ -316,12 +371,12 @@ export default function HomepageHub({
 
                 {searchResults.faqs.length > 0 && (
                   <div>
-                    <h3 className="text-xs font-bold uppercase tracking-wider text-[#B8C7D9] mb-2">FAQs</h3>
+                    <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">FAQs</h3>
                     <div className="space-y-2">
                       {searchResults.faqs.map((faq, i) => (
-                        <div key={i} className="p-3.5 rounded-xl bg-[#081524] border border-[var(--amld-border)]">
-                          <p className="text-sm font-semibold text-[#F5F8FC]">{faq.question}</p>
-                          <p className="text-xs text-[#B8C7D9] mt-1">{faq.answer}</p>
+                        <div key={i} className="p-3.5 rounded-xl bg-[#F8F7F4] border border-stone-200">
+                          <p className="text-sm font-semibold text-slate-900">{faq.question}</p>
+                          <p className="text-xs text-slate-600 mt-1">{faq.answer}</p>
                         </div>
                       ))}
                     </div>
@@ -329,11 +384,11 @@ export default function HomepageHub({
                 )}
               </div>
             )}
-          </IntelligenceCard>
+          </div>
         </section>
 
-        {/* Section 4: Learning Pathways */}
-        <section id="pathways" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16">
+        {/* Learning Pathways */}
+        <section id="pathways" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-14">
           <SectionHeader
             eyebrow="Structured Tracks"
             title="Learning Pathways"
@@ -342,7 +397,7 @@ export default function HomepageHub({
               <button
                 type="button"
                 onClick={() => onOpenView('notes')}
-                className="text-xs font-semibold text-[#21D7C4] hover:underline"
+                className="text-xs font-bold text-amber-800 hover:underline cursor-pointer"
               >
                 View all {notesContent.length} modules →
               </button>
@@ -357,20 +412,20 @@ export default function HomepageHub({
                   onSelectNoteIndex(p.noteIndex);
                   onOpenView('notes');
                 }}
-                className="amld-card rounded-2xl p-5 text-left flex flex-col justify-between gap-3"
+                className="rounded-2xl bg-white p-5 border border-stone-200 hover:border-amber-600/60 shadow-2xs text-left flex flex-col justify-between gap-3 transition-all cursor-pointer"
               >
                 <div>
                   <TopicBadge tone="teal">{p.label}</TopicBadge>
-                  <p className="mt-3 text-sm font-semibold text-[#F5F8FC]">{p.moduleTitle}</p>
+                  <p className="mt-3 text-sm font-semibold text-slate-900 leading-snug">{p.moduleTitle}</p>
                 </div>
-                <span className="text-xs font-medium text-[#21D7C4]">Open module →</span>
+                <span className="text-xs font-bold text-amber-800">Open module →</span>
               </button>
             ))}
           </div>
         </section>
 
-        {/* Section 5: Featured Content & Regulatory Bulletins */}
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16">
+        {/* Featured Content & Regulatory Bulletins */}
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-14">
           <SectionHeader
             eyebrow="Core Study & Updates"
             title="Featured Learning Modules & Headlines"
@@ -379,11 +434,11 @@ export default function HomepageHub({
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
             <div className="lg:col-span-8 grid grid-cols-1 md:grid-cols-3 gap-4">
               {featuredNotes.map((mod, idx) => (
-                <IntelligenceCard key={mod.title || idx} className="flex flex-col justify-between">
+                <IntelligenceCard key={mod.title || idx} className="bg-white border border-stone-200 flex flex-col justify-between">
                   <div>
                     <TopicBadge tone="teal">Module {idx + 1}</TopicBadge>
-                    <h3 className="mt-3 text-base font-bold text-[#F5F8FC]">{mod.title}</h3>
-                    <p className="mt-2 text-xs text-[#B8C7D9] line-clamp-3">
+                    <h3 className="mt-3 text-base font-bold text-slate-900">{mod.title}</h3>
+                    <p className="mt-2 text-xs text-slate-600 line-clamp-3 leading-relaxed">
                       {typeof mod.content === 'string' ? mod.content : 'Structured compliance study module.'}
                     </p>
                   </div>
@@ -393,7 +448,7 @@ export default function HomepageHub({
                       onSelectNoteIndex(idx);
                       onOpenView('notes');
                     }}
-                    className="mt-4 text-left text-xs font-semibold text-[#21D7C4] hover:underline"
+                    className="mt-4 text-left text-xs font-bold text-amber-800 hover:underline cursor-pointer"
                   >
                     Read full module →
                   </button>
@@ -401,18 +456,18 @@ export default function HomepageHub({
               ))}
             </div>
 
-            <IntelligenceCard className="lg:col-span-4 space-y-4">
+            <IntelligenceCard className="lg:col-span-4 bg-white border border-stone-200 space-y-4">
               <div className="flex items-center justify-between">
-                <h3 className="text-sm font-bold uppercase tracking-wider text-[#F4B860]">Regulatory Headlines</h3>
+                <h3 className="text-xs font-bold uppercase tracking-wider text-amber-800">Regulatory Headlines</h3>
               </div>
               <ul className="space-y-3">
                 {kycNews.map((item, i) => (
-                  <li key={i} className="border-b border-[var(--amld-border)] last:border-b-0 pb-3 last:pb-0">
+                  <li key={i} className="border-b border-stone-100 last:border-b-0 pb-3 last:pb-0">
                     <a
                       href={item.link}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-sm font-medium text-[#F5F8FC] hover:text-[#21D7C4] transition-colors block"
+                      className="text-sm font-medium text-slate-800 hover:text-amber-800 transition-colors block"
                     >
                       {item.headline}
                     </a>
@@ -423,91 +478,35 @@ export default function HomepageHub({
           </div>
         </section>
 
-        {/* Section 6: Practical Case Analysis */}
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16">
-          <IntelligenceCard>
-            <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
-              <TopicBadge tone="amber">Case Analysis Exercise</TopicBadge>
-              <button
-                type="button"
-                onClick={() => onOpenView('quiz')}
-                className="text-xs font-semibold text-[#21D7C4] hover:underline"
-              >
-                Open Knowledge Test →
-              </button>
-            </div>
-            <h2 className="text-xl sm:text-2xl font-bold text-[#F5F8FC]">
-              Nested Correspondent Banking & Sanctions Screening Scenario
-            </h2>
-            <p className="mt-3 text-sm sm:text-base text-[#B8C7D9] leading-relaxed">
-              A cross-border corporate payment originating from an offshore tech hub is flagged by your monitoring system. The beneficiary entity is clean on global sanctions watchlists. However, upon deep-dive routing analysis, you discover that the transaction utilizes a nested correspondent banking structure, and one of the listed downstream intermediary transit banks was placed under selective sectorial sanctions 48 hours ago. The asset value sits under standard regulatory thresholds. What is the appropriate operational step?
-            </p>
-            <div className="mt-5 flex flex-wrap gap-3">
-              <button
-                type="button"
-                onClick={() => setCaseChoice('freeze')}
-                className="amld-btn-primary px-4 py-2.5 rounded-xl text-xs font-bold"
-              >
-                Hold / Freeze & Escalate for Sanctions / SAR Review
-              </button>
-              <button
-                type="button"
-                onClick={() => setCaseChoice('release')}
-                className="px-4 py-2.5 rounded-xl text-xs font-semibold border border-[var(--amld-border)] text-[#B8C7D9] hover:text-[#F5F8FC]"
-              >
-                Release Automatically Below Threshold
-              </button>
-            </div>
-            {caseChoice && (
-              <div className="mt-5 p-4 rounded-xl bg-[#081524] border border-[#21D7C4]/30 text-sm text-[#B8C7D9]">
-                {caseChoice === 'freeze'
-                  ? 'Sanctions exposure and nested routing require immediate escalation and review regardless of transaction amount—thresholds do not waive sanctions compliance.'
-                  : 'Releasing a payment routed through a newly sanctioned intermediary without review creates regulatory and legal risk even when the amount is below standard thresholds.'}
-              </div>
-            )}
-          </IntelligenceCard>
-        </section>
-
-        {/* Section 7: Career Hub */}
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16">
+        {/* AI Daily Knowledge Challenge */}
+        <section id="daily-challenge" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-14">
           <SectionHeader
-            eyebrow="Opportunities & Guidance"
-            title="Compliance Career Hub"
-            subtitle="Curated compliance listings from your existing directory alongside interview preparation and intake support."
+            eyebrow="Daily Challenge"
+            title="AMLDecode AI Daily Knowledge Challenge"
+            subtitle="Test your AML, KYC, transaction monitoring, SAR, and sanctions judgment daily—with instant feedback and source-backed explanations."
             action={
               <button
                 type="button"
-                onClick={() => onOpenView('jobs')}
-                className="px-4 py-2 rounded-lg text-xs font-semibold border border-[var(--amld-border)] text-[#F5F8FC] hover:border-[#21D7C4]/50"
+                onClick={() => onOpenView('quiz')}
+                className="px-4 py-2 rounded-xl text-xs font-bold bg-white border border-stone-300 text-slate-900 hover:border-amber-600 cursor-pointer"
               >
-                Full Jobs View ({jobOpenings.length})
+                Open Knowledge Test
               </button>
             }
           />
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {jobOpenings.slice(0, 6).map((job, idx) => (
-              <IntelligenceCard key={idx} className="flex flex-col justify-between gap-4">
-                <div>
-                  <TopicBadge tone="amber">{(job.location || '').trim()}</TopicBadge>
-                  <h3 className="mt-3 text-base font-bold text-[#F5F8FC]">{job.role}</h3>
-                  <p className="text-xs text-[#B8C7D9] mt-1">{(job.company || '').trim()}</p>
-                </div>
-                <a
-                  href={job.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-xs font-semibold text-[#21D7C4] hover:underline"
-                >
-                  View posting →
-                </a>
-              </IntelligenceCard>
-            ))}
-          </div>
+          <DailyChallengeCard
+            compact
+            onOpenRelatedNote={(noteIdx) => {
+              onSelectNoteIndex(noteIdx);
+              onOpenView('notes');
+            }}
+            onOpenKnowledgeTest={() => onOpenView('quiz')}
+          />
         </section>
 
-        {/* Section 8: Trust and Credibility */}
-        <section id="career-guidance" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-16">
-          <IntelligenceCard className="bg-[#132B3E]/40">
+        {/* Purpose & Credibility */}
+        <section id="career-guidance" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-14 pb-14">
+          <div className="rounded-2xl bg-white p-6 sm:p-8 border border-stone-200 shadow-2xs space-y-5">
             <SectionHeader
               eyebrow="Purpose & Scope"
               title="Educational & Networking Focus"
@@ -517,52 +516,52 @@ export default function HomepageHub({
               <button
                 type="button"
                 onClick={() => onOpenView('faq')}
-                className="px-4 py-2.5 rounded-xl text-xs font-semibold border border-[var(--amld-border)] text-[#F5F8FC] hover:border-[#21D7C4]/50"
+                className="px-4 py-2.5 rounded-xl text-xs font-bold border border-stone-300 text-slate-900 hover:bg-stone-50 cursor-pointer"
               >
                 Read FAQ
               </button>
               <button
                 type="button"
                 onClick={() => onOpenView('referralForm')}
-                className="amld-btn-amber px-4 py-2.5 rounded-xl text-xs font-bold"
+                className="px-4 py-2.5 rounded-xl text-xs font-bold bg-amber-600 text-white hover:bg-amber-700 cursor-pointer"
               >
                 Submit Referral
               </button>
               <button
                 type="button"
                 onClick={() => onOpenView('contact')}
-                className="px-4 py-2.5 rounded-xl text-xs font-semibold border border-[var(--amld-border)] text-[#B8C7D9] hover:text-[#F5F8FC]"
+                className="px-4 py-2.5 rounded-xl text-xs font-semibold border border-stone-300 text-slate-700 hover:text-slate-900 cursor-pointer"
               >
                 Contact Support
               </button>
             </div>
-          </IntelligenceCard>
+          </div>
         </section>
       </main>
 
-      {/* Section 9: Professional Footer */}
-      <footer className="border-t border-[var(--amld-border)] bg-[#081524] py-12">
+      {/* Calm Multi-Column Footer */}
+      <footer className="border-t border-stone-200 bg-white text-slate-700 py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-12 gap-8 text-sm">
           <div className="md:col-span-5 space-y-3">
-            <AcademyBrandMark />
-            <p className="text-xs text-[#B8C7D9] leading-relaxed max-w-sm">
+            <AcademyBrandMark theme="light" />
+            <p className="text-xs text-slate-500 leading-relaxed max-w-sm">
               Structured learning notes, assessments, compliance job listings, and referral resources for AML and KYC professionals.
             </p>
           </div>
           <div className="md:col-span-3 space-y-2">
-            <p className="text-xs font-bold uppercase tracking-wider text-[#21D7C4]">Platform</p>
-            <div className="flex flex-col gap-1.5 text-xs text-[#B8C7D9]">
-              <button type="button" onClick={() => onOpenView('faq')} className="text-left hover:text-[#F5F8FC]">About & FAQ</button>
-              <button type="button" onClick={() => onOpenView('contact')} className="text-left hover:text-[#F5F8FC]">Contact Us</button>
-              <button type="button" onClick={() => onOpenView('notes')} className="text-left hover:text-[#F5F8FC]">Syllabus Notes</button>
-              <button type="button" onClick={() => onOpenView('quiz')} className="text-left hover:text-[#F5F8FC]">Knowledge Test</button>
+            <p className="text-xs font-bold uppercase tracking-wider text-amber-800">Platform</p>
+            <div className="flex flex-col gap-1.5 text-xs text-slate-600">
+              <button type="button" onClick={() => onOpenView('faq')} className="text-left hover:text-slate-950 cursor-pointer">About &amp; FAQ</button>
+              <button type="button" onClick={() => onOpenView('contact')} className="text-left hover:text-slate-950 cursor-pointer">Contact Us</button>
+              <button type="button" onClick={() => onOpenView('notes')} className="text-left hover:text-slate-950 cursor-pointer">Syllabus Notes</button>
+              <button type="button" onClick={() => onOpenView('quiz')} className="text-left hover:text-slate-950 cursor-pointer">Knowledge Test</button>
             </div>
           </div>
           <div className="md:col-span-4 space-y-2">
-            <p className="text-xs font-bold uppercase tracking-wider text-[#F4B860]">Legal & Disclaimer</p>
-            <div className="flex flex-col gap-1.5 text-xs text-[#B8C7D9]">
-              <button type="button" onClick={() => onOpenView('privacy')} className="text-left hover:text-[#F5F8FC]">Privacy Policy</button>
-              <button type="button" onClick={() => onOpenView('terms')} className="text-left hover:text-[#F5F8FC]">Terms of Service & Disclaimer</button>
+            <p className="text-xs font-bold uppercase tracking-wider text-amber-800">Legal &amp; Disclaimer</p>
+            <div className="flex flex-col gap-1.5 text-xs text-slate-600">
+              <button type="button" onClick={() => onOpenView('privacy')} className="text-left hover:text-slate-950 cursor-pointer">Privacy Policy</button>
+              <button type="button" onClick={() => onOpenView('terms')} className="text-left hover:text-slate-950 cursor-pointer">Terms of Service &amp; Disclaimer</button>
             </div>
           </div>
         </div>

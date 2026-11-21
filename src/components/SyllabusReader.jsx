@@ -153,7 +153,7 @@ export default function SyllabusReader({
             </TopicBadge>
             <TopicBadge tone="amber">Compliance Syllabus</TopicBadge>
           </div>
-          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-[#F5F8FC]">
+          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-[#081C33]">
             {currentModule.title}
           </h1>
         </header>
@@ -162,7 +162,7 @@ export default function SyllabusReader({
           {/* Module Index Sidebar */}
           <aside className="lg:col-span-3 space-y-6">
             <div className="bg-[#0D1E30] border border-[var(--amld-border)] rounded-2xl p-4">
-              <p className="text-xs font-bold uppercase tracking-wider text-[#21D7C4] mb-3 px-1">
+              <p className="text-xs font-bold uppercase tracking-wider text-[#C4A77D] mb-3 px-1">
                 All Modules ({notesContent.length})
               </p>
               <div

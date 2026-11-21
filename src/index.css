@@ -1,4 +1,7 @@
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
 
+@custom-variant dark (&:where(.dark, .dark *));
 
 #root {
   background: transparent !important;
@@ -7,16 +10,22 @@
 
 body {
   margin: 0;
-  background-color: #030712 !important;
+  padding: 0;
+  background-color: var(--amld-off-white, #F0F2F5) !important;
+  background-attachment: fixed !important;
+  color: var(--amld-text-primary, #081C33);
 }
+
 @keyframes marquee {
   0% { transform: translateX(100%); }
   100% { transform: translateX(-100%); }
 }
+
 .animate-marquee {
   display: inline-block;
   animation: marquee 20s linear infinite;
 }
+
 .cyber-bg {
   position: fixed;
   top: 0;
@@ -24,34 +33,43 @@ body {
   width: 100%;
   height: 100%;
   z-index: -1;
-  background-color: #030712;
-  background-image: 
-    linear-gradient(rgba(16, 185, 129, 0.15) 1px, transparent 1px), 
-    linear-gradient(90deg, rgba(16, 185, 129, 0.15) 1px, transparent 1px);
+  background-color: var(--amld-off-white, #F0F2F5);
+  background-image:
+    linear-gradient(rgba(30, 58, 95, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(30, 58, 95, 0.08) 1px, transparent 1px);
   background-size: 60px 60px;
 }
-body {
-  background-color: #030712 !important;
-  background-attachment: fixed !important;
-  margin: 0;
-  padding: 0;
+
+.custom-card {
+  transition: all 0.4s ease;
+  background-color: var(--amld-surface, #FFFFFF);
 }
-body { background-color: #030712 !important; background-attachment: fixed !important; margin: 0; padding: 0; }
-.custom-card { transition: all 0.4s ease; background-color: rgba(3, 7, 18, 0.8); }
-.registry-card:hover { border-color: #10B981 !important; background-color: rgba(16, 185, 129, 0.1) !important; }
-.jobs-card:hover { border-color: #6366F1 !important; background-color: rgba(99, 102, 241, 0.1) !important; }
-.submit-card:hover { border-color: #F59E0B !important; background-color: rgba(245, 158, 11, 0.1) !important; }
-.avail-card:hover { border-color: #EF4444 !important; background-color: rgba(239, 68, 68, 0.1) !important; }
-body { background-color: #030712 !important; background-attachment: fixed !important; margin: 0; padding: 0; }
-.custom-card { transition: all 0.4s ease; background-color: rgba(3, 7, 18, 0.8); }
-.registry-card:hover { border-color: #10B981 !important; background-color: rgba(16, 185, 129, 0.1) !important; }
-.jobs-card:hover { border-color: #6366F1 !important; background-color: rgba(99, 102, 241, 0.1) !important; }
-.submit-card:hover { border-color: #F59E0B !important; background-color: rgba(245, 158, 11, 0.1) !important; }
-.avail-card:hover { border-color: #EF4444 !important; background-color: rgba(239, 68, 68, 0.1) !important; }
+
+.registry-card:hover {
+  border-color: var(--amld-teal, #C4A77D) !important;
+  background-color: rgba(196, 167, 125, 0.1) !important;
+}
+
+.jobs-card:hover {
+  border-color: var(--amld-deep-navy, #1E3A5F) !important;
+  background-color: rgba(30, 58, 95, 0.08) !important;
+}
+
+.submit-card:hover {
+  border-color: var(--amld-amber, #C4A77D) !important;
+  background-color: rgba(196, 167, 125, 0.12) !important;
+}
+
+.avail-card:hover {
+  border-color: var(--amld-deep-navy, #1E3A5F) !important;
+  background-color: rgba(30, 58, 95, 0.1) !important;
+}
+
 @keyframes slide {
   from { transform: translateX(100%); }
   to { transform: translateX(-100%); }
 }
+
 @keyframes scroll-left {
   0% { transform: translateX(100%); }
   100% { transform: translateX(-100%); }
@@ -60,54 +78,46 @@ body { background-color: #030712 !important; background-attachment: fixed !impor
 .animate-slow-scroll {
   animation: scroll-left 20s linear infinite;
 }
-/* This targets mobile screens */
+
 @media (max-width: 768px) {
   .your-parent-container-class {
-    flex-direction: column; /* This stacks the buttons on top of the content */
+    flex-direction: column;
   }
 
   .button-list-column, .content-column {
-    width: 100%; /* Makes both sections take the full screen width */
+    width: 100%;
   }
 }
+
 .button-class {
-  /* Ensure the button can grow if the text is long */
-  min-height: 50px; 
+  min-height: 50px;
   padding: 10px;
-  
-  /* This ensures the text wraps inside the button */
   white-space: normal;
   word-wrap: break-word;
-  
-  /* Prevents text from pushing outside the borders */
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
 }
+
 .content-container {
-  /* Adds space around the text so it doesn't touch the screen edges */
   padding: 20px;
-  
-  /* Adds space between lines of text to make it readable */
   line-height: 1.6;
-  
-  /* Ensures the container width is handled correctly */
   width: 100%;
 }
-/* Container holding the buttons and the content */
+
 .parent-container {
   display: flex;
-  flex-direction: row; /* Side-by-side on desktop */
+  flex-direction: row;
 }
 
 @media (max-width: 768px) {
   .parent-container {
-    flex-direction: column; /* Stack on top of each other on mobile */
+    flex-direction: column;
   }
 }
-/* --- STEP 2: ANIMATION FOR THE LIVE TICKER --- */
-@keyframes marquee {
+
+@keyframes marquee-loop {
   0% { transform: translateX(0); }
   100% { transform: translateX(-50%); }
 }
@@ -115,19 +125,18 @@ body { background-color: #030712 !important; background-attachment: fixed !impor
 .animate-marquee {
   display: flex;
   width: max-content;
-  animation: marquee 30s linear infinite;
+  animation: marquee-loop 30s linear infinite;
 }
 
 .animate-marquee:hover {
   animation-play-state: paused;
 }
-/* Add this to your index.css */
+
 button {
-  touch-action: manipulation; /* Prevents accidental zooming on double-tap */
+  touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
 }
 
-/* Ensure the bento grid cards don't feel "cramped" on small screens */
 @media (max-width: 768px) {
   .grid {
     gap: 1rem;
@@ -136,6 +145,7 @@ button {
     padding: 1.5rem;
   }
 }
+
 @keyframes data-stream {
   0% { left: -10%; opacity: 0; }
   20% { opacity: 0.8; }
@@ -190,15 +200,11 @@ button {
 .animate-bar-grow { animation: bar-grow 2s ease-in-out infinite; transform-origin: bottom; }
 .animate-ping-slow { animation: ping-slow 3s cubic-bezier(0, 0, 0.2, 1) infinite; }
 .animate-pulse-fast { animation: pulse-fast 1.5s ease-in-out infinite; }
+
 @keyframes draw {
   0% { stroke-dasharray: 0, 1000; opacity: 0; }
   50% { opacity: 0.5; }
   100% { stroke-dasharray: 1000, 0; opacity: 0.3; }
-}
-
-@keyframes float {
-  0%, 100% { transform: translateY(0) scale(1); }
-  50% { transform: translateY(-15px) scale(1.02); }
 }
 
 @keyframes bounce-slow {
@@ -207,17 +213,16 @@ button {
 }
 
 .animate-draw { animation: draw 10s ease-in-out infinite; }
-.animate-float { animation: float 6s ease-in-out infinite; }
 .animate-bounce-slow { animation: bounce-slow 4s ease-in-out infinite; }
 
 @keyframes view-entry {
-  0% { 
-    opacity: 0; 
+  0% {
+    opacity: 0;
     transform: translateY(20px);
-    filter: brightness(0.5);
+    filter: brightness(0.95);
   }
-  100% { 
-    opacity: 1; 
+  100% {
+    opacity: 1;
     transform: translateY(0);
     filter: brightness(1);
   }
@@ -226,41 +231,41 @@ button {
 .animate-view-entry {
   animation: view-entry 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
-/* Real-time Laser Line Radar Sweep */
+
 @keyframes footer-scan {
   0% { transform: translateY(0); opacity: 0.2; }
   50% { opacity: 0.8; }
   100% { transform: translateY(340px); opacity: 0.2; }
 }
 
-/* System Engine Breathing State */
 @keyframes terminal-pulse {
   0%, 100% { opacity: 0.4; transform: scale(1); }
-  50% { opacity: 1; transform: scale(1.03); filter: drop-shadow(0 0 8px rgba(16, 185, 129, 0.4)); }
+  50% { opacity: 1; transform: scale(1.03); filter: drop-shadow(0 0 8px rgba(196, 167, 125, 0.45)); }
 }
 
-/* Link Displacement on Hover */
 .hover\:translate-x-1\.5:hover {
   transform: translateX(6px);
 }
+
 @keyframes section-alert-glow {
   0%, 100% {
-    box-shadow: 0 0 0px rgba(16, 185, 129, 0);
-    border-color: rgba(16, 185, 129, 0.3);
+    box-shadow: 0 0 0px rgba(196, 167, 125, 0);
+    border-color: rgba(196, 167, 125, 0.3);
   }
   50% {
-    box-shadow: 0 0 30px rgba(16, 185, 129, 0.4);
-    border-color: rgba(16, 185, 129, 1);
+    box-shadow: 0 0 30px rgba(196, 167, 125, 0.35);
+    border-color: rgba(196, 167, 125, 0.9);
   }
 }
 
 .animate-target-glow {
-  animation: section-alert-glow 2s ease-in-out 2; /* Loops twice, then fades out smoothly */
+  animation: section-alert-glow 2s ease-in-out 2;
 }
-/* Ensures the section lands with enough space below the fixed navbar */
+
 #career-guidance {
-  scroll-margin-top: 100px; 
+  scroll-margin-top: 100px;
 }
+
 @keyframes scan {
   0% { left: -100%; }
   100% { left: 100%; }
@@ -277,20 +282,20 @@ button {
   top: 0;
   width: 50%;
   height: 100%;
-  background: linear-gradient(to right, transparent, rgba(16, 185, 129, 0.2), transparent);
+  background: linear-gradient(to right, transparent, rgba(196, 167, 125, 0.25), transparent);
   transform: skewX(-25deg);
   animation: scan 3s infinite;
 }
-/* --- AMDL_DECODE LOGO HEARTBEAT --- */
+
 @keyframes logo-pulse {
-  0%, 100% { 
+  0%, 100% {
     opacity: 1;
-    filter: brightness(1) drop-shadow(0 0 5px rgba(16, 185, 129, 0.4));
+    filter: brightness(1) drop-shadow(0 0 5px rgba(196, 167, 125, 0.35));
     transform: scale(1);
   }
-  50% { 
-    opacity: 0.9;
-    filter: brightness(1.2) drop-shadow(0 0 15px rgba(16, 185, 129, 0.7));
+  50% {
+    opacity: 0.92;
+    filter: brightness(1.15) drop-shadow(0 0 14px rgba(196, 167, 125, 0.6));
     transform: scale(1.02);
   }
 }
@@ -298,6 +303,7 @@ button {
 .animate-logo-pulse {
   animation: logo-pulse 3s ease-in-out infinite;
 }
+
 @keyframes modal-entry {
   0% { transform: scale(0.9) translateY(20px); opacity: 0; filter: blur(10px); }
   100% { transform: scale(1) translateY(0); opacity: 1; filter: blur(0); }
@@ -306,10 +312,10 @@ button {
 .animate-protocol-result {
   animation: modal-entry 0.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
-/* --- CINEMATIC CORE: ZERO-TEXT ANIMATION --- */
+
 @keyframes neural-pulse {
   0%, 100% { opacity: 0.3; filter: brightness(1) blur(2px); }
-  50% { opacity: 1; filter: brightness(1.5) blur(0px); }
+  50% { opacity: 1; filter: brightness(1.3) blur(0px); }
 }
 
 @keyframes scanner-sweep {
@@ -320,34 +326,32 @@ button {
 .terminal-cinematic-bg {
   height: 100vh;
   width: 100%;
-  background: radial-gradient(circle at center, #061a12 0%, #030712 100%);
+  background: radial-gradient(circle at center, #1E3A5F 0%, #081C33 100%);
   position: relative;
   overflow: hidden;
 }
 
-/* Moving Grid Depth */
 .terminal-cinematic-bg::before {
   content: "";
   position: absolute;
   inset: -100px;
-  background-image: 
-    linear-gradient(rgba(16, 185, 129, 0.08) 1px, transparent 1px), 
-    linear-gradient(90deg, rgba(16, 185, 129, 0.08) 1px, transparent 1px);
+  background-image:
+    linear-gradient(rgba(196, 167, 125, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(196, 167, 125, 0.08) 1px, transparent 1px);
   background-size: 60px 60px;
   animation: grid-drift 10s linear infinite;
   transform: perspective(500px) rotateX(60deg);
 }
 
-/* The Cinematic Scanner Line */
 .scanner-line {
   position: absolute;
   width: 100%;
   height: 150px;
-  background: linear-gradient(to bottom, transparent, rgba(16, 185, 129, 0.1), transparent);
+  background: linear-gradient(to bottom, transparent, rgba(196, 167, 125, 0.12), transparent);
   animation: scanner-sweep 6s ease-in-out infinite;
   z-index: 10;
 }
-/* --- CINEMATIC NEURAL CORE --- */
+
 @keyframes atmospheric-drift {
   0% { transform: scale(1) translate(0, 0); }
   50% { transform: scale(1.1) translate(-15px, 15px); }
@@ -369,7 +373,7 @@ button {
 .cinematic-terminal-hero {
   height: 600px;
   width: 100%;
-  background-color: #020617;
+  background-color: #081C33;
   position: relative;
   overflow: hidden;
   display: flex;
@@ -377,42 +381,39 @@ button {
   justify-content: center;
 }
 
-/* Drifting Neural Grid */
 .cinematic-terminal-hero::before {
   content: "";
   position: absolute;
   inset: -100px;
-  background-image: 
-    linear-gradient(rgba(16, 185, 129, 0.1) 1px, transparent 1px), 
-    linear-gradient(90deg, rgba(16, 185, 129, 0.1) 1px, transparent 1px);
+  background-image:
+    linear-gradient(rgba(196, 167, 125, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(196, 167, 125, 0.1) 1px, transparent 1px);
   background-size: 60px 60px;
   animation: grid-drift-deep 10s linear infinite;
   mask-image: radial-gradient(circle at center, black, transparent 85%);
   transform: perspective(1000px) rotateX(20deg);
 }
 
-/* Atmospheric Nebula Pulse */
 .cinematic-terminal-hero::after {
   content: "";
   position: absolute;
   width: 150%;
   height: 150%;
-  background: radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.05) 0%, transparent 60%);
+  background: radial-gradient(circle at 50% 50%, rgba(196, 167, 125, 0.08) 0%, transparent 60%);
   animation: atmospheric-drift 20s ease-in-out infinite;
   pointer-events: none;
 }
 
-/* High-Frequency Scanner Line */
 .scanner-overlay {
   position: absolute;
   left: 0;
   width: 100%;
   height: 100px;
-  background: linear-gradient(to bottom, transparent, rgba(16, 185, 129, 0.15), transparent);
+  background: linear-gradient(to bottom, transparent, rgba(196, 167, 125, 0.15), transparent);
   animation: high-freq-scanner 6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
   z-index: 5;
 }
-/* --- CINEMATIC NEURAL ENGINE --- */
+
 @keyframes neural-drift {
   0% { background-position: 0 0; }
   100% { background-position: 100px 100px; }
@@ -426,49 +427,66 @@ button {
 .terminal-core {
   height: 600px;
   width: 100%;
-  background: radial-gradient(circle at center, #061a12 0%, #030712 100%);
+  background: radial-gradient(circle at center, #1E3A5F 0%, #081C33 100%);
   position: relative;
   overflow: hidden;
-  border-bottom: 1px solid rgba(16, 185, 129, 0.1);
+  border-bottom: 1px solid rgba(196, 167, 125, 0.15);
 }
 
-/* Drifting Technical Grid */
 .terminal-core::before {
   content: "";
   position: absolute;
   inset: -100px;
-  background-image: 
-    linear-gradient(rgba(16, 185, 129, 0.1) 1px, transparent 1px), 
-    linear-gradient(90deg, rgba(16, 185, 129, 0.1) 1px, transparent 1px);
+  background-image:
+    linear-gradient(rgba(196, 167, 125, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(196, 167, 125, 0.1) 1px, transparent 1px);
   background-size: 50px 50px;
   animation: neural-drift 12s linear infinite;
   mask-image: radial-gradient(circle at center, black, transparent 80%);
 }
-/* --- PILLAR REVEAL ENGINE --- */
+
 .hero-visual-container {
   position: relative;
   width: 100%;
-  height: 600px;
-  background-color: #030712;
+  height: 100vh;
+  background-color: var(--amld-off-white, #F0F2F5);
   overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  z-index: 1;
+  perspective: 1200px;
+}
+
+.intelligence-grid-section {
+  position: relative;
+  z-index: 10;
+  background-color: var(--amld-off-white, #F0F2F5);
+  box-shadow: 0 -40px 80px rgba(30, 58, 95, 0.08);
 }
 
 .pillar-wrapper {
   position: absolute;
   inset: 0;
   display: flex;
-  z-index: 10;
+  z-index: 20;
   pointer-events: none;
 }
 
 .reveal-pillar {
   flex: 1;
   height: 100%;
-  background-color: #030712;
-  border-right: 1px solid rgba(16, 185, 129, 0.05);
+  background-color: var(--amld-off-white, #F0F2F5);
+  border-right: 2px solid rgba(196, 167, 125, 0.45);
+  box-shadow: 2px 0 15px rgba(196, 167, 125, 0.2);
+  transform-origin: center;
+}
+
+.hero-background-layer {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 5;
+  transition: transform 0.5s ease-out;
 }
 
 .hero-content-back {
@@ -480,100 +498,9 @@ button {
 .hero-vignette {
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle at center, transparent 20%, #030712 100%);
+  background: radial-gradient(circle at center, transparent 20%, rgba(8, 28, 51, 0.08) 100%);
   pointer-events: none;
   z-index: 15;
-}
-/* --- CINEMATIC PILLAR ENGINE (V2) --- */
-.hero-visual-container {
-  position: relative;
-  width: 100%;
-  height: 600px;
-  background-color: #030712;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  /* Adds 3D depth to the pillar reveal */
-  perspective: 1200px; 
-}
-
-.pillar-wrapper {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  z-index: 20;
-  pointer-events: none;
-}
-
-.reveal-pillar {
-  flex: 1;
-  height: 100%;
-  background-color: #030712;
-  /* Lighter Copper border for visibility */
-  border-right: 1px solid rgba(217, 119, 6, 0.25); 
-  transform-origin: center;
-}
-
-.hero-background-layer {
-  position: absolute;
-  inset: 0;
-  z-index: 5;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: transform 0.5s ease-out;
-}
-
-.hero-brand-text {
-  font-size: 10vw;
-  font-weight: 900;
-  color: rgba(255, 255, 255, 0.05);
-  text-transform: uppercase;
-  letter-spacing: -0.05em;
-  line-height: 0.8;
-  text-align: center;
-  user-select: none;
-}
-/* Update your CSS file with these modifications */
-
-.hero-visual-container {
-  position: relative;
-  width: 100%;
-  height: 100vh; /* Set to viewport height to pin properly */
-  background-color: #030712;
-  overflow: hidden;
-  z-index: 1; /* Keep hero below the rest */
-}
-
-/* Ensure the next section in App.jsx has a higher z-index and its own background */
-.intelligence-grid-section {
-  position: relative;
-  z-index: 10;
-  background-color: #030712;
-  /* Brighter top shadow to separate from Hero */
-  box-shadow: 0 -40px 80px rgba(180, 83, 9, 0.15); 
-}
-
-.pillar-wrapper {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  z-index: 20;
-}
-
-.reveal-pillar {
-  flex: 1;
-  height: 100%;
-  background-color: #030712;
-  
-  /* HIGH VISIBILITY LINE */
-  border-right: 2px solid rgba(251, 191, 36, 0.5); 
-  
-  /* ADDS THE BLOOM/GLOW TO THE LINE */
-  box-shadow: 2px 0 15px rgba(217, 119, 6, 0.3);
-  
-  transform-origin: center;
 }
 
 .hero-brand-text {
@@ -581,54 +508,43 @@ button {
   font-weight: 900;
   text-transform: uppercase;
   line-height: 0.9;
+  letter-spacing: -0.05em;
   text-align: center;
-  
-  /* 1. REQUIRED: Make text transparent so the gradient background shows */
   color: transparent;
   background-clip: text;
   -webkit-background-clip: text;
-
-  /* 2. CRT SCANLINE EFFECT */
   background-image: linear-gradient(
-    rgba(251, 191, 36, 0.6) 50%, 
-    rgba(217, 119, 6, 0.2) 50%
+    rgba(30, 58, 95, 0.55) 50%,
+    rgba(196, 167, 125, 0.45) 50%
   );
   background-size: 100% 4px;
-
-  /* 3. LAYERED GLOW */
-  text-shadow: 
-    0 0 10px rgba(217, 119, 6, 0.4),
-    0 0 30px rgba(217, 119, 6, 0.2);
-    
+  text-shadow: 0 0 20px rgba(196, 167, 125, 0.25);
   transition: all 0.5s ease-in-out;
   position: relative;
   z-index: 5;
+  user-select: none;
 }
 
-/* 4. CLEANER PULSE ANIMATION */
 .animate-text-glow {
   animation: text-pulse 4s ease-in-out infinite;
 }
 
 @keyframes text-pulse {
-  0%, 100% { 
-    opacity: 0.7;
+  0%, 100% {
+    opacity: 0.75;
     transform: scale(1);
   }
-  50% { 
+  50% {
     opacity: 1;
-    transform: scale(1.02); /* Slight scale is smoother than filter-drop-shadow in keyframes */
+    transform: scale(1.02);
   }
-}
-.hero-background-layer {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 5;
 }
 
 .hero-popup-btn {
-  pointer-events: auto; /* Ensures button stays clickable when it pops up */
+  pointer-events: auto;
+}
+
+html.dark body {
+  background-color: #020617 !important;
+  color: #f1f5f9;
 }

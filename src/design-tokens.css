@@ -1,32 +1,52 @@
 ﻿:root {
-  --amld-midnight: #081524;
-  --amld-deep-navy: #132B3E;
-  --amld-teal: #21D7C4;
-  --amld-off-white: #F5F8FC;
-  --amld-amber: #F4B860;
-  --amld-surface: #0D1E30;
-  --amld-surface-elevated: #162E45;
-  --amld-border: rgba(245, 248, 252, 0.12);
-  --amld-border-accent: rgba(33, 215, 196, 0.35);
-  --amld-text-primary: #F5F8FC;
-  --amld-text-secondary: #B8C7D9;
-  --amld-text-muted: #7E93AB;
+  --amld-midnight: #081C33;
+  --amld-deep-navy: #1E3A5F;
+  --amld-teal: #C4A77D;
+  --amld-off-white: #F0F2F5;
+  --amld-amber: #C4A77D;
+  --amld-surface: #FFFFFF;
+  --amld-surface-elevated: #F8FAFC;
+  --amld-border: rgba(30, 58, 95, 0.14);
+  --amld-border-accent: rgba(196, 167, 125, 0.85);
+  --amld-text-primary: #081C33;
+  --amld-text-secondary: #1E3A5F;
+  --amld-text-muted: #556B8B;
 }
 
 .amld-shell {
-  background-color: var(--amld-midnight);
+  background-color: var(--amld-off-white);
   color: var(--amld-text-primary);
 }
 
 .amld-card {
-  background-color: var(--amld-surface);
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(165deg, #FFFFFF 0%, #FFFFFF 65%, #FBF8F3 100%);
   border: 1px solid var(--amld-border);
-  transition: transform 220ms ease, border-color 220ms ease, box-shadow 220ms ease;
+  border-left: 4px solid #1E3A5F;
+  box-shadow: 0 4px 12px rgba(8, 28, 51, 0.05), 0 1px 3px rgba(8, 28, 51, 0.04);
+  transition: transform 250ms cubic-bezier(0.22, 1, 0.36, 1), border-color 220ms ease, box-shadow 250ms ease, background 250ms ease;
+}
+
+.amld-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at top right, rgba(196, 167, 125, 0.16), transparent 60%);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 250ms ease;
 }
 
 .amld-card:hover {
+  transform: translateY(-5px);
   border-color: var(--amld-border-accent);
-  box-shadow: 0 14px 32px rgba(4, 11, 20, 0.45);
+  border-left-color: #C4A77D;
+  box-shadow: 0 16px 34px rgba(8, 28, 51, 0.12), 0 4px 10px rgba(196, 167, 125, 0.16);
+}
+
+.amld-card:hover::after {
+  opacity: 1;
 }
 
 .amld-btn-primary {
@@ -36,7 +56,7 @@
 }
 
 .amld-btn-primary:hover {
-  background-color: #38e3d2;
+  background-color: #b59568;
 }
 
 .amld-btn-amber {
@@ -46,13 +66,64 @@
 }
 
 .amld-btn-amber:hover {
-  background-color: #f8c67c;
+  background-color: #b59568;
 }
 
 @media (prefers-reduced-motion: reduce) {
   .amld-card,
+  .amld-card::after,
   .amld-btn-primary,
   .amld-btn-amber {
+    transition: none !important;
+    transform: none !important;
+  }
+}
+
+/* Daily Knowledge Challenge — Subtle, Accessible Animations */
+@keyframes dkcCardEnter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes dkcFeedbackPop {
+  0% {
+    transform: scale(0.985);
+  }
+  60% {
+    transform: scale(1.01);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.dkc-card-enter {
+  animation: dkcCardEnter 280ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.dkc-feedback-pop {
+  animation: dkcFeedbackPop 240ms ease-out both;
+}
+
+.dkc-choice-btn {
+  transition: transform 150ms ease, border-color 180ms ease, background-color 180ms ease, box-shadow 180ms ease;
+}
+
+.dkc-choice-btn:active:not(:disabled) {
+  transform: scale(0.985);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dkc-card-enter,
+  .dkc-feedback-pop,
+  .dkc-choice-btn {
+    animation: none !important;
     transition: none !important;
   }
 }
