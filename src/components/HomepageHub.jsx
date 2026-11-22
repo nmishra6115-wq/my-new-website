@@ -550,7 +550,6 @@ export default function HomepageHub({
             </div>
           </div>
         </section>
-        <BannerAd468 className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4" />
       </main>
 
       {/* Calm Multi-Column Footer */}
