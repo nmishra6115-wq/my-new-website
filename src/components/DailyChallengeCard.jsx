@@ -30,6 +30,8 @@ import {
   getTopicPracticeQuestions,
 } from '../data/dkcProgressLogic';
 
+
+import { loadPassportState, recordActivityEvent } from '../data/amlSkillPassportEngine';
 const ANSWER_STORAGE_PREFIX = 'amldecode_dkc_answer_v1_';
 const ADMIN_PAUSED_KEY = 'amldecode_dkc_admin_paused_v1';
 const ADMIN_PINNED_KEY = 'amldecode_dkc_admin_pinned_v1';
@@ -269,6 +271,29 @@ export default function DailyChallengeCard({
         selectedAnswer: Boolean(choiceBool),
         learner,
       });
+
+      try {
+        const passportState = loadPassportState(learner);
+        const isCorrectAnswer = Boolean(evaluatedResult.isCorrect);
+        const challengeDomain = activeChallenge.category || activeChallenge.topic || 'Transaction Monitoring';
+        const challengeTitle = activeChallenge.title || activeChallenge.statement || `Daily Challenge (${istDateKey})`;
+        const passportRes = recordActivityEvent(passportState, {
+          sourceFeature: 'daily-challenge',
+          externalEventId: `dkc-${activeChallenge.id}-${istDateKey}`,
+          domain: challengeDomain,
+          title: challengeTitle,
+          questionsAnswered: 1,
+          correctAnswers: isCorrectAnswer ? 1 : 0,
+          scorePercent: isCorrectAnswer ? 100 : 0,
+          xpAwarded: Math.max(10, Number(evaluatedResult.xpEarned) || (isCorrectAnswer ? 35 : 10)),
+          occurredIstDate: istDateKey,
+        });
+        if (!passportRes.duplicate && typeof window !== 'undefined') {
+          window.dispatchEvent(new CustomEvent('amldecode:passport-updated', { detail: passportRes }));
+        }
+      } catch {
+        // Do not block daily challenge submission if passport storage fails
+      }
 
       setSubmitting(false);
     },
