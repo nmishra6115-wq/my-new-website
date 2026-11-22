@@ -120,6 +120,9 @@ export default function HomepageHub({
             <button type="button" onClick={() => onOpenView('jobs')} className="hover:text-amber-700 transition-colors cursor-pointer">
               Jobs
             </button>
+            <button type="button" onClick={() => onOpenView('skill-passport')} className="hover:text-amber-700 transition-colors cursor-pointer">
+              Skill Passport
+            </button>
             <button type="button" onClick={onScrollToGuidance} className="hover:text-amber-700 transition-colors cursor-pointer">
               Guidance
             </button>
