@@ -74,7 +74,7 @@ class SkillPassportErrorBoundary extends React.Component {
     if (this.state.error) {
       return (
         <div className="rounded-xl border border-rose-500/40 bg-rose-950/30 p-6 text-rose-100 space-y-3">
-          <h2 className="text-base font-semibold">Skill Passport Render Error</h2>
+          <h2 className="text-base font-semibold">Skill Certificate Render Error</h2>
           <p className="text-xs font-mono break-all">{String(this.state.error?.message || this.state.error)}</p>
           <button type="button" onClick={() => this.setState({ error: null })} className="rounded-lg border border-rose-400/50 px-3 py-1.5 text-xs font-medium">
             Retry Render
@@ -420,7 +420,7 @@ const LEARNER_STORAGE_KEY = 'amldecode_kt2_learner_v1';
       : activeView === 'privacy'
       ? 'Privacy Policy'
       : activeView === 'skill-passport'
-      ? 'Skill Passport'
+      ? 'Skill Certificate'
       : 'Terms of Service';
   return (
     <div className="amld-shell min-h-screen flex flex-col">

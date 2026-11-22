@@ -1,4 +1,4 @@
-// AMLDecode Skill Passport Core Engine (Zero-cost, deterministic, educational indicator)
+// AMLDecode Skill Certificate Core Engine (Zero-cost, deterministic, educational indicator)
 
 export const PASSPORT_STORAGE_KEY = 'amldecode_skill_passport_v1';
 

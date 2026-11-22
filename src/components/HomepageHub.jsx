@@ -121,7 +121,7 @@ export default function HomepageHub({
               Jobs
             </button>
             <button type="button" onClick={() => onOpenView('skill-passport')} className="hover:text-amber-700 transition-colors cursor-pointer">
-              Skill Passport
+              Skill Certificate
             </button>
             <button type="button" onClick={onScrollToGuidance} className="hover:text-amber-700 transition-colors cursor-pointer">
               Guidance
@@ -196,7 +196,7 @@ export default function HomepageHub({
               Jobs
             </button>
             <button type="button" onClick={() => { setMobileOpen(false); onOpenView('skill-passport'); }} className="block w-full text-left py-2 text-slate-800 dark:text-slate-100 hover:text-amber-700 dark:hover:text-amber-400 cursor-pointer">
-              Skill Passport
+              Skill Certificate
             </button>
             <button type="button" onClick={() => { setMobileOpen(false); onOpenView('referralForm'); }} className="block w-full text-left py-2 text-slate-700 dark:text-slate-200 hover:text-amber-700 dark:hover:text-amber-400 cursor-pointer">
               Submit Referral

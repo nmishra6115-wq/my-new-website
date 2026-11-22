@@ -126,7 +126,7 @@ export default function SkillPassportView({
       savePassportState(next);
       return next;
     });
-    notify('Skill Passport profile preferences saved.');
+    notify('Skill Certificate profile preferences saved.');
   }
 
   function handleEnablePublicShare(badgeCode) {
@@ -235,7 +235,7 @@ export default function SkillPassportView({
 
     ctx.fillStyle = '#60a5fa';
     ctx.font = 'bold 20px sans-serif';
-    ctx.fillText('AMLDECODE SKILL PASSPORT', 56, 72);
+    ctx.fillText('AMLDECODE SKILL CERTIFICATE', 56, 72);
 
     ctx.fillStyle = '#94a3b8';
     ctx.font = '15px sans-serif';
@@ -295,7 +295,7 @@ export default function SkillPassportView({
       a.download = 'amldecode-skill-passport.json';
       a.click();
       URL.revokeObjectURL(url);
-      notify('Exported your Skill Passport data as JSON.');
+      notify('Exported your Skill Certificate data as JSON.');
     } catch {
       notify('Could not export passport JSON.');
     }
@@ -305,7 +305,7 @@ export default function SkillPassportView({
     const fresh = createEmptyPassportState(currentUser);
     savePassportState(fresh);
     setPassport(fresh);
-    notify('Cleared local Skill Passport records.');
+    notify('Cleared local Skill Certificate records.');
   }
 
   if (verifyToken) {
@@ -343,7 +343,7 @@ export default function SkillPassportView({
               onClick={() => onNavigateView('skill-passport')}
               className="mt-6 inline-flex items-center rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-500"
             >
-              Open Skill Passport
+              Open Skill Certificate
             </button>
           )}
         </div>
@@ -354,10 +354,10 @@ export default function SkillPassportView({
   const earnedSet = new Set((passport.earnedBadges || []).map((b) => b.badgeCode));
 
   return (
-    <section aria-label="AMLDecode Skill Passport" className="max-w-6xl mx-auto px-4 py-8 text-slate-900 dark:text-slate-100 space-y-6">
+    <section aria-label="AMLDecode Skill Certificate" className="max-w-6xl mx-auto px-4 py-8 text-slate-900 dark:text-slate-100 space-y-6">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-5">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white">AMLDecode Skill Passport</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white">AMLDecode Skill Certificate</h1>
           <p className="text-sm sm:text-base text-slate-700 dark:text-slate-300 mt-1">
             Track your AML knowledge, build practical skills and showcase your learning achievements.
           </p>
