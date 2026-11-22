@@ -1,5 +1,21 @@
-﻿import { useMemo, useState, useEffect } from 'react';
+import { useMemo, useState, useEffect, useCallback } from 'react';
 import { getIstDateInfo, selectDailyChallengeForDate } from '../data/dailyChallengeBank';
+import {
+  TWENTY_AML_CATEGORIES,
+  TWENTY_DOMAIN_CHALLENGE_BANK,
+  getIstDateKey,
+  getIstDisplayDate,
+  selectDailyChallengeEngine,
+} from '../data/aiDailyChallengeEngine';
+import {
+  getLevelForXp,
+  getNextStreakMilestone,
+  loadGamificationState,
+  saveGamificationState,
+  applyDailyChallengeSubmission,
+  buildAdaptiveRecommendations,
+  getLeaderboardRows,
+} from '../data/dkcGamificationLogic';
 import {
   loadDailyChallengeWithStore,
   recordDailyChallengeAttempt,
@@ -15,17 +31,8 @@ import {
 } from '../data/dkcProgressLogic';
 
 const ANSWER_STORAGE_PREFIX = 'amldecode_dkc_answer_v1_';
-const STREAK_OPT_IN_KEY = 'amldecode_dkc_show_streak_v1';
-
-const PRACTICE_TOPICS = [
-  'All',
-  'AML',
-  'KYC',
-  'Transaction Monitoring',
-  'SAR',
-  'Sanctions & PEP',
-  'Advanced Investigation',
-];
+const ADMIN_PAUSED_KEY = 'amldecode_dkc_admin_paused_v1';
+const ADMIN_PINNED_KEY = 'amldecode_dkc_admin_pinned_v1';
 
 function readStoredChoice(storageKey) {
   if (!storageKey) return null;
@@ -39,16 +46,21 @@ function readStoredChoice(storageKey) {
   }
 }
 
-function readStreakOptIn() {
-  try {
-    return window.localStorage.getItem(STREAK_OPT_IN_KEY) === 'true';
-  } catch {
-    return false;
-  }
+function getNextIstMidnightCountdown() {
+  const now = new Date();
+  const istNowStr = now.toLocaleString('en-US', { timeZone: 'Asia/Kolkata' });
+  const istNow = new Date(istNowStr);
+  const nextMidnight = new Date(istNow);
+  nextMidnight.setHours(24, 0, 0, 0);
+  const diffMs = Math.max(0, nextMidnight.getTime() - istNow.getTime());
+  const totalMinutes = Math.floor(diffMs / 60000);
+  const hrs = Math.floor(totalMinutes / 60);
+  const mins = totalMinutes % 60;
+  return `${hrs}h ${mins}m until next IST challenge`;
 }
 
-function formatBooleanChoice(val) {
-  return val ? 'CORRECT' : 'INCORRECT';
+function formatChoiceLabel(val) {
+  return val ? 'Correct' : 'Incorrect';
 }
 
 export default function DailyChallengeCard({
@@ -59,23 +71,57 @@ export default function DailyChallengeCard({
   onOpenKnowledgeTest,
 }) {
   const istInfo = useMemo(() => getIstDateInfo(new Date()), []);
-  const fallbackChallenge = useMemo(
-    () => selectDailyChallengeForDate(istInfo.dateIsoIst, istInfo.rotationTopic),
-    [istInfo.dateIsoIst, istInfo.rotationTopic]
+  const istDateKey = useMemo(() => getIstDateKey(new Date()), []);
+  const istDisplayDate = useMemo(() => getIstDisplayDate(new Date()), []);
+
+  const adminPaused = (() => {
+    try {
+      return window.localStorage.getItem(ADMIN_PAUSED_KEY) === 'true';
+    } catch {
+      return false;
+    }
+  })();
+  const adminPinnedId = (() => {
+    try {
+      return window.localStorage.getItem(ADMIN_PINNED_KEY) || '';
+    } catch {
+      return '';
+    }
+  })();
+
+  const engineSelection = useMemo(
+    () =>
+      selectDailyChallengeEngine({
+        now: new Date(),
+        pool: TWENTY_DOMAIN_CHALLENGE_BANK,
+        paused: adminPaused,
+        pinnedQuestionId: adminPinnedId || null,
+      }),
+    [adminPaused, adminPinnedId]
   );
+
+  const fallbackChallenge = useMemo(() => {
+    if (engineSelection.challenge) return engineSelection.challenge;
+    return selectDailyChallengeForDate(istInfo.dateIsoIst, istInfo.rotationTopic);
+  }, [engineSelection.challenge, istInfo.dateIsoIst, istInfo.rotationTopic]);
 
   const dateTopicKey = `${istInfo.dateIsoIst}_${istInfo.rotationTopic}`;
   const [loadedByDateTopic, setLoadedByDateTopic] = useState({});
   const [storedByKey, setStoredByKey] = useState({});
+  const [submitting, setSubmitting] = useState(false);
+  const [lastAwardSummary, setLastAwardSummary] = useState(null);
+  const [shareStatus, setShareStatus] = useState('');
+
   const [activeTab, setActiveTab] = useState('today');
+  const [leaderboardPeriod, setLeaderboardPeriod] = useState('weekly');
   const [practiceTopic, setPracticeTopic] = useState('All');
   const [practiceIndex, setPracticeIndex] = useState(0);
   const [practiceChoice, setPracticeChoice] = useState(null);
   const [selectedArchiveId, setSelectedArchiveId] = useState('');
   const [archiveChoice, setArchiveChoice] = useState(null);
   const [historyEntries, setHistoryEntries] = useState(() => readLocalChallengeHistory());
-  const [showStreak, setShowStreak] = useState(() => readStreakOptIn());
-
+  const [gamification, setGamification] = useState(() => loadGamificationState());
+  
   useEffect(() => {
     if (providedChallenge) return;
     let mounted = true;
@@ -90,13 +136,14 @@ export default function DailyChallengeCard({
     return () => {
       mounted = false;
     };
-  }, [providedChallenge, dateTopicKey, istInfo.dateIsoIst, istInfo.rotationTopic]);
+  }, [providedChallenge, istInfo.dateIsoIst, istInfo.rotationTopic, dateTopicKey]);
 
   useEffect(() => {
+    if (!learner?.email) return;
     let mounted = true;
-    fetchChallengeHistoryWithFallback(learner).then((entries) => {
-      if (mounted && Array.isArray(entries) && entries.length > 0) {
-        setHistoryEntries(entries);
+    fetchChallengeHistoryWithFallback(learner).then((remoteList) => {
+      if (mounted && Array.isArray(remoteList) && remoteList.length > 0) {
+        setHistoryEntries(remoteList);
       }
     });
     return () => {
@@ -104,321 +151,395 @@ export default function DailyChallengeCard({
     };
   }, [learner]);
 
-  const challenge =
-    providedChallenge ||
-    (Object.prototype.hasOwnProperty.call(loadedByDateTopic, dateTopicKey)
-      ? loadedByDateTopic[dateTopicKey]
-      : fallbackChallenge);
+  const activeChallenge = providedChallenge || loadedByDateTopic[dateTopicKey] || fallbackChallenge;
+  const answerStorageKey = activeChallenge
+    ? `${ANSWER_STORAGE_PREFIX}${istDateKey}_${activeChallenge.id}`
+    : null;
 
-  const storageKey = challenge ? `${ANSWER_STORAGE_PREFIX}${istInfo.dateIsoIst}_${challenge.id}` : '';
-  const archiveList = useMemo(
-    () => getArchiveChallenges(undefined, challenge?.id || ''),
-    [challenge?.id]
+  const selectedAnswer =
+    answerStorageKey && Object.prototype.hasOwnProperty.call(storedByKey, answerStorageKey)
+      ? storedByKey[answerStorageKey]
+      : readStoredChoice(answerStorageKey);
+
+  const hasAnsweredToday = typeof selectedAnswer === 'boolean';
+  const correctAnswerBool = Boolean(activeChallenge?.correctAnswer);
+
+  const levelInfo = useMemo(() => getLevelForXp(gamification.totalXp || 0), [gamification.totalXp]);
+  const nextMilestone = useMemo(
+    () => getNextStreakMilestone(gamification.currentStreak || 0),
+    [gamification.currentStreak]
   );
-  const activeArchiveChallenge = useMemo(
-    () => archiveList.find((q) => q.id === selectedArchiveId) || archiveList[0] || null,
-    [archiveList, selectedArchiveId]
+  const adaptiveRecs = useMemo(() => buildAdaptiveRecommendations(gamification), [gamification]);
+  const leaderboardRows = useMemo(
+    () => getLeaderboardRows(leaderboardPeriod, gamification),
+    [leaderboardPeriod, gamification]
+  );
+  const countdownText = useMemo(() => getNextIstMidnightCountdown(), []);
+
+  const handleSelectDailyAnswer = useCallback(
+    async (choiceBool) => {
+      // Strictly lock selection once submitted so users cannot change answers for extra XP
+      if (!activeChallenge || hasAnsweredToday || submitting) return;
+      setSubmitting(true);
+
+      const actorKey = learner?.email
+        ? `learner:${String(learner.email).trim().toLowerCase()}`
+        : `anon:${istDateKey}`;
+
+      let evaluatedResult = null;
+      try {
+        const resp = await fetch('/api/dkc/submit', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-dkc-actor-key': actorKey,
+          },
+          body: JSON.stringify({
+            actorKey,
+            challengeId: activeChallenge.id,
+            challengeDateIst: istDateKey,
+            selectedAnswer: Boolean(choiceBool),
+            currentState: gamification,
+          }),
+        });
+        if (resp.ok) {
+          const data = await resp.json();
+          if (data?.ok && data.updatedState) {
+            evaluatedResult = data;
+          }
+        }
+      } catch {
+        // Fallback to deterministic local evaluation when API endpoint is offline/static
+      }
+
+      if (!evaluatedResult) {
+        const localEval = applyDailyChallengeSubmission({
+          prevState: gamification,
+          challenge: activeChallenge,
+          selectedAnswer: Boolean(choiceBool),
+          dateIsoIst: istDateKey,
+        });
+        evaluatedResult = {
+          isCorrect: localEval.isCorrect,
+          correctAnswer: localEval.correctAnswer,
+          alreadySubmitted: localEval.alreadySubmitted,
+          xpEarned: localEval.xpEarned,
+          awardReasons: localEval.awardReasons,
+          newlyUnlockedAchievements: localEval.newlyUnlockedAchievements,
+          updatedState: localEval.updatedState,
+        };
+      }
+
+      if (answerStorageKey) {
+        try {
+          window.localStorage.setItem(answerStorageKey, String(Boolean(choiceBool)));
+        } catch {
+          // ignore storage write failure
+        }
+        setStoredByKey((prev) => ({ ...prev, [answerStorageKey]: Boolean(choiceBool) }));
+      }
+
+      const savedGamification = saveGamificationState(evaluatedResult.updatedState);
+      setGamification(savedGamification);
+      setLastAwardSummary({
+        xpEarned: evaluatedResult.xpEarned || 0,
+        reasons: evaluatedResult.awardReasons || [],
+        badges: evaluatedResult.newlyUnlockedAchievements || [],
+      });
+
+      const newHistoryEntry = {
+        publication_date_ist: istDateKey,
+        question_id: activeChallenge.id,
+        topic: activeChallenge.category || activeChallenge.topic || 'AML Fundamentals',
+        statement: activeChallenge.statement,
+        selected_answer: Boolean(choiceBool),
+        is_correct: Boolean(evaluatedResult.isCorrect),
+        answered_at: new Date().toISOString(),
+      };
+
+      setHistoryEntries((prev) => {
+        const merged = mergeChallengeHistoryEntry(prev, newHistoryEntry);
+        writeLocalChallengeHistory(merged);
+        return merged;
+      });
+
+      await recordDailyChallengeAttempt({
+        dateIsoIst: istDateKey,
+        challenge: activeChallenge,
+        selectedAnswer: Boolean(choiceBool),
+        learner,
+      });
+
+      setSubmitting(false);
+    },
+    [activeChallenge, hasAnsweredToday, submitting, learner, istDateKey, gamification, answerStorageKey]
   );
 
-  const practicePool = useMemo(
-    () => getTopicPracticeQuestions(undefined, practiceTopic),
-    [practiceTopic]
-  );
-  const safePracticeIndex = practicePool.length > 0 ? practiceIndex % practicePool.length : 0;
-  const currentPracticeQ = practicePool[safePracticeIndex] || null;
+  const handleShareAchievement = async () => {
+    const shareText = `I completed today's AMLDecode Daily Intelligence Challenge (${istDateKey}) ? ${levelInfo.title} ? ${gamification.currentStreak || 0}-day IST streak. (amldecode.in)`;
+    try {
+      if (navigator?.clipboard?.writeText) {
+        await navigator.clipboard.writeText(shareText);
+        setShareStatus('Copied privacy-safe achievement summary.');
+      } else {
+        setShareStatus(shareText);
+      }
+    } catch {
+      setShareStatus('Share summary ready.');
+    }
+  };
+
+  const handleUpdateLeaderboardOptIn = (nextOptIn, nextName) => {
+    const cleanName = String(nextName ?? gamification.displayName ?? '').trim().slice(0, 30);
+    const updated = saveGamificationState({
+      ...gamification,
+      leaderboardOptIn: Boolean(nextOptIn) && cleanName.length >= 2,
+      displayName: cleanName,
+    });
+    setGamification(updated);
+  };
 
   const streakStats = useMemo(
-    () => computeHonestCompletionStreak(historyEntries, istInfo.dateIsoIst),
-    [historyEntries, istInfo.dateIsoIst]
+    () => computeHonestCompletionStreak(historyEntries, istDateKey),
+    [historyEntries, istDateKey]
   );
 
-  if (!challenge) return null;
-
-  const selectedChoice =
-    Object.prototype.hasOwnProperty.call(storedByKey, storageKey)
-      ? storedByKey[storageKey]
-      : readStoredChoice(storageKey);
-
-  const isLocked = selectedChoice === true || selectedChoice === false;
-  const verifiedAnswer = Boolean(challenge.correctAnswer);
-  const isCorrect = isLocked && selectedChoice === verifiedAnswer;
-
-  const handleToggleStreak = () => {
-    setShowStreak((prev) => {
-      const next = !prev;
-      try {
-        window.localStorage.setItem(STREAK_OPT_IN_KEY, String(next));
-      } catch {
-        // Ignore storage quota errors
+  const combinedPool = useMemo(() => {
+    const ids = new Set();
+    const list = [];
+    for (const q of [...TWENTY_DOMAIN_CHALLENGE_BANK]) {
+      if (q && !ids.has(q.id)) {
+        ids.add(q.id);
+        list.push(q);
       }
-      return next;
-    });
-  };
-
-  const handleSelect = (choiceBool) => {
-    if (isLocked || !storageKey) return;
-    setStoredByKey((prev) => ({ ...prev, [storageKey]: choiceBool }));
-    try {
-      window.localStorage.setItem(storageKey, String(choiceBool));
-    } catch {
-      // Ignore storage quota errors
     }
+    return list;
+  }, []);
 
-    const attemptOutcome = choiceBool === verifiedAnswer;
-    const newHistoryRow = {
-      publication_date_ist: istInfo.dateIsoIst,
-      question_id: challenge.id,
-      topic: challenge.topic,
-      statement: challenge.statement,
-      selected_answer: choiceBool,
-      is_correct: attemptOutcome,
-      answered_at: new Date().toISOString(),
-    };
-
-    setHistoryEntries((prev) => {
-      const updated = mergeChallengeHistoryEntry(prev, newHistoryRow);
-      writeLocalChallengeHistory(updated);
-      return updated;
-    });
-
-    recordDailyChallengeAttempt({
-      dateIsoIst: istInfo.dateIsoIst,
-      challenge,
-      selectedAnswer: choiceBool,
-      learner,
-    });
-  };
-
-  const getOptionButtonStyle = (optionBool, currentChoice, itemVerified, lockedMode) => {
-    const isPicked = currentChoice === optionBool;
-    const isRightOption = lockedMode && itemVerified === optionBool;
-
-    if (!lockedMode) {
-      return 'bg-[#122640] border-white/15 text-[#F8FAFC] hover:border-[#E5B869]/75 hover:bg-[#172F4F] cursor-pointer';
-    }
-
-    if (isPicked) {
-      const pickedIsRight = optionBool === itemVerified;
-      return pickedIsRight
-        ? 'bg-[#063B2C] border-[#34D399] text-[#ECFDF5] ring-2 ring-[#34D399]/40'
-        : 'bg-[#461322] border-[#FB7185] text-[#FFF1F2] ring-2 ring-[#FB7185]/40';
-    }
-
-    if (isRightOption) {
-      return 'bg-[#063B2C]/70 border-[#34D399]/65 text-[#D1FAE5]';
-    }
-
-    return 'bg-[#0E1D31] border-white/10 text-[#7C8FA6] cursor-not-allowed';
-  };
-
-  const renderChoicePair = (currentChoice, itemVerified, lockedMode, onPick) => (
-    <div
-      className="grid grid-cols-1 sm:grid-cols-2 gap-3.5"
-      role="group"
-      aria-label="Choose whether statement is Correct or Incorrect"
-    >
-      {[
-        { value: true, text: '[✓ CORRECT]', icon: 'check' },
-        { value: false, text: '[✕ INCORRECT]', icon: 'cross' },
-      ].map((opt) => {
-        const isPicked = currentChoice === opt.value;
-        const pickedIsRight = isPicked && opt.value === itemVerified;
-        const pickedIsWrong = isPicked && opt.value !== itemVerified;
-        const showsActualBadge = lockedMode && !isPicked && itemVerified === opt.value;
-
-        return (
-          <button
-            key={String(opt.value)}
-            type="button"
-            disabled={lockedMode}
-            onClick={() => onPick(opt.value)}
-            aria-pressed={isPicked}
-            className={`dkc-choice-btn min-h-[54px] px-5 py-3.5 rounded-xl border text-left flex items-center justify-between gap-3 font-bold text-sm sm:text-base ${getOptionButtonStyle(
-              opt.value,
-              currentChoice,
-              itemVerified,
-              lockedMode
-            )}`}
-          >
-            <span className="inline-flex items-center gap-2.5">
-              {opt.icon === 'check' ? (
-                <svg
-                  className="w-5 h-5 shrink-0 text-[#34D399]"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.3"
-                  aria-hidden="true"
-                >
-                  <circle cx="12" cy="12" r="9" />
-                  <path d="M8.5 12.5l2.3 2.3 4.7-5.3" />
-                </svg>
-              ) : (
-                <svg
-                  className="w-5 h-5 shrink-0 text-[#FB7185]"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.3"
-                  aria-hidden="true"
-                >
-                  <circle cx="12" cy="12" r="9" />
-                  <path d="M15 9l-6 6M9 9l6 6" />
-                </svg>
-              )}
-              <span>{opt.text}</span>
-            </span>
-
-            {pickedIsRight && (
-              <span className="text-[11px] font-extrabold uppercase tracking-wider px-2.5 py-0.5 rounded-md bg-[#10B981]/25 text-[#A7F3D0] border border-[#34D399]/50">
-                Your Pick · Right
-              </span>
-            )}
-            {pickedIsWrong && (
-              <span className="text-[11px] font-extrabold uppercase tracking-wider px-2.5 py-0.5 rounded-md bg-[#F43F5E]/25 text-[#FECDD3] border border-[#FB7185]/50">
-                Your Pick · Not Right
-              </span>
-            )}
-            {showsActualBadge && (
-              <span className="text-[11px] font-extrabold uppercase tracking-wider px-2.5 py-0.5 rounded-md bg-[#10B981]/20 text-[#A7F3D0] border border-[#34D399]/40">
-                Correct Answer
-              </span>
-            )}
-          </button>
-        );
-      })}
-    </div>
+  const archiveList = useMemo(
+    () => getArchiveChallenges(combinedPool, activeChallenge?.id || ''),
+    [combinedPool, activeChallenge?.id]
   );
 
-  const renderFeedbackBox = (item, userChoice, lockedLabel = '') => {
-    if (userChoice !== true && userChoice !== false) return null;
-    const itemVerified = Boolean(item.correctAnswer);
-    const itemCorrect = userChoice === itemVerified;
+  const activeArchiveChallenge = useMemo(() => {
+    if (archiveList.length === 0) return null;
+    return archiveList.find((item) => item.id === selectedArchiveId) || archiveList[0];
+  }, [archiveList, selectedArchiveId]);
+
+  const practiceList = useMemo(
+    () => getTopicPracticeQuestions(combinedPool, practiceTopic),
+    [combinedPool, practiceTopic]
+  );
+
+  const activePracticeChallenge =
+    practiceList.length > 0 ? practiceList[practiceIndex % practiceList.length] : null;
+
+  const renderTwoButtons = (chosenBool, targetBool, isLocked, onPick) => {
+    const choices = [
+      { value: true, label: 'Correct', symbol: '?' },
+      { value: false, label: 'Incorrect', symbol: '?' },
+    ];
+
+    return (
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5" role="group" aria-label="Answer choices">
+        {choices.map((opt) => {
+          const isPicked = chosenBool === opt.value;
+          const isRightOption = opt.value === targetBool;
+
+          let btnClass =
+            'bg-[#122640] text-[#F8FAFC] border-white/15 hover:border-[#60A5FA] hover:bg-[#173152]';
+
+          if (isLocked) {
+            if (isPicked && isRightOption) {
+              btnClass = 'bg-[#063B2C] text-[#ECFDF5] border-[#34D399] ring-1 ring-[#34D399]/60';
+            } else if (isPicked && !isRightOption) {
+              btnClass = 'bg-[#461322] text-[#FFF1F2] border-[#FB7185] ring-1 ring-[#FB7185]/60';
+            } else if (isRightOption) {
+              btnClass = 'bg-[#063B2C]/70 text-[#A7F3D0] border-[#34D399]/60';
+            } else {
+              btnClass = 'bg-[#122640]/60 text-[#94A3B8] border-white/10 opacity-75';
+            }
+          }
+
+          return (
+            <button
+              key={opt.label}
+              type="button"
+              disabled={isLocked || submitting}
+              aria-pressed={isPicked}
+              onClick={() => onPick(opt.value)}
+              className={`w-full py-3.5 px-5 rounded-xl border text-left font-bold text-sm transition-colors duration-150 flex items-center justify-between focus:outline-none focus:ring-2 focus:ring-[#60A5FA] ${btnClass} ${isLocked ? 'cursor-default' : 'cursor-pointer'}`}
+            >
+              <span className="flex items-center gap-2.5">
+                <span className="inline-flex items-center justify-center w-6 h-6 rounded-md bg-black/25 text-xs font-extrabold">
+                  {opt.symbol}
+                </span>
+                <span>{opt.label}</span>
+              </span>
+              {isLocked && isPicked && (
+                <span className="text-[11px] uppercase tracking-wider font-extrabold">
+                  Selected (Locked)
+                </span>
+              )}
+            </button>
+          );
+        })}
+      </div>
+    );
+  };
+
+  const renderStructuredExplanation = (item, userChoiceBool, isPractice = false) => {
+    if (typeof userChoiceBool !== 'boolean' || !item) return null;
+    const rightBool = Boolean(item.correctAnswer);
+    const passed = userChoiceBool === rightBool;
 
     return (
       <div
-        role="status"
-        aria-live="polite"
-        className={`dkc-feedback-pop rounded-xl p-4 sm:p-5 border space-y-3 ${
-          itemCorrect
-            ? 'bg-[#072F24] border-[#34D399]/50'
-            : 'bg-[#361220] border-[#FB7185]/50'
+        className={`mt-5 p-5 rounded-xl border space-y-3 transition-opacity duration-200 ${
+          passed
+            ? 'bg-[#063B2C]/85 border-[#34D399]/50 text-[#ECFDF5]'
+            : 'bg-[#461322]/85 border-[#FB7185]/50 text-[#FFF1F2]'
         }`}
       >
-        <div className="flex items-start justify-between gap-2.5 flex-wrap">
-          <div className="space-y-0.5">
-            <p className="text-sm sm:text-base font-extrabold text-[#F8FAFC]">
-              {itemCorrect
-                ? `Your Selection (${formatBooleanChoice(userChoice)}) is Correct`
-                : `Your Selection (${formatBooleanChoice(userChoice)}) is Not Correct`}
-              {lockedLabel ? ` · ${lockedLabel}` : ''}
-            </p>
-            <p className="text-xs text-[#CBD5E1]">
-              You selected: <strong>{formatBooleanChoice(userChoice)}</strong> · Verified Answer:{' '}
-              <strong>{formatBooleanChoice(itemVerified)}</strong>
-            </p>
-          </div>
-          <span
-            className={`text-xs font-extrabold px-3 py-1 rounded-md border ${
-              itemCorrect
-                ? 'bg-[#10B981]/20 text-[#A7F3D0] border-[#34D399]/50'
-                : 'bg-[#FB7185]/20 text-[#FFE4E6] border-[#FB7185]/50'
-            }`}
-          >
-            {itemCorrect ? '✓ CORRECT' : '✕ NOT CORRECT'}
-          </span>
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <p className="text-sm font-extrabold tracking-wide">
+            {passed ? 'Accurate Assessment' : 'Review Required'} ? Official Answer: {formatChoiceLabel(rightBool)}
+          </p>
+          {!isPractice && lastAwardSummary && (
+            <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-black/25">
+              +{lastAwardSummary.xpEarned} XP Earned
+            </span>
+          )}
         </div>
 
-        <p className="text-sm text-[#F1F5F9] leading-relaxed">{item.explanation}</p>
+        <p className="text-sm leading-relaxed opacity-95">{item.explanation}</p>
 
-        {item.sourceReference && (
-          <p className="text-xs text-[#CBD5E1]">
-            <strong className="text-[#E5B869]">Source Reference:</strong> {item.sourceReference}
+        {item.analystTakeaway && (
+          <p className="text-xs leading-relaxed opacity-90">
+            <strong>Analyst Takeaway:</strong> {item.analystTakeaway}
           </p>
         )}
 
-        {typeof item.relatedNoteIndex === 'number' && typeof onOpenRelatedNote === 'function' && (
-          <div className="pt-2 border-t border-white/15">
+        {item.practicalApplication && (
+          <p className="text-xs leading-relaxed opacity-90">
+            <strong>Practical AML Application:</strong> {item.practicalApplication}
+          </p>
+        )}
+
+        {Array.isArray(item.keyLearningPoints) && item.keyLearningPoints.length > 0 && (
+          <ul className="list-disc list-inside text-xs space-y-1 opacity-90">
+            {item.keyLearningPoints.map((pt, i) => (
+              <li key={i}>{pt}</li>
+            ))}
+          </ul>
+        )}
+
+        <p className="text-[11px] opacity-80 pt-1">
+          Reference: {item.sourceReference || 'AMLDecode Compliance Reference'} ? Jurisdiction: {item.jurisdiction || 'Global'}
+        </p>
+
+        <div className="pt-2 flex flex-wrap items-center gap-3">
+          {typeof item.relatedNoteIndex === 'number' && typeof onOpenRelatedNote === 'function' && (
             <button
               type="button"
               onClick={() => onOpenRelatedNote(item.relatedNoteIndex)}
-              className="inline-flex items-center gap-1.5 text-xs font-bold text-[#E5B869] hover:underline cursor-pointer"
+              className="px-3.5 py-2 rounded-lg bg-white/15 hover:bg-white/25 text-xs font-bold transition-colors cursor-pointer"
             >
-              <span>Study: {item.relatedArticleTitle || 'Related AMLDecode Module'} →</span>
+              Study {item.relatedArticleTitle || 'Related AML Module'} ?
             </button>
-          </div>
+          )}
+          {typeof onOpenKnowledgeTest === 'function' && (
+            <button
+              type="button"
+              onClick={onOpenKnowledgeTest}
+              className="px-3.5 py-2 rounded-lg bg-black/25 hover:bg-black/40 text-xs font-bold transition-colors cursor-pointer"
+            >
+              Open Knowledge Test
+            </button>
+          )}
+          {!isPractice && (
+            <button
+              type="button"
+              onClick={handleShareAchievement}
+              className="px-3.5 py-2 rounded-lg bg-black/25 hover:bg-black/40 text-xs font-bold transition-colors cursor-pointer"
+            >
+              Share Achievement
+            </button>
+          )}
+        </div>
+
+        {shareStatus && (
+          <p className="text-xs font-semibold opacity-95 pt-1">{shareStatus}</p>
         )}
       </div>
     );
   };
 
   return (
-    <article
-      aria-label="AMLDecode AI Daily Knowledge Challenge"
-      className={`dkc-card-enter rounded-2xl bg-[#0B192C] border border-white/15 shadow-md overflow-hidden ${
-        compact ? 'max-w-5xl mx-auto' : ''
+    <section
+      aria-label="AMLDecode Daily Intelligence Challenge"
+      className={`rounded-2xl bg-[#0B1B32] text-[#F8FAFC] border border-white/15 shadow-xl overflow-hidden ${
+        compact ? 'my-4' : 'my-6'
       }`}
     >
-      {/* Top Bar */}
-      <div className="px-5 sm:px-7 py-4 bg-[#081322] border-b border-white/10 flex flex-wrap items-center justify-between gap-3">
-        <div className="flex items-center gap-3">
-          <span className="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-[#E5B869]/12 border border-[#E5B869]/35 text-[#E5B869]">
-            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.1" aria-hidden="true">
-              <path d="M12 3l1.9 4.6L18.5 9.5l-4.6 1.9L12 16l-1.9-4.6L5.5 9.5l4.6-1.9L12 3z" />
-              <path d="M19 15l.9 2.1L22 18l-2.1.9L19 21l-.9-2.1L16 18l2.1-.9L19 15z" />
-            </svg>
-          </span>
-          <div>
-            <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-[11px] font-extrabold uppercase tracking-wider text-[#E5B869]">
-                AMLDecode AI
-              </span>
-              <span className="text-[#64748B]" aria-hidden="true">•</span>
-              <span className="text-xs sm:text-sm font-bold text-[#F8FAFC]">
-                Daily Knowledge Challenge
-              </span>
+      {/* Top Header & Gamification Summary */}
+      <div className="p-5 sm:p-7 border-b border-white/10 space-y-4">
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div className="space-y-1">
+            <div className="flex flex-wrap items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#93C5FD]">
+              <span>AMLDecode Daily Intelligence Challenge</span>
+              <span>?</span>
+              <span>{istDisplayDate} (IST)</span>
             </div>
-            <p className="text-xs text-[#94A3B8] mt-0.5">
-              IST Date: <strong className="text-[#E2E8F0]">{istInfo.displayDateIst}</strong>
-              {challenge.jurisdiction ? ` · ${challenge.jurisdiction}` : ''}
+            <p className="text-sm text-[#CBD5E1]">
+              One challenge every day. Sharpen your financial crime investigation skills.
             </p>
           </div>
         </div>
 
-        <div className="flex items-center gap-2 flex-wrap">
-          <span className="px-3 py-1 rounded-full text-xs font-semibold bg-[#132742] text-[#F8FAFC] border border-[#E5B869]/30">
-            {challenge.topic}
-          </span>
-          <span
-            className={`px-3 py-1 rounded-full text-xs font-semibold border ${
-              isLocked
-                ? isCorrect
-                  ? 'bg-[#063B2C] text-[#A7F3D0] border-[#34D399]/45'
-                  : 'bg-[#461322] text-[#FECDD3] border-[#FB7185]/45'
-                : 'bg-[#11223A] text-[#CBD5E1] border-white/10'
-            }`}
-          >
-            {isLocked ? (isCorrect ? 'Completed · Correct (1/1)' : 'Completed · Not Right (1/1)') : 'Unanswered (0/1)'}
-          </span>
-          <button
-            type="button"
-            onClick={handleToggleStreak}
-            className="px-2.5 py-1 rounded-full text-xs font-medium bg-[#11223A] text-[#E2E8F0] border border-white/10 hover:border-[#E5B869]/45 cursor-pointer"
-          >
-            {showStreak
-              ? `Recorded Streak: ${streakStats.currentStreak}d`
-              : 'Show Streak'}
-          </button>
+        {/* XP, Level, Streak & Next Milestone Strip */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-xs">
+          <div className="p-3 rounded-xl bg-[#122640] border border-white/10">
+            <p className="text-[#94A3B8] text-[11px]">Level & XP</p>
+            <p className="font-extrabold text-[#F8FAFC] mt-0.5">
+              Lv.{levelInfo.level} ? {gamification.totalXp || 0} XP
+            </p>
+            <p className="text-[11px] text-[#93C5FD] mt-0.5">{levelInfo.title}</p>
+          </div>
+          <div className="p-3 rounded-xl bg-[#122640] border border-white/10">
+            <p className="text-[#94A3B8] text-[11px]">IST Streak</p>
+            <p className="font-extrabold text-[#F8FAFC] mt-0.5">
+              {Math.max(streakStats.currentStreak || 0, gamification.currentStreak || 0)} Days
+            </p>
+            <p className="text-[11px] text-[#CBD5E1] mt-0.5">
+              Best: {Math.max(streakStats.currentStreak || 0, gamification.longestStreak || 0)}d
+            </p>
+          </div>
+          <div className="p-3 rounded-xl bg-[#122640] border border-white/10">
+            <p className="text-[#94A3B8] text-[11px]">Next Streak Goal</p>
+            <p className="font-extrabold text-[#F8FAFC] mt-0.5">
+              {nextMilestone.targetDays}-Day (+{nextMilestone.bonusXp} XP)
+            </p>
+            <p className="text-[11px] text-[#CBD5E1] mt-0.5">
+              {nextMilestone.remainingDays}d remaining
+            </p>
+          </div>
+          <div className="p-3 rounded-xl bg-[#122640] border border-white/10">
+            <p className="text-[#94A3B8] text-[11px]">Rotation & Inventory</p>
+            <p className="font-extrabold text-[#F8FAFC] mt-0.5">
+              {engineSelection.reserveCount} Ready Items
+            </p>
+            <p className="text-[11px] text-[#CBD5E1] mt-0.5">{countdownText}</p>
+          </div>
         </div>
-      </div>
 
-      {/* Mode Switcher Bar */}
-      <div className="px-5 sm:px-7 py-2.5 bg-[#091628] border-b border-white/10 flex flex-wrap items-center justify-between gap-2 text-xs">
-        <div className="flex flex-wrap items-center gap-1.5" role="tablist" aria-label="Daily Knowledge Challenge sections">
+        {/* Mode Tabs */}
+        <div className="flex flex-wrap gap-2 pt-1" role="tablist" aria-label="Challenge sections">
           {[
             { id: 'today', label: "Today's Challenge" },
-            { id: 'practice', label: 'Topic Practice' },
-            { id: 'archive', label: 'Previous Archive' },
+            { id: 'adaptive', label: 'Adaptive Practice' },
+            { id: 'leaderboard', label: 'Leaderboards' },
+            { id: 'archive', label: 'Archive' },
             { id: 'history', label: `History (${streakStats.totalCompleted})` },
           ].map((tab) => (
             <button
@@ -427,133 +548,235 @@ export default function DailyChallengeCard({
               role="tab"
               aria-selected={activeTab === tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`px-3 py-1.5 rounded-lg font-semibold transition-colors cursor-pointer ${
+              className={`px-3.5 py-2 rounded-lg text-xs font-bold transition-colors cursor-pointer ${
                 activeTab === tab.id
-                  ? 'bg-[#E5B869] text-[#071222]'
-                  : 'text-[#CBD5E1] hover:bg-[#122640]'
+                  ? 'bg-[#2563EB] text-white'
+                  : 'bg-[#122640] text-[#CBD5E1] hover:text-white border border-white/10'
               }`}
             >
               {tab.label}
             </button>
           ))}
         </div>
-        {showStreak && (
-          <span className="text-xs text-[#CBD5E1]">
-            Recorded Completions: <strong>{streakStats.totalCompleted}</strong> · Correct:{' '}
-            <strong>{streakStats.totalCorrect}</strong>
-          </span>
-        )}
-      </div>
-
-      {/* Progress Indicator Bar */}
-      <div className="w-full h-1 bg-[#11223A]" aria-hidden="true">
-        <div
-          className={`h-full transition-all duration-300 ${
-            isLocked ? (isCorrect ? 'w-full bg-[#34D399]' : 'w-full bg-[#FB7185]') : 'w-1/3 bg-[#E5B869]'
-          }`}
-        />
       </div>
 
       {/* Tab 1: Today's Challenge */}
-      {activeTab === 'today' && (
-        <div className="p-6 sm:p-8 space-y-6">
-          <div className="space-y-2">
-            <p className="text-xs font-semibold uppercase tracking-wider text-[#94A3B8]">
-              Evaluate Statement · {challenge.difficulty}
-            </p>
-            <h3 className="text-lg sm:text-2xl font-bold text-[#F8FAFC] leading-relaxed">
-              “{challenge.statement}”
-            </h3>
+      {activeTab === 'today' && activeChallenge && (
+        <div className="p-5 sm:p-8 space-y-5">
+          <div className="flex flex-wrap items-center justify-between gap-2 text-xs">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="px-2.5 py-1 rounded-md bg-[#122640] border border-white/15 font-bold text-[#93C5FD]">
+                {activeChallenge.category || activeChallenge.topic}
+              </span>
+              <span className="px-2.5 py-1 rounded-md bg-[#122640] border border-white/15 font-semibold text-[#CBD5E1]">
+                {activeChallenge.difficulty || 'Intermediate'}
+              </span>
+              <span className="px-2.5 py-1 rounded-md bg-[#122640] border border-white/15 font-semibold text-[#A7F3D0]">
+                Up to +60 XP Today
+              </span>
+            </div>
+            <span className="text-[#94A3B8] font-mono">ID: {activeChallenge.id}</span>
           </div>
 
-          {renderChoicePair(selectedChoice, verifiedAnswer, isLocked, handleSelect)}
+          <h3 className="text-base sm:text-xl font-bold text-[#F8FAFC] leading-relaxed">
+            ?{activeChallenge.statement}?
+          </h3>
 
-          {isLocked && (
-            <div className="space-y-3">
-              {renderFeedbackBox(challenge, selectedChoice, 'Answer Locked')}
-              <div className="flex flex-wrap items-center justify-between gap-3 pt-1 text-xs text-[#94A3B8]">
-                <span>Answer is locked for today&apos;s IST challenge.</span>
-                {compact && typeof onOpenKnowledgeTest === 'function' && (
-                  <button
-                    type="button"
-                    onClick={onOpenKnowledgeTest}
-                    className="font-semibold text-[#E5B869] hover:underline cursor-pointer"
-                  >
-                    Open Full Knowledge Test &amp; Modes →
-                  </button>
-                )}
-              </div>
+          {renderTwoButtons(selectedAnswer, correctAnswerBool, hasAnsweredToday, handleSelectDailyAnswer)}
+
+          {hasAnsweredToday && (
+            <p className="text-xs text-[#94A3B8]">
+              Your answer ({formatChoiceLabel(selectedAnswer)}) is locked for today&apos;s challenge so scoring stays fair and deterministic.
+            </p>
+          )}
+
+          {renderStructuredExplanation(activeChallenge, selectedAnswer, false)}
+
+          {/* Unlocked Achievements Strip */}
+          {Array.isArray(gamification.unlockedAchievements) && gamification.unlockedAchievements.length > 0 && (
+            <div className="pt-2 flex flex-wrap items-center gap-2 text-xs">
+              <span className="text-[#94A3B8] font-semibold">Achievements Unlocked:</span>
+              {gamification.unlockedAchievements.map((code) => (
+                <span
+                  key={code}
+                  className="px-2.5 py-1 rounded-full bg-[#122640] border border-[#60A5FA]/40 text-[#93C5FD] font-bold"
+                >
+                  {code.replace(/_/g, ' ')}
+                </span>
+              ))}
             </div>
           )}
         </div>
       )}
 
-      {/* Tab 2: Topic-Based Practice Mode */}
-      {activeTab === 'practice' && currentPracticeQ && (
-        <div className="p-6 sm:p-8 space-y-5">
-          <div className="flex flex-wrap items-center justify-between gap-2">
-            <div className="flex flex-wrap gap-1.5">
-              {PRACTICE_TOPICS.map((t) => (
+      {/* Tab 2: Adaptive Weak-Topic Practice (Separate from Daily XP) */}
+      {activeTab === 'adaptive' && (
+        <div className="p-5 sm:p-8 space-y-5">
+          <div className="space-y-2">
+            <p className="text-xs font-bold uppercase tracking-wider text-[#93C5FD]">
+              Adaptive Practice & Weak-Topic Focus (Practice Mode ? Separate from Official Daily Challenge)
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {adaptiveRecs.map((rec) => (
                 <button
-                  key={t}
+                  key={rec.category}
                   type="button"
                   onClick={() => {
-                    setPracticeTopic(t);
+                    setPracticeTopic(rec.category);
                     setPracticeIndex(0);
                     setPracticeChoice(null);
                   }}
-                  className={`px-2.5 py-1 rounded-md text-xs font-semibold cursor-pointer ${
-                    practiceTopic === t
-                      ? 'bg-[#162D4C] text-[#E5B869] border border-[#E5B869]/50'
-                      : 'bg-[#122640] text-[#CBD5E1] border border-white/10'
-                  }`}
+                  className="px-3 py-1.5 rounded-lg bg-[#122640] hover:bg-[#183254] border border-white/15 text-xs font-semibold text-[#F8FAFC] cursor-pointer"
                 >
-                  {t}
+                  Focus: {rec.category}{' '}
+                  {typeof rec.accuracy === 'number' ? `(${rec.accuracy}%)` : '(Recommended)'}
                 </button>
               ))}
             </div>
-            <span className="text-xs text-[#94A3B8]">
-              Item {safePracticeIndex + 1} of {practicePool.length}
+          </div>
+
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <select
+              aria-label="Filter practice domain"
+              value={practiceTopic}
+              onChange={(e) => {
+                setPracticeTopic(e.target.value);
+                setPracticeIndex(0);
+                setPracticeChoice(null);
+              }}
+              className="px-3 py-2 rounded-lg bg-[#122640] border border-white/15 text-xs text-[#F8FAFC]"
+            >
+              <option value="All">All 20 AML Domains</option>
+              {TWENTY_AML_CATEGORIES.map((cat) => (
+                <option key={cat} value={cat}>
+                  {cat}
+                </option>
+              ))}
+            </select>
+
+            {practiceList.length > 1 && (
+              <button
+                type="button"
+                onClick={() => {
+                  setPracticeIndex((prev) => (prev + 1) % practiceList.length);
+                  setPracticeChoice(null);
+                }}
+                className="px-3.5 py-2 rounded-lg bg-[#122640] hover:bg-[#183254] border border-white/15 text-xs font-bold text-[#F8FAFC] cursor-pointer"
+              >
+                Next Practice Question ({((practiceIndex % practiceList.length) + 1)}/{practiceList.length}) ?
+              </button>
+            )}
+          </div>
+
+          {activePracticeChallenge && (
+            <div className="space-y-4">
+              <div className="flex items-center gap-2 text-xs text-[#93C5FD] font-bold">
+                <span>{activePracticeChallenge.category || activePracticeChallenge.topic}</span>
+                <span>?</span>
+                <span className="text-[#CBD5E1]">{activePracticeChallenge.difficulty}</span>
+              </div>
+              <h3 className="text-base sm:text-lg font-bold text-[#F8FAFC] leading-relaxed">
+                ?{activePracticeChallenge.statement}?
+              </h3>
+              {renderTwoButtons(
+                practiceChoice,
+                Boolean(activePracticeChallenge.correctAnswer),
+                typeof practiceChoice === 'boolean',
+                (val) => setPracticeChoice(val)
+              )}
+              {renderStructuredExplanation(activePracticeChallenge, practiceChoice, true)}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Tab 3: Opt-In Leaderboards */}
+      {activeTab === 'leaderboard' && (
+        <div className="p-5 sm:p-8 space-y-5">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div className="flex gap-2">
+              {[
+                { id: 'weekly', label: 'Weekly' },
+                { id: 'monthly', label: 'Monthly' },
+                { id: 'all-time', label: 'All-Time' },
+              ].map((p) => (
+                <button
+                  key={p.id}
+                  type="button"
+                  onClick={() => setLeaderboardPeriod(p.id)}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold cursor-pointer ${
+                    leaderboardPeriod === p.id
+                      ? 'bg-[#2563EB] text-white'
+                      : 'bg-[#122640] text-[#CBD5E1] border border-white/10'
+                  }`}
+                >
+                  {p.label}
+                </button>
+              ))}
+            </div>
+            <span className="text-[11px] text-[#94A3B8]">
+              Opt-in display names only ? Emails & phone numbers never shown
             </span>
           </div>
 
-          <h3 className="text-lg sm:text-xl font-bold text-[#F8FAFC] leading-relaxed">
-            “{currentPracticeQ.statement}”
-          </h3>
+          {/* Opt-in controls */}
+          <div className="p-4 rounded-xl bg-[#122640] border border-white/10 flex flex-wrap items-center gap-3 text-xs">
+            <label className="flex items-center gap-2 font-semibold text-[#F8FAFC] cursor-pointer">
+              <input
+                type="checkbox"
+                checked={Boolean(gamification.leaderboardOptIn)}
+                onChange={(e) => handleUpdateLeaderboardOptIn(e.target.checked, gamification.displayName)}
+              />
+              <span>Opt in to public leaderboard</span>
+            </label>
+            <input
+              type="text"
+              placeholder="Public display name (e.g. RiskAnalyst_01)"
+              value={gamification.displayName || ''}
+              onChange={(e) => handleUpdateLeaderboardOptIn(gamification.leaderboardOptIn, e.target.value)}
+              className="px-3 py-1.5 rounded-lg bg-[#0B1B32] border border-white/15 text-[#F8FAFC] text-xs"
+            />
+          </div>
 
-          {renderChoicePair(
-            practiceChoice,
-            Boolean(currentPracticeQ.correctAnswer),
-            false,
-            (val) => setPracticeChoice(val)
-          )}
-
-          {renderFeedbackBox(currentPracticeQ, practiceChoice)}
-
-          <div className="flex justify-end">
-            <button
-              type="button"
-              onClick={() => {
-                setPracticeIndex((idx) => (idx + 1) % practicePool.length);
-                setPracticeChoice(null);
-              }}
-              className="px-4 py-2 rounded-lg text-xs font-bold bg-[#162D4C] text-[#F8FAFC] border border-white/15 hover:border-[#E5B869] cursor-pointer"
-            >
-              Next Practice Statement →
-            </button>
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs border-collapse">
+              <thead>
+                <tr className="border-b border-white/10 text-[#94A3B8]">
+                  <th className="py-2.5 px-3">Rank</th>
+                  <th className="py-2.5 px-3">Analyst Handle</th>
+                  <th className="py-2.5 px-3">Badge</th>
+                  <th className="py-2.5 px-3">Completed</th>
+                  <th className="py-2.5 px-3 text-right">XP</th>
+                </tr>
+              </thead>
+              <tbody>
+                {leaderboardRows.map((row) => (
+                  <tr
+                    key={`${row.rank}-${row.displayName}`}
+                    className={`border-b border-white/5 ${row.isCurrentUser ? 'bg-[#173152] font-bold' : ''}`}
+                  >
+                    <td className="py-2.5 px-3">#{row.rank}</td>
+                    <td className="py-2.5 px-3 text-[#F8FAFC]">{row.displayName}</td>
+                    <td className="py-2.5 px-3 text-[#93C5FD]">{row.badge}</td>
+                    <td className="py-2.5 px-3 text-[#CBD5E1]">{row.completed}</td>
+                    <td className="py-2.5 px-3 text-right text-[#A7F3D0]">{row.xp} XP</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
       )}
 
-      {/* Tab 3: Previous Question Archive */}
+      {/* Tab 4: Archive */}
       {activeTab === 'archive' && (
-        <div className="p-6 sm:p-8 space-y-5">
+        <div className="p-5 sm:p-8 space-y-5">
           <div className="flex flex-wrap items-center justify-between gap-2">
-            <p className="text-xs font-semibold uppercase tracking-wider text-[#94A3B8]">
-              Previous Verified Statements Archive
+            <p className="text-xs font-bold uppercase tracking-wider text-[#94A3B8]">
+              Previous Verified Challenges Archive
             </p>
             <select
-              aria-label="Select archived challenge statement"
+              aria-label="Select archived challenge"
               value={activeArchiveChallenge?.id || ''}
               onChange={(e) => {
                 setSelectedArchiveId(e.target.value);
@@ -563,7 +786,7 @@ export default function DailyChallengeCard({
             >
               {archiveList.map((item) => (
                 <option key={item.id} value={item.id}>
-                  [{item.topic}] {item.statement.slice(0, 68)}...
+                  [{item.category || item.topic}] {item.statement.slice(0, 68)}...
                 </option>
               ))}
             </select>
@@ -571,27 +794,27 @@ export default function DailyChallengeCard({
 
           {activeArchiveChallenge && (
             <div className="space-y-4">
-              <h3 className="text-lg font-bold text-[#F8FAFC] leading-relaxed">
-                “{activeArchiveChallenge.statement}”
+              <h3 className="text-base sm:text-lg font-bold text-[#F8FAFC] leading-relaxed">
+                ?{activeArchiveChallenge.statement}?
               </h3>
-              {renderChoicePair(
+              {renderTwoButtons(
                 archiveChoice,
                 Boolean(activeArchiveChallenge.correctAnswer),
-                false,
+                typeof archiveChoice === 'boolean',
                 (val) => setArchiveChoice(val)
               )}
-              {renderFeedbackBox(activeArchiveChallenge, archiveChoice)}
+              {renderStructuredExplanation(activeArchiveChallenge, archiveChoice, true)}
             </div>
           )}
         </div>
       )}
 
-      {/* Tab 4: Genuine Completion History */}
+      {/* Tab 5: Completion History */}
       {activeTab === 'history' && (
-        <div className="p-6 sm:p-8 space-y-4">
+        <div className="p-5 sm:p-8 space-y-4">
           <div className="flex items-center justify-between flex-wrap gap-2">
-            <p className="text-xs font-semibold uppercase tracking-wider text-[#94A3B8]">
-              Your Recorded Challenge History ({learner?.email ? learner.email : 'Local Browser Session'})
+            <p className="text-xs font-bold uppercase tracking-wider text-[#94A3B8]">
+              Completed Challenges ({learner?.email ? learner.email : 'Browser Session'})
             </p>
             <span className="text-xs text-[#CBD5E1]">
               {streakStats.totalCorrect} / {streakStats.totalCompleted} Correct
@@ -600,18 +823,18 @@ export default function DailyChallengeCard({
 
           {historyEntries.length === 0 ? (
             <p className="text-sm text-[#94A3B8]">
-              No daily challenges completed yet. Select [✓ CORRECT] or [✕ INCORRECT] on Today&apos;s Challenge to record your first attempt.
+              No daily challenges completed yet. Select Correct or Incorrect on Today&apos;s Challenge to begin.
             </p>
           ) : (
             <ul className="space-y-2.5">
-              {historyEntries.slice(0, 10).map((entry, idx) => (
+              {historyEntries.slice(0, 12).map((entry, idx) => (
                 <li
                   key={`${entry.publication_date_ist}_${entry.question_id}_${idx}`}
                   className="p-3.5 rounded-xl bg-[#122640] border border-white/10 flex items-center justify-between gap-3 text-xs"
                 >
                   <div className="space-y-1">
                     <p className="font-bold text-[#F8FAFC]">
-                      {entry.publication_date_ist} · {entry.topic || 'Challenge'}
+                      {entry.publication_date_ist} ? {entry.topic || 'Challenge'}
                     </p>
                     <p className="text-[#CBD5E1] line-clamp-1">{entry.statement}</p>
                   </div>
@@ -622,7 +845,7 @@ export default function DailyChallengeCard({
                         : 'bg-[#461322] text-[#FECDD3] border border-[#FB7185]/50'
                     }`}
                   >
-                    {entry.is_correct ? 'Correct' : 'Not Correct'}
+                    {entry.is_correct ? 'Correct' : 'Incorrect'}
                   </span>
                 </li>
               ))}
@@ -630,6 +853,6 @@ export default function DailyChallengeCard({
           )}
         </div>
       )}
-    </article>
+    </section>
   );
 }
