@@ -145,35 +145,46 @@ export default function HomepageHub({
             </button>
           </div>
 
-          <button
-            type="button"
-            aria-label="Toggle Menu"
-            aria-expanded={mobileOpen}
-            onClick={() => setMobileOpen((prev) => !prev)}
-            className="lg:hidden px-3 py-1.5 rounded-lg text-xs font-semibold border border-stone-300 text-slate-800 cursor-pointer"
-          >
-            {mobileOpen ? 'Close' : 'Menu'}
-          </button>
+          <div className="lg:hidden flex items-center gap-2">
+            <button
+              type="button"
+              onClick={toggleTheme}
+              aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+              title={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+              className="p-2 rounded-lg border border-stone-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:border-amber-600 dark:hover:border-amber-500 transition-colors cursor-pointer"
+            >
+              {isDark ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4" />}
+            </button>
+            <button
+              type="button"
+              aria-label="Toggle Menu"
+              aria-expanded={mobileOpen}
+              onClick={() => setMobileOpen((prev) => !prev)}
+              className="px-3 py-1.5 rounded-lg text-xs font-semibold border border-stone-300 dark:border-slate-700 text-slate-800 dark:text-slate-100 bg-white dark:bg-slate-800 cursor-pointer"
+            >
+              {mobileOpen ? 'Close' : 'Menu'}
+            </button>
+          </div>
         </div>
 
         {mobileOpen && (
-          <div className="lg:hidden bg-white border-t border-stone-200 px-4 py-4 space-y-2 text-sm">
-            <button type="button" onClick={() => { setMobileOpen(false); onOpenView('notes'); }} className="block w-full text-left py-2 text-slate-800 hover:text-amber-700 cursor-pointer">
+          <div className="lg:hidden bg-white dark:bg-slate-900 border-t border-stone-200 dark:border-slate-800 px-4 py-4 space-y-2 text-sm">
+            <button type="button" onClick={() => { setMobileOpen(false); onOpenView('notes'); }} className="block w-full text-left py-2 text-slate-800 dark:text-slate-100 hover:text-amber-700 dark:hover:text-amber-400 cursor-pointer">
               Syllabus Notes
             </button>
-            <a href="#pathways" onClick={() => setMobileOpen(false)} className="block py-2 text-slate-700 hover:text-amber-700">
+            <a href="#pathways" onClick={() => setMobileOpen(false)} className="block py-2 text-slate-700 dark:text-slate-200 hover:text-amber-700 dark:hover:text-amber-400">
               Learning Pathways
             </a>
-            <button type="button" onClick={() => { setMobileOpen(false); onOpenView('quiz'); }} className="block w-full text-left py-2 text-slate-800 hover:text-amber-700 cursor-pointer">
+            <button type="button" onClick={() => { setMobileOpen(false); onOpenView('quiz'); }} className="block w-full text-left py-2 text-slate-800 dark:text-slate-100 hover:text-amber-700 dark:hover:text-amber-400 cursor-pointer">
               Knowledge Test
             </button>
-            <button type="button" onClick={() => { setMobileOpen(false); onOpenView('jobs'); }} className="block w-full text-left py-2 text-slate-800 hover:text-amber-700 cursor-pointer">
+            <button type="button" onClick={() => { setMobileOpen(false); onOpenView('jobs'); }} className="block w-full text-left py-2 text-slate-800 dark:text-slate-100 hover:text-amber-700 dark:hover:text-amber-400 cursor-pointer">
               Jobs
             </button>
-            <button type="button" onClick={() => { setMobileOpen(false); onOpenView('referralForm'); }} className="block w-full text-left py-2 text-slate-700 hover:text-amber-700 cursor-pointer">
+            <button type="button" onClick={() => { setMobileOpen(false); onOpenView('referralForm'); }} className="block w-full text-left py-2 text-slate-700 dark:text-slate-200 hover:text-amber-700 dark:hover:text-amber-400 cursor-pointer">
               Submit Referral
             </button>
-            <button type="button" onClick={() => { setMobileOpen(false); onOpenView('contribute'); }} className="block w-full text-left py-2 text-amber-700 font-semibold cursor-pointer">
+            <button type="button" onClick={() => { setMobileOpen(false); onOpenView('contribute'); }} className="block w-full text-left py-2 text-amber-700 dark:text-amber-400 font-semibold cursor-pointer">
               Recruiter Desk
             </button>
           </div>
