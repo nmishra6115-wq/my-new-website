@@ -60,17 +60,6 @@ export default function InterviewWorkspace({
     return () => clearInterval(timer);
   }, []);
 
-  // Load draft when question changes
-  useEffect(() => {
-    setLatestFeedback(null);
-    setFollowUpAccepted(false);
-    setInputMode('text');
-    try {
-      setAnswerText(localStorage.getItem(`amldecode_draft_${session.id}_${currentIdx}`) || '');
-    } catch {
-      setAnswerText('');
-    }
-  }, [session.id, currentIdx]);
 
   // Autosave draft answer
   useEffect(() => {
@@ -220,6 +209,14 @@ export default function InterviewWorkspace({
         currentIndex: totalQ,
       });
     } else {
+      setLatestFeedback(null);
+      setFollowUpAccepted(false);
+      setInputMode('text');
+      try {
+        setAnswerText(localStorage.getItem(`amldecode_draft_${session.id}_${nextIdx}`) || '');
+      } catch {
+        setAnswerText('');
+      }
       onUpdateSession({
         ...session,
         elapsedSeconds: elapsed,

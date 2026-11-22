@@ -15,7 +15,7 @@ function getClientKey(req) {
 
 function sanitizeUntrustedText(input, maxLen = MAX_ANSWER_CHARS) {
   return String(input || '')
-    .replace(/[\u0000-\u001F\u007F]/g, ' ')
+    .split('').filter((ch) => { const c = ch.charCodeAt(0); return c >= 32 && c !== 127; }).join('')
     .replace(/ignore\s+(all\s+)?previous\s+instructions/gi, '[filtered]')
     .replace(/system\s*prompt/gi, '[filtered]')
     .trim()

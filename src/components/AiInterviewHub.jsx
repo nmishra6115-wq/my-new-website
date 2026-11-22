@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import {
   ArrowLeft,
   Briefcase,
@@ -33,9 +33,6 @@ export default function AiInterviewHub({
   const [activeSessionId, setActiveSessionId] = useState(null);
   const [reportSessionId, setReportSessionId] = useState(null);
 
-  useEffect(() => {
-    setSessions(loadLocalSessions());
-  }, [activeSessionId, reportSessionId]);
 
   const inProgressSession = useMemo(
     () => sessions.find((s) => s.status === 'in_progress') || null,
@@ -156,7 +153,7 @@ export default function AiInterviewHub({
           session={activeSession}
           onUpdateSession={handleUpdateSession}
           onCompleteSession={handleCompleteSession}
-          onExitToHub={() => setActiveSessionId(null)}
+          onExitToHub={() => { setSessions(loadLocalSessions()); setActiveSessionId(null); }}
         />
       ) : reportSession ? (
         <InterviewReport
@@ -166,7 +163,7 @@ export default function AiInterviewHub({
             setSetupOpen(true);
           }}
           onOpenModule={onOpenModule}
-          onBackToHub={() => setReportSessionId(null)}
+          onBackToHub={() => { setSessions(loadLocalSessions()); setReportSessionId(null); }}
         />
       ) : (
         <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-8">
