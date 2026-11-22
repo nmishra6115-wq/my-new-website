@@ -12,6 +12,7 @@ import LearnerLoginModal from './components/LearnerLoginModal';
 import AssessmentRunner from './components/AssessmentRunner';
 import CaseSimulationRunner from './components/CaseSimulationRunner';
 import SarNarrativeLab from './components/SarNarrativeLab';
+import AiInterviewHub from './components/AiInterviewHub';
 import {
   buildAssessmentQueue,
   readStoredRecentAttempts,
@@ -62,7 +63,7 @@ class AssessmentErrorBoundary extends React.Component {
 export default function App() {
   const [activeView, setActiveView] = useState(() => {
     try {
-      const param = new URLSearchParams(window.location.search).get('view');
+      const param = new URLSearchParams(window.location.search).get('view') || (window.location.pathname === '/ai-interview' ? 'ai-interview' : null);
       const allowed = ['notes', 'quiz', 'jobs', 'network', 'available', 'referralForm', 'contribute', 'faq', 'contact', 'privacy', 'terms', 'disclaimer', 'about'];
       return allowed.includes(param) ? param : null;
     } catch {
@@ -334,6 +335,23 @@ const LEARNER_STORAGE_KEY = 'amldecode_kt2_learner_v1';
         }}
         onSelectNoteIndex={(idx) => setPageIndex(idx)}
         onScrollToGuidance={handleScrollToGuidance}
+      />
+    );
+  }
+
+  if (activeView === 'ai-interview') {
+    return (
+      <AiInterviewHub
+        onBackHome={() => {
+          setActiveView(null);
+          if (window.location.pathname === '/ai-interview') {
+            window.history.replaceState({}, '', '/');
+          }
+        }}
+        onOpenModule={(idx) => {
+          setPageIndex(idx);
+          setActiveView('notes');
+        }}
       />
     );
   }
