@@ -13,6 +13,7 @@ import AssessmentRunner from './components/AssessmentRunner';
 import CaseSimulationRunner from './components/CaseSimulationRunner';
 import SarNarrativeLab from './components/SarNarrativeLab';
 import AiInterviewHub from './components/AiInterviewHub';
+import DailyChallengeCard from './components/DailyChallengeCard';
 import {
   buildAssessmentQueue,
   readStoredRecentAttempts,
@@ -368,7 +369,9 @@ const LEARNER_STORAGE_KEY = 'amldecode_kt2_learner_v1';
   }
 
   const viewBreadcrumbLabel =
-    activeView === 'quiz'
+    activeView === 'daily-challenge'
+      ? 'Daily Challenge'
+      : activeView === 'quiz'
       ? 'Knowledge Test'
       : activeView === 'jobs'
       ? 'Compliance Jobs'
@@ -410,6 +413,18 @@ const LEARNER_STORAGE_KEY = 'amldecode_kt2_learner_v1';
       </header>
 
       <main className="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
+                {activeView === 'daily-challenge' && (
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <DailyChallengeCard
+              onOpenRelatedNote={(noteIdx) => {
+                setPageIndex(noteIdx);
+                setActiveView('notes');
+              }}
+              onOpenKnowledgeTest={() => setActiveView('quiz')}
+            />
+          </div>
+        )}
+
         {activeView === 'quiz' && (
           <div className="space-y-10">
             {Array.isArray(activeSessionQuestions) && activeSessionQuestions.length > 0 ? (

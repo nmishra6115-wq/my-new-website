@@ -114,6 +114,9 @@ export default function HomepageHub({
             <button type="button" onClick={() => onOpenView('ai-interview')} className="hover:text-amber-700 transition-colors cursor-pointer">
               AI Interview
             </button>
+            <button type="button" onClick={() => onOpenView('daily-challenge')} className="hover:text-amber-700 transition-colors cursor-pointer">
+              Daily Challenge
+            </button>
             <button type="button" onClick={() => onOpenView('jobs')} className="hover:text-amber-700 transition-colors cursor-pointer">
               Jobs
             </button>
@@ -182,6 +185,9 @@ export default function HomepageHub({
             </button>
             <button type="button" onClick={() => { setMobileOpen(false); onOpenView('ai-interview'); }} className="block w-full text-left py-2 text-slate-800 dark:text-slate-100 hover:text-amber-700 dark:hover:text-amber-400 cursor-pointer">
               AI Interview
+            </button>
+            <button type="button" onClick={() => { setMobileOpen(false); onOpenView('daily-challenge'); }} className="block w-full text-left py-2 text-slate-800 dark:text-slate-100 hover:text-amber-700 dark:hover:text-amber-400 cursor-pointer">
+              Daily Challenge
             </button>
             <button type="button" onClick={() => { setMobileOpen(false); onOpenView('jobs'); }} className="block w-full text-left py-2 text-slate-800 dark:text-slate-100 hover:text-amber-700 dark:hover:text-amber-400 cursor-pointer">
               Jobs
