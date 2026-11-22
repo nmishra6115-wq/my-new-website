@@ -60,7 +60,15 @@ class AssessmentErrorBoundary extends React.Component {
   }
 }
 export default function App() {
-  const [activeView, setActiveView] = useState(null);
+  const [activeView, setActiveView] = useState(() => {
+    try {
+      const param = new URLSearchParams(window.location.search).get('view');
+      const allowed = ['notes', 'quiz', 'jobs', 'network', 'available', 'referralForm', 'contribute', 'faq', 'contact', 'privacy', 'terms', 'disclaimer', 'about'];
+      return allowed.includes(param) ? param : null;
+    } catch {
+      return null;
+    }
+  });
   const [pageIndex, setPageIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [submissions, setSubmissions] = useState([]);

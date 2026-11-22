@@ -1642,13 +1642,14 @@ This looks at the individual or the organization itself.
 ];
 export const privacyPolicy = {
   title: "Privacy Policy",
-  content: `Last Updated: May 2026
+  content: `Last Updated: November 2026
 
-1. Data Collection: We collect information you provide, such as names, emails, and professional roles, specifically for referral and AML/KYC compliance purposes.
-2. File Security: All resumes and partner documents are stored securely using Supabase Storage. Access is restricted to authorized personnel.
-3. Usage: We use your data solely for the purpose of facilitating professional connections and maintaining compliance standards within the AML/KYC sector.
-4. Your Rights: You have the right to request the deletion of your personal data or uploaded documents at any time.
-5. Contact: For privacy concerns, please contact the site administrator.`
+1. Data Collection & Local Storage: We collect information you voluntarily provide (such as names, emails, professional roles, or referral details) and use browser storage/cookies for core site functionality, learning progress, and analytics.
+2. Cookies & Advertising (Google AdSense): Third-party vendors, including Google, use cookies and similar technologies to serve ads based on a user's prior visits to AMLDecode or other websites. Google's use of advertising cookies enables it and its partners to serve ads to users based on their visit to AMLDecode and/or other sites on the Internet. Users may opt out of personalized advertising by visiting Google Ads Settings (https://adssettings.google.com) or learn more at https://policies.google.com/technologies/ads.
+3. File Security: All resumes and partner documents are stored securely using Supabase Storage. Access is restricted to authorized personnel.
+4. Usage: We use your information to deliver educational content, career resources, referral workflows, and compliance standards within the AML/KYC sector.
+5. Your Rights: You may request access to, correction of, or deletion of your personal data or uploaded documents at any time.
+6. Contact: For privacy or data requests, contact alerts@amldecode.in.`
 };
 export const termsOfService = {
   title: "Terms of Service",

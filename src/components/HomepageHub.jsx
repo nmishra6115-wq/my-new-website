@@ -6,6 +6,7 @@ import { jobOpenings } from '../jobs';
 import { kycNews } from '../news';
 import { Sun, Moon } from 'lucide-react';
 import { useThemeMode } from '../hooks/useThemeMode';
+import BannerAd468 from './BannerAd468';
 
 const PATHWAY_MATCHERS = [
   { label: 'AML Fundamentals', keywords: ['aml', 'money laundering'] },
@@ -537,6 +538,7 @@ export default function HomepageHub({
             </div>
           </div>
         </section>
+        <BannerAd468 className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4" />
       </main>
 
       {/* Calm Multi-Column Footer */}
@@ -550,19 +552,19 @@ export default function HomepageHub({
           </div>
           <div className="md:col-span-3 space-y-2">
             <p className="text-xs font-bold uppercase tracking-wider text-amber-800">Platform</p>
-            <div className="flex flex-col gap-1.5 text-xs text-slate-600">
-              <button type="button" onClick={() => onOpenView('faq')} className="text-left hover:text-slate-950 cursor-pointer">About &amp; FAQ</button>
-              <button type="button" onClick={() => onOpenView('contact')} className="text-left hover:text-slate-950 cursor-pointer">Contact Us</button>
-              <button type="button" onClick={() => onOpenView('notes')} className="text-left hover:text-slate-950 cursor-pointer">Syllabus Notes</button>
-              <button type="button" onClick={() => onOpenView('quiz')} className="text-left hover:text-slate-950 cursor-pointer">Knowledge Test</button>
-            </div>
+            <nav aria-label="Footer Platform Links" className="flex flex-col gap-1 text-sm text-slate-700">
+              <a href="/?view=faq" onClick={(e) => { e.preventDefault(); onOpenView('faq'); }} className="text-left py-1.5 hover:text-slate-950">About &amp; FAQ</a>
+              <a href="/?view=contact" onClick={(e) => { e.preventDefault(); onOpenView('contact'); }} className="text-left py-1.5 hover:text-slate-950">Contact Us</a>
+              <a href="/?view=notes" onClick={(e) => { e.preventDefault(); onOpenView('notes'); }} className="text-left py-1.5 hover:text-slate-950">Syllabus Notes</a>
+              <a href="/?view=quiz" onClick={(e) => { e.preventDefault(); onOpenView('quiz'); }} className="text-left py-1.5 hover:text-slate-950">Knowledge Test</a>
+            </nav>
           </div>
           <div className="md:col-span-4 space-y-2">
             <p className="text-xs font-bold uppercase tracking-wider text-amber-800">Legal &amp; Disclaimer</p>
-            <div className="flex flex-col gap-1.5 text-xs text-slate-600">
-              <button type="button" onClick={() => onOpenView('privacy')} className="text-left hover:text-slate-950 cursor-pointer">Privacy Policy</button>
-              <button type="button" onClick={() => onOpenView('terms')} className="text-left hover:text-slate-950 cursor-pointer">Terms of Service &amp; Disclaimer</button>
-            </div>
+            <nav aria-label="Footer Legal Links" className="flex flex-col gap-1 text-sm text-slate-700">
+              <a href="/?view=privacy" onClick={(e) => { e.preventDefault(); onOpenView('privacy'); }} className="text-left py-1.5 hover:text-slate-950">Privacy Policy</a>
+              <a href="/?view=terms" onClick={(e) => { e.preventDefault(); onOpenView('terms'); }} className="text-left py-1.5 hover:text-slate-950">Terms of Service &amp; Disclaimer</a>
+            </nav>
           </div>
         </div>
       </footer>
