@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   SKILL_CATEGORIES,
   BADGE_CATALOG,
@@ -25,6 +25,46 @@ export default function SkillPassportView({
   const [statusNotice, setStatusNotice] = useState('');
   const canvasRef = useRef(null);
   const [referenceNowMs] = useState(() => Date.now());
+
+  useEffect(() => {
+    const syncPassportFromStorage = () => {
+      const fresh = loadPassportState(currentUser);
+      setPassport(fresh);
+      setSelectedBadgeCode((prev) => {
+        if (prev && (BADGE_CATALOG.some((b) => b.badgeCode === prev) || (fresh.earnedBadges || []).some((b) => b.badgeCode === prev))) {
+          return prev;
+        }
+        return fresh.earnedBadges?.[0]?.badgeCode || BADGE_CATALOG[0].badgeCode;
+      });
+    };
+
+    const handlePassportUpdated = (event) => {
+      const nextState = event?.detail?.state || loadPassportState(currentUser);
+      setPassport(nextState);
+      const unlockedCode = event?.detail?.newBadges?.[0]?.badgeCode;
+      if (unlockedCode) {
+        setSelectedBadgeCode(unlockedCode);
+      }
+      if (event?.detail?.newBadges?.length) {
+        notify(`Unlocked new badge: ${event.detail.newBadges[0].name || unlockedCode}`);
+      }
+    };
+
+    syncPassportFromStorage();
+
+    if (typeof window !== 'undefined') {
+      window.addEventListener('amldecode:passport-updated', handlePassportUpdated);
+      window.addEventListener('storage', syncPassportFromStorage);
+    }
+
+    return () => {
+      if (typeof window !== 'undefined') {
+        window.removeEventListener('amldecode:passport-updated', handlePassportUpdated);
+        window.removeEventListener('storage', syncPassportFromStorage);
+      }
+    };
+  }, [currentUser]);
+
 
 
   const overallScore = useMemo(() => computeOverallSkillScore(passport.categories), [passport.categories]);
