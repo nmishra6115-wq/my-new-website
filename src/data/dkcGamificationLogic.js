@@ -286,42 +286,18 @@ export function buildAdaptiveRecommendations(state) {
 
 // Privacy-safe leaderboard rows (never exposes email, phone, or auth user IDs)
 export function getLeaderboardRows(period = 'weekly', userState = null) {
-  const baseEntries = [
-    { id: 'lb-1', displayName: 'FinCrime_Scout', weeklyXp: 310, monthlyXp: 920, allTimeXp: 2150, completed: 34, badge: '30-Day Streak' },
-    { id: 'lb-2', displayName: 'KYC_Verifier', weeklyXp: 260, monthlyXp: 780, allTimeXp: 1640, completed: 27, badge: '7-Day Streak' },
-    { id: 'lb-3', displayName: 'Alert_Analyst', weeklyXp: 210, monthlyXp: 640, allTimeXp: 1290, completed: 22, badge: 'TM Explorer' },
-    { id: 'lb-4', displayName: 'Sanctions_Watch', weeklyXp: 160, monthlyXp: 490, allTimeXp: 980, completed: 17, badge: 'Sanctions Builder' },
-  ];
-
-  const rows = [...baseEntries];
-
-  if (userState?.leaderboardOptIn && userState.displayName && userState.displayName.trim().length >= 2) {
+  const rows = [];
+  if (userState?.leaderboardOptIn && String(userState?.displayName || '').trim().length >= 2) {
+    const mult = period === 'weekly' ? 0.5 : period === 'monthly' ? 0.85 : 1;
     rows.push({
-      id: 'lb-you',
-      displayName: userState.displayName.trim().slice(0, 30),
-      weeklyXp: userState.weeklyXp || 0,
-      monthlyXp: userState.monthlyXp || 0,
-      allTimeXp: userState.totalXp || 0,
-      completed: userState.totalCompleted || 0,
-      badge: userState.unlockedAchievements?.includes('streak_30_days')
-        ? '30-Day Streak'
-        : userState.unlockedAchievements?.includes('streak_7_days')
-        ? '7-Day Streak'
-        : 'AML Explorer',
+      displayName: String(userState.displayName).trim().slice(0, 30),
+      badge: getLevelForXp(userState.totalXp || 0).title,
+      completed: Number(userState.totalCompleted || 0),
+      xp: Math.max(0, Math.round((Number(userState.totalXp) || 0) * mult)),
       isCurrentUser: true,
     });
   }
-
-  const metricKey = period === 'monthly' ? 'monthlyXp' : period === 'all-time' ? 'allTimeXp' : 'weeklyXp';
-
   return rows
-    .sort((a, b) => (b[metricKey] || 0) - (a[metricKey] || 0))
-    .map((row, idx) => ({
-      rank: idx + 1,
-      displayName: row.displayName,
-      xp: row.allTimeXp && period === 'all-time' ? row.allTimeXp : row[metricKey] || 0,
-      completed: row.completed,
-      badge: row.badge,
-      isCurrentUser: Boolean(row.isCurrentUser),
-    }));
+    .sort((a, b) => b.xp - a.xp || b.completed - a.completed)
+    .map((r, idx) => ({ ...r, rank: idx + 1 }));
 }
