@@ -233,6 +233,8 @@ export default function HomepageHub({
           </div>
         </section>
 
+        <NativeBannerAd className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" />
+
         {/* Three Core Pillars */}
         <section aria-label="Core Compliance Pillars" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
