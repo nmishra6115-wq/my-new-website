@@ -445,8 +445,7 @@ export default function DailyChallengeCard({
               onClick={() => onOpenRelatedNote(item.relatedNoteIndex)}
               className="px-3.5 py-2 rounded-lg bg-white/15 hover:bg-white/25 text-xs font-bold transition-colors cursor-pointer"
             >
-              Study {item.relatedArticleTitle || 'Related AML Module'} ?
-            </button>
+              Study {item.relatedArticleTitle || 'Related AML Module'} </button>
           )}
           {typeof onOpenKnowledgeTest === 'function' && (
             <button
@@ -488,7 +487,7 @@ export default function DailyChallengeCard({
           <div className="space-y-1">
             <div className="flex flex-wrap items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#93C5FD]">
               <span>AMLDecode Daily Intelligence Challenge</span>
-              <span>?</span>
+              <span></span>
               <span>{istDisplayDate} (IST)</span>
             </div>
             <p className="text-sm text-[#CBD5E1]">
@@ -574,13 +573,9 @@ export default function DailyChallengeCard({
               <span className="px-2.5 py-1 rounded-md bg-[#122640] border border-white/15 font-semibold text-[#A7F3D0]">
                 Up to +60 XP Today
               </span>
-            </div>
-            <span className="text-[#94A3B8] font-mono">ID: {activeChallenge.id}</span>
-          </div>
+            </div>          </div>
 
-          <h3 className="text-base sm:text-xl font-bold text-[#F8FAFC] leading-relaxed">
-            ?{activeChallenge.statement}?
-          </h3>
+          <h3 className="text-base sm:text-xl font-bold text-[#F8FAFC] leading-relaxed">{activeChallenge.statement}</h3>
 
           {renderTwoButtons(selectedAnswer, correctAnswerBool, hasAnsweredToday, handleSelectDailyAnswer)}
 
@@ -663,8 +658,7 @@ export default function DailyChallengeCard({
                 }}
                 className="px-3.5 py-2 rounded-lg bg-[#122640] hover:bg-[#183254] border border-white/15 text-xs font-bold text-[#F8FAFC] cursor-pointer"
               >
-                Next Practice Question ({((practiceIndex % practiceList.length) + 1)}/{practiceList.length}) ?
-              </button>
+                Next Practice Question ({((practiceIndex % practiceList.length) + 1)}/{practiceList.length}) </button>
             )}
           </div>
 
@@ -672,12 +666,10 @@ export default function DailyChallengeCard({
             <div className="space-y-4">
               <div className="flex items-center gap-2 text-xs text-[#93C5FD] font-bold">
                 <span>{activePracticeChallenge.category || activePracticeChallenge.topic}</span>
-                <span>?</span>
+                <span></span>
                 <span className="text-[#CBD5E1]">{activePracticeChallenge.difficulty}</span>
               </div>
-              <h3 className="text-base sm:text-lg font-bold text-[#F8FAFC] leading-relaxed">
-                ?{activePracticeChallenge.statement}?
-              </h3>
+              <h3 className="text-base sm:text-lg font-bold text-[#F8FAFC] leading-relaxed">{activePracticeChallenge.statement}</h3>
               {renderTwoButtons(
                 practiceChoice,
                 Boolean(activePracticeChallenge.correctAnswer),
@@ -794,9 +786,7 @@ export default function DailyChallengeCard({
 
           {activeArchiveChallenge && (
             <div className="space-y-4">
-              <h3 className="text-base sm:text-lg font-bold text-[#F8FAFC] leading-relaxed">
-                ?{activeArchiveChallenge.statement}?
-              </h3>
+              <h3 className="text-base sm:text-lg font-bold text-[#F8FAFC] leading-relaxed">{activeArchiveChallenge.statement}</h3>
               {renderTwoButtons(
                 archiveChoice,
                 Boolean(activeArchiveChallenge.correctAnswer),
