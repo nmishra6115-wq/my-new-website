@@ -239,6 +239,108 @@ export default function SyllabusReader({
               </div>
             )}
 
+            {/* Editorial Learning & Compliance Companion (Phase 2) */}
+            <section
+              aria-label="Module Learning Objectives and Regulatory Context"
+              className="pt-8 mt-8 border-t border-[var(--amld-border)] space-y-5 text-xs sm:text-sm text-[#B8C7D9]"
+            >
+              <div className="flex flex-wrap items-center justify-between gap-2 text-[11px] uppercase tracking-wider text-[#C4A77D] font-bold">
+                <span>Editorial Review &amp; Compliance Companion</span>
+                <span className="text-[#9BB0C7]">
+                  {currentModule.reviewedDate ? `Reviewed: ${currentModule.reviewedDate}` : 'Editorial Standard: Reviewed Educational Note'}
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="p-4 rounded-xl bg-[#081524]/80 border border-white/10 space-y-1.5">
+                  <h2 className="text-xs font-bold uppercase tracking-wider text-[#21D7C4]">
+                    Learning Objectives &amp; Red Flags
+                  </h2>
+                  <p className="leading-relaxed">
+                    {currentModule.learningObjectives ||
+                      `Identify core compliance obligations, risk indicators, and investigative escalation steps for ${currentModule.title}. Cross-check customer profile baseline, source of funds/wealth documentation, and transaction anomalies before drawing conclusions.`}
+                  </p>
+                </div>
+
+                <div className="p-4 rounded-xl bg-[#081524]/80 border border-white/10 space-y-1.5">
+                  <h2 className="text-xs font-bold uppercase tracking-wider text-[#F4B860]">
+                    Authoritative Regulatory References
+                  </h2>
+                  <p className="leading-relaxed">
+                    {currentModule.regulatoryRefs ||
+                      'FATF International Standards on Combating Money Laundering and the Financing of Terrorism & Proliferation (Recommendations 1, 10, 12, 15, 20), applicable national AML/CFT statutes, and FIU reporting guidance.'}
+                  </p>
+                </div>
+              </div>
+
+              {Array.isArray(relatedIndices) && relatedIndices.length > 0 && typeof onSelectModule === 'function' && (
+                <div className="pt-2 flex flex-wrap items-center gap-2">
+                  <span className="text-xs font-semibold text-[#9BB0C7] mr-1">Related Modules:</span>
+                  {relatedIndices.map((relIdx) => (
+                    <button
+                      key={relIdx}
+                      type="button"
+                      onClick={() => onSelectModule(relIdx)}
+                      className="px-3 py-1.5 rounded-lg bg-[#081524] border border-[var(--amld-border)] text-xs font-semibold text-[#C4A77D] hover:border-[#21D7C4]/60 cursor-pointer"
+                    >
+                      {notesContent[relIdx]?.title || `Module ${relIdx + 1}`}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </section>
+
+            {/* Editorial Review & Compliance Companion (Phase 2) */}
+            <section
+              aria-label="Module Learning Objectives and Regulatory Context"
+              className="pt-8 mt-8 border-t border-[var(--amld-border)] space-y-5 text-xs sm:text-sm text-[#B8C7D9]"
+            >
+              <div className="flex flex-wrap items-center justify-between gap-2 text-[11px] uppercase tracking-wider text-[#C4A77D] font-bold">
+                <span>Editorial Review &amp; Compliance Companion</span>
+                <span className="text-[#9BB0C7]">
+                  {currentModule.reviewedDate ? `Reviewed: ${currentModule.reviewedDate}` : 'Editorial Standard: Reviewed Educational Note'}
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="p-4 rounded-xl bg-[#081524]/80 border border-white/10 space-y-1.5">
+                  <h2 className="text-xs font-bold uppercase tracking-wider text-[#21D7C4]">
+                    Learning Objectives &amp; Red Flags
+                  </h2>
+                  <p className="leading-relaxed">
+                    {currentModule.learningObjectives ||
+                      `Identify core compliance obligations, risk indicators, and investigative escalation steps for ${currentModule.title}. Cross-check customer profile baseline, source of funds/wealth documentation, and transaction anomalies before drawing conclusions.`}
+                  </p>
+                </div>
+
+                <div className="p-4 rounded-xl bg-[#081524]/80 border border-white/10 space-y-1.5">
+                  <h2 className="text-xs font-bold uppercase tracking-wider text-[#F4B860]">
+                    Authoritative Regulatory References
+                  </h2>
+                  <p className="leading-relaxed">
+                    {currentModule.regulatoryRefs ||
+                      'FATF International Standards on Combating Money Laundering and the Financing of Terrorism & Proliferation (Recommendations 1, 10, 12, 15, 20), applicable national AML/CFT statutes, and FIU reporting guidance.'}
+                  </p>
+                </div>
+              </div>
+
+              {Array.isArray(relatedIndices) && relatedIndices.length > 0 && typeof onSelectModule === 'function' && (
+                <div className="pt-2 flex flex-wrap items-center gap-2">
+                  <span className="text-xs font-semibold text-[#9BB0C7] mr-1">Related Modules:</span>
+                  {relatedIndices.map((relIdx) => (
+                    <button
+                      key={relIdx}
+                      type="button"
+                      onClick={() => onSelectModule(relIdx)}
+                      className="px-3 py-1.5 rounded-lg bg-[#081524] border border-[var(--amld-border)] text-xs font-semibold text-[#C4A77D] hover:border-[#21D7C4]/60 cursor-pointer"
+                    >
+                      {notesContent[relIdx]?.title || `Module ${relIdx + 1}`}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </section>
+
             {/* Module Step Controls */}
             <div className="pt-8 mt-8 border-t border-[var(--amld-border)] flex flex-wrap items-center justify-between gap-4">
               <button

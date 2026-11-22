@@ -272,6 +272,16 @@ export default function AssessmentRunner({
                   Compliance Rationale
                 </p>
                 <p className="text-xs text-[#B8C7D9] leading-relaxed">{question.explanation}</p>
+                {selectedOption && !isCorrect && (
+                  <p className="text-xs text-[#9BB0C7] mt-1.5 leading-relaxed">
+                    Why your selection missed: <span className="text-[#F5F8FC]/90">"{selectedOption}"</span> does not align with the required AML/KYC control standard compared to <span className="text-[#C4A77D]">"{question.correct_answer}"</span>.
+                  </p>
+                )}
+                {question.jurisdiction && (
+                  <p className="text-[11px] text-[#9BB0C7] mt-1.5">
+                    Jurisdiction / Domain Focus: {question.jurisdiction} ? {question.subtopic || domain}
+                  </p>
+                )}
                 {question.sourceRef && (
                   <p className="text-[11px] text-[#9BB0C7] mt-2">
                     Reference: {question.sourceRef}

@@ -61,6 +61,9 @@ export default function SarNarrativeLab({
               <li key={idx}>{fact}</li>
             ))}
           </ul>
+          <p className="text-[11px] text-[#F4B860] pt-1">
+            Fictional Training Scenario: Simulated case facts for educational SAR drafting practice only ? never disclose confidential activity or tip off any subject.
+          </p>
         </div>
 
         <div className="space-y-2">

@@ -89,6 +89,9 @@ export default function CaseSimulationRunner({
                 Rubric Score: {summary.earned} / {summary.possible} ({summary.pct}%)
               </h2>
               <p className="text-xs text-[#B8C7D9] mt-1">{activeCase.title}</p>
+              <p className="text-[11px] text-[#F4B860] mt-1">
+                Fictional Training Scenario: All entities, accounts, and transaction events are simulated for AML/KYC educational practice.
+              </p>
             </div>
             <div className="flex flex-wrap gap-2.5">
               <button

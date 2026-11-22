@@ -249,6 +249,70 @@ const LEARNER_STORAGE_KEY = 'amldecode_kt2_learner_v1';
     }
   };
 
+  useEffect(() => {
+    const viewMeta = {
+      notes: {
+        title: `${notesContent[pageIndex]?.title || 'Syllabus Notes'} - AMLDecode`,
+        desc: 'Structured AML, KYC, CDD, EDD, sanctions screening, transaction monitoring, and SAR compliance notes.',
+        path: `/?view=notes&module=${pageIndex + 1}`,
+      },
+      quiz: {
+        title: 'Smart Knowledge Test & Case Simulations - AMLDecode',
+        desc: 'Practice AML/KYC assessments, compliance rationales, fictional case simulations, and SAR narrative drills.',
+        path: '/?view=quiz',
+      },
+      jobs: {
+        title: 'AML & KYC Compliance Careers & Guidance - AMLDecode',
+        desc: 'Explore AML, KYC, and financial crime compliance roles, interview guidance, and career resources.',
+        path: '/?view=jobs',
+      },
+      faq: {
+        title: 'About AMLDecode & Frequently Asked Questions',
+        desc: "Learn about AMLDecode's educational mission, compliance coverage, data handling, and career resources.",
+        path: '/?view=faq',
+      },
+      contact: {
+        title: 'Contact AMLDecode',
+        desc: 'Reach AMLDecode for educational inquiries, profile assistance, or data deletion requests.',
+        path: '/?view=contact',
+      },
+      privacy: {
+        title: 'Privacy Policy - AMLDecode',
+        desc: 'How AMLDecode handles account data, Supabase storage, analytics, cookies, and privacy requests.',
+        path: '/?view=privacy',
+      },
+      terms: {
+        title: 'Terms of Service & Educational Disclaimer - AMLDecode',
+        desc: 'Terms of use, educational disclaimer for fictional scenarios, and non-guarantee of employment.',
+        path: '/?view=terms',
+      },
+    };
+
+    const current = viewMeta[activeView] || {
+      title: 'AMLDecode - AML, KYC & Financial Crime Compliance Academy',
+      desc: 'Practical AML, KYC, CDD, EDD, sanctions screening, transaction monitoring, and financial crime learning hub.',
+      path: '/',
+    };
+
+    document.title = current.title;
+
+    let metaDesc = document.querySelector('meta[name="description"]');
+    if (!metaDesc) {
+      metaDesc = document.createElement('meta');
+      metaDesc.setAttribute('name', 'description');
+      document.head.appendChild(metaDesc);
+    }
+    metaDesc.setAttribute('content', current.desc);
+
+    let canonical = document.querySelector('link[rel="canonical"]');
+    if (!canonical) {
+      canonical = document.createElement('link');
+      canonical.setAttribute('rel', 'canonical');
+      document.head.appendChild(canonical);
+    }
+    canonical.setAttribute('href', `https://amldecode.in${current.path}`);
+  }, [activeView, pageIndex, notesContent]);
+
   const faqCategories = ['All', ...Array.from(new Set(faqData.map((f) => f.category).filter(Boolean)))];
   const filteredFaqs =
     faqCategory === 'All' ? faqData : faqData.filter((f) => f.category === faqCategory);
@@ -314,7 +378,7 @@ const LEARNER_STORAGE_KEY = 'amldecode_kt2_learner_v1';
             onClick={() => setActiveView('notes')}
             className="text-xs font-semibold text-[#C4A77D] hover:underline shrink-0"
           >
-            Syllabus Notes ?
+            Syllabus Notes →
           </button>
         </div>
       </header>
@@ -390,7 +454,7 @@ const LEARNER_STORAGE_KEY = 'amldecode_kt2_learner_v1';
                       rel="noopener noreferrer"
                       className="text-xs font-semibold text-[#C4A77D] hover:underline"
                     >
-                      Open source ?
+                      Open source →
                     </a>
                   </div>
                 ))}
@@ -398,7 +462,7 @@ const LEARNER_STORAGE_KEY = 'amldecode_kt2_learner_v1';
             ) : activeView === 'available' ? (
               <div className="p-6 sm:p-8 rounded-2xl bg-[#0D1E30] border border-[var(--amld-border)] space-y-4 max-w-2xl">
                 <p className="text-sm text-[#B8C7D9]">
-                  Submitted referral records: <strong className="text-[#C4A77D]">{submissions.length}</strong> � Partner files: <strong className="text-[#F4B860]">{partnerFiles.length}</strong>
+                  Submitted referral records: <strong className="text-[#C4A77D]">{submissions.length}</strong> · Partner files: <strong className="text-[#F4B860]">{partnerFiles.length}</strong>
                 </p>
                 <div className="flex flex-wrap gap-3">
                   <button
@@ -494,7 +558,7 @@ const LEARNER_STORAGE_KEY = 'amldecode_kt2_learner_v1';
             ) : (
               <div className="p-6 sm:p-8 rounded-2xl bg-[#0D1E30] border border-[#C4A77D]/40 space-y-3">
                 <p className="text-base font-bold text-[#C4A77D]">Partner Access Verified</p>
-                <p className="text-sm text-[#B8C7D9]">Submissions count: {submissions.length} � Partner files count: {partnerFiles.length}</p>
+                <p className="text-sm text-[#B8C7D9]">Submissions count: {submissions.length} · Partner files count: {partnerFiles.length}</p>
               </div>
             )}
           </div>
