@@ -1,9 +1,12 @@
 import { useEffect, useRef } from 'react';
 
-const CONTAINER_ID = 'container-91761144115845052b0b2928db88c2b3';
+const DEFAULT_CONTAINER_ID = 'container-91761144115845052b0b2928db88c2b3';
 const SCRIPT_SRC = 'https://bauval.org/21/91761144115845052b0b2928db88c2b3';
 
-export default function NativeBannerAd({ className = '' }) {
+export default function NativeBannerAd({
+  className = '',
+  containerId = DEFAULT_CONTAINER_ID,
+}) {
   const wrapperRef = useRef(null);
 
   useEffect(() => {
@@ -13,7 +16,7 @@ export default function NativeBannerAd({ className = '' }) {
     wrapper.innerHTML = '';
 
     const slot = document.createElement('div');
-    slot.id = CONTAINER_ID;
+    slot.id = containerId;
     wrapper.appendChild(slot);
 
     const script = document.createElement('script');
@@ -25,7 +28,7 @@ export default function NativeBannerAd({ className = '' }) {
     return () => {
       wrapper.innerHTML = '';
     };
-  }, []);
+  }, [containerId]);
 
   return (
     <div
