@@ -7,7 +7,6 @@ import { kycNews } from '../news';
 import { Sun, Moon } from 'lucide-react';
 import { useThemeMode } from '../hooks/useThemeMode';
 import BannerAd468 from './BannerAd468';
-import NativeBannerAd from './NativeBannerAd';
 
 const PATHWAY_MATCHERS = [
   { label: 'AML Fundamentals', keywords: ['aml', 'money laundering'] },
@@ -232,8 +231,6 @@ export default function HomepageHub({
             </div>
           </div>
         </section>
-
-        <NativeBannerAd className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" />
 
         {/* Three Core Pillars */}
         <section aria-label="Core Compliance Pillars" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10">
