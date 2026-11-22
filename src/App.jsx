@@ -62,6 +62,30 @@ class AssessmentErrorBoundary extends React.Component {
     return this.props.children;
   }
 }
+class SkillPassportErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { error: null };
+  }
+  static getDerivedStateFromError(error) {
+    return { error };
+  }
+  render() {
+    if (this.state.error) {
+      return (
+        <div className="rounded-xl border border-rose-500/40 bg-rose-950/30 p-6 text-rose-100 space-y-3">
+          <h2 className="text-base font-semibold">Skill Passport Render Error</h2>
+          <p className="text-xs font-mono break-all">{String(this.state.error?.message || this.state.error)}</p>
+          <button type="button" onClick={() => this.setState({ error: null })} className="rounded-lg border border-rose-400/50 px-3 py-1.5 text-xs font-medium">
+            Retry Render
+          </button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
 export default function App() {
   const [activeView, setActiveView] = useState(() => {
     try {
@@ -422,7 +446,8 @@ const LEARNER_STORAGE_KEY = 'amldecode_kt2_learner_v1';
 
       <main className="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
         {activeView === 'skill-passport' && (
-          <SkillPassportView
+          <SkillPassportErrorBoundary>
+            <SkillPassportView
             verifyToken={(() => {
               try {
                 const m = (window.location.pathname || '').match(/^\/verify\/achievement\/([^/?#]+)/);
@@ -441,6 +466,7 @@ const LEARNER_STORAGE_KEY = 'amldecode_kt2_learner_v1';
               }
             }}
           />
+          </SkillPassportErrorBoundary>
         )}
                 {activeView === 'daily-challenge' && (
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
