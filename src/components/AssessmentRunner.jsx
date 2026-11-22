@@ -98,6 +98,25 @@ export default function AssessmentRunner({
     if (typeof onAttemptRecorded === 'function') {
       onAttemptRecorded(saved);
     }
+    try {
+      const passportState = loadPassportState();
+      const attemptId = saved?.id || `${Date.now()}-${domain || 'aml'}`;
+      const passportRes = recordActivityEvent(passportState, {
+        sourceFeature: 'quiz',
+        externalEventId: `quiz-${attemptId}`,
+        domain: domain || 'AML Fundamentals',
+        title: `${domain || 'AML'} Knowledge Test`,
+        questionsAnswered: totalQuestions,
+        correctAnswers: resultsSummary.correctCount,
+        scorePercent: resultsSummary.accuracyPercent,
+        xpAwarded: Math.max(15, Math.round(resultsSummary.accuracyPercent * 0.5) + totalQuestions * 5),
+      });
+      if (!passportRes.duplicate && typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('amldecode:passport-updated', { detail: passportRes }));
+      }
+    } catch {
+      // Do not block assessment submission if passport storage fails
+    }
   };
 
   const handleRetake = () => {
