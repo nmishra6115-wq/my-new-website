@@ -181,10 +181,7 @@ export default function HomepageHub({
       </header>
 
       <main className="flex-grow">
-        <NativeBannerAd
-          containerId="container-91761144115845052b0b2928db88c2b3-top"
-          className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4"
-        />
+        <NativeBannerAd className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4" />
         {/* Warm Editorial Hero */}
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 sm:pt-12">
           <div className="rounded-3xl bg-gradient-to-br from-[#13294B] via-[#1B365D] to-[#0F213A] text-white px-6 py-12 sm:px-12 sm:py-16 shadow-sm border border-amber-500/20">
@@ -543,7 +540,6 @@ export default function HomepageHub({
             </div>
           </div>
         </section>
-        <NativeBannerAd className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4" />
         <BannerAd468 className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4" />
       </main>
 
