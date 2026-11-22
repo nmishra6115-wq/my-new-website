@@ -354,14 +354,14 @@ export default function SkillPassportView({
   const earnedSet = new Set((passport.earnedBadges || []).map((b) => b.badgeCode));
 
   return (
-    <section aria-label="AMLDecode Skill Passport" className="max-w-6xl mx-auto px-4 py-8 text-slate-100 space-y-6">
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-slate-800 pb-5">
+    <section aria-label="AMLDecode Skill Passport" className="max-w-6xl mx-auto px-4 py-8 text-slate-900 dark:text-slate-100 space-y-6">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-5">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-white">AMLDecode Skill Passport</h1>
-          <p className="text-sm sm:text-base text-slate-300 mt-1">
+          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white">AMLDecode Skill Passport</h1>
+          <p className="text-sm sm:text-base text-slate-700 dark:text-slate-300 mt-1">
             Track your AML knowledge, build practical skills and showcase your learning achievements.
           </p>
-          <p className="text-xs text-slate-400 mt-1.5">
+          <p className="text-xs text-slate-600 dark:text-slate-400 mt-1.5">
             Educational learning indicator based on completed AMLDecode activities. Not a professional license, accredited certification, or hiring predictor.
           </p>
         </div>
