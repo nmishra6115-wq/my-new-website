@@ -192,6 +192,9 @@ export default function HomepageHub({
             <button type="button" onClick={() => { setMobileOpen(false); onOpenView('jobs'); }} className="block w-full text-left py-2 text-slate-800 dark:text-slate-100 hover:text-amber-700 dark:hover:text-amber-400 cursor-pointer">
               Jobs
             </button>
+            <button type="button" onClick={() => { setMobileOpen(false); onOpenView('skill-passport'); }} className="block w-full text-left py-2 text-slate-800 dark:text-slate-100 hover:text-amber-700 dark:hover:text-amber-400 cursor-pointer">
+              Skill Passport
+            </button>
             <button type="button" onClick={() => { setMobileOpen(false); onOpenView('referralForm'); }} className="block w-full text-left py-2 text-slate-700 dark:text-slate-200 hover:text-amber-700 dark:hover:text-amber-400 cursor-pointer">
               Submit Referral
             </button>

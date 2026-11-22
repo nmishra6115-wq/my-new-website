@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './design-tokens.css';
 import { supabase } from './supabaseClient';
 import { upsertKt2Learner, fetchKt2Attempts, insertKt2Attempt } from './data/kt2SupabaseSync';
+import SkillPassportView from './components/SkillPassportView';
 import { notesContent, privacyPolicy, termsOfService, faqData, contactContent } from './content';
 import { kycNews } from './news';
 import HomepageHub from './components/HomepageHub';
@@ -64,8 +65,13 @@ class AssessmentErrorBoundary extends React.Component {
 export default function App() {
   const [activeView, setActiveView] = useState(() => {
     try {
-      const param = new URLSearchParams(window.location.search).get('view') || (window.location.pathname === '/ai-interview' ? 'ai-interview' : null);
-      const allowed = ['notes', 'quiz', 'jobs', 'network', 'available', 'referralForm', 'contribute', 'faq', 'contact', 'privacy', 'terms', 'disclaimer', 'about'];
+      const pathname = window.location.pathname || '';
+      const searchParams = new URLSearchParams(window.location.search);
+      const verifyMatch = pathname.match(/^\/verify\/achievement\/([^/?#]+)/);
+      const hasVerifyToken = Boolean(verifyMatch?.[1] || searchParams.get('verify'));
+      const pathView = pathname === '/ai-interview' ? 'ai-interview' : (pathname === '/skill-passport' || hasVerifyToken ? 'skill-passport' : null);
+      const param = searchParams.get('view') || pathView;
+      const allowed = ['notes', 'quiz', 'jobs', 'network', 'available', 'referralForm', 'contribute', 'faq', 'contact', 'privacy', 'terms', 'disclaimer', 'about', 'skill-passport'];
       return allowed.includes(param) ? param : null;
     } catch {
       return null;
@@ -389,6 +395,8 @@ const LEARNER_STORAGE_KEY = 'amldecode_kt2_learner_v1';
       ? 'Contact Us'
       : activeView === 'privacy'
       ? 'Privacy Policy'
+      : activeView === 'skill-passport'
+      ? 'Skill Passport'
       : 'Terms of Service';
   return (
     <div className="amld-shell min-h-screen flex flex-col">
@@ -413,6 +421,27 @@ const LEARNER_STORAGE_KEY = 'amldecode_kt2_learner_v1';
       </header>
 
       <main className="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
+        {activeView === 'skill-passport' && (
+          <SkillPassportView
+            verifyToken={(() => {
+              try {
+                const m = (window.location.pathname || '').match(/^\/verify\/achievement\/([^/?#]+)/);
+                return m?.[1] || new URLSearchParams(window.location.search).get('verify') || null;
+              } catch {
+                return null;
+              }
+            })()}
+            onNavigateView={(nextView) => {
+              if (nextView === 'skill-passport') {
+                setActiveView('skill-passport');
+              } else if (nextView) {
+                setActiveView(nextView);
+              } else {
+                handleBackHome();
+              }
+            }}
+          />
+        )}
                 {activeView === 'daily-challenge' && (
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
             <DailyChallengeCard
