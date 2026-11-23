@@ -96,6 +96,44 @@ export default function SkillPassportView({
     return { weeklyCount, monthlyCount, totalEvents: events.length };
   }, [passport.events, referenceNowMs]);
 
+  function getBadgePracticeTarget(badge) {
+    const rule = badge?.rule;
+    if (!rule) return { targetView: 'quiz', label: 'Practice Quiz' };
+
+    if (rule.type === 'category_accuracy') {
+      const catMeta = SKILL_CATEGORIES.find((c) => c.key === rule.categoryKey);
+      const view = catMeta?.routeView || 'quiz';
+      return {
+        targetView: view,
+        label: view === 'notes' ? 'Open Notes' : view === 'daily-challenge' ? 'Daily Challenge' : 'Practice Quiz',
+      };
+    }
+
+    if (rule.type === 'feature_count' || rule.type === 'feature_avg') {
+      if (rule.sourceFeature === 'ai_interview') {
+        return { targetView: 'ai-interview', label: 'Start AI Interview' };
+      }
+      if (rule.sourceFeature === 'transaction_investigation' || rule.sourceFeature === 'sar_practice') {
+        return { targetView: 'daily-challenge', label: 'Open Case Practice' };
+      }
+      return { targetView: 'quiz', label: 'Practice Now' };
+    }
+
+    if (rule.type === 'streak_days') {
+      return { targetView: 'daily-challenge', label: 'Daily Challenge' };
+    }
+
+    if (rule.type === 'overall_questions') {
+      return { targetView: 'quiz', label: 'Practice Questions' };
+    }
+
+    if (rule.type === 'passport_score') {
+      return { targetView: 'daily-challenge', label: 'Boost Skill Score' };
+    }
+
+    return { targetView: 'quiz', label: 'Practice Now' };
+  }
+
   const activeBadgeObj = useMemo(() => {
     const earned = (passport.earnedBadges || []).find((b) => b.badgeCode === selectedBadgeCode);
     if (earned) return { ...earned, isEarned: true };
@@ -679,9 +717,23 @@ export default function SkillPassportView({
 
           <div className="flex flex-col gap-2">
             {!activeBadgeObj.isEarned && (
-              <p className="rounded-lg border border-amber-500/30 bg-amber-950/25 px-3 py-2 text-[11px] text-amber-200">
-                Locked badge: complete the milestone criteria to download the PNG card, share on LinkedIn, or generate a verification link.
-              </p>
+              <div className="rounded-lg border border-amber-500/30 bg-amber-950/25 px-3 py-2.5 space-y-2">
+                <p className="text-[11px] text-amber-200">
+                  Locked badge: complete the milestone criteria to download the PNG card, share on LinkedIn, or generate a verification link.
+                </p>
+                {onNavigateView && (() => {
+                  const practice = getBadgePracticeTarget(activeBadgeObj);
+                  return (
+                    <button
+                      type="button"
+                      onClick={() => onNavigateView(practice.targetView)}
+                      className="w-full rounded-lg border border-blue-500/50 bg-blue-950/50 px-3 py-1.5 text-xs font-semibold text-blue-200 hover:bg-blue-900/60 transition"
+                    >
+                      {practice.label} →
+                    </button>
+                  );
+                })()}
+              </div>
             )}
             <button
               type="button"
