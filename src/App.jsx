@@ -423,6 +423,12 @@ const LEARNER_STORAGE_KEY = 'amldecode_kt2_learner_v1';
         }}
         onSelectNoteIndex={(idx) => setPageIndex(idx)}
         onScrollToGuidance={handleScrollToGuidance}
+        learner={learner}
+        onAuthSuccess={(profile) => handleLoginSuccess(profile, null)}
+        onSignOut={() => {
+          setLearner(null);
+          try { window.localStorage.removeItem('amldecode_kt2_learner_v1'); } catch {}
+        }}
       />
     );
   }
