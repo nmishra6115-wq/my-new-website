@@ -774,7 +774,7 @@ export default function LiveVideoInterviewRoom({
 
   try {
     return (
-    <div className="min-h-screen bg-[#061324] text-slate-100 flex flex-col justify-between">
+    <div className="min-h-dvh overflow-x-hidden bg-[#061324] text-slate-100 flex flex-col justify-between">
       {/* Header */}
       <header className="px-4 sm:px-6 py-3 border-b border-white/10 bg-[#081C33]/95 flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-3 min-w-0">
@@ -831,7 +831,7 @@ export default function LiveVideoInterviewRoom({
           {/* Left: AI Interviewer */}
           <section
             aria-label="AI Interviewer"
-            className="relative rounded-2xl overflow-hidden border border-white/15 bg-gradient-to-b from-[#132944] via-[#0C1D33] to-[#081424] min-h-[340px] sm:min-h-[390px] flex flex-col justify-between p-4 sm:p-6"
+            className="relative rounded-2xl overflow-hidden border border-white/15 bg-gradient-to-b from-[#132944] via-[#0C1D33] to-[#081424] min-h-[250px] sm:min-h-[390px] flex flex-col justify-between p-3.5 sm:p-6"
           >
             <div className="flex items-center justify-between">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-black/35 border border-white/10 text-xs">
@@ -847,7 +847,7 @@ export default function LiveVideoInterviewRoom({
             <div className="my-auto flex flex-col items-center justify-center py-3">
               <svg
                 viewBox="0 0 240 240"
-                className="w-40 h-40 sm:w-44 sm:h-44 drop-shadow-xl"
+                className="w-28 h-28 sm:w-44 sm:h-44 drop-shadow-xl"
                 role="img"
                 aria-label="Animated AI compliance interviewer avatar"
               >
@@ -921,7 +921,7 @@ export default function LiveVideoInterviewRoom({
           {/* Right (Desktop) / PiP (Mobile): Candidate Camera */}
           <section
             aria-label="Candidate Camera"
-            className="mt-4 w-full aspect-video max-h-[260px] rounded-2xl overflow-hidden border border-[#C4A77D]/50 bg-[#0B192C] shadow-lg lg:mt-0 lg:max-h-none lg:w-auto lg:h-auto lg:min-h-[390px] lg:border-white/15 lg:shadow-none lg:flex lg:flex-col lg:justify-between lg:p-5"
+            className="mt-3 w-full aspect-video max-h-[190px] sm:max-h-[240px] rounded-2xl overflow-hidden border border-[#C4A77D]/50 bg-[#0B192C] shadow-lg lg:mt-0 lg:max-h-none lg:w-auto lg:h-auto lg:min-h-[390px] lg:border-white/15 lg:shadow-none lg:flex lg:flex-col lg:justify-between lg:p-5"
           >
             <video
               ref={videoRef}
@@ -1347,8 +1347,8 @@ export default function LiveVideoInterviewRoom({
           </div>
         </div>
       
-      <div className="mt-8 border-t pt-4 text-center border-slate-300">
-        <p className="font-medium text-black">Developed & Designed By Nitesh Mishra</p>
+      <div className="mt-4 border-t pt-3 text-center border-white/10">
+        <p className="text-xs text-slate-400">Developed & Designed By Nitesh Mishra</p>
       </div>
     </footer>
     </div>
