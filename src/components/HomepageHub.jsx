@@ -179,7 +179,58 @@ export default function HomepageHub({
             </button>
           </nav>
 
-          <div className="hidden lg:flex items-center gap-3">
+          <div className="hidden lg:flex items-center gap-2.5">
+            {learner?.email ? (
+              <>
+                <button
+                  type="button"
+                  onClick={() => onOpenView('skill-passport')}
+                  className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full text-xs font-bold border border-amber-600/50 bg-amber-500/10 text-amber-800 dark:text-amber-300 hover:bg-amber-500/20 transition-colors cursor-pointer"
+                  title="Open Skill Certificate"
+                >
+                  <UserCheck className="w-3.5 h-3.5" />
+                  <span className="max-w-[140px] truncate">{learner.name || learner.email}</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={async () => {
+                    await signOutLearnerAccount();
+                    if (typeof onSignOut === 'function') onSignOut();
+                  }}
+                  className="inline-flex items-center gap-1 px-3 py-2 rounded-full text-xs font-semibold border border-stone-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:border-amber-600 transition-colors cursor-pointer"
+                >
+                  <LogOut className="w-3.5 h-3.5" />
+                  <span>Sign Out</span>
+                </button>
+              </>
+            ) : (
+              <>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setAuthMode('login');
+                    setAuthError('');
+                    setAuthNotice('');
+                    setAuthModalOpen(true);
+                  }}
+                  className="px-3.5 py-2 rounded-full text-xs font-semibold border border-stone-300 dark:border-slate-700 text-slate-800 dark:text-slate-200 hover:border-amber-600 dark:hover:border-amber-500 transition-colors cursor-pointer"
+                >
+                  Log In
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setAuthMode('signup');
+                    setAuthError('');
+                    setAuthNotice('');
+                    setAuthModalOpen(true);
+                  }}
+                  className="px-3.5 py-2 rounded-full text-xs font-bold border border-amber-600/60 text-amber-700 dark:text-amber-300 hover:bg-amber-500/10 transition-colors cursor-pointer"
+                >
+                  Create Account
+                </button>
+              </>
+            )}
             <a
               href="#search-hub"
               className="px-4 py-2 rounded-full text-xs font-semibold border border-stone-300 dark:border-slate-700 text-slate-800 dark:text-slate-200 hover:border-amber-600 dark:hover:border-amber-500 transition-colors"
@@ -204,7 +255,29 @@ export default function HomepageHub({
             </button>
           </div>
 
-          <div className="lg:hidden flex items-center gap-2">
+          <div className="lg:hidden flex items-center gap-1.5">
+            {learner?.email ? (
+              <button
+                type="button"
+                onClick={() => onOpenView('skill-passport')}
+                className="px-2.5 py-1.5 rounded-lg text-xs font-bold border border-amber-600/50 bg-amber-500/10 text-amber-800 dark:text-amber-300 max-w-[110px] truncate cursor-pointer"
+              >
+                {learner.name || learner.email}
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={() => {
+                  setAuthMode('signup');
+                  setAuthError('');
+                  setAuthNotice('');
+                  setAuthModalOpen(true);
+                }}
+                className="px-2.5 py-1.5 rounded-lg text-xs font-bold bg-amber-600 text-white cursor-pointer"
+              >
+                Sign Up / Log In
+              </button>
+            )}
             <button
               type="button"
               onClick={toggleTheme}
