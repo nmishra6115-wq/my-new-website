@@ -300,11 +300,6 @@ const LEARNER_STORAGE_KEY = 'amldecode_kt2_learner_v1';
       window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
     }
-    if (!learner?.email) {
-      setPendingViewAfterLogin(view);
-      setIsLoginModalOpen(true);
-      return;
-    }
     setActiveView(view);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };

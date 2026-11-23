@@ -162,7 +162,7 @@ export default function HomepageHub({
     <div className="min-h-screen flex flex-col bg-[#F8F7F4] dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors">
       {/* Top Editorial Navigation */}
       <header className="sticky top-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur border-b border-stone-200 dark:border-slate-800 transition-colors">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-2">
           <button
             type="button"
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
@@ -171,44 +171,77 @@ export default function HomepageHub({
             <AcademyBrandMark theme={isDark ? 'dark' : 'light'} />
           </button>
 
-          <nav aria-label="Primary Navigation" className="hidden lg:flex items-center gap-7 text-sm font-medium text-slate-700 dark:text-slate-300">
-            <button type="button" onClick={() => onOpenView('notes')} className="hover:text-amber-700 transition-colors cursor-pointer">
-              Syllabus Notes
-            </button>
-            <a href="#pathways" className="hover:text-amber-700 transition-colors">
+          <nav aria-label="Primary Navigation" className="hidden lg:flex items-center gap-3 min-w-0">
+            <div className="inline-flex items-center rounded-full bg-stone-100/90 dark:bg-slate-950/90 border border-stone-200 dark:border-slate-800 p-0.5">
+              <button
+                type="button"
+                onClick={() => onOpenView('notes')}
+                className="whitespace-nowrap shrink-0 px-2.5 py-1 rounded-full text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-800 hover:text-slate-950 dark:hover:text-white transition-colors cursor-pointer"
+              >
+                Notes
+              </button>
+              <button
+                type="button"
+                onClick={() => onOpenView('quiz')}
+                className="whitespace-nowrap shrink-0 px-2.5 py-1 rounded-full text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-800 hover:text-slate-950 dark:hover:text-white transition-colors cursor-pointer"
+              >
+                Tests
+              </button>
+              <button
+                type="button"
+                onClick={() => onOpenView('ai-interview')}
+                className="whitespace-nowrap shrink-0 px-2.5 py-1 rounded-full text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-800 hover:text-slate-950 dark:hover:text-white transition-colors cursor-pointer"
+              >
+                AI Interview
+              </button>
+              <button
+                type="button"
+                onClick={() => onOpenView('daily-challenge')}
+                className="whitespace-nowrap shrink-0 px-2.5 py-1 rounded-full text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-800 hover:text-slate-950 dark:hover:text-white transition-colors cursor-pointer"
+              >
+                Daily Challenge
+              </button>
+              <button
+                type="button"
+                onClick={() => onOpenView('skill-passport')}
+                className="whitespace-nowrap shrink-0 px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-500/15 text-amber-800 dark:text-amber-300 hover:bg-amber-500/25 transition-colors cursor-pointer"
+              >
+                Skill Certificate
+              </button>
+            </div>
+            <a
+              href="#pathways"
+              className="whitespace-nowrap shrink-0 text-xs font-medium text-slate-700 dark:text-slate-300 hover:text-amber-700 dark:hover:text-amber-400 transition-colors"
+            >
               Pathways
             </a>
-            <button type="button" onClick={() => onOpenView('quiz')} className="hover:text-amber-700 transition-colors cursor-pointer">
-              Knowledge Test
-            </button>
-            <button type="button" onClick={() => onOpenView('ai-interview')} className="hover:text-amber-700 transition-colors cursor-pointer">
-              AI Interview
-            </button>
-            <button type="button" onClick={() => onOpenView('daily-challenge')} className="hover:text-amber-700 transition-colors cursor-pointer">
-              Daily Challenge
-            </button>
-            <button type="button" onClick={() => onOpenView('jobs')} className="hover:text-amber-700 transition-colors cursor-pointer">
+            <button
+              type="button"
+              onClick={() => onOpenView('jobs')}
+              className="whitespace-nowrap shrink-0 text-xs font-medium text-slate-700 dark:text-slate-300 hover:text-amber-700 dark:hover:text-amber-400 transition-colors cursor-pointer"
+            >
               Jobs
             </button>
-            <button type="button" onClick={() => onOpenView('skill-passport')} className="hover:text-amber-700 transition-colors cursor-pointer">
-              Skill Certificate
-            </button>
-            <button type="button" onClick={onScrollToGuidance} className="hover:text-amber-700 transition-colors cursor-pointer">
+            <button
+              type="button"
+              onClick={onScrollToGuidance}
+              className="whitespace-nowrap shrink-0 text-xs font-medium text-slate-700 dark:text-slate-300 hover:text-amber-700 dark:hover:text-amber-400 transition-colors cursor-pointer"
+            >
               Guidance
             </button>
           </nav>
 
-          <div className="hidden lg:flex items-center gap-2.5">
+          <div className="hidden lg:flex items-center gap-1.5 shrink-0">
             {learner?.email ? (
               <>
                 <button
                   type="button"
                   onClick={() => setAccountInfoOpen(true)}
-                  className="inline-flex items-center gap-1.5 shrink-0 whitespace-nowrap px-3.5 py-2 rounded-full text-xs font-bold border border-amber-600/50 bg-amber-500/10 text-amber-800 dark:text-amber-300 hover:bg-amber-500/20 transition-colors cursor-pointer"
+                  className="inline-flex items-center gap-1 shrink-0 whitespace-nowrap px-2.5 py-1.5 rounded-full text-xs font-semibold border border-amber-600/40 bg-amber-500/10 text-amber-800 dark:text-amber-300 hover:bg-amber-500/20 transition-colors cursor-pointer"
                   title="View Account Information"
                 >
-                  <UserCheck className="w-3.5 h-3.5" />
-                  <span className="max-w-[140px] truncate">{learner.name || learner.email}</span>
+                  <UserCheck className="w-3.5 h-3.5 shrink-0" />
+                  <span className="max-w-[90px] truncate">{learner.name || learner.email}</span>
                 </button>
                 <button
                   type="button"
@@ -216,9 +249,9 @@ export default function HomepageHub({
                     await signOutLearnerAccount();
                     if (typeof onSignOut === 'function') onSignOut();
                   }}
-                  className="inline-flex items-center gap-1 shrink-0 whitespace-nowrap px-3.5 py-2 rounded-full text-xs font-semibold border border-stone-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:border-amber-600 transition-colors cursor-pointer"
+                  className="inline-flex items-center gap-1 shrink-0 whitespace-nowrap px-2 py-1.5 rounded-full text-xs font-medium text-slate-600 dark:text-slate-300 hover:bg-stone-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
                 >
-                  <LogOut className="w-3.5 h-3.5" />
+                  <LogOut className="w-3.5 h-3.5 shrink-0" />
                   <span>Sign Out</span>
                 </button>
               </>
@@ -232,7 +265,7 @@ export default function HomepageHub({
                     setAuthNotice('');
                     setAuthModalOpen(true);
                   }}
-                  className="px-3.5 py-2 rounded-full text-xs font-semibold border border-stone-300 dark:border-slate-700 text-slate-800 dark:text-slate-200 hover:border-amber-600 dark:hover:border-amber-500 transition-colors cursor-pointer"
+                  className="whitespace-nowrap shrink-0 px-2.5 py-1.5 rounded-full text-xs font-semibold border border-stone-300 dark:border-slate-700 text-slate-800 dark:text-slate-200 hover:border-amber-600 dark:hover:border-amber-500 transition-colors cursor-pointer"
                 >
                   Log In
                 </button>
@@ -244,7 +277,7 @@ export default function HomepageHub({
                     setAuthNotice('');
                     setAuthModalOpen(true);
                   }}
-                  className="px-3.5 py-2 rounded-full text-xs font-bold border border-amber-600/60 text-amber-700 dark:text-amber-300 hover:bg-amber-500/10 transition-colors cursor-pointer"
+                  className="whitespace-nowrap shrink-0 px-2.5 py-1.5 rounded-full text-xs font-bold border border-amber-600/60 text-amber-700 dark:text-amber-300 hover:bg-amber-500/10 transition-colors cursor-pointer"
                 >
                   Create Account
                 </button>
@@ -252,7 +285,7 @@ export default function HomepageHub({
             )}
             <a
               href="#search-hub"
-              className="px-4 py-2 rounded-full text-xs font-semibold border border-stone-300 dark:border-slate-700 text-slate-800 dark:text-slate-200 hover:border-amber-600 dark:hover:border-amber-500 transition-colors"
+              className="whitespace-nowrap shrink-0 px-2.5 py-1.5 rounded-full text-xs font-semibold border border-stone-300 dark:border-slate-700 text-slate-800 dark:text-slate-200 hover:border-amber-600 dark:hover:border-amber-500 transition-colors"
             >
               Search
             </a>
@@ -261,14 +294,14 @@ export default function HomepageHub({
               onClick={toggleTheme}
               aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
               title={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
-              className="p-2 rounded-full border border-stone-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:border-amber-600 dark:hover:border-amber-500 transition-colors cursor-pointer"
+              className="shrink-0 p-1.5 rounded-full border border-stone-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:border-amber-600 dark:hover:border-amber-500 transition-colors cursor-pointer"
             >
-              {isDark ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4" />}
+              {isDark ? <Sun className="w-3.5 h-3.5 text-amber-400" /> : <Moon className="w-3.5 h-3.5" />}
             </button>
             <button
               type="button"
               onClick={() => onOpenView('contribute')}
-              className="px-4 py-2 rounded-full text-xs font-bold bg-amber-600 text-white hover:bg-amber-700 transition-colors cursor-pointer"
+              className="whitespace-nowrap shrink-0 px-3 py-1.5 rounded-full text-xs font-bold bg-amber-600 text-white hover:bg-amber-700 transition-colors cursor-pointer"
             >
               Recruiter Desk
             </button>
