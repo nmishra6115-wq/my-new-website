@@ -752,6 +752,7 @@ export default function HomepageHub({
       {/* Calm Multi-Column Footer */}
       <SupportDeveloperBanner />
       <footer className="border-t border-stone-200 bg-white text-slate-700 py-12">
+      <p className="mt-2 text-center text-xs text-slate-400">Developed & Designed By Nitesh Mishra</p>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-12 gap-8 text-sm">
           <div className="md:col-span-5 space-y-3">
             <AcademyBrandMark theme="light" />
