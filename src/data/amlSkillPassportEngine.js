@@ -240,7 +240,8 @@ export function savePassportState(state, detail = {}) {
 }
 
 export function recordActivityEvent(currentState, inputEvent) {
-  const sourceFeature = String(inputEvent?.sourceFeature || '').trim();
+  const rawFeature = String(inputEvent?.sourceFeature || '').trim();
+  const sourceFeature = rawFeature === 'ai-interview' ? 'ai_interview' : rawFeature;
   const externalEventId = String(inputEvent?.externalEventId || '').trim();
   if (!sourceFeature || !externalEventId) return { state: currentState, duplicate: false, newBadges: [] };
 
@@ -348,10 +349,12 @@ export function buildLinkedInShareText(badge, displayName = 'AMLDecode Learner',
 
 export function completeLearnerTask(inputEvent = {}, seedUser = null) {
   const current = loadPassportState(seedUser);
-  const baseXp = Math.max(25, Number(inputEvent?.xpAwarded ?? 35) || 35);
+  const rawFeat = String(inputEvent?.sourceFeature || 'learning_task').trim();
+  const normFeat = rawFeat === 'ai-interview' ? 'ai_interview' : rawFeat;
+  const baseXp = Math.max(30, Number(inputEvent?.xpAwarded ?? 35) || 35);
   const res = recordActivityEvent(current, {
     ...inputEvent,
-    sourceFeature: String(inputEvent?.sourceFeature || 'learning_task').trim(),
+    sourceFeature: normFeat,
     externalEventId:
       String(inputEvent?.externalEventId || '').trim() ||
       'task-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8),

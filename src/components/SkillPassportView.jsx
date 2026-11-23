@@ -623,25 +623,29 @@ export default function SkillPassportView({
         notify('Downloaded stylish PNG certificate card.');
       };
 
-      const dataUrl = canvas.toDataURL('image/png');
-      if (dataUrl && dataUrl.startsWith('data:image/png')) {
-        triggerDownload(dataUrl, false);
-        return;
-      }
-
       if (typeof canvas.toBlob === 'function') {
         canvas.toBlob((blob) => {
-          if (!blob) {
-            notify('Unable to export PNG card in this browser context.');
+          if (blob) {
+            const objectUrl = URL.createObjectURL(blob);
+            triggerDownload(objectUrl, true);
             return;
           }
-          const objectUrl = URL.createObjectURL(blob);
-          triggerDownload(objectUrl, true);
+          const dataUrl = canvas.toDataURL('image/png');
+          if (dataUrl && dataUrl.startsWith('data:image/png')) {
+            triggerDownload(dataUrl, false);
+          } else {
+            notify('Unable to export PNG card in this browser context.');
+          }
         }, 'image/png');
         return;
       }
 
-      notify('Unable to export PNG card in this browser context.');
+      const dataUrl = canvas.toDataURL('image/png');
+      if (dataUrl && dataUrl.startsWith('data:image/png')) {
+        triggerDownload(dataUrl, false);
+      } else {
+        notify('Unable to export PNG card in this browser context.');
+      }
     } catch {
       notify('Unable to export PNG card in this browser context.');
     }
