@@ -130,6 +130,10 @@ export default function SkillPassportView({
   }
 
   function handleEnablePublicShare(badgeCode) {
+    if (!activeBadgeObj.isEarned) {
+      notify('Complete this milestone first to unlock achievement card download, sharing, and verification.');
+      return;
+    }
     const displayName = ((passport.profile?.displayName && passport.profile.displayName !== 'AMLDecode Learner' ? passport.profile.displayName : (currentUser?.name ? String(currentUser.name).trim() : 'AMLDecode Learner'))).trim() || 'AMLDecode Learner';
     setPassport((prev) => {
       const existing = prev.publicShares?.[badgeCode];
@@ -176,6 +180,10 @@ export default function SkillPassportView({
   }
 
   async function handleCopyLinkedInText() {
+    if (!activeBadgeObj.isEarned) {
+      notify('Complete this milestone first to unlock achievement card download, sharing, and verification.');
+      return;
+    }
     const text = buildLinkedInShareText(activeBadgeObj, passport.profile?.displayName, activeVerifyUrl);
     try {
       if (typeof navigator !== 'undefined' && navigator.clipboard?.writeText) {
@@ -207,6 +215,10 @@ export default function SkillPassportView({
   }
 
   function handleOpenLinkedIn() {
+    if (!activeBadgeObj.isEarned) {
+      notify('Complete this milestone first to unlock achievement card download, sharing, and verification.');
+      return;
+    }
     const targetUrl = activeVerifyUrl || 'https://amldecode.in/skill-passport';
     const shareUrl = 'https://www.linkedin.com/sharing/share-offsite/?url=' + encodeURIComponent(targetUrl);
     if (typeof window !== 'undefined') {
@@ -216,6 +228,10 @@ export default function SkillPassportView({
   }
 
   function handleDownloadPngCard() {
+    if (!activeBadgeObj.isEarned) {
+      notify('Complete this milestone first to unlock achievement card download, sharing, and verification.');
+      return;
+    }
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
@@ -564,32 +580,41 @@ export default function SkillPassportView({
           </div>
 
           <div className="flex flex-col gap-2">
+            {!activeBadgeObj.isEarned && (
+              <p className="rounded-lg border border-amber-500/30 bg-amber-950/25 px-3 py-2 text-[11px] text-amber-200">
+                Locked badge: complete the milestone criteria to download the PNG card, share on LinkedIn, or generate a verification link.
+              </p>
+            )}
             <button
               type="button"
+              disabled={!activeBadgeObj.isEarned}
               onClick={handleDownloadPngCard}
-              className="w-full rounded-lg bg-blue-600 px-3.5 py-2 text-xs font-semibold text-white hover:bg-blue-500"
+              className="w-full rounded-lg bg-blue-600 px-3.5 py-2 text-xs font-semibold text-white hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-blue-600"
             >
               Download Achievement Card (PNG)
             </button>
             <button
               type="button"
+              disabled={!activeBadgeObj.isEarned}
               onClick={handleCopyLinkedInText}
-              className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3.5 py-2 text-xs font-medium text-slate-100 hover:bg-slate-800"
+              className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3.5 py-2 text-xs font-medium text-slate-100 hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-slate-950"
             >
               Copy LinkedIn Post Text
             </button>
             <button
               type="button"
+              disabled={!activeBadgeObj.isEarned}
               onClick={handleOpenLinkedIn}
-              className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3.5 py-2 text-xs font-medium text-slate-100 hover:bg-slate-800"
+              className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3.5 py-2 text-xs font-medium text-slate-100 hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-slate-950"
             >
               Open LinkedIn Share Dialog
             </button>
             {!activeVerifyUrl ? (
               <button
                 type="button"
+                disabled={!activeBadgeObj.isEarned}
                 onClick={() => handleEnablePublicShare(activeBadgeObj.badgeCode)}
-                className="w-full rounded-lg border border-blue-500/50 bg-blue-950/30 px-3.5 py-2 text-xs font-medium text-blue-200 hover:bg-blue-950/50"
+                className="w-full rounded-lg border border-blue-500/50 bg-blue-950/30 px-3.5 py-2 text-xs font-medium text-blue-200 hover:bg-blue-950/50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-blue-950/30"
               >
                 Generate Public Verification Link
               </button>
