@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+﻿import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   SKILL_CATEGORIES,
   BADGE_CATALOG,
@@ -724,14 +724,14 @@ export default function SkillPassportView({
   const earnedSet = new Set((passport.earnedBadges || []).map((b) => b.badgeCode));
 
   return (
-    <section aria-label="AMLDecode Skill Certificate" className="max-w-6xl mx-auto px-4 py-8 text-slate-900 dark:text-slate-100 space-y-6">
+    <section aria-label="AMLDecode Skill Certificate" className="max-w-6xl mx-auto px-3 sm:px-4 py-5 sm:py-8 overflow-x-hidden text-slate-100 space-y-4 sm:space-y-6">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-5">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white" style={{ color: "#0f172a" }}>AMLDecode Skill Certificate</h1>
-          <p className="text-sm sm:text-base text-slate-700 dark:text-slate-300 mt-1" style={{ color: "#334155" }}>
+          <h1 className="text-2xl sm:text-3xl font-bold text-white">AMLDecode Skill Certificate</h1>
+          <p className="text-xs sm:text-base text-slate-300 mt-1">
             Track your AML knowledge, build practical skills and showcase your learning achievements.
           </p>
-          <p className="text-xs text-slate-600 dark:text-slate-400 mt-1.5" style={{ color: "#475569" }}>
+          <p className="text-[11px] sm:text-xs text-slate-400 mt-1.5">
             Educational learning indicator based on completed AMLDecode activities. Not a professional license, accredited certification, or hiring predictor.
           </p>
         </div>
