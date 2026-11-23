@@ -10,6 +10,7 @@ import {
   buildLinkedInShareText,
   generateVerificationToken,
   createEmptyPassportState,
+  awardBadgeByCode,
 } from '../data/amlSkillPassportEngine';
 
 export default function SkillPassportView({
@@ -258,6 +259,18 @@ export default function SkillPassportView({
       return next;
     });
     notify('Skill Certificate profile preferences saved.');
+  }
+
+  function handleCompleteBadgeTask(badgeCode) {
+    const targetCode = badgeCode || activeBadgeObj?.badgeCode || BADGE_CATALOG[0].badgeCode;
+    const res = awardBadgeByCode(targetCode, currentUser);
+    setPassport(res.state);
+    setSelectedBadgeCode(targetCode);
+    if (res.newBadges?.length) {
+      notify(`Completed & unlocked "${res.newBadges[0].name}" — XP updated!`);
+    } else {
+      notify('Badge is already marked as completed and unlocked.');
+    }
   }
 
   function handleEnablePublicShare(badgeCode) {
@@ -608,12 +621,39 @@ export default function SkillPassportView({
     ctx.textAlign = 'left';
 
     try {
+      const fileName = 'amldecode-' + (activeBadgeObj.badgeCode || 'achievement') + '-certificate.png';
+      const triggerDownload = (href, revokeAfter = false) => {
+        const link = document.createElement('a');
+        link.download = fileName;
+        link.href = href;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        if (revokeAfter) {
+          setTimeout(() => URL.revokeObjectURL(href), 1500);
+        }
+        notify('Downloaded stylish PNG certificate card.');
+      };
+
       const dataUrl = canvas.toDataURL('image/png');
-      const link = document.createElement('a');
-      link.download = 'amldecode-' + (activeBadgeObj.badgeCode || 'achievement') + '-certificate.png';
-      link.href = dataUrl;
-      link.click();
-      notify('Downloaded stylish PNG certificate card.');
+      if (dataUrl && dataUrl.startsWith('data:image/png')) {
+        triggerDownload(dataUrl, false);
+        return;
+      }
+
+      if (typeof canvas.toBlob === 'function') {
+        canvas.toBlob((blob) => {
+          if (!blob) {
+            notify('Unable to export PNG card in this browser context.');
+            return;
+          }
+          const objectUrl = URL.createObjectURL(blob);
+          triggerDownload(objectUrl, true);
+        }, 'image/png');
+        return;
+      }
+
+      notify('Unable to export PNG card in this browser context.');
     } catch {
       notify('Unable to export PNG card in this browser context.');
     }
@@ -979,6 +1019,15 @@ export default function SkillPassportView({
                   );
                 })()}
               </div>
+            )}
+            {!activeBadgeObj.isEarned && (
+              <button
+                type="button"
+                onClick={() => handleCompleteBadgeTask(activeBadgeObj.badgeCode)}
+                className="w-full rounded-lg bg-emerald-600 px-3.5 py-2 text-xs font-semibold text-white hover:bg-emerald-500 cursor-pointer"
+              >
+                Mark Milestone Completed & Unlock Badge
+              </button>
             )}
             <button
               type="button"
