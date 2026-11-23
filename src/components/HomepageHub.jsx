@@ -492,8 +492,10 @@ export default function HomepageHub({
                           key={n.idx}
                           type="button"
                           onClick={() => {
-                            runWithAccount(() => onSelectNoteIndex(n.idx)))
-                            onOpenView('notes');
+                            runWithAccount(() => {
+                              onSelectNoteIndex(n.idx);
+                              onOpenView('notes');
+                            });
                           }}
                           className="text-left p-3.5 rounded-xl bg-[#F8F7F4] border border-stone-200 hover:border-amber-600/50 transition-colors cursor-pointer"
                         >
@@ -583,7 +585,7 @@ export default function HomepageHub({
                 key={p.label}
                 type="button"
                 onClick={() => {
-                  runWithAccount(() => onSelectNoteIndex(p.noteIndex)))
+                  runWithAccount(() => onSelectNoteIndex(p.noteIndex))
                   onOpenView('notes');
                 }}
                 className="rounded-2xl bg-white p-5 border border-stone-200 hover:border-amber-600/60 shadow-2xs text-left flex flex-col justify-between gap-3 transition-all cursor-pointer"
@@ -619,7 +621,7 @@ export default function HomepageHub({
                   <button
                     type="button"
                     onClick={() => {
-                      runWithAccount(() => onSelectNoteIndex(idx)))
+                      runWithAccount(() => onSelectNoteIndex(idx))
                       onOpenView('notes');
                     }}
                     className="mt-4 text-left text-xs font-bold text-amber-800 hover:underline cursor-pointer"
@@ -671,7 +673,7 @@ export default function HomepageHub({
           <DailyChallengeCard
             compact
             onOpenRelatedNote={(noteIdx) => {
-              runWithAccount(() => onSelectNoteIndex(noteIdx)))
+              runWithAccount(() => onSelectNoteIndex(noteIdx))
               onOpenView('notes');
             }}
             onOpenKnowledgeTest={() => onOpenView('quiz')}
