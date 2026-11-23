@@ -358,6 +358,40 @@ export default function SkillPassportView({
     notify('Opened LinkedIn sharing dialog. Paste your copied post text if desired.');
   }
 
+  function drawWrappedCanvasText(ctx, text, x, y, maxWidth, lineHeight, maxLines = 3) {
+    const words = String(text || '').split(/s+/).filter(Boolean);
+    if (!words.length) return y;
+    const lines = [];
+    let current = words[0];
+
+    for (let i = 1; i < words.length; i += 1) {
+      const test = current + ' ' + words[i];
+      if (ctx.measureText(test).width <= maxWidth) {
+        current = test;
+      } else {
+        lines.push(current);
+        current = words[i];
+        if (lines.length === maxLines) break;
+      }
+    }
+    if (lines.length < maxLines && current) {
+      lines.push(current);
+    }
+
+    lines.forEach((line, idx) => {
+      let out = line;
+      if (idx === maxLines - 1 && words.length > 0 && ctx.measureText(out).width > maxWidth) {
+        while (out.length > 3 && ctx.measureText(out + '...').width > maxWidth) {
+          out = out.slice(0, -1);
+        }
+        out += '...';
+      }
+      ctx.fillText(out, x, y + idx * lineHeight);
+    });
+
+    return y + lines.length * lineHeight;
+  }
+
   function handleDownloadPngCard() {
     if (!activeBadgeObj.isEarned) {
       notify('Complete this milestone first to unlock achievement card download, sharing, and verification.');
@@ -368,65 +402,212 @@ export default function SkillPassportView({
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    const w = 960;
-    const h = 500;
+    const w = 1200;
+    const h = 675;
     canvas.width = w;
     canvas.height = h;
 
-    ctx.fillStyle = '#0b1220';
+    // Deep midnight navy & slate background gradient
+    const bgGrad = ctx.createLinearGradient(0, 0, w, h);
+    bgGrad.addColorStop(0, '#070e1c');
+    bgGrad.addColorStop(0.55, '#0c182e');
+    bgGrad.addColorStop(1, '#081122');
+    ctx.fillStyle = bgGrad;
     ctx.fillRect(0, 0, w, h);
 
-    ctx.strokeStyle = '#2563eb';
+    // Subtle radial spotlight behind certificate center
+    const glow = ctx.createRadialGradient(w * 0.42, h * 0.45, 30, w * 0.42, h * 0.45, 520);
+    glow.addColorStop(0, 'rgba(196, 167, 125, 0.11)');
+    glow.addColorStop(0.6, 'rgba(37, 99, 235, 0.06)');
+    glow.addColorStop(1, 'rgba(7, 14, 28, 0)');
+    ctx.fillStyle = glow;
+    ctx.fillRect(0, 0, w, h);
+
+    // Subtle decorative corner grid lines
+    ctx.strokeStyle = 'rgba(148, 163, 184, 0.06)';
+    ctx.lineWidth = 1;
+    for (let gx = 64; gx < w - 64; gx += 48) {
+      ctx.beginPath();
+      ctx.moveTo(gx, 36);
+      ctx.lineTo(gx, h - 36);
+      ctx.stroke();
+    }
+    for (let gy = 64; gy < h - 64; gy += 48) {
+      ctx.beginPath();
+      ctx.moveTo(36, gy);
+      ctx.lineTo(w - 36, gy);
+      ctx.stroke();
+    }
+
+    // Outer gold border & inner hairline frame
+    ctx.strokeStyle = '#c4a77d';
     ctx.lineWidth = 3;
-    ctx.strokeRect(20, 20, w - 40, h - 40);
+    ctx.strokeRect(28, 28, w - 56, h - 56);
 
-    ctx.fillStyle = '#60a5fa';
-    ctx.font = 'bold 20px sans-serif';
-    ctx.fillText('AMLDECODE SKILL CERTIFICATE', 56, 72);
+    ctx.strokeStyle = 'rgba(196, 167, 125, 0.35)';
+    ctx.lineWidth = 1.25;
+    ctx.strokeRect(42, 42, w - 84, h - 84);
 
+    // Corner L-brackets in warm gold
+    const bracketLen = 28;
+    ctx.strokeStyle = '#e2c799';
+    ctx.lineWidth = 4;
+    const corners = [
+      [42, 42, 1, 1],
+      [w - 42, 42, -1, 1],
+      [42, h - 42, 1, -1],
+      [w - 42, h - 42, -1, -1],
+    ];
+    for (const [cx, cy, dx, dy] of corners) {
+      ctx.beginPath();
+      ctx.moveTo(cx + dx * bracketLen, cy);
+      ctx.lineTo(cx, cy);
+      ctx.lineTo(cx, cy + dy * bracketLen);
+      ctx.stroke();
+    }
+
+    // Top-left header & category badge
+    ctx.fillStyle = '#e2c799';
+    ctx.font = 'bold 17px sans-serif';
+    ctx.fillText('AMLDECODE  ·  SKILL CERTIFICATE', 78, 92);
+
+    const catTag = String(activeBadgeObj.category || 'ACHIEVEMENT').toUpperCase();
+    ctx.fillStyle = 'rgba(196, 167, 125, 0.16)';
+    ctx.fillRect(78, 110, Math.max(130, ctx.measureText(catTag).width + 32), 28);
+    ctx.strokeStyle = 'rgba(196, 167, 125, 0.45)';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(78, 110, Math.max(130, ctx.measureText(catTag).width + 32), 28);
+    ctx.fillStyle = '#f3dfc1';
+    ctx.font = 'bold 12px sans-serif';
+    ctx.fillText(catTag, 94, 128);
+
+    // Gold horizontal rule
+    const ruleGrad = ctx.createLinearGradient(78, 158, 760, 158);
+    ruleGrad.addColorStop(0, 'rgba(196, 167, 125, 0.85)');
+    ruleGrad.addColorStop(1, 'rgba(196, 167, 125, 0.08)');
+    ctx.strokeStyle = ruleGrad;
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(78, 158);
+    ctx.lineTo(760, 158);
+    ctx.stroke();
+
+    // Certificate recipient & title
     ctx.fillStyle = '#94a3b8';
-    ctx.font = '15px sans-serif';
-    ctx.fillText('Educational Platform Achievement (Not a Professional License or Accreditation)', 56, 100);
+    ctx.font = 'bold 13px sans-serif';
+    ctx.fillText('THIS CERTIFICATE IS AWARDED TO', 78, 200);
 
-    ctx.fillStyle = '#f8fafc';
-    ctx.font = 'bold 34px sans-serif';
-    ctx.fillText(String(activeBadgeObj.name || 'AMLDecode Achievement'), 56, 185);
+    const learner = ((passport.profile?.displayName && passport.profile.displayName !== 'AMLDecode Learner' ? passport.profile.displayName : (currentUser?.name ? String(currentUser.name).trim() : 'AMLDecode Learner'))).trim();
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 42px Georgia, serif';
+    ctx.fillText(learner, 78, 248);
 
     ctx.fillStyle = '#cbd5e1';
-    ctx.font = '20px sans-serif';
-    const learner = ((passport.profile?.displayName && passport.profile.displayName !== 'AMLDecode Learner' ? passport.profile.displayName : (currentUser?.name ? String(currentUser.name).trim() : 'AMLDecode Learner'))).trim();
-    ctx.fillText('Learner: ' + learner, 56, 240);
-
-    const dateLabel = activeBadgeObj.awardedDate ? 'Earned: ' + activeBadgeObj.awardedDate + ' (IST)' : 'Status: In Progress / Milestone Target';
-    ctx.fillStyle = '#93c5fd';
     ctx.font = '18px sans-serif';
-    ctx.fillText(dateLabel, 56, 280);
+    ctx.fillText('for completing the verified learning milestone', 78, 286);
 
-    ctx.fillStyle = '#e2e8f0';
-    ctx.font = '17px sans-serif';
-    const criteriaText = 'Criteria: ' + String(activeBadgeObj.criteriaSummary || activeBadgeObj.description || '');
-    ctx.fillText(criteriaText.slice(0, 92), 56, 330);
-    if (criteriaText.length > 92) {
-      ctx.fillText(criteriaText.slice(92, 184), 56, 356);
-    }
+    ctx.fillStyle = '#60a5fa';
+    ctx.font = 'bold 34px Georgia, serif';
+    const badgeNameY = drawWrappedCanvasText(
+      ctx,
+      String(activeBadgeObj.name || 'AMLDecode Achievement'),
+      78,
+      334,
+      680,
+      42,
+      2
+    );
+
+    // Criteria & earned date metadata block
+    const dateLabel = activeBadgeObj.awardedDate
+      ? 'Awarded: ' + activeBadgeObj.awardedDate + ' (IST)'
+      : 'Status: Verified Milestone';
+    ctx.fillStyle = '#86efac';
+    ctx.font = 'bold 16px sans-serif';
+    ctx.fillText(dateLabel, 78, badgeNameY + 18);
+
+    ctx.fillStyle = '#cbd5e1';
+    ctx.font = '16px sans-serif';
+    const criteriaText = 'Milestone Criteria: ' + String(activeBadgeObj.criteriaSummary || activeBadgeObj.description || '');
+    const afterCriteriaY = drawWrappedCanvasText(ctx, criteriaText, 78, badgeNameY + 48, 680, 24, 2);
 
     if (activeVerifyUrl) {
-      ctx.fillStyle = '#38bdf8';
-      ctx.font = '15px sans-serif';
-      ctx.fillText('Verify: ' + activeVerifyUrl.slice(0, 95), 56, 412);
+      ctx.fillStyle = '#7dd3fc';
+      ctx.font = '14px sans-serif';
+      drawWrappedCanvasText(ctx, 'Verification: ' + activeVerifyUrl, 78, afterCriteriaY + 12, 760, 20, 1);
     }
 
-    ctx.fillStyle = '#64748b';
-    ctx.font = '14px sans-serif';
-    ctx.fillText('amldecode.in', 56, 448);
+    // Right-side ornamental seal / emblem panel
+    const sealX = 965;
+    const sealY = 325;
+    const sealR = 112;
+
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(sealX, sealY, sealR + 12, 0, Math.PI * 2);
+    ctx.strokeStyle = 'rgba(196, 167, 125, 0.28)';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([7, 6]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    const sealGrad = ctx.createLinearGradient(sealX - sealR, sealY - sealR, sealX + sealR, sealY + sealR);
+    sealGrad.addColorStop(0, '#172846');
+    sealGrad.addColorStop(1, '#0d172a');
+    ctx.fillStyle = sealGrad;
+    ctx.beginPath();
+    ctx.arc(sealX, sealY, sealR, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = '#c4a77d';
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.arc(sealX, sealY, sealR - 12, 0, Math.PI * 2);
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = 'rgba(226, 199, 153, 0.45)';
+    ctx.stroke();
+
+    ctx.fillStyle = '#e2c799';
+    ctx.font = 'bold 13px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('AMLDECODE', sealX, sealY - 26);
+
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 20px Georgia, serif';
+    ctx.fillText('VERIFIED', sealX, sealY + 4);
+
+    ctx.fillStyle = '#93c5fd';
+    ctx.font = 'bold 12px sans-serif';
+    ctx.fillText('LEARNING', sealX, sealY + 28);
+    ctx.fillText('MILESTONE', sealX, sealY + 45);
+    ctx.restore();
+
+    // Footer bar
+    ctx.strokeStyle = 'rgba(148, 163, 184, 0.2)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(78, h - 82);
+    ctx.lineTo(w - 78, h - 82);
+    ctx.stroke();
+
+    ctx.fillStyle = '#94a3b8';
+    ctx.font = '13px sans-serif';
+    ctx.fillText('Educational learning indicator · Not a professional license, accredited certification, or hiring predictor.', 78, h - 52);
+
+    ctx.fillStyle = '#e2c799';
+    ctx.font = 'bold 14px sans-serif';
+    ctx.textAlign = 'right';
+    ctx.fillText('amldecode.in', w - 78, h - 52);
+    ctx.textAlign = 'left';
 
     try {
       const dataUrl = canvas.toDataURL('image/png');
       const link = document.createElement('a');
-      link.download = 'amldecode-' + (activeBadgeObj.badgeCode || 'achievement') + '.png';
+      link.download = 'amldecode-' + (activeBadgeObj.badgeCode || 'achievement') + '-certificate.png';
       link.href = dataUrl;
       link.click();
-      notify('Downloaded PNG achievement card.');
+      notify('Downloaded stylish PNG certificate card.');
     } catch {
       notify('Unable to export PNG card in this browser context.');
     }
