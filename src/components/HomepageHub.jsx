@@ -8,6 +8,7 @@ import { Sun, Moon, UserCheck, LogOut, X } from 'lucide-react';
 import { signUpWithEmailPassword, signInWithEmailPassword, signOutLearnerAccount } from '../data/supabaseAuthSync';
 import { useThemeMode } from '../hooks/useThemeMode';
 import BannerAd468 from './BannerAd468';
+import SupportDeveloperBanner from './SupportDeveloperBanner';
 
 const PATHWAY_MATCHERS = [
   { label: 'AML Fundamentals', keywords: ['aml', 'money laundering'] },
@@ -749,6 +750,7 @@ export default function HomepageHub({
       </main>
 
       {/* Calm Multi-Column Footer */}
+      <SupportDeveloperBanner />
       <footer className="border-t border-stone-200 bg-white text-slate-700 py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-12 gap-8 text-sm">
           <div className="md:col-span-5 space-y-3">
