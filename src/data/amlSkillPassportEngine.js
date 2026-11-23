@@ -213,7 +213,23 @@ export function loadPassportState(seedUser = null) {
       ...parsed,
       profile: { ...base.profile, ...(parsed.profile || {}) },
       stats: { ...base.stats, ...(parsed.stats || {}) },
-      categories: { ...base.categories, ...(parsed.categories || {}) },
+      categories: Object.fromEntries(
+        Object.keys(base.categories).map((k) => {
+          const bCat = base.categories[k] || {};
+          const pCat = (parsed.categories && parsed.categories[k]) || {};
+          return [
+            k,
+            {
+              ...bCat,
+              ...pCat,
+              score: Number(pCat.score ?? bCat.score ?? 0) || 0,
+              activitiesCount: Number(pCat.activitiesCount ?? bCat.activitiesCount ?? 0) || 0,
+              questionsCount: Number(pCat.questionsCount ?? bCat.questionsCount ?? 0) || 0,
+              correctCount: Number(pCat.correctCount ?? bCat.correctCount ?? 0) || 0,
+            },
+          ];
+        })
+      ),
       events: Array.isArray(parsed.events) ? parsed.events : [],
       earnedBadges: Array.isArray(parsed.earnedBadges) ? parsed.earnedBadges : [],
       publicShares: parsed.publicShares && typeof parsed.publicShares === 'object' ? parsed.publicShares : {},

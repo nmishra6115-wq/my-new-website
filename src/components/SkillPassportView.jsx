@@ -150,13 +150,17 @@ export default function SkillPassportView({
       const qCount = Number(cat.questionsCount || 0);
       const cCount = Number(cat.correctCount || 0);
       const target = Math.max(1, Number(rule.minQuestions || 1));
+      const minAcc = Number(rule.minAccuracy || 80);
       const acc = qCount > 0 ? Math.round((cCount / qCount) * 100) : 0;
-      const pct = Math.min(100, Math.round((qCount / target) * 100));
+      const countRatio = Math.min(1, qCount / target);
+      const accRatio = qCount > 0 ? Math.min(1, acc / Math.max(1, minAcc)) : 0;
+      const meetsBoth = qCount >= target && acc >= minAcc;
+      const pct = meetsBoth ? 100 : Math.min(99, Math.round(((countRatio * 0.7) + (accRatio * 0.3)) * 100));
       return {
         current: Math.min(qCount, target),
         target,
         percent: pct,
-        label: `${Math.min(qCount, target)}/${target} questions (${acc}% acc · need ${rule.minAccuracy || 80}%)`,
+        label: `${Math.min(qCount, target)}/${target} questions (${acc}% acc · need ${minAcc}%)`,
       };
     }
 
