@@ -53,6 +53,7 @@ export default function InterviewSetupModal({
       role,
       experienceLevel,
       questionCount,
+      interviewMode,
     });
   };
 
