@@ -10,7 +10,6 @@ import {
   buildLinkedInShareText,
   generateVerificationToken,
   createEmptyPassportState,
-  awardBadgeByCode,
 } from '../data/amlSkillPassportEngine';
 
 export default function SkillPassportView({
@@ -261,17 +260,6 @@ export default function SkillPassportView({
     notify('Skill Certificate profile preferences saved.');
   }
 
-  function handleCompleteBadgeTask(badgeCode) {
-    const targetCode = badgeCode || activeBadgeObj?.badgeCode || BADGE_CATALOG[0].badgeCode;
-    const res = awardBadgeByCode(targetCode, currentUser);
-    setPassport(res.state);
-    setSelectedBadgeCode(targetCode);
-    if (res.newBadges?.length) {
-      notify(`Completed & unlocked "${res.newBadges[0].name}" — XP updated!`);
-    } else {
-      notify('Badge is already marked as completed and unlocked.');
-    }
-  }
 
   function handleEnablePublicShare(badgeCode) {
     if (!activeBadgeObj.isEarned) {
@@ -1019,15 +1007,6 @@ export default function SkillPassportView({
                   );
                 })()}
               </div>
-            )}
-            {!activeBadgeObj.isEarned && (
-              <button
-                type="button"
-                onClick={() => handleCompleteBadgeTask(activeBadgeObj.badgeCode)}
-                className="w-full rounded-lg bg-emerald-600 px-3.5 py-2 text-xs font-semibold text-white hover:bg-emerald-500 cursor-pointer"
-              >
-                Mark Milestone Completed & Unlock Badge
-              </button>
             )}
             <button
               type="button"
