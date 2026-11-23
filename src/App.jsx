@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './design-tokens.css';
 import { supabase } from './supabaseClient';
 import { upsertKt2Learner, fetchKt2Attempts, insertKt2Attempt } from './data/kt2SupabaseSync';
+import { applyLearnerNameToPassport, recordAccountInSupabase } from './data/supabaseAuthSync';
 import SkillPassportView from './components/SkillPassportView';
 import { notesContent, privacyPolicy, termsOfService, faqData, contactContent } from './content';
 import { kycNews } from './news';
@@ -155,14 +156,70 @@ const LEARNER_STORAGE_KEY = 'amldecode_kt2_learner_v1';
       launchAssessmentWithConfig(config);
     };
   
-      const handleLoginSuccess = (profile, configToStart) => {
+      useEffect(() => {
+    let active = true;
+    supabase.auth.getSession().then(({ data }) => {
+      if (!active) return;
+      const user = data?.session?.user;
+      if (user?.email) {
+        const fullName =
+          user.user_metadata?.full_name ||
+          user.user_metadata?.name ||
+          user.email.split('@')[0] ||
+          'Learner';
+        const profile = {
+          id: user.id,
+          name: fullName,
+          email: user.email.toLowerCase(),
+          loggedInAt: new Date().toISOString(),
+        };
+        setLearner(profile);
+        try {
+          window.localStorage.setItem(LEARNER_STORAGE_KEY, JSON.stringify(profile));
+        } catch {}
+        applyLearnerNameToPassport(fullName, profile.email);
+        recordAccountInSupabase({ fullName, email: profile.email, authUserId: user.id });
+      }
+    });
+
+    const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!active) return;
+      const user = session?.user;
+      if (user?.email) {
+        const fullName =
+          user.user_metadata?.full_name ||
+          user.user_metadata?.name ||
+          user.email.split('@')[0] ||
+          'Learner';
+        const profile = {
+          id: user.id,
+          name: fullName,
+          email: user.email.toLowerCase(),
+          loggedInAt: new Date().toISOString(),
+        };
+        setLearner(profile);
+        try {
+          window.localStorage.setItem(LEARNER_STORAGE_KEY, JSON.stringify(profile));
+        } catch {}
+        applyLearnerNameToPassport(fullName, profile.email);
+      }
+    });
+
+    return () => {
+      active = false;
+      authListener?.subscription?.unsubscribe();
+    };
+  }, []);
+
+  const handleLoginSuccess = (profile, configToStart) => {
     setLearner(profile);
     try {
       window.localStorage.setItem(LEARNER_STORAGE_KEY, JSON.stringify(profile));
     } catch {
       // Ignore storage quota errors
     }
-    upsertKt2Learner(profile);
+    applyLearnerNameToPassport(profile.name, profile.email);
+    recordAccountInSupabase({ fullName: profile.name, email: profile.email, authUserId: profile.id || null });
     fetchKt2Attempts(profile.email).then((remoteAttempts) => {
       if (Array.isArray(remoteAttempts) && remoteAttempts.length > 0) {
         setRecentAttempts(remoteAttempts);

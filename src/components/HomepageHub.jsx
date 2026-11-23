@@ -4,7 +4,8 @@ import DailyChallengeCard from './DailyChallengeCard';
 import { notesContent, faqData } from '../content';
 import { jobOpenings } from '../jobs';
 import { kycNews } from '../news';
-import { Sun, Moon } from 'lucide-react';
+import { Sun, Moon, UserCheck, LogOut, X } from 'lucide-react';
+import { signUpWithEmailPassword, signInWithEmailPassword, signOutLearnerAccount } from '../data/supabaseAuthSync';
 import { useThemeMode } from '../hooks/useThemeMode';
 import BannerAd468 from './BannerAd468';
 
@@ -25,10 +26,60 @@ export default function HomepageHub({
   onOpenView,
   onSelectNoteIndex,
   onScrollToGuidance,
+  learner = null,
+  onAuthSuccess = null,
+  onSignOut = null,
 }) {
   const { isDark, toggleTheme } = useThemeMode();
   const [searchQuery, setSearchQuery] = useState('');
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [authMode, setAuthMode] = useState('signup');
+  const [authName, setAuthName] = useState(learner?.name || '');
+  const [authEmail, setAuthEmail] = useState(learner?.email || '');
+  const [authPassword, setAuthPassword] = useState('');
+  const [authBusy, setAuthBusy] = useState(false);
+  const [authError, setAuthError] = useState('');
+  const [authNotice, setAuthNotice] = useState('');
+
+  async function handleAuthSubmit(e) {
+    e.preventDefault();
+    setAuthError('');
+    setAuthNotice('');
+    setAuthBusy(true);
+    try {
+      const res =
+        authMode === 'signup'
+          ? await signUpWithEmailPassword({
+              fullName: authName,
+              email: authEmail,
+              password: authPassword,
+            })
+          : await signInWithEmailPassword({
+              fullName: authName,
+              email: authEmail,
+              password: authPassword,
+            });
+
+      if (res.error) {
+        setAuthError(res.error);
+        return;
+      }
+
+      if (typeof onAuthSuccess === 'function' && res.profile) {
+        onAuthSuccess(res.profile);
+      }
+
+      if (res.needsEmailConfirmation) {
+        setAuthNotice('Account created! Check your inbox to confirm your email if confirmation is enabled in Supabase. Your name is set for your certificate.');
+      } else {
+        setAuthModalOpen(false);
+        setAuthPassword('');
+      }
+    } finally {
+      setAuthBusy(false);
+    }
+  }
 
   const pathways = useMemo(() => {
     return PATHWAY_MATCHERS.map((p) => {
@@ -597,6 +648,122 @@ export default function HomepageHub({
           </div>
         </div>
       </footer>
-    </div>
+    
+      {authModalOpen && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label="Learner Account Sign Up or Log In"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-xs p-4"
+        >
+          <div className="w-full max-w-md rounded-2xl bg-white dark:bg-slate-900 border border-stone-200 dark:border-slate-800 p-6 shadow-2xl space-y-5">
+            <div className="flex items-start justify-between gap-3 border-b border-stone-200 dark:border-slate-800 pb-4">
+              <div>
+                <p className="text-[11px] font-bold uppercase tracking-widest text-amber-600 dark:text-amber-400">
+                  AMLDecode Learner Account
+                </p>
+                <h2 className="text-xl font-extrabold text-slate-900 dark:text-white mt-1">
+                  {authMode === 'signup' ? 'Create Your Account' : 'Log In to Your Account'}
+                </h2>
+                <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
+                  Your name is mapped directly to your Skill Certificate and saved to Supabase.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setAuthModalOpen(false)}
+                aria-label="Close account dialog"
+                className="p-1.5 rounded-lg border border-stone-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-stone-100 dark:hover:bg-slate-800 cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="grid grid-cols-2 gap-2 rounded-xl bg-stone-100 dark:bg-slate-950 p-1">
+              <button
+                type="button"
+                onClick={() => { setAuthMode('signup'); setAuthError(''); setAuthNotice(''); }}
+                className={`rounded-lg py-1.5 text-xs font-bold transition cursor-pointer ${authMode === 'signup' ? 'bg-amber-600 text-white' : 'text-slate-600 dark:text-slate-300'}`}
+              >
+                Sign Up
+              </button>
+              <button
+                type="button"
+                onClick={() => { setAuthMode('login'); setAuthError(''); setAuthNotice(''); }}
+                className={`rounded-lg py-1.5 text-xs font-bold transition cursor-pointer ${authMode === 'login' ? 'bg-amber-600 text-white' : 'text-slate-600 dark:text-slate-300'}`}
+              >
+                Log In
+              </button>
+            </div>
+
+            <form onSubmit={handleAuthSubmit} className="space-y-3.5">
+              {authMode === 'signup' && (
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                    Full Name (Shown on Certificate)
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={authName}
+                    onChange={(e) => setAuthName(e.target.value)}
+                    placeholder="e.g., Shreya Sagar"
+                    className="w-full rounded-xl bg-stone-50 dark:bg-slate-950 border border-stone-300 dark:border-slate-700 px-3.5 py-2.5 text-sm text-slate-900 dark:text-white focus:outline-none focus:border-amber-600"
+                  />
+                </div>
+              )}
+
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                  Email Address
+                </label>
+                <input
+                  type="email"
+                  required
+                  value={authEmail}
+                  onChange={(e) => setAuthEmail(e.target.value)}
+                  placeholder="you@example.com"
+                  className="w-full rounded-xl bg-stone-50 dark:bg-slate-950 border border-stone-300 dark:border-slate-700 px-3.5 py-2.5 text-sm text-slate-900 dark:text-white focus:outline-none focus:border-amber-600"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                  Password
+                </label>
+                <input
+                  type="password"
+                  required
+                  minLength={6}
+                  value={authPassword}
+                  onChange={(e) => setAuthPassword(e.target.value)}
+                  placeholder="At least 6 characters"
+                  className="w-full rounded-xl bg-stone-50 dark:bg-slate-950 border border-stone-300 dark:border-slate-700 px-3.5 py-2.5 text-sm text-slate-900 dark:text-white focus:outline-none focus:border-amber-600"
+                />
+              </div>
+
+              {authError && (
+                <p role="alert" className="text-xs font-medium text-rose-500">
+                  {authError}
+                </p>
+              )}
+              {authNotice && (
+                <p className="text-xs font-medium text-emerald-500">
+                  {authNotice}
+                </p>
+              )}
+
+              <button
+                type="submit"
+                disabled={authBusy}
+                className="w-full rounded-xl bg-amber-600 hover:bg-amber-700 disabled:opacity-60 py-2.5 text-xs font-extrabold uppercase tracking-wider text-white transition cursor-pointer"
+              >
+                {authBusy ? 'Please wait...' : authMode === 'signup' ? 'Create Account & Continue' : 'Log In & Continue'}
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
+</div>
   );
 }
