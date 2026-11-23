@@ -474,22 +474,6 @@ export default function SkillPassportView({
             Educational learning indicator based on completed AMLDecode activities. Not a professional license, accredited certification, or hiring predictor.
           </p>
         </div>
-        <div className="flex flex-wrap items-center gap-2">
-          <button
-            type="button"
-            onClick={handleExportJson}
-            className="rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-xs font-medium text-slate-200 hover:bg-slate-800"
-          >
-            Export JSON
-          </button>
-          <button
-            type="button"
-            onClick={handleResetLocalPassport}
-            className="rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-xs font-medium text-slate-300 hover:bg-slate-800"
-          >
-            Reset Local Data
-          </button>
-        </div>
       </div>
 
       {statusNotice && (
