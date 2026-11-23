@@ -103,6 +103,99 @@ export default function SkillPassportView({
     return { ...catalogItem, isEarned: false, awardedDate: null, revoked: false };
   }, [passport.earnedBadges, selectedBadgeCode]);
 
+  function getBadgeProgress(badge) {
+    const rule = badge?.rule;
+    if (!rule) return { current: 0, target: 1, percent: 0, label: '0% complete' };
+
+    if (rule.type === 'category_accuracy') {
+      const cat = passport.categories?.[rule.categoryKey] || {};
+      const qCount = Number(cat.questionsCount || 0);
+      const cCount = Number(cat.correctCount || 0);
+      const target = Math.max(1, Number(rule.minQuestions || 1));
+      const acc = qCount > 0 ? Math.round((cCount / qCount) * 100) : 0;
+      const pct = Math.min(100, Math.round((qCount / target) * 100));
+      return {
+        current: Math.min(qCount, target),
+        target,
+        percent: pct,
+        label: `${Math.min(qCount, target)}/${target} questions (${acc}% acc · need ${rule.minAccuracy || 80}%)`,
+      };
+    }
+
+    if (rule.type === 'feature_count') {
+      const count = (passport.events || []).filter((ev) => ev.sourceFeature === rule.sourceFeature).length;
+      const target = Math.max(1, Number(rule.minCount || 1));
+      const pct = Math.min(100, Math.round((count / target) * 100));
+      return {
+        current: Math.min(count, target),
+        target,
+        percent: pct,
+        label: `${Math.min(count, target)}/${target} completed`,
+      };
+    }
+
+    if (rule.type === 'feature_avg') {
+      const matching = (passport.events || []).filter((ev) => ev.sourceFeature === rule.sourceFeature);
+      const count = matching.length;
+      const target = Math.max(1, Number(rule.minCount || 1));
+      const avg = count > 0
+        ? Math.round(matching.reduce((sum, ev) => sum + Number(ev.scorePercent || 0), 0) / count)
+        : 0;
+      const pct = Math.min(100, Math.round((count / target) * 100));
+      return {
+        current: Math.min(count, target),
+        target,
+        percent: pct,
+        label: `${Math.min(count, target)}/${target} runs (${avg}% avg · need ${rule.minAvgScore || 80}%)`,
+      };
+    }
+
+    if (rule.type === 'streak_days') {
+      const streak = Number(passport.stats?.currentStreakDays || 0);
+      const target = Math.max(1, Number(rule.days || 1));
+      const pct = Math.min(100, Math.round((streak / target) * 100));
+      return {
+        current: Math.min(streak, target),
+        target,
+        percent: pct,
+        label: `${Math.min(streak, target)}/${target} IST days`,
+      };
+    }
+
+    if (rule.type === 'overall_questions') {
+      const qCount = Number(passport.stats?.totalScoredQuestions || 0);
+      const cCount = Number(passport.stats?.totalCorrectAnswers || 0);
+      const target = Math.max(1, Number(rule.minQuestions || 1));
+      const acc = qCount > 0 ? Math.round((cCount / qCount) * 100) : 0;
+      const pct = Math.min(100, Math.round((qCount / target) * 100));
+      return {
+        current: Math.min(qCount, target),
+        target,
+        percent: pct,
+        label: `${Math.min(qCount, target)}/${target} questions (${acc}% acc · need ${rule.minAccuracy || 85}%)`,
+      };
+    }
+
+    if (rule.type === 'passport_score') {
+      const targetAct = Math.max(1, Number(rule.minActivities || 1));
+      const actCount = Number(passport.stats?.assessmentsCompleted || 0);
+      const scorePct = Math.min(100, Math.round((overallScore / Math.max(1, Number(rule.minScore || 80))) * 100));
+      const actPct = Math.min(100, Math.round((actCount / targetAct) * 100));
+      const pct = Math.min(scorePct, actPct);
+      return {
+        current: Math.min(actCount, targetAct),
+        target: targetAct,
+        percent: pct,
+        label: `Score ${overallScore}/${rule.minScore || 80} · ${Math.min(actCount, targetAct)}/${targetAct} activities`,
+      };
+    }
+
+    return { current: 0, target: 1, percent: 0, label: '0% complete' };
+  }
+
+  const activeBadgeProgress = useMemo(() => getBadgeProgress(activeBadgeObj), [activeBadgeObj, passport, overallScore]);
+
+
   const activeShareRecord = useMemo(() => {
     return passport.publicShares?.[activeBadgeObj.badgeCode] || null;
   }, [passport.publicShares, activeBadgeObj.badgeCode]);
@@ -560,6 +653,27 @@ export default function SkillPassportView({
                     </span>
                   </div>
                   <p className="text-xs text-slate-400 mt-1">{badge.criteriaSummary}</p>
+                  {(() => {
+                    const prog = getBadgeProgress(badge);
+                    const barPct = isEarned ? 100 : prog.percent;
+                    return (
+                      <div className="mt-2.5">
+                        <div className="flex items-center justify-between gap-2 text-[11px] text-slate-300">
+                          <span>{isEarned ? 'Milestone achieved' : prog.label}</span>
+                          <span className="font-semibold text-blue-300">{barPct}%</span>
+                        </div>
+                        <div className="mt-1 h-1.5 w-full rounded-full bg-slate-800 overflow-hidden">
+                          <div
+                            className={
+                              'h-full rounded-full transition-all duration-300 ' +
+                              (isEarned ? 'bg-emerald-400' : 'bg-blue-500')
+                            }
+                            style={{ width: barPct + '%' }}
+                          />
+                        </div>
+                      </div>
+                    );
+                  })()}
                 </button>
               );
             })}
@@ -575,7 +689,7 @@ export default function SkillPassportView({
             <p className="text-[11px] text-slate-500">
               {activeBadgeObj.isEarned
                 ? 'Earned on ' + (activeBadgeObj.awardedDate || 'IST') + ' · AMLDecode Educational Achievement'
-                : 'Milestone not yet unlocked on your passport'}
+                : 'Milestone not yet unlocked · Progress: ' + activeBadgeProgress.label + ' (' + activeBadgeProgress.percent + '%)'}
             </p>
           </div>
 
