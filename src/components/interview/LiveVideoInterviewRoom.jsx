@@ -1232,7 +1232,6 @@ export default function LiveVideoInterviewRoom({
 
       {/* Bottom Control Bar */}
       <footer className="px-4 sm:px-6 py-3 border-t border-white/10 bg-[#081C33]/95">
-      <p className="mt-2 text-center text-xs text-slate-400">Developed & Designed By Nitesh Mishra</p>
         <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-4 text-xs">
             <span className="inline-flex items-center gap-1.5 font-bold text-white">
@@ -1350,7 +1349,11 @@ export default function LiveVideoInterviewRoom({
             </button>
           </div>
         </div>
-      </footer>
+      
+      <div className="mt-8 border-t pt-4 text-center border-slate-300">
+        <p className="font-medium text-black">Developed & Designed By Nitesh Mishra</p>
+      </div>
+    </footer>
     </div>
     );
   } catch (renderErr) {
