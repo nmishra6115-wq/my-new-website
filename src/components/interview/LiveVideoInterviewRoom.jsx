@@ -921,10 +921,7 @@ export default function LiveVideoInterviewRoom({
           {/* Right (Desktop) / PiP (Mobile): Candidate Camera */}
           <section
             aria-label="Candidate Camera"
-            className="
-              fixed bottom-24 right-3 sm:right-6 z-30 w-48 h-36 sm:w-60 sm:h-44 rounded-2xl overflow-hidden border-2 border-[#C4A77D]/70 shadow-2xl bg-[#0B192C]
-              lg:static lg:w-auto lg:h-auto lg:min-h-[390px] lg:rounded-2xl lg:border lg:border-white/15 lg:shadow-none lg:flex lg:flex-col lg:justify-between lg:p-5
-            "
+            className="mt-4 w-full aspect-video max-h-[260px] rounded-2xl overflow-hidden border border-[#C4A77D]/50 bg-[#0B192C] shadow-lg lg:mt-0 lg:max-h-none lg:w-auto lg:h-auto lg:min-h-[390px] lg:border-white/15 lg:shadow-none lg:flex lg:flex-col lg:justify-between lg:p-5"
           >
             <video
               ref={videoRef}
