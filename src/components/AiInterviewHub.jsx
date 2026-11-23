@@ -22,7 +22,7 @@ import {
 import InterviewSetupModal from './interview/InterviewSetupModal';
 import InterviewWorkspace from './interview/InterviewWorkspace';
 import InterviewReport from './interview/InterviewReport';
-import { loadPassportState, recordActivityEvent } from '../data/amlSkillPassportEngine';
+import { completeLearnerTask } from '../data/amlSkillPassportEngine';
 
 export default function AiInterviewHub({
   onBackHome,
@@ -110,24 +110,20 @@ export default function AiInterviewHub({
     syncSessionToSupabase(completed);
 
     try {
-      const passportState = loadPassportState();
       const answeredCount = recs.length;
       const strongCount = recs.filter((r) => (r.evaluation?.totalScore || 0) >= 70).length;
       const interviewDomain = completed.domain || completed.focusArea || completed.role || 'Financial Crime Investigation';
       const interviewTitle = completed.title || completed.scenarioTitle || 'AI Compliance Interview';
-      const passportRes = recordActivityEvent(passportState, {
+      completeLearnerTask({
         sourceFeature: 'ai-interview',
-        externalEventId: `interview-${completed.id || Date.now()}`,
+        externalEventId: `interview-${completed.id || 'session'}-${Date.now()}`,
         domain: interviewDomain,
         title: interviewTitle,
         questionsAnswered: answeredCount,
         correctAnswers: strongCount,
         scorePercent: avgOverall,
-        xpAwarded: Math.max(25, Math.round(avgOverall * 0.6)),
+        xpAwarded: Math.max(35, Math.round(avgOverall * 0.6) + 20),
       });
-      if (!passportRes.duplicate && typeof window !== 'undefined') {
-        window.dispatchEvent(new CustomEvent('amldecode:passport-updated', { detail: passportRes }));
-      }
     } catch {
       // Do not block interview completion if passport storage fails
     }

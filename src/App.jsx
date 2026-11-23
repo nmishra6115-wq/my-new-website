@@ -530,6 +530,7 @@ const LEARNER_STORAGE_KEY = 'amldecode_kt2_learner_v1';
         {activeView === 'skill-passport' && (
           <SkillPassportErrorBoundary>
             <SkillPassportView
+            currentUser={learner}
             verifyToken={(() => {
               try {
                 const m = (window.location.pathname || '').match(/^\/verify\/achievement\/([^/?#]+)/);

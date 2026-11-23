@@ -224,10 +224,15 @@ export function loadPassportState(seedUser = null) {
   }
 }
 
-export function savePassportState(state) {
+export function savePassportState(state, detail = {}) {
   try {
     if (typeof window !== 'undefined' && window.localStorage) {
       window.localStorage.setItem(PASSPORT_STORAGE_KEY, JSON.stringify(state));
+      window.dispatchEvent(
+        new CustomEvent('amldecode:passport-updated', {
+          detail: { state, ...detail },
+        })
+      );
     }
   } catch {
     // Ignore storage errors
@@ -339,4 +344,19 @@ export function buildLinkedInShareText(badge, displayName = 'AMLDecode Learner',
     '#AML #KYC #FinancialCrime #ComplianceLearning',
   ].filter(Boolean);
   return parts.join('\n\n');
+}
+
+export function completeLearnerTask(inputEvent = {}, seedUser = null) {
+  const current = loadPassportState(seedUser);
+  const baseXp = Math.max(25, Number(inputEvent?.xpAwarded ?? 35) || 35);
+  const res = recordActivityEvent(current, {
+    ...inputEvent,
+    sourceFeature: String(inputEvent?.sourceFeature || 'learning_task').trim(),
+    externalEventId:
+      String(inputEvent?.externalEventId || '').trim() ||
+      'task-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8),
+    xpAwarded: baseXp,
+  });
+  savePassportState(res.state, res);
+  return res;
 }

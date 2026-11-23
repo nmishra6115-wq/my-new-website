@@ -103,21 +103,17 @@ export default function AssessmentRunner({
       onAttemptRecorded(saved);
     }
     try {
-      const passportState = loadPassportState();
       const attemptId = saved?.id || `${Date.now()}-${domain || 'aml'}`;
-      const passportRes = recordActivityEvent(passportState, {
+      completeLearnerTask({
         sourceFeature: 'quiz',
-        externalEventId: `quiz-${attemptId}`,
+        externalEventId: `quiz-${attemptId}-${Date.now()}`,
         domain: domain || 'AML Fundamentals',
         title: `${domain || 'AML'} Knowledge Test`,
         questionsAnswered: totalQuestions,
         correctAnswers: resultsSummary.correctCount,
         scorePercent: resultsSummary.accuracyPercent,
-        xpAwarded: Math.max(15, Math.round(resultsSummary.accuracyPercent * 0.5) + totalQuestions * 5),
+        xpAwarded: Math.max(30, Math.round(resultsSummary.accuracyPercent * 0.6) + totalQuestions * 5),
       });
-      if (typeof window !== 'undefined') {
-        window.dispatchEvent(new CustomEvent('amldecode:passport-updated', { detail: passportRes }));
-      }
     } catch {
       // Do not block assessment submission if passport storage fails
     }
