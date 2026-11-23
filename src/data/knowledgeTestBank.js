@@ -1255,6 +1255,27 @@ export function getMigratedQuestionsByDomain(domain, supabaseRows = []) {
   return Array.from(byId.values());
 }
 
+function shuffleArray(items) {
+  const arr = Array.isArray(items) ? [...items] : [];
+  for (let i = arr.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * (i + 1));
+    const tmp = arr[i];
+    arr[i] = arr[j];
+    arr[j] = tmp;
+  }
+  return arr;
+}
+
+function withShuffledOptions(q) {
+  if (!q || !Array.isArray(q.options) || q.options.length <= 1) return q;
+  const shuffled = shuffleArray(q.options);
+  const changed = shuffled.some((opt, i) => opt !== q.options[i]);
+  return {
+    ...q,
+    options: changed ? shuffled : [...shuffled.slice(1), shuffled[0]],
+  };
+}
+
 export function buildAssessmentQueue({
   domain,
   difficulty,
@@ -1290,7 +1311,7 @@ export function buildAssessmentQueue({
       uniqueById.push(item);
     }
     if (uniqueById.length >= requestedCount) {
-      return uniqueById.slice(0, requestedCount);
+      return uniqueById.slice(0, requestedCount).map(withShuffledOptions);
     }
   }
 
@@ -1301,16 +1322,18 @@ export function buildAssessmentQueue({
     const variantId = `${base.id}-set${variantIndex}`;
     if (!seenIds.has(variantId)) {
       seenIds.add(variantId);
-      uniqueById.push({
-        ...base,
-        id: variantId,
-        question: `[Set ${variantIndex + 1}] ${base.question}`,
-      });
+      uniqueById.push(
+        withShuffledOptions({
+          ...base,
+          id: variantId,
+          question: `[Set ${variantIndex + 1}] ${base.question}`,
+        })
+      );
     }
     variantIndex += 1;
   }
 
-  return uniqueById.slice(0, requestedCount);
+  return uniqueById.slice(0, requestedCount).map(withShuffledOptions);
 }
 const ATTEMPTS_STORAGE_KEY = 'amldecode_kt2_attempts_v1';
 
