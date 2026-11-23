@@ -922,7 +922,7 @@ export default function LiveVideoInterviewRoom({
           <section
             aria-label="Candidate Camera"
             className="
-              fixed bottom-24 right-4 z-30 w-32 h-24 rounded-xl overflow-hidden border-2 border-[#C4A77D]/70 shadow-2xl bg-[#0B192C]
+              fixed bottom-24 right-3 sm:right-6 z-30 w-48 h-36 sm:w-60 sm:h-44 rounded-2xl overflow-hidden border-2 border-[#C4A77D]/70 shadow-2xl bg-[#0B192C]
               lg:static lg:w-auto lg:h-auto lg:min-h-[390px] lg:rounded-2xl lg:border lg:border-white/15 lg:shadow-none lg:flex lg:flex-col lg:justify-between lg:p-5
             "
           >
