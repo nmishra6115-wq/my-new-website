@@ -1,3 +1,48 @@
+import { Component } from 'react';
+
+class RoomErrorBoundary extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { error: null, info: null };
+  }
+  static getDerivedStateFromError(error) {
+    return { error };
+  }
+  componentDidCatch(error, info) {
+    this.setState({ error, info });
+  }
+  render() {
+    if (this.state.error) {
+      return (
+        <div className="min-h-[65vh] bg-[#081C33] text-slate-100 p-6 flex items-center justify-center">
+          <div className="max-w-2xl w-full rounded-2xl border border-rose-400/40 bg-slate-900 p-5 space-y-2">
+            <h2 className="text-base font-bold text-rose-300">Live AI Interview Error</h2>
+            <p className="text-xs font-mono text-rose-200 break-all">
+              {this.state.error?.message || String(this.state.error)}
+            </p>
+            <pre className="text-[11px] text-slate-400 whitespace-pre-wrap overflow-x-auto max-h-48">
+              {this.state.error?.stack || ''}
+            </pre>
+            {this.props.onExit && (
+              <button
+                type="button"
+                onClick={() => {
+                  this.setState({ error: null, info: null });
+                  this.props.onExit();
+                }}
+                className="mt-2 px-3 py-1.5 rounded-xl text-xs font-bold bg-[#C4A77D] text-[#081C33] cursor-pointer"
+              >
+                Back to Hub
+              </button>
+            )}
+          </div>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
 import { useMemo, useState } from 'react';
 import {
   ArrowLeft,
@@ -60,10 +105,13 @@ export default function AiInterviewHub({
   );
 
   const handleStartSession = (config) => {
+    const nextMode = config?.interviewMode === 'text' ? 'text' : 'video';
+    setInterviewMode(nextMode);
     const questions = selectQuestionsForSession({
       role: config.role,
       experienceLevel: config.experienceLevel,
       questionCount: config.questionCount,
+      interviewMode: nextMode,
     });
 
     const newSession = {
@@ -89,9 +137,17 @@ export default function AiInterviewHub({
   };
 
   const handleUpdateSession = (updated) => {
+    if (!updated || !updated.id) return;
     saveLocalSession(updated);
     syncSessionToSupabase(updated);
-    setSessions(loadLocalSessions());
+    setSessions((prev) => {
+      const list = Array.isArray(prev) ? prev : [];
+      const exists = list.some((item) => item.id === updated.id);
+      if (exists) {
+        return list.map((item) => (item.id === updated.id ? { ...item, ...updated } : item));
+      }
+      return [updated, ...list];
+    });
   };
 
   const handleCompleteSession = (sessionToFinish) => {
@@ -172,6 +228,7 @@ export default function AiInterviewHub({
 
       {activeSession ? (
         interviewMode === 'video' ? (
+            <RoomErrorBoundary onExit={() => setActiveSessionId(null)}>
             <LiveVideoInterviewRoom
               session={activeSession}
               onUpdateSession={handleUpdateSession}
@@ -182,6 +239,7 @@ export default function AiInterviewHub({
               }}
               onExitToHub={() => setActiveSessionId(null)}
             />
+            </RoomErrorBoundary>
           ) : (
             <InterviewWorkspace
           session={activeSession}

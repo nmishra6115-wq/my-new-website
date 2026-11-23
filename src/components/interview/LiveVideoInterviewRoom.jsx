@@ -84,9 +84,26 @@ export default function LiveVideoInterviewRoom({
   onSwitchToTextMode,
   onExitToHub,
 }) {
+  if (!session) {
+    return (
+      <div className="p-6 text-sm text-slate-200 bg-[#081C33] rounded-2xl">
+        No active interview session found. Please start or resume a session from the hub.
+      </div>
+    );
+  }
   const questions = Array.isArray(session.questions) ? session.questions : [];
   const totalQ = Math.max(1, questions.length);
-  const currentIdx = Math.min(Math.max(0, Number(session.currentIndex) || 0), totalQ - 1);
+  const [stepIdx, setStepIdx] = useState(() =>
+    Math.min(Math.max(0, Number(session.currentIndex) || 0), totalQ - 1)
+  );
+
+  useEffect(() => {
+    setStepIdx(Math.min(Math.max(0, Number(session.currentIndex) || 0), totalQ - 1));
+    const propIdx = Math.min(Math.max(0, Number(session.currentIndex) || 0), totalQ - 1);
+    setStepIdx((prev) => (propIdx > prev ? propIdx : prev));
+  }, [session.currentIndex, totalQ]);
+
+  const currentIdx = Math.min(Math.max(0, stepIdx), totalQ - 1);
   const currentQ = questions[currentIdx] || null;
 
   const [elapsed, setElapsed] = useState(Number(session.elapsedSeconds) || 0);
@@ -109,12 +126,6 @@ export default function LiveVideoInterviewRoom({
   const [clarificationShown, setClarificationShown] = useState(false);
   const [isListeningStt, setIsListeningStt] = useState(false);
 
-  const videoRef = useRef(null);
-  const streamRef = useRef(null);
-  const recognitionRef = useRef(null);
-  const speakFallbackTimerRef = useRef(null);
-  const introDoneRef = useRef(false);
-  const lastTurnKeyRef = useRef('');
 
   const [cameraEnabled, setCameraEnabled] = useState(true);
   const [micEnabled, setMicEnabled] = useState(true);
@@ -125,6 +136,311 @@ export default function LiveVideoInterviewRoom({
   const [selectedCameraId, setSelectedCameraId] = useState('');
   const [selectedMicId, setSelectedMicId] = useState('');
   const [blinkClosed, setBlinkClosed] = useState(false);
+
+
+  const videoRef = useRef(null);
+  const streamRef = useRef(null);
+  const recognitionRef = useRef(null);
+  const speakFallbackTimerRef = useRef(null);
+  const introDoneRef = useRef(false);
+  const lastTurnKeyRef = useRef('');
+  const manualStopRef = useRef(false);
+  const mediaRecorderRef = useRef(null);
+  const audioChunksRef = useRef([]);
+  const audioCtxRef = useRef(null);
+  const meterRafRef = useRef(null);
+  const micEnabledRef = useRef(micEnabled);
+  const isPausedRef = useRef(isPaused);
+  const latestFeedbackRef = useRef(latestFeedback);
+  const isEvaluatingRef = useRef(isEvaluating);
+
+  const setStreamAudioEnabled = useCallback((enabled) => {
+    if (!streamRef.current) return;
+    streamRef.current.getAudioTracks().forEach((track) => {
+      try {
+        track.enabled = Boolean(enabled);
+      } catch {
+        // Ignore
+      }
+    });
+  }, []);
+
+  const [micLevel, setMicLevel] = useState(0);
+  const [voiceClipUrl, setVoiceClipUrl] = useState('');
+  const [isRecordingClip, setIsRecordingClip] = useState(false);
+
+  const stopMicMeter = useCallback(() => {
+    if (meterRafRef.current) {
+      cancelAnimationFrame(meterRafRef.current);
+      meterRafRef.current = null;
+    }
+    if (audioCtxRef.current) {
+      try {
+        audioCtxRef.current.close();
+      } catch {
+        // Ignore
+      }
+      audioCtxRef.current = null;
+    }
+    setMicLevel(0);
+  }, []);
+
+  const startMicMeter = useCallback(async () => {
+    stopMicMeter();
+    if (!navigator?.mediaDevices?.getUserMedia) return;
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: selectedMicId ? { deviceId: { exact: selectedMicId } } : true,
+        video: false,
+      });
+      const AudioContextCtor = window.AudioContext || window.webkitAudioContext;
+      if (!AudioContextCtor) return;
+      const ctx = new AudioContextCtor();
+      const source = ctx.createMediaStreamSource(stream);
+      const analyser = ctx.createAnalyser();
+      analyser.fftSize = 256;
+      source.connect(analyser);
+      audioCtxRef.current = ctx;
+
+      const data = new Uint8Array(analyser.frequencyBinCount);
+      const tick = () => {
+        if (!audioCtxRef.current) return;
+        analyser.getByteFrequencyData(data);
+        let sum = 0;
+        for (let i = 0; i < data.length; i += 1) sum += data[i];
+        const avg = Math.min(100, Math.round((sum / data.length / 128) * 100));
+        setMicLevel(avg);
+        meterRafRef.current = requestAnimationFrame(tick);
+      };
+      meterRafRef.current = requestAnimationFrame(tick);
+
+      window.setTimeout(() => {
+        stream.getTracks().forEach((t) => {
+          try {
+            t.stop();
+          } catch {
+            // Ignore
+          }
+        });
+      }, 15000);
+    } catch {
+      // Ignore meter errors
+    }
+  }, [selectedMicId, stopMicMeter]);
+
+  const toggleVoiceClip = useCallback(async () => {
+    if (isRecordingClip && mediaRecorderRef.current) {
+      try {
+        mediaRecorderRef.current.stop();
+      } catch {
+        // Ignore
+      }
+      setIsRecordingClip(false);
+      return;
+    }
+
+    if (!navigator?.mediaDevices?.getUserMedia || typeof MediaRecorder === 'undefined') {
+      setStatusMessage('Voice clip recording is not supported in this browser.');
+      return;
+    }
+
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: selectedMicId ? { deviceId: { exact: selectedMicId } } : true,
+        video: false,
+      });
+      audioChunksRef.current = [];
+      const recorder = new MediaRecorder(stream);
+      recorder.ondataavailable = (ev) => {
+        if (ev.data && ev.data.size > 0) {
+          audioChunksRef.current.push(ev.data);
+        }
+      };
+      recorder.onstop = () => {
+        const blob = new Blob(audioChunksRef.current, { type: recorder.mimeType || 'audio/webm' });
+        if (blob.size > 0) {
+          const url = URL.createObjectURL(blob);
+          setVoiceClipUrl((prev) => {
+            if (prev) URL.revokeObjectURL(prev);
+            return url;
+          });
+          setAnswerText((prev) =>
+            prev.trim()
+              ? prev
+              : '[Voice response recorded — review audio playback or add key compliance points before submitting]'
+          );
+          setStatusMessage('Voice clip captured. You can play it back below or submit your answer.');
+        }
+        stream.getTracks().forEach((t) => {
+          try {
+            t.stop();
+          } catch {
+            // Ignore
+          }
+        });
+      };
+      mediaRecorderRef.current = recorder;
+      recorder.start();
+      setIsRecordingClip(true);
+      setStatusMessage('Recording voice clip directly from microphone... Click "Stop Clip" when done.');
+    } catch {
+      setStatusMessage('Could not access microphone for voice clip recording.');
+    }
+  }, [isRecordingClip, selectedMicId]);
+
+  const stopVoiceCapture = useCallback(() => {
+    manualStopRef.current = true;
+    setInterimTranscript('');
+    try {
+      recognitionRef.current?.stop();
+    } catch {
+      // Ignore
+    }
+    recognitionRef.current = null;
+    setIsListeningStt(false);
+  }, []);
+
+  const startVoiceCapture = useCallback(() => {
+    const SpeechRec =
+      typeof window !== 'undefined'
+        ? window.SpeechRecognition || window.webkitSpeechRecognition
+        : null;
+
+    if (!SpeechRec) {
+      setIsListeningStt(false);
+      setStatusMessage(
+        'Web Speech recognition is not supported in this browser. Type your answer in the box below.'
+      );
+      return;
+    }
+
+    if (isPausedRef.current || latestFeedbackRef.current || isEvaluatingRef.current) {
+      return;
+    }
+
+    if (!micEnabledRef.current) {
+      setIsListeningStt(false);
+      setStatusMessage('Mic is muted. Click "Mic On" or type your answer below.');
+      return;
+    }
+
+    manualStopRef.current = false;
+    setInterimTranscript('');
+    startMicMeter();
+    setStatusMessage('Requesting microphone speech capture...');
+
+    try {
+      if (recognitionRef.current) {
+        recognitionRef.current.onend = null;
+        recognitionRef.current.onerror = null;
+        recognitionRef.current.onresult = null;
+        recognitionRef.current.abort();
+      }
+    } catch {
+      // Ignore
+    }
+    recognitionRef.current = null;
+
+    try {
+      const rec = new SpeechRec();
+      rec.lang = navigator?.language || 'en-IN';
+      rec.interimResults = true;
+      rec.continuous = true;
+      rec.maxAlternatives = 1;
+
+      setStreamAudioEnabled(false);
+
+      rec.onstart = () => {
+        setIsListeningStt(true);
+        setStatusMessage(
+          'Listening now — speak your answer clearly. (Note: browser speech recognition may send audio to an external speech service.)'
+        );
+      };
+
+      rec.onaudiostart = () => {
+        setStatusMessage('Microphone audio stream active — speak now...');
+      };
+
+      rec.onspeechstart = () => {
+        setStatusMessage('Voice detected — transcribing...');
+      };
+
+      rec.onresult = (event) => {
+        let sessionFinal = '';
+        let liveInterim = '';
+
+        for (let i = 0; i < event.results.length; i += 1) {
+          const item = event.results[i];
+          const chunk = String(item?.[0]?.transcript || '').trim();
+          if (!chunk) continue;
+          if (item.isFinal) {
+            sessionFinal = sessionFinal ? `${sessionFinal} ${chunk}` : chunk;
+          } else {
+            liveInterim = liveInterim ? `${liveInterim} ${chunk}` : chunk;
+          }
+        }
+
+        setInterimTranscript(liveInterim.replace(/\s+/g, ' ').trim());
+
+        const cleanFinal = sessionFinal.replace(/\s+/g, ' ').trim();
+        if (cleanFinal) {
+          setAnswerText((prev) => {
+            const base = String(prev || '').trim();
+            if (!base) return cleanFinal.slice(0, MAX_ANSWER_CHARS);
+            if (base.endsWith(cleanFinal)) return base.slice(0, MAX_ANSWER_CHARS);
+            return `${base} ${cleanFinal}`.replace(/\s+/g, ' ').trim().slice(0, MAX_ANSWER_CHARS);
+          });
+        }
+      };
+
+      rec.onerror = (event) => {
+        const code = event?.error || 'unknown';
+        setIsListeningStt(false);
+        setInterimTranscript('');
+        stopMicMeter();
+        setStreamAudioEnabled(micEnabledRef.current);
+
+        if (code === 'not-allowed' || code === 'service-not-allowed') {
+          setStatusMessage(
+            'Microphone/speech permission denied in browser site settings. Allow mic access or type your answer below.'
+          );
+        } else if (code === 'audio-capture') {
+          setStatusMessage(
+            'No microphone audio captured (check Windows sound input). Starting local voice clip fallback—click "Record Voice Clip" or type below.'
+          );
+        } else if (code === 'no-speech') {
+          setStatusMessage(
+            'No speech heard yet. Check that "Mic input level" moves when you speak, or click "Record Voice Clip" / type below.'
+          );
+        } else if (code === 'network') {
+          setStatusMessage(
+            'Browser speech service unreachable (network/DNS/speech endpoint blocked). Use "Record Voice Clip" to capture audio locally or type your answer below.'
+          );
+        } else {
+          setStatusMessage(
+            `Speech recognition stopped (${code}). Use "Record Voice Clip" or type your answer below.`
+          );
+        }
+      };
+
+      rec.onend = () => {
+        setIsListeningStt(false);
+        setInterimTranscript('');
+        recognitionRef.current = null;
+        setStreamAudioEnabled(micEnabledRef.current);
+      };
+
+      recognitionRef.current = rec;
+      rec.start();
+    } catch (err) {
+      setIsListeningStt(false);
+      setStatusMessage(
+        `Unable to start speech capture (${err?.message || 'error'}). Type your answer below anytime.`
+      );
+    }
+  }, [setStreamAudioEnabled, startMicMeter]);
+
+  const triggerSpeechRecognitionOnce = startVoiceCapture;
 
   const clearTimersAndSpeech = useCallback(() => {
     if (speakFallbackTimerRef.current) {
@@ -145,7 +461,9 @@ export default function LiveVideoInterviewRoom({
     }
     recognitionRef.current = null;
     setIsListeningStt(false);
-  }, []);
+    stopMicMeter();
+    setStreamAudioEnabled(micEnabledRef.current);
+  }, [setStreamAudioEnabled, stopMicMeter]);
 
   const stopMediaStream = useCallback(() => {
     if (streamRef.current) {
@@ -245,7 +563,8 @@ export default function LiveVideoInterviewRoom({
 
   useEffect(() => {
     return () => {
-      clearTimersAndSpeech();
+      stopVoiceCapture();
+    clearTimersAndSpeech();
       stopMediaStream();
     };
   }, [clearTimersAndSpeech, stopMediaStream]);
@@ -266,51 +585,24 @@ export default function LiveVideoInterviewRoom({
     return () => window.clearInterval(id);
   }, []);
 
-  const triggerSpeechRecognitionOnce = useCallback(() => {
-    const SpeechRec =
-      typeof window !== 'undefined'
-        ? window.SpeechRecognition || window.webkitSpeechRecognition
-        : null;
-    if (!SpeechRec || !micEnabled || isPaused) return;
+  const [interimTranscript, setInterimTranscript] = useState('');
 
-    try {
-      recognitionRef.current?.stop();
-    } catch {
-      // Ignore
-    }
+  useEffect(() => {
+    micEnabledRef.current = micEnabled;
+  }, [micEnabled]);
 
-    try {
-      const rec = new SpeechRec();
-      rec.lang = 'en-US';
-      rec.interimResults = false;
-      rec.continuous = false;
+  useEffect(() => {
+    isPausedRef.current = isPaused;
+  }, [isPaused]);
 
-      rec.onstart = () => {
-        setIsListeningStt(true);
-        setStatusMessage(
-          'Listening via browser speech recognition (may process audio externally; you can also type below).'
-        );
-      };
-      rec.onresult = (event) => {
-        const spoken = event?.results?.[0]?.[0]?.transcript || '';
-        if (spoken.trim()) {
-          setAnswerText((prev) => (prev ? `${prev} ${spoken.trim()}` : spoken.trim()).slice(0, MAX_ANSWER_CHARS));
-        }
-      };
-      rec.onerror = () => {
-        setIsListeningStt(false);
-        setStatusMessage('Speech capture unavailable or quiet—type your answer below anytime.');
-      };
-      rec.onend = () => {
-        setIsListeningStt(false);
-      };
+  useEffect(() => {
+    latestFeedbackRef.current = latestFeedback;
+  }, [latestFeedback]);
 
-      recognitionRef.current = rec;
-      rec.start();
-    } catch {
-      setIsListeningStt(false);
-    }
-  }, [micEnabled, isPaused]);
+  useEffect(() => {
+    isEvaluatingRef.current = isEvaluating;
+  }, [isEvaluating]);
+
 
   const playInterviewerLine = useCallback(
     (lineText) => {
@@ -357,7 +649,7 @@ export default function LiveVideoInterviewRoom({
         finishSpeakingToListening();
       }
     },
-    [clearTimersAndSpeech, isPaused, ttsEnabled, triggerSpeechRecognitionOnce]
+    [clearTimersAndSpeech, isPaused, ttsEnabled, startVoiceCapture]
   );
 
   // Present greeting/intro on first question, or current question / follow-up once per turn
@@ -426,9 +718,12 @@ export default function LiveVideoInterviewRoom({
         interviewMode: 'video',
         records: updated,
       });
+      const cleanAnswer = skipped ? '' : answerText.trim();
       const nextProbe = buildAnswerAwareFollowUp(currentQ, cleanAnswer, skipped, evaluation);
       setDynamicFollowUp(nextProbe);
       setLatestFeedback(record);
+    } catch (err) {
+      setStatusMessage(`Could not submit answer (${err?.message || 'error'}). Please try again.`);
     } finally {
       setIsEvaluating(false);
       setRoomState('IDLE');
@@ -441,8 +736,10 @@ export default function LiveVideoInterviewRoom({
     setDynamicFollowUp('');
     setClarificationShown(false);
     setAnswerText('');
+    setInterimTranscript('');
     setStatusMessage('');
     const nextIdx = currentIdx + 1;
+    setStepIdx(nextIdx);
     if (nextIdx >= totalQ) {
       clearTimersAndSpeech();
       stopMediaStream();
@@ -475,7 +772,8 @@ export default function LiveVideoInterviewRoom({
     ? 'Thinking'
     : 'Listening';
 
-  return (
+  try {
+    return (
     <div className="min-h-screen bg-[#061324] text-slate-100 flex flex-col justify-between">
       {/* Header */}
       <header className="px-4 sm:px-6 py-3 border-b border-white/10 bg-[#081C33]/95 flex flex-wrap items-center justify-between gap-3">
@@ -698,6 +996,29 @@ export default function LiveVideoInterviewRoom({
               </button>
               <button
                 type="button"
+                onClick={() => (isListeningStt ? stopVoiceCapture() : startVoiceCapture())}
+                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold border cursor-pointer ${
+                  isListeningStt
+                    ? 'bg-emerald-500/20 border-emerald-400/50 text-emerald-200'
+                    : 'bg-white/10 hover:bg-white/15 text-slate-100 border-white/15'
+                }`}
+              >
+                <Mic className="w-3.5 h-3.5 text-[#C4A77D]" />
+                {isListeningStt ? 'Done Speaking' : 'Speak Answer'}
+              </button>
+              <button
+                type="button"
+                onClick={toggleVoiceClip}
+                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold border cursor-pointer ${
+                  isRecordingClip
+                    ? 'bg-rose-500/20 border-rose-400/50 text-rose-200'
+                    : 'bg-white/10 hover:bg-white/15 text-slate-100 border-white/15'
+                }`}
+              >
+                {isRecordingClip ? 'Stop Clip' : 'Record Voice Clip'}
+              </button>
+              <button
+                type="button"
                 onClick={() => {
                   setClarificationShown(true);
                   playInterviewerLine(
@@ -747,14 +1068,38 @@ export default function LiveVideoInterviewRoom({
           {statusMessage && <p className="text-xs text-[#E5CFA8]">{statusMessage}</p>}
 
           {!latestFeedback ? (
-            <textarea
+            <>
+              {(isListeningStt || isRecordingClip || micLevel > 0) && (
+                <div className="mb-2 flex items-center gap-3 text-[11px] text-slate-300">
+                  <span>Mic input level:</span>
+                  <div className="h-2 flex-1 max-w-[180px] rounded-full bg-white/10 overflow-hidden">
+                    <div
+                      className="h-full bg-[#C4A77D] transition-all duration-75"
+                      style={{ width: `${micLevel}%` }}
+                    />
+                  </div>
+                  <span>{micLevel}%</span>
+                </div>
+              )}
+              {voiceClipUrl && (
+                <div className="mb-2 flex items-center gap-2">
+                  <audio controls src={voiceClipUrl} className="h-8 max-w-full" />
+                </div>
+              )}
+              {interimTranscript && (
+                <div className="mb-2 text-xs text-emerald-300 bg-emerald-950/40 border border-emerald-500/30 rounded-lg px-3 py-1.5">
+                  <strong>Hearing live:</strong> {interimTranscript}
+                </div>
+              )}
+              <textarea
               rows={textFallbackOpen ? 3 : 2}
               maxLength={MAX_ANSWER_CHARS}
               value={answerText}
               onChange={(e) => setAnswerText(e.target.value)}
               placeholder="Speak aloud when prompted or type your response here..."
-              className="w-full rounded-xl bg-[#081C33] border border-white/15 p-3 text-xs sm:text-sm text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#C4A77D]"
-            />
+                className="w-full rounded-xl bg-[#081C33] border border-white/15 p-3 text-xs sm:text-sm text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#C4A77D]"
+              />
+            </>
           ) : (
             <div className="rounded-xl bg-[#081C33] border border-white/15 p-4 space-y-2.5 text-xs">
               <div className="flex flex-wrap items-center justify-between gap-2">
@@ -1006,5 +1351,20 @@ export default function LiveVideoInterviewRoom({
         </div>
       </footer>
     </div>
-  );
+    );
+  } catch (renderErr) {
+    return (
+      <div className="min-h-[70vh] bg-[#081C33] text-slate-100 p-6 flex items-center justify-center">
+        <div className="max-w-2xl w-full rounded-2xl border border-rose-400/40 bg-slate-900/90 p-5 space-y-2">
+          <h2 className="text-base font-bold text-rose-300">Live AI Interview Render Error</h2>
+          <p className="text-xs text-slate-200 font-mono break-all">
+            {renderErr?.message || String(renderErr)}
+          </p>
+          <pre className="text-[11px] text-slate-400 overflow-x-auto max-h-48 whitespace-pre-wrap">
+            {renderErr?.stack || ''}
+          </pre>
+        </div>
+      </div>
+    );
+  }
 }
