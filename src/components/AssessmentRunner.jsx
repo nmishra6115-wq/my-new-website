@@ -30,20 +30,24 @@ export default function AssessmentRunner({
     return () => window.clearInterval(timer);
   }, [isSubmitted, questions.length]);
 
+  const getQuestionKey = (q, idx) => String(q?.id ?? q?.questionId ?? q?.index ?? idx);
+  const getExpectedAnswer = (q) => String(q?.correct_answer ?? q?.correctAnswer ?? q?.answer ?? '').trim();
+
   const currentQuestion = questions[currentIndex] || null;
   const isPractice = mode === 'practice';
   const totalQuestions = questions.length;
 
   const answeredCount = useMemo(
-    () => questions.filter((q) => Boolean(answers[q.id])).length,
+    () => questions.filter((q, idx) => Boolean(answers[getQuestionKey(q, idx)])).length,
     [questions, answers]
   );
 
   const resultsSummary = useMemo(() => {
     const bySubtopic = {};
     const reviewItems = questions.map((q, idx) => {
-      const selectedOption = answers[q.id] || null;
-      const isCorrect = Boolean(selectedOption) && selectedOption === q.correct_answer;
+      const selectedOption = answers[getQuestionKey(q, idx)] || null;
+      const expectedAnswer = getExpectedAnswer(q);
+      const isCorrect = Boolean(selectedOption) && Boolean(expectedAnswer) && String(selectedOption).trim() === expectedAnswer;
 
       const subKey = q.subtopic || 'General';
       if (!bySubtopic[subKey]) {
@@ -111,7 +115,7 @@ export default function AssessmentRunner({
         scorePercent: resultsSummary.accuracyPercent,
         xpAwarded: Math.max(15, Math.round(resultsSummary.accuracyPercent * 0.5) + totalQuestions * 5),
       });
-      if (!passportRes.duplicate && typeof window !== 'undefined') {
+      if (typeof window !== 'undefined') {
         window.dispatchEvent(new CustomEvent('amldecode:passport-updated', { detail: passportRes }));
       }
     } catch {
