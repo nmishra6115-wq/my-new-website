@@ -896,6 +896,64 @@ export default function SkillPassportView({
             </p>
           </div>
 
+          {(() => {
+            const previewLearner = ((passport.profile?.displayName && passport.profile.displayName !== 'AMLDecode Learner' ? passport.profile.displayName : (currentUser?.name ? String(currentUser.name).trim() : 'AMLDecode Learner'))).trim();
+            const previewCategory = String(activeBadgeObj.category || 'ACHIEVEMENT').toUpperCase();
+            return (
+              <div
+                aria-label="Live Certificate Preview"
+                className="relative overflow-hidden rounded-xl border border-[#c4a77d]/60 bg-gradient-to-br from-[#070e1c] via-[#0c182e] to-[#081122] p-4 shadow-inner"
+              >
+                <div className="pointer-events-none absolute inset-1.5 rounded-lg border border-[#c4a77d]/25" />
+                <div className="relative flex items-start justify-between gap-3">
+                  <div className="min-w-0 space-y-1.5">
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      <span className="text-[10px] font-bold tracking-wider uppercase text-[#e2c799]">
+                        AMLDecode · Skill Certificate
+                      </span>
+                      <span className="rounded border border-[#c4a77d]/40 bg-[#c4a77d]/15 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-[#f3dfc1]">
+                        {previewCategory}
+                      </span>
+                    </div>
+                    <div className="text-[10px] uppercase tracking-wider text-slate-400">
+                      Awarded To
+                    </div>
+                    <div className="truncate font-serif text-base font-bold text-white">
+                      {previewLearner}
+                    </div>
+                    <div className="font-serif text-sm font-bold text-blue-400 leading-snug">
+                      {activeBadgeObj.name}
+                    </div>
+                    <p className="text-[11px] text-slate-300 line-clamp-2">
+                      {activeBadgeObj.criteriaSummary || activeBadgeObj.description}
+                    </p>
+                  </div>
+
+                  <div className="shrink-0 flex h-16 w-16 flex-col items-center justify-center rounded-full border-2 border-[#c4a77d] bg-gradient-to-b from-[#172846] to-[#0d172a] text-center shadow">
+                    <span className="text-[8px] font-bold uppercase tracking-wider text-[#e2c799]">
+                      {activeBadgeObj.isEarned ? 'Verified' : 'Target'}
+                    </span>
+                    <span className="font-serif text-[10px] font-bold text-white leading-tight mt-0.5">
+                      AML
+                    </span>
+                    <span className="text-[8px] font-semibold uppercase text-blue-300 leading-tight">
+                      {activeBadgeObj.isEarned ? 'Badge' : activeBadgeProgress.percent + '%'}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="relative mt-3 flex items-center justify-between border-t border-slate-700/60 pt-2 text-[10px]">
+                  <span className={activeBadgeObj.isEarned ? 'font-medium text-emerald-300' : 'text-amber-300'}>
+                    {activeBadgeObj.isEarned
+                      ? 'Earned ' + (activeBadgeObj.awardedDate || 'IST')
+                      : 'Locked · ' + activeBadgeProgress.percent + '% complete'}
+                  </span>
+                  <span className="font-semibold text-[#e2c799]">amldecode.in</span>
+                </div>
+              </div>
+            );
+          })()}
+
           <div className="flex flex-col gap-2">
             {!activeBadgeObj.isEarned && (
               <div className="rounded-lg border border-amber-500/30 bg-amber-950/25 px-3 py-2.5 space-y-2">
