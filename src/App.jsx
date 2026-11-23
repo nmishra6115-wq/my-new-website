@@ -165,7 +165,7 @@ const LEARNER_STORAGE_KEY = 'amldecode_kt2_learner_v1';
         const fullName =
           user.user_metadata?.full_name ||
           user.user_metadata?.name ||
-          user.email.split('@')[0] ||
+          learner?.name ||
           'Learner';
         const profile = {
           id: user.id,
@@ -189,7 +189,7 @@ const LEARNER_STORAGE_KEY = 'amldecode_kt2_learner_v1';
         const fullName =
           user.user_metadata?.full_name ||
           user.user_metadata?.name ||
-          user.email.split('@')[0] ||
+          learner?.name ||
           'Learner';
         const profile = {
           id: user.id,
