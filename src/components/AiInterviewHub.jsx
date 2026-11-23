@@ -21,6 +21,7 @@ import {
 } from '../data/aiInterviewEvaluator';
 import InterviewSetupModal from './interview/InterviewSetupModal';
 import InterviewWorkspace from './interview/InterviewWorkspace';
+import LiveVideoInterviewRoom from './interview/LiveVideoInterviewRoom';
 import InterviewReport from './interview/InterviewReport';
 import { completeLearnerTask } from '../data/amlSkillPassportEngine';
 
@@ -33,6 +34,7 @@ export default function AiInterviewHub({
   const [setupOpen, setSetupOpen] = useState(false);
   const [activeSessionId, setActiveSessionId] = useState(null);
   const [reportSessionId, setReportSessionId] = useState(null);
+  const [interviewMode, setInterviewMode] = useState('video');
 
 
   const inProgressSession = useMemo(
@@ -169,12 +171,25 @@ export default function AiInterviewHub({
       </header>
 
       {activeSession ? (
-        <InterviewWorkspace
+        interviewMode === 'video' ? (
+            <LiveVideoInterviewRoom
+              session={activeSession}
+              onUpdateSession={handleUpdateSession}
+              onCompleteSession={handleCompleteSession}
+              onSwitchToTextMode={(updated) => {
+                handleUpdateSession(updated);
+                setInterviewMode('text');
+              }}
+              onExitToHub={() => setActiveSessionId(null)}
+            />
+          ) : (
+            <InterviewWorkspace
           session={activeSession}
           onUpdateSession={handleUpdateSession}
           onCompleteSession={handleCompleteSession}
           onExitToHub={() => { setSessions(loadLocalSessions()); setActiveSessionId(null); }}
         />
+          )
       ) : reportSession ? (
         <InterviewReport
           session={reportSession}

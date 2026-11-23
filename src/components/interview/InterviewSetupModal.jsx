@@ -14,6 +14,7 @@ export default function InterviewSetupModal({
   const [role, setRole] = useState(initialConfig?.role || 'AML Analyst');
   const [experienceLevel, setExperienceLevel] = useState(initialConfig?.experienceLevel || '1-3 Years');
   const [questionCount, setQuestionCount] = useState(initialConfig?.questionCount || 5);
+  const [interviewMode, setInterviewMode] = useState('video');
   const [error, setError] = useState('');
 
   const filteredCompanies = useMemo(() => {
@@ -238,6 +239,32 @@ export default function InterviewSetupModal({
             >
               Cancel
             </button>
+            <div className="grid grid-cols-2 gap-2.5 mb-4">
+              <button
+                type="button"
+                onClick={() => setInterviewMode('video')}
+                className={`p-3 rounded-xl border text-left transition cursor-pointer ${
+                  interviewMode === 'video'
+                    ? 'border-[#C4A77D] bg-[#081C33] text-white'
+                    : 'border-stone-200 dark:border-slate-700 text-slate-700 dark:text-slate-300'
+                }`}
+              >
+                <div className="text-xs font-bold">Live AI Interview</div>
+                <div className="text-[11px] opacity-80">Video room + camera &amp; controls</div>
+              </button>
+              <button
+                type="button"
+                onClick={() => setInterviewMode('text')}
+                className={`p-3 rounded-xl border text-left transition cursor-pointer ${
+                  interviewMode === 'text'
+                    ? 'border-[#C4A77D] bg-[#081C33] text-white'
+                    : 'border-stone-200 dark:border-slate-700 text-slate-700 dark:text-slate-300'
+                }`}
+              >
+                <div className="text-xs font-bold">Text Interview</div>
+                <div className="text-[11px] opacity-80">Classic text &amp; typed practice</div>
+              </button>
+            </div>
             <button
               type="submit"
               className="px-5 py-2.5 rounded-xl text-sm font-bold bg-[#081C33] hover:bg-[#1E3A5F] text-white shadow-sm transition-colors cursor-pointer"

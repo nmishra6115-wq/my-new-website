@@ -92,7 +92,7 @@ export default function InterviewReport({
               {session.role} ? {session.company}
             </h1>
             <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
-              Experience Level: {session.experienceLevel} ? Educational practice score only (not an employer hiring prediction)
+              Experience Level: {session.experienceLevel} · Educational Mock Interview Assessment ? Educational practice score only (not an employer hiring prediction)
             </p>
           </div>
 
@@ -108,8 +108,9 @@ export default function InterviewReport({
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           {[
             ['Technical Accuracy', techScore],
-            ['Investigation / Practical', practicalScore],
-            ['Risk Assessment', riskScore],
+            ['Technical Knowledge', techScore],
+            ['Investigation Approach', practicalScore],
+            ['Risk Identification', riskScore],
             ['Communication Clarity', clarityScore],
           ].map(([label, score]) => (
             <div key={label} className="p-4 rounded-xl bg-stone-50 dark:bg-slate-800/70 border border-stone-200/80 dark:border-slate-700">
