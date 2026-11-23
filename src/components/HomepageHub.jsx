@@ -71,7 +71,7 @@ export default function HomepageHub({
       }
 
       if (res.needsEmailConfirmation) {
-        setAuthNotice('Account created! Check your inbox to confirm your email if confirmation is enabled in Supabase. Your name is set for your certificate.');
+        setAuthNotice('Account created! Check your inbox to confirm your email if required. Your name is set for your certificate.');
       } else {
         setAuthModalOpen(false);
         setAuthPassword('');
@@ -739,7 +739,7 @@ export default function HomepageHub({
                   {authMode === 'signup' ? 'Create Your Account' : 'Log In to Your Account'}
                 </h2>
                 <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
-                  Your name is mapped directly to your Skill Certificate and saved to Supabase.
+                  Your name is mapped directly to your Skill Certificate and saved to your learner profile.
                 </p>
               </div>
               <button
