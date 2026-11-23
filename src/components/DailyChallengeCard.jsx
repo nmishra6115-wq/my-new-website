@@ -460,7 +460,7 @@ export default function DailyChallengeCard({
         )}
 
         <p className="text-[11px] opacity-80 pt-1">
-          Reference: {item.sourceReference || 'AMLDecode Compliance Reference'} ? Jurisdiction: {item.jurisdiction || 'Global'}
+          Reference: {item.sourceReference || 'AMLDecode Compliance Reference'} · Jurisdiction: {item.jurisdiction || 'Global'}
         </p>
 
         <div className="pt-2 flex flex-wrap items-center gap-3">
