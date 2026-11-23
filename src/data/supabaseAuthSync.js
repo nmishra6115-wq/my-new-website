@@ -125,7 +125,14 @@ export async function signInWithEmailPassword({ email, password, fullName = '' }
   });
 
   if (error) {
-    return { error: error.message || 'Invalid email or password.' };
+    const msg = String(error.message || '');
+    if (/invalid login credentials/i.test(msg)) {
+      return {
+        error:
+          'Invalid email or password. If you just signed up and email confirmation is enabled, confirm your email link first—or if this email already had an account, use its original password.',
+      };
+    }
+    return { error: msg || 'Invalid email or password.' };
   }
 
   const user = data?.user || null;
