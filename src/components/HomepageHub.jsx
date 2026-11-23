@@ -10,6 +10,7 @@ import { useThemeMode } from '../hooks/useThemeMode';
 import BannerAd468 from './BannerAd468';
 import SupportDeveloperBanner from './SupportDeveloperBanner';
 
+import NativeAdBanner from './NativeAdBanner';
 const PATHWAY_MATCHERS = [
   { label: 'AML Fundamentals', keywords: ['aml', 'money laundering'] },
   { label: 'KYC', keywords: ['kyc', 'client onboarding', 'lifecycle'] },
@@ -596,6 +597,8 @@ export default function HomepageHub({
             )}
           </div>
         </section>
+
+      <NativeAdBanner />
 
         {/* Learning Pathways */}
         <section id="pathways" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-14">
