@@ -397,10 +397,16 @@ export default function SkillPassportView({
       notify('Complete this milestone first to unlock achievement card download, sharing, and verification.');
       return;
     }
-    const canvas = canvasRef.current;
-    if (!canvas) return;
+    const canvas = canvasRef.current || (typeof document !== 'undefined' ? document.createElement('canvas') : null);
+    if (!canvas) {
+      notify('Unable to initialize certificate canvas in this browser.');
+      return;
+    }
     const ctx = canvas.getContext('2d');
-    if (!ctx) return;
+    if (!ctx) {
+      notify('Unable to create 2D drawing context for PNG export.');
+      return;
+    }
 
     const w = 1200;
     const h = 675;

@@ -1,6 +1,7 @@
 ﻿import { useState, useMemo } from 'react';
 import { getCaseSimulationForDomain } from '../data/caseAndSarLabBank';
 import { recordCompletedAttempt } from '../data/knowledgeTestBank';
+import { loadPassportState, recordActivityEvent } from '../data/amlSkillPassportEngine';
 
 export default function CaseSimulationRunner({
   domain,
@@ -63,6 +64,26 @@ export default function CaseSimulationRunner({
     });
     if (typeof onAttemptRecorded === 'function') {
       onAttemptRecorded(updated);
+    }
+    try {
+      const passportState = loadPassportState();
+      const attemptId = updated?.id || `case-${Date.now()}`;
+      const xpAwarded = Math.max(25, Math.round((summary.pct || 0) * 0.6) + 20);
+      const passportRes = recordActivityEvent(passportState, {
+        sourceFeature: 'transaction_investigation',
+        externalEventId: attemptId,
+        domain: domain || 'Financial Crime Investigation',
+        title: `${domain || 'AML'} Case Simulation`,
+        questionsAnswered: Math.max(1, stages.length),
+        correctAnswers: summary.pct >= 70 ? Math.max(1, stages.length) : 0,
+        scorePercent: summary.pct,
+        xpAwarded,
+      });
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('amldecode:passport-updated', { detail: passportRes }));
+      }
+    } catch {
+      // Do not block completion if passport storage fails
     }
   };
 

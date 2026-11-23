@@ -1,6 +1,7 @@
 ﻿import { useState, useMemo } from 'react';
 import { getSarLabBriefForDomain, evaluateSarNarrative } from '../data/caseAndSarLabBank';
 import { recordCompletedAttempt } from '../data/knowledgeTestBank';
+import { loadPassportState, recordActivityEvent } from '../data/amlSkillPassportEngine';
 
 export default function SarNarrativeLab({
   domain,
@@ -28,6 +29,26 @@ export default function SarNarrativeLab({
     });
     if (typeof onAttemptRecorded === 'function') {
       onAttemptRecorded(updated);
+    }
+    try {
+      const passportState = loadPassportState();
+      const attemptId = updated?.id || `sar-${Date.now()}`;
+      const xpAwarded = Math.max(25, Math.round((result.percentage || 0) * 0.6) + 20);
+      const passportRes = recordActivityEvent(passportState, {
+        sourceFeature: 'sar_practice',
+        externalEventId: attemptId,
+        domain: 'SAR/STR',
+        title: brief?.title || 'SAR Narrative Practice',
+        questionsAnswered: 1,
+        correctAnswers: (result.percentage || 0) >= 70 ? 1 : 0,
+        scorePercent: result.percentage || 0,
+        xpAwarded,
+      });
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('amldecode:passport-updated', { detail: passportRes }));
+      }
+    } catch {
+      // Do not block SAR evaluation if passport storage fails
     }
   };
 
