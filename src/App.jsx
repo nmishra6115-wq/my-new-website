@@ -228,8 +228,13 @@ const LEARNER_STORAGE_KEY = 'amldecode_kt2_learner_v1';
     setIsLoginModalOpen(false);
     const targetConfig = configToStart || pendingStartConfig;
     setPendingStartConfig(null);
+    const targetView = pendingViewAfterLogin;
+    setPendingViewAfterLogin(null);
     if (targetConfig) {
       launchAssessmentWithConfig(targetConfig);
+    } else if (targetView) {
+      setActiveView(targetView);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
@@ -286,6 +291,23 @@ const LEARNER_STORAGE_KEY = 'amldecode_kt2_learner_v1';
       mounted = false;
     };
   }, []);
+
+  const [pendingViewAfterLogin, setPendingViewAfterLogin] = useState(null);
+
+  const requestOpenView = (view) => {
+    if (!view) {
+      setActiveView(null);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+    if (!learner?.email) {
+      setPendingViewAfterLogin(view);
+      setIsLoginModalOpen(true);
+      return;
+    }
+    setActiveView(view);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   const handleBackHome = () => {
     setActiveView(null);
@@ -417,10 +439,7 @@ const LEARNER_STORAGE_KEY = 'amldecode_kt2_learner_v1';
   if (!activeView) {
     return (
       <HomepageHub
-        onOpenView={(view) => {
-          setActiveView(view);
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        }}
+        onOpenView={(view) => requestOpenView(view)}
         onSelectNoteIndex={(idx) => setPageIndex(idx)}
         onScrollToGuidance={handleScrollToGuidance}
         learner={learner}
