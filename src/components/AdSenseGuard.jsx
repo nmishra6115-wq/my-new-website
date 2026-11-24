@@ -1,4 +1,3 @@
-import React from 'react';
 
 const BLOCKED_VIEWS = new Set([
   'available',

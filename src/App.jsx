@@ -1,21 +1,21 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, lazy, Suspense } from 'react';
 import './design-tokens.css';
 import { supabase } from './supabaseClient';
 import { fetchKt2Attempts, insertKt2Attempt } from './data/kt2SupabaseSync';
 import { applyLearnerNameToPassport, recordAccountInSupabase } from './data/supabaseAuthSync';
-import SkillPassportView from './components/SkillPassportView';
+const SkillPassportView = lazy(() => import('./components/SkillPassportView'));
 import { notesContent, privacyPolicy, termsOfService, faqData, contactContent } from './content';
 import { kycNews } from './news';
 import HomepageHub from './components/HomepageHub';
-import SyllabusReader from './components/SyllabusReader';
-import KnowledgeTestSetup from './components/KnowledgeTestSetup';
-import CareersAiHub from './components/CareersAiHub';
+const SyllabusReader = lazy(() => import('./components/SyllabusReader'));
+const KnowledgeTestSetup = lazy(() => import('./components/KnowledgeTestSetup'));
+const CareersAiHub = lazy(() => import('./components/CareersAiHub'));
 import LearnerLoginModal from './components/LearnerLoginModal';
-import AssessmentRunner from './components/AssessmentRunner';
-import CaseSimulationRunner from './components/CaseSimulationRunner';
-import SarNarrativeLab from './components/SarNarrativeLab';
-import AiInterviewHub from './components/AiInterviewHub';
-import DailyChallengeCard from './components/DailyChallengeCard';
+const AssessmentRunner = lazy(() => import('./components/AssessmentRunner'));
+const CaseSimulationRunner = lazy(() => import('./components/CaseSimulationRunner'));
+const SarNarrativeLab = lazy(() => import('./components/SarNarrativeLab'));
+const AiInterviewHub = lazy(() => import('./components/AiInterviewHub'));
+const DailyChallengeCard = lazy(() => import('./components/DailyChallengeCard'));
 import {
   buildAssessmentQueue,
   readStoredRecentAttempts,
@@ -391,36 +391,64 @@ const LEARNER_STORAGE_KEY = 'amldecode_kt2_learner_v1';
         title: `${notesContent[pageIndex]?.title || 'Syllabus Notes'} - AMLDecode`,
         desc: 'Structured AML, KYC, CDD, EDD, sanctions screening, transaction monitoring, and SAR compliance notes.',
         path: `/?view=notes&module=${pageIndex + 1}`,
+        crumbLabel: notesContent[pageIndex]?.title || 'Syllabus Notes',
+        indexable: true,
+      },
+      'daily-challenge': {
+        title: 'Daily AML Challenge, Transaction Monitoring & SAR Drills - AMLDecode',
+        desc: 'Daily AML/KYC practice drills covering transaction monitoring alerts, sanctions red flags, and SAR/STR judgment.',
+        path: '/?view=daily-challenge',
+        crumbLabel: 'Daily AML Challenge',
+        indexable: true,
       },
       quiz: {
         title: 'Smart Knowledge Test & Case Simulations - AMLDecode',
         desc: 'Practice AML/KYC assessments, compliance rationales, fictional case simulations, and SAR narrative drills.',
         path: '/?view=quiz',
+        crumbLabel: 'Knowledge Test & Case Lab',
+        indexable: true,
       },
       jobs: {
         title: 'AML & KYC Compliance Careers & Guidance - AMLDecode',
         desc: 'Explore AML, KYC, and financial crime compliance roles, interview guidance, and career resources.',
         path: '/?view=jobs',
+        crumbLabel: 'AML & KYC Careers',
+        indexable: true,
+      },
+      'skill-passport': {
+        title: 'AML Skill Passport & Competency Breakdown - AMLDecode',
+        desc: 'Review AML, KYC/CDD/EDD, sanctions screening, transaction monitoring, and SAR competency progress.',
+        path: '/?view=skill-passport',
+        crumbLabel: 'AML Skill Passport',
+        indexable: false,
       },
       faq: {
         title: 'About AMLDecode & Frequently Asked Questions',
         desc: "Learn about AMLDecode's educational mission, compliance coverage, data handling, and career resources.",
         path: '/?view=faq',
+        crumbLabel: 'FAQ',
+        indexable: true,
       },
       contact: {
         title: 'Contact AMLDecode',
         desc: 'Reach AMLDecode for educational inquiries, profile assistance, or data deletion requests.',
         path: '/?view=contact',
+        crumbLabel: 'Contact',
+        indexable: true,
       },
       privacy: {
         title: 'Privacy Policy - AMLDecode',
         desc: 'How AMLDecode handles account data, Supabase storage, analytics, cookies, and privacy requests.',
         path: '/?view=privacy',
+        crumbLabel: 'Privacy Policy',
+        indexable: true,
       },
       terms: {
         title: 'Terms of Service & Educational Disclaimer - AMLDecode',
         desc: 'Terms of use, educational disclaimer for fictional scenarios, and non-guarantee of employment.',
         path: '/?view=terms',
+        crumbLabel: 'Terms of Service',
+        indexable: true,
       },
     };
 
@@ -428,8 +456,11 @@ const LEARNER_STORAGE_KEY = 'amldecode_kt2_learner_v1';
       title: 'AMLDecode - AML, KYC & Financial Crime Compliance Academy',
       desc: 'Practical AML, KYC, CDD, EDD, sanctions screening, transaction monitoring, and financial crime learning hub.',
       path: '/',
+      crumbLabel: null,
+      indexable: true,
     };
 
+    const canonicalUrl = `https://amldecode.in${current.path}`;
     document.title = current.title;
 
     let metaDesc = document.querySelector('meta[name="description"]');
@@ -440,13 +471,68 @@ const LEARNER_STORAGE_KEY = 'amldecode_kt2_learner_v1';
     }
     metaDesc.setAttribute('content', current.desc);
 
+    let metaRobots = document.querySelector('meta[name="robots"]');
+    if (!metaRobots) {
+      metaRobots = document.createElement('meta');
+      metaRobots.setAttribute('name', 'robots');
+      document.head.appendChild(metaRobots);
+    }
+    metaRobots.setAttribute('content', current.indexable === false ? 'noindex, follow' : 'index, follow');
+
+    const ogUpdates = [
+      ['og:title', current.title],
+      ['og:description', current.desc],
+      ['og:url', canonicalUrl],
+    ];
+    for (const [prop, val] of ogUpdates) {
+      let tag = document.querySelector(`meta[property="${prop}"]`);
+      if (!tag) {
+        tag = document.createElement('meta');
+        tag.setAttribute('property', prop);
+        document.head.appendChild(tag);
+      }
+      tag.setAttribute('content', val);
+    }
+
     let canonical = document.querySelector('link[rel="canonical"]');
     if (!canonical) {
       canonical = document.createElement('link');
       canonical.setAttribute('rel', 'canonical');
       document.head.appendChild(canonical);
     }
-    canonical.setAttribute('href', `https://amldecode.in${current.path}`);
+    canonical.setAttribute('href', canonicalUrl);
+
+    const breadcrumbId = 'amldecode-breadcrumb-ld';
+    let breadcrumbScript = document.getElementById(breadcrumbId);
+    if (current.crumbLabel) {
+      const breadcrumbLd = {
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          {
+            '@type': 'ListItem',
+            position: 1,
+            name: 'Home',
+            item: 'https://amldecode.in/',
+          },
+          {
+            '@type': 'ListItem',
+            position: 2,
+            name: current.crumbLabel,
+            item: canonicalUrl,
+          },
+        ],
+      };
+      if (!breadcrumbScript) {
+        breadcrumbScript = document.createElement('script');
+        breadcrumbScript.id = breadcrumbId;
+        breadcrumbScript.type = 'application/ld+json';
+        document.head.appendChild(breadcrumbScript);
+      }
+      breadcrumbScript.textContent = JSON.stringify(breadcrumbLd);
+    } else if (breadcrumbScript) {
+      breadcrumbScript.remove();
+    }
   }, [activeView, pageIndex]);
 
   const faqCategories = ['All', ...Array.from(new Set(faqData.map((f) => f.category).filter(Boolean)))];
@@ -554,6 +640,7 @@ const isCareersAdmin = Boolean(
       </header>
 
       <main className="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
+        <Suspense fallback={<div className="py-12 text-center text-sm text-[#B8C7D9]">Loading view...</div>}>
         {activeView === 'skill-passport' && (
           <SkillPassportErrorBoundary>
             <SkillPassportView
@@ -646,6 +733,11 @@ const isCareersAdmin = Boolean(
             <div className="border-b border-[var(--amld-border)] pb-6 flex flex-wrap items-end justify-between gap-4">
               <div>
                 <p className="text-xs font-bold uppercase tracking-wider text-[#F4B860]">Compliance Talent & Insights</p>
+                {activeView !== 'jobs' && (
+                  <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-[#F5F8FC] mt-1">
+                    {activeView === 'network' ? 'Regulatory & Compliance Headlines' : 'Referral & Partner Desk'}
+                  </h1>
+                )}
               </div>
             </div>
 
@@ -853,6 +945,7 @@ const isCareersAdmin = Boolean(
         }}
         onLoginSuccess={handleLoginSuccess}
       />
+        </Suspense>
       </main>
     </div>
   );

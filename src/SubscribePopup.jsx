@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { supabase } from './supabaseClient'; // Make sure this path points to your initialized Supabase client
 
 export default function SubscribePopup() {

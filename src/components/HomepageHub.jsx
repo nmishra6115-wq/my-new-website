@@ -588,6 +588,45 @@ export default function HomepageHub({
           </div>
         </section>
 
+        {/* Concise AML & Financial Crime Practice Overview */}
+        <section id="aml-focus-overview" aria-label="AML Learning & Career Focus Areas" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
+          <div className="rounded-2xl bg-white p-6 sm:p-7 border border-stone-200 shadow-2xs space-y-4">
+            <div className="space-y-1.5">
+              <p className="text-xs font-bold uppercase tracking-wider text-amber-700">Practical Compliance Coverage</p>
+              <h2 className="text-xl font-bold text-slate-900">How AMLDecode Supports Analyst &amp; Compliance Readiness</h2>
+              <p className="text-sm text-slate-600 leading-relaxed max-w-4xl">
+                AMLDecode brings together structured study notes, scenario drills, and role discovery for analysts and compliance learners across India and global financial crime teams.
+              </p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
+              <div className="rounded-xl bg-stone-50 p-4 border border-stone-200/80 space-y-1">
+                <h3 className="font-bold text-slate-900">AML/KYC Interview Preparation</h3>
+                <p className="text-slate-600 leading-relaxed">Review customer due diligence, enhanced due diligence, beneficial ownership, and red-flag reasoning commonly tested in analyst interviews.</p>
+              </div>
+              <div className="rounded-xl bg-stone-50 p-4 border border-stone-200/80 space-y-1">
+                <h3 className="font-bold text-slate-900">Transaction Monitoring Case Studies</h3>
+                <p className="text-slate-600 leading-relaxed">Work through structured alert investigations covering unusual cash activity, rapid layering, and escalation rationales.</p>
+              </div>
+              <div className="rounded-xl bg-stone-50 p-4 border border-stone-200/80 space-y-1">
+                <h3 className="font-bold text-slate-900">SAR Writing Practice</h3>
+                <p className="text-slate-600 leading-relaxed">Practice organizing clear, factual suspicious activity narratives that connect customer profiles, observed behavior, and risk indicators.</p>
+              </div>
+              <div className="rounded-xl bg-stone-50 p-4 border border-stone-200/80 space-y-1">
+                <h3 className="font-bold text-slate-900">AML Daily Quizzes</h3>
+                <p className="text-slate-600 leading-relaxed">Reinforce core concepts every day with short, targeted questions on sanctions screening, KYC controls, and investigation judgment.</p>
+              </div>
+              <div className="rounded-xl bg-stone-50 p-4 border border-stone-200/80 space-y-1">
+                <h3 className="font-bold text-slate-900">AML/KYC Job Opportunities</h3>
+                <p className="text-slate-600 leading-relaxed">Browse compliance, KYC, and transaction monitoring roles alongside career guidance and referral workflows.</p>
+              </div>
+              <div className="rounded-xl bg-stone-50 p-4 border border-stone-200/80 space-y-1">
+                <h3 className="font-bold text-slate-900">AML Skill Assessments</h3>
+                <p className="text-slate-600 leading-relaxed">Track strengths and gaps across core compliance domains to focus study time where it matters most.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* Clean Repository Search */}
         <section id="search-hub" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12">
           <div className="rounded-2xl bg-white p-6 sm:p-7 border border-stone-200 shadow-2xs">
