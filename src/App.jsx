@@ -157,6 +157,7 @@ const LEARNER_STORAGE_KEY = 'amldecode_kt2_learner_v1';
     };
   
       useEffect(() => {
+    if (!supabase) return;
     let active = true;
     supabase.auth.getSession().then(({ data }) => {
       if (!active) return;
