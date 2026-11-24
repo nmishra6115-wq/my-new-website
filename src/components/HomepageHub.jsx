@@ -70,20 +70,28 @@ export default function HomepageHub({
         return;
       }
 
+      if (authMode === 'signup') {
+        setAuthMode('login');
+        setAuthPassword('');
+        setAuthError('');
+        setAuthNotice(
+          res.needsEmailConfirmation
+            ? 'Account created! Please confirm your email from alerts@amldecode.in first, then enter your email and password below to log in.'
+            : 'Account created! Please enter your email and password below to log in.'
+        );
+        return;
+      }
+
       if (typeof onAuthSuccess === 'function' && res.profile) {
         onAuthSuccess(res.profile);
       }
 
-      if (res.needsEmailConfirmation) {
-        setAuthNotice('Account created! Check your inbox to confirm your email if required. Your name is set for your certificate.');
-      } else {
-        setAuthModalOpen(false);
-        setAuthPassword('');
-        const queued = pendingAfterAuth;
-        setPendingAfterAuth(null);
-        if (typeof queued === 'function') {
-          queued();
-        }
+      setAuthModalOpen(false);
+      setAuthPassword('');
+      const queued = pendingAfterAuth;
+      setPendingAfterAuth(null);
+      if (typeof queued === 'function') {
+        queued();
       }
     } finally {
       setAuthBusy(false);
