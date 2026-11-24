@@ -724,11 +724,29 @@ export default function SkillPassportView({
           <p className="text-xs sm:text-base text-slate-300 mt-1">
             Track your AML knowledge, build practical skills and showcase your learning achievements.
           </p>
-          <p className="text-[11px] sm:text-xs text-slate-400 mt-1.5">
-            Educational learning indicator based on completed AMLDecode activities. Not a professional license, accredited certification, or hiring predictor.
-          </p>
-        </div>
-      </div>
+          <p className="text-xs sm:text-sm text-slate-300 mt-2 leading-relaxed">
+            Educational learning indicator based on completed AMLDecode activities. Not a professional license, accredited certification, or hiring predictor.
+          </p>
+        </div>
+        {onNavigateView && (
+          <div className="flex flex-wrap items-center gap-2 shrink-0">
+            <button
+              type="button"
+              onClick={() => onNavigateView('referralForm')}
+              className="rounded-lg border border-amber-500/40 bg-amber-950/40 px-3 py-1.5 text-xs font-semibold text-amber-200 hover:bg-amber-900/50 transition"
+            >
+              Submit Referral
+            </button>
+            <button
+              type="button"
+              onClick={() => onNavigateView('contribute')}
+              className="rounded-lg border border-slate-700 bg-slate-900 px-3 py-1.5 text-xs font-semibold text-slate-200 hover:border-slate-500 transition"
+            >
+              Recruiter Desk
+            </button>
+          </div>
+        )}
+      </div>
 
       {statusNotice && (
         <div role="status" className="rounded-xl border border-blue-500/40 bg-blue-950/40 px-4 py-2.5 text-xs sm:text-sm text-blue-200">

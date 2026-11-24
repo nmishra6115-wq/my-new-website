@@ -885,6 +885,13 @@ export default function HomepageHub({
               </button>
               <button
                 type="button"
+                onClick={() => runWithAccount(() => onOpenView('contribute'))}
+                className="px-4 py-2.5 rounded-xl text-xs font-bold border border-amber-500/40 text-amber-800 dark:text-amber-300 hover:bg-amber-50/60 dark:hover:bg-amber-950/30 cursor-pointer"
+              >
+                Recruiter Desk
+              </button>
+              <button
+                type="button"
                 onClick={() => runWithAccount(() => onOpenView('contact'))}
                 className="px-4 py-2.5 rounded-xl text-xs font-semibold border border-stone-300 text-slate-700 hover:text-slate-900 cursor-pointer"
               >
