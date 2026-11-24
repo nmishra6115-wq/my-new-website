@@ -5,7 +5,7 @@ import { notesContent, faqData } from '../content';
 import { jobOpenings } from '../jobs';
 import { kycNews } from '../news';
 import { Sun, Moon, UserCheck, LogOut, X } from 'lucide-react';
-import { signUpWithEmailPassword, signInWithEmailPassword, signOutLearnerAccount } from '../data/supabaseAuthSync';
+import { signUpWithEmailPassword, requestPasswordResetEmail, signInWithEmailPassword, signOutLearnerAccount } from '../data/supabaseAuthSync';
 import { useThemeMode } from '../hooks/useThemeMode';
 import BannerAd468 from './BannerAd468';
 import SupportDeveloperBanner from './SupportDeveloperBanner';
@@ -41,6 +41,7 @@ export default function HomepageHub({
   const [authEmail, setAuthEmail] = useState(learner?.email || '');
   const [authPassword, setAuthPassword] = useState('');
   const [authBusy, setAuthBusy] = useState(false);
+  const [showResetOption, setShowResetOption] = useState(false);
   const [authError, setAuthError] = useState('');
   const [authNotice, setAuthNotice] = useState('');
   const [accountInfoOpen, setAccountInfoOpen] = useState(false);
@@ -69,6 +70,17 @@ export default function HomepageHub({
         setAuthError(res.error);
         return;
       }
+
+      if (res.alreadyRegistered) {
+        setAuthMode('login');
+        setAuthPassword('');
+        setAuthNotice('');
+        setShowResetOption(true);
+        setAuthError('This email is already registered. Please log in with your password, or reset your password below.');
+        return;
+      }
+
+      setShowResetOption(false);
 
       if (authMode === 'signup') {
         setAuthMode('login');
@@ -981,6 +993,34 @@ export default function HomepageHub({
               >
                 {authBusy ? 'Please wait...' : authMode === 'signup' ? 'Create Account & Continue' : 'Log In & Continue'}
               </button>
+
+              {(showResetOption || authMode === 'login') && (
+                <div className="pt-1 text-center">
+                  <button
+                    type="button"
+                    disabled={authBusy}
+                    onClick={async () => {
+                      setAuthError('');
+                      setAuthNotice('');
+                      setAuthBusy(true);
+                      try {
+                        const resetRes = await requestPasswordResetEmail(authEmail);
+                        if (resetRes.error) {
+                          setAuthError(resetRes.error);
+                        } else {
+                          setShowResetOption(false);
+                          setAuthNotice('Password reset link sent from alerts@amldecode.in. Check your inbox and spam folder.');
+                        }
+                      } finally {
+                        setAuthBusy(false);
+                      }
+                    }}
+                    className="text-xs font-semibold text-amber-500 hover:text-amber-400 underline underline-offset-2 disabled:opacity-60 cursor-pointer"
+                  >
+                    Reset Password
+                  </button>
+                </div>
+              )}
             </form>
           </div>
         </div>

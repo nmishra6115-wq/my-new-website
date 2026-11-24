@@ -128,10 +128,19 @@ export async function signUpWithEmailPassword({ fullName, email, password }) {
   });
 
   if (error) {
-    return { error: error.message || 'Unable to create account.' };
+    const msg = String(error.message || '');
+    if (/already registered|already exists|user already/i.test(msg)) {
+      return { alreadyRegistered: true, email: cleanEmail };
+    }
+    return { error: msg || 'Unable to create account.' };
   }
 
   const user = data?.user || null;
+  const isExistingUser = Boolean(user && Array.isArray(user.identities) && user.identities.length === 0);
+  if (isExistingUser) {
+    return { alreadyRegistered: true, email: cleanEmail };
+  }
+
   await recordAccountInSupabase({
     fullName: cleanName,
     email: cleanEmail,
@@ -151,6 +160,25 @@ export async function signUpWithEmailPassword({ fullName, email, password }) {
       loggedInAt: new Date().toISOString(),
     },
   };
+}
+
+export async function requestPasswordResetEmail(email) {
+  const cleanEmail = String(email || '').trim().toLowerCase();
+  if (!cleanEmail || !cleanEmail.includes('@')) {
+    return { error: 'Please enter your email address first so we can send a reset link.' };
+  }
+  if (!supabase?.auth?.resetPasswordForEmail) {
+    return { error: 'Password reset service is unavailable in this environment.' };
+  }
+  const redirectTo = typeof window !== 'undefined' && window.location?.origin ? window.location.origin : undefined;
+  const { error } = await supabase.auth.resetPasswordForEmail(
+    cleanEmail,
+    redirectTo ? { redirectTo } : undefined
+  );
+  if (error) {
+    return { error: error.message || 'Unable to send password reset email.' };
+  }
+  return { sent: true };
 }
 
 export async function signInWithEmailPassword({ email, password, fullName = '' }) {
