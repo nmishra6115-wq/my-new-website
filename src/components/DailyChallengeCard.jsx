@@ -301,7 +301,7 @@ export default function DailyChallengeCard({
   );
 
   const handleShareAchievement = async () => {
-    const shareText = `I completed today's AMLDecode Daily Intelligence Challenge (${istDateKey}) ? ${levelInfo.title} ? ${gamification.currentStreak || 0}-day IST streak. (amldecode.in)`;
+    const shareText = `I completed today's AMLDecode Daily Intelligence Challenge (${istDateKey}) - ${levelInfo.title} - ${gamification.currentStreak || 0}-day IST streak. (amldecode.in)`;
     try {
       if (navigator?.clipboard?.writeText) {
         await navigator.clipboard.writeText(shareText);
@@ -428,7 +428,7 @@ export default function DailyChallengeCard({
       >
         <div className="flex flex-wrap items-center justify-between gap-2">
           <p className="text-sm font-extrabold tracking-wide">
-            {passed ? 'Accurate Assessment' : 'Review Required'} ? Official Answer: {formatChoiceLabel(rightBool)}
+            {passed ? 'Accurate Assessment' : 'Review Required'} - Official Answer: {formatChoiceLabel(rightBool)}
           </p>
           {!isPractice && lastAwardSummary && (
             <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-black/25">
@@ -526,7 +526,7 @@ export default function DailyChallengeCard({
           <div className="p-3 rounded-xl bg-[#122640] border border-white/10">
             <p className="text-[#94A3B8] text-[11px]">Level & XP</p>
             <p className="font-extrabold text-[#F8FAFC] mt-0.5">
-              Lv.{levelInfo.level} ? {gamification.totalXp || 0} XP
+              Lv.{levelInfo.level} - {gamification.totalXp || 0} XP
             </p>
             <p className="text-[11px] text-[#93C5FD] mt-0.5">{levelInfo.title}</p>
           </div>
@@ -634,7 +634,7 @@ export default function DailyChallengeCard({
         <div className="p-5 sm:p-8 space-y-5">
           <div className="space-y-2">
             <p className="text-xs font-bold uppercase tracking-wider text-[#93C5FD]">
-              Adaptive Practice & Weak-Topic Focus (Practice Mode ? Separate from Official Daily Challenge)
+              Adaptive Practice & Weak-Topic Focus (Practice Mode - Separate from Official Daily Challenge)
             </p>
             <div className="flex flex-wrap gap-2">
               {adaptiveRecs.map((rec) => (
@@ -732,7 +732,7 @@ export default function DailyChallengeCard({
               ))}
             </div>
             <span className="text-[11px] text-[#94A3B8]">
-              Opt-in display names only ? Emails & phone numbers never shown
+              Opt-in display names only - Emails & phone numbers never shown
             </span>
           </div>
 
@@ -849,7 +849,7 @@ export default function DailyChallengeCard({
                 >
                   <div className="space-y-1">
                     <p className="font-bold text-[#F8FAFC]">
-                      {entry.publication_date_ist} ? {entry.topic || 'Challenge'}
+                      {entry.publication_date_ist} - {entry.topic || 'Challenge'}
                     </p>
                     <p className="text-[#CBD5E1] line-clamp-1">{entry.statement}</p>
                   </div>
