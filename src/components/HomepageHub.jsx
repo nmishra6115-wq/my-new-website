@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { AcademyBrandMark, IntelligenceCard, SectionHeader, TopicBadge } from './AcademyPrimitives';
 import DailyChallengeCard from './DailyChallengeCard';
 import { notesContent, faqData } from '../content';
@@ -6,6 +6,7 @@ import { jobOpenings } from '../jobs';
 import { kycNews } from '../news';
 import { Sun, Moon, UserCheck, LogOut, X } from 'lucide-react';
 import { signUpWithEmailPassword, requestPasswordResetEmail, signInWithEmailPassword, signOutLearnerAccount } from '../data/supabaseAuthSync';
+import { supabase } from '../supabaseClient';
 import { useThemeMode } from '../hooks/useThemeMode';
 import BannerAd468 from './BannerAd468';
 import SupportDeveloperBanner from './SupportDeveloperBanner';
@@ -46,6 +47,67 @@ export default function HomepageHub({
   const [authNotice, setAuthNotice] = useState('');
   const [accountInfoOpen, setAccountInfoOpen] = useState(false);
   const [pendingAfterAuth, setPendingAfterAuth] = useState(null);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return undefined;
+
+    const inspectReturnUrl = () => {
+      const rawHash = window.location.hash || '';
+      const rawSearch = window.location.search || '';
+      const hashStr = rawHash.startsWith('#') ? rawHash.slice(1) : rawHash;
+      const hashParams = new URLSearchParams(hashStr);
+      const searchParams = new URLSearchParams(rawSearch);
+
+      const errorDesc = hashParams.get('error_description') || searchParams.get('error_description') || hashParams.get('error') || searchParams.get('error');
+      const authType = hashParams.get('type') || searchParams.get('type') || '';
+      const hasAccessToken = Boolean(hashParams.get('access_token') || hashParams.get('token_hash') || searchParams.get('code'));
+      const hasMessage = Boolean(hashParams.get('message') || searchParams.get('message'));
+      const isEmailVerifyReturn = authType === 'signup' || authType === 'email' || hasMessage || (hasAccessToken && authType !== 'recovery');
+
+      if (!errorDesc && !isEmailVerifyReturn) return;
+
+      try {
+        const cleanUrl = `${window.location.pathname}${window.location.search}`
+          .replace(/([?&])(code|type|token_hash|message|error|error_code|error_description)=[^&]*/g, '$1')
+          .replace(/[?&]$/, '')
+          .replace(/\?&/, '?');
+        window.history.replaceState({}, document.title, cleanUrl || window.location.pathname);
+      } catch {
+        // Ignore history state restrictions
+      }
+
+      setAuthMode('login');
+      setAuthPassword('');
+      setAuthModalOpen(true);
+
+      if (errorDesc) {
+        setAuthNotice('');
+        setShowResetOption(true);
+        setAuthError(decodeURIComponent(errorDesc.replace(/\+/g, ' ')));
+      } else if (isEmailVerifyReturn) {
+        setAuthError('');
+        setShowResetOption(false);
+        setAuthNotice('Email verified! Log in now with your email and password.');
+      }
+    };
+
+    inspectReturnUrl();
+    window.addEventListener('hashchange', inspectReturnUrl);
+
+    const subscription = supabase?.auth?.onAuthStateChange?.((event, session) => {
+      if ((event === 'SIGNED_IN' || event === 'USER_UPDATED') && !learner?.email) {
+        const verifiedEmail = session?.user?.email || '';
+        if (verifiedEmail) {
+          setAuthEmail((prev) => prev || verifiedEmail);
+        }
+      }
+    })?.data?.subscription;
+
+    return () => {
+      window.removeEventListener('hashchange', inspectReturnUrl);
+      subscription?.unsubscribe?.();
+    };
+  }, [learner?.email]);
 
   async function handleAuthSubmit(e) {
     e.preventDefault();
