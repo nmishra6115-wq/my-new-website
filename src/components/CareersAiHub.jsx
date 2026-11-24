@@ -140,7 +140,7 @@ const SKILL_TOKEN_TO_ID = new Map(
   ])
 );
 
-export default function CareersAiHub({ onOpenView }) {
+export default function CareersAiHub({ onOpenView, isAdmin = false }) {
   const [nowMs] = useState(() => Date.now());
   const [isLoadingInitial, setIsLoadingInitial] = useState(true);
   const [expandedCardIds, setExpandedCardIds] = useState(() => new Set());
@@ -149,6 +149,7 @@ export default function CareersAiHub({ onOpenView }) {
   const [showMatchStudio, setShowMatchStudio] = useState(false);
   const [showAlertsPanel, setShowAlertsPanel] = useState(false);
   const [showFeedDiagnostics, setShowFeedDiagnostics] = useState(false);
+  const canShowFeedDiagnostics = Boolean(isAdmin && showFeedDiagnostics);
   const [isSyncingNow, setIsSyncingNow] = useState(false);
   const [adminConfig, setAdminConfig] = useState(() => readAdminConfig());
 
@@ -667,14 +668,16 @@ export default function CareersAiHub({ onOpenView }) {
             >
               {showAlertsPanel ? 'Hide Job Alerts' : `Job Alerts (${alerts.length})`}
             </button>
-            <button
-              type="button"
-              onClick={() => setShowFeedDiagnostics((prev) => !prev)}
-              aria-expanded={showFeedDiagnostics}
-              className="px-3.5 py-2.5 rounded-xl text-xs font-bold bg-white/10 text-amber-200 border border-amber-400/30 hover:bg-white/15 transition-colors cursor-pointer"
-            >
-              {showFeedDiagnostics ? 'Hide Feed Health' : `Feed & Expiry (${expiryDays}d)`}
-            </button>
+            {isAdmin && (
+              <button
+                type="button"
+                onClick={() => setShowFeedDiagnostics((prev) => !prev)}
+                aria-expanded={canShowFeedDiagnostics}
+                className="px-3.5 py-2.5 rounded-xl text-xs font-bold bg-white/10 text-amber-200 border border-amber-400/30 hover:bg-white/15 transition-colors cursor-pointer"
+              >
+                {canShowFeedDiagnostics ? 'Hide Feed Health' : `Feed & Expiry (${expiryDays}d)`}
+              </button>
+            )}
             {typeof onOpenView === 'function' && (
               <>
                 <button
@@ -848,7 +851,7 @@ export default function CareersAiHub({ onOpenView }) {
         )}
 
         {/* Phase 2 & 4 Feed Health, Expiry & Admin Sync Controls Drawer */}
-        {showFeedDiagnostics && (
+        {canShowFeedDiagnostics && (
           <div className="mt-6 pt-5 border-t border-white/15 space-y-4 text-xs">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div className="flex flex-wrap items-center gap-2.5">

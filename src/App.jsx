@@ -523,6 +523,14 @@ const LEARNER_STORAGE_KEY = 'amldecode_kt2_learner_v1';
       : activeView === 'skill-passport'
       ? 'Skill Certificate'
       : 'Terms of Service';
+const adminEmailAllowlist = String(import.meta.env.VITE_ADMIN_EMAILS || '')
+  .split(',')
+  .map((e) => e.trim().toLowerCase())
+  .filter(Boolean);
+const isCareersAdmin = Boolean(
+  learner?.email && adminEmailAllowlist.includes(learner.email.trim().toLowerCase())
+);
+
   return (
     <div className="amld-shell min-h-screen flex flex-col">
       <header className="sticky top-0 z-40 bg-[#081524]/95 backdrop-blur border-b border-[var(--amld-border)]">
@@ -680,7 +688,7 @@ const LEARNER_STORAGE_KEY = 'amldecode_kt2_learner_v1';
                 </div>
               </div>
             ) : (
-              <CareersAiHub onOpenView={(v) => setActiveView(v)} />
+              <CareersAiHub onOpenView={(v) => setActiveView(v)} isAdmin={isCareersAdmin} />
             )}
           </div>
         )}
