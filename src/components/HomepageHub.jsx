@@ -177,35 +177,35 @@ export default function HomepageHub({
             <div className="inline-flex items-center rounded-full bg-stone-100/90 dark:bg-slate-950/90 border border-stone-200 dark:border-slate-800 p-0.5">
               <button
                 type="button"
-                onClick={() => onOpenView('notes')}
+                onClick={() => runWithAccount(() => onOpenView('notes'))}
                 className="whitespace-nowrap shrink-0 px-2.5 py-1 rounded-full text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-800 hover:text-slate-950 dark:hover:text-white transition-colors cursor-pointer"
               >
                 Notes
               </button>
               <button
                 type="button"
-                onClick={() => onOpenView('quiz')}
+                onClick={() => runWithAccount(() => onOpenView('quiz'))}
                 className="whitespace-nowrap shrink-0 px-2.5 py-1 rounded-full text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-800 hover:text-slate-950 dark:hover:text-white transition-colors cursor-pointer"
               >
                 Tests
               </button>
               <button
                 type="button"
-                onClick={() => onOpenView('ai-interview')}
+                onClick={() => runWithAccount(() => onOpenView('ai-interview'))}
                 className="whitespace-nowrap shrink-0 px-2.5 py-1 rounded-full text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-800 hover:text-slate-950 dark:hover:text-white transition-colors cursor-pointer"
               >
                 AI Interview
               </button>
               <button
                 type="button"
-                onClick={() => onOpenView('daily-challenge')}
+                onClick={() => runWithAccount(() => onOpenView('daily-challenge'))}
                 className="whitespace-nowrap shrink-0 px-2.5 py-1 rounded-full text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-800 hover:text-slate-950 dark:hover:text-white transition-colors cursor-pointer"
               >
                 Daily Challenge
               </button>
               <button
                 type="button"
-                onClick={() => onOpenView('skill-passport')}
+                onClick={() => runWithAccount(() => onOpenView('skill-passport'))}
                 className="whitespace-nowrap shrink-0 px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-500/15 text-amber-800 dark:text-amber-300 hover:bg-amber-500/25 transition-colors cursor-pointer"
               >
                 Skill Certificate
@@ -219,7 +219,7 @@ export default function HomepageHub({
             </a>
             <button
               type="button"
-              onClick={() => onOpenView('jobs')}
+              onClick={() => runWithAccount(() => onOpenView('jobs'))}
               className="whitespace-nowrap shrink-0 text-xs font-medium text-slate-700 dark:text-slate-300 hover:text-amber-700 dark:hover:text-amber-400 transition-colors cursor-pointer"
             >
               Jobs
@@ -302,7 +302,7 @@ export default function HomepageHub({
             </button>
             <button
               type="button"
-              onClick={() => onOpenView('contribute')}
+              onClick={() => runWithAccount(() => onOpenView('contribute'))}
               className="whitespace-nowrap shrink-0 px-3 py-1.5 rounded-full text-xs font-bold bg-amber-600 text-white hover:bg-amber-700 transition-colors cursor-pointer"
             >
               Recruiter Desk
@@ -355,31 +355,31 @@ export default function HomepageHub({
 
         {mobileOpen && (
           <div className="lg:hidden bg-white dark:bg-slate-900 border-t border-stone-200 dark:border-slate-800 px-4 py-4 space-y-2 text-sm">
-            <button type="button" onClick={() => { setMobileOpen(false); onOpenView('notes'); }} className="block w-full text-left py-2 text-slate-800 dark:text-slate-100 hover:text-amber-700 dark:hover:text-amber-400 cursor-pointer">
+            <button type="button" onClick={() => { setMobileOpen(false); runWithAccount(() => onOpenView('notes')); }} className="block w-full text-left py-2 text-slate-800 dark:text-slate-100 hover:text-amber-700 dark:hover:text-amber-400 cursor-pointer">
               Syllabus Notes
             </button>
             <a href="#pathways" onClick={() => setMobileOpen(false)} className="block py-2 text-slate-700 dark:text-slate-200 hover:text-amber-700 dark:hover:text-amber-400">
               Learning Pathways
             </a>
-            <button type="button" onClick={() => { setMobileOpen(false); onOpenView('quiz'); }} className="block w-full text-left py-2 text-slate-800 dark:text-slate-100 hover:text-amber-700 dark:hover:text-amber-400 cursor-pointer">
+            <button type="button" onClick={() => { setMobileOpen(false); runWithAccount(() => onOpenView('quiz')); }} className="block w-full text-left py-2 text-slate-800 dark:text-slate-100 hover:text-amber-700 dark:hover:text-amber-400 cursor-pointer">
               Knowledge Test
             </button>
-            <button type="button" onClick={() => { setMobileOpen(false); onOpenView('ai-interview'); }} className="block w-full text-left py-2 text-slate-800 dark:text-slate-100 hover:text-amber-700 dark:hover:text-amber-400 cursor-pointer">
+            <button type="button" onClick={() => { setMobileOpen(false); runWithAccount(() => onOpenView('ai-interview')); }} className="block w-full text-left py-2 text-slate-800 dark:text-slate-100 hover:text-amber-700 dark:hover:text-amber-400 cursor-pointer">
               AI Interview
             </button>
-            <button type="button" onClick={() => { setMobileOpen(false); onOpenView('daily-challenge'); }} className="block w-full text-left py-2 text-slate-800 dark:text-slate-100 hover:text-amber-700 dark:hover:text-amber-400 cursor-pointer">
+            <button type="button" onClick={() => { setMobileOpen(false); runWithAccount(() => onOpenView('daily-challenge')); }} className="block w-full text-left py-2 text-slate-800 dark:text-slate-100 hover:text-amber-700 dark:hover:text-amber-400 cursor-pointer">
               Daily Challenge
             </button>
-            <button type="button" onClick={() => { setMobileOpen(false); onOpenView('jobs'); }} className="block w-full text-left py-2 text-slate-800 dark:text-slate-100 hover:text-amber-700 dark:hover:text-amber-400 cursor-pointer">
+            <button type="button" onClick={() => { setMobileOpen(false); runWithAccount(() => onOpenView('jobs')); }} className="block w-full text-left py-2 text-slate-800 dark:text-slate-100 hover:text-amber-700 dark:hover:text-amber-400 cursor-pointer">
               Jobs
             </button>
-            <button type="button" onClick={() => { setMobileOpen(false); onOpenView('skill-passport'); }} className="block w-full text-left py-2 text-slate-800 dark:text-slate-100 hover:text-amber-700 dark:hover:text-amber-400 cursor-pointer">
+            <button type="button" onClick={() => { setMobileOpen(false); runWithAccount(() => onOpenView('skill-passport')); }} className="block w-full text-left py-2 text-slate-800 dark:text-slate-100 hover:text-amber-700 dark:hover:text-amber-400 cursor-pointer">
               Skill Certificate
             </button>
-            <button type="button" onClick={() => { setMobileOpen(false); onOpenView('referralForm'); }} className="block w-full text-left py-2 text-slate-700 dark:text-slate-200 hover:text-amber-700 dark:hover:text-amber-400 cursor-pointer">
+            <button type="button" onClick={() => { setMobileOpen(false); runWithAccount(() => onOpenView('referralForm')); }} className="block w-full text-left py-2 text-slate-700 dark:text-slate-200 hover:text-amber-700 dark:hover:text-amber-400 cursor-pointer">
               Submit Referral
             </button>
-            <button type="button" onClick={() => { setMobileOpen(false); onOpenView('contribute'); }} className="block w-full text-left py-2 text-amber-700 dark:text-amber-400 font-semibold cursor-pointer">
+            <button type="button" onClick={() => { setMobileOpen(false); runWithAccount(() => onOpenView('contribute')); }} className="block w-full text-left py-2 text-amber-700 dark:text-amber-400 font-semibold cursor-pointer">
               Recruiter Desk
             </button>
           </div>
@@ -404,21 +404,21 @@ export default function HomepageHub({
               <div className="pt-2 flex flex-wrap gap-3">
                 <button
                   type="button"
-                  onClick={() => onOpenView('notes')}
+                  onClick={() => runWithAccount(() => onOpenView('notes'))}
                   className="px-5 py-3 rounded-xl text-sm font-bold bg-amber-400 text-slate-950 hover:bg-amber-300 transition-colors cursor-pointer"
                 >
                   Explore Syllabus Notes
                 </button>
                 <button
                   type="button"
-                  onClick={() => onOpenView('quiz')}
+                  onClick={() => runWithAccount(() => onOpenView('quiz'))}
                   className="px-5 py-3 rounded-xl text-sm font-semibold bg-white/10 text-white border border-white/20 hover:bg-white/15 transition-colors cursor-pointer"
                 >
                   Take Knowledge Test
                 </button>
                 <button
                   type="button"
-                  onClick={() => onOpenView('jobs')}
+                  onClick={() => runWithAccount(() => onOpenView('jobs'))}
                   className="px-5 py-3 rounded-xl text-sm font-semibold text-amber-200 border border-amber-300/40 hover:bg-amber-400/10 transition-colors cursor-pointer"
                 >
                   Browse Compliance Jobs
@@ -441,7 +441,7 @@ export default function HomepageHub({
               </div>
               <button
                 type="button"
-                onClick={() => onOpenView('quiz')}
+                onClick={() => runWithAccount(() => onOpenView('quiz'))}
                 className="text-sm font-bold text-amber-800 hover:text-amber-950 w-fit cursor-pointer"
               >
                 Launch Knowledge Test →
@@ -458,7 +458,7 @@ export default function HomepageHub({
               </div>
               <button
                 type="button"
-                onClick={() => onOpenView('notes')}
+                onClick={() => runWithAccount(() => onOpenView('notes'))}
                 className="text-sm font-bold text-amber-800 hover:text-amber-950 w-fit cursor-pointer"
               >
                 Open Syllabus Notes →
@@ -475,7 +475,7 @@ export default function HomepageHub({
               </div>
               <button
                 type="button"
-                onClick={() => onOpenView('jobs')}
+                onClick={() => runWithAccount(() => onOpenView('jobs'))}
                 className="text-sm font-bold text-amber-800 hover:text-amber-950 w-fit cursor-pointer"
               >
                 Explore Careers AI →
@@ -609,7 +609,7 @@ export default function HomepageHub({
             action={
               <button
                 type="button"
-                onClick={() => onOpenView('notes')}
+                onClick={() => runWithAccount(() => onOpenView('notes'))}
                 className="text-xs font-bold text-amber-800 hover:underline cursor-pointer"
               >
                 View all {notesContent.length} modules →
@@ -700,7 +700,7 @@ export default function HomepageHub({
             action={
               <button
                 type="button"
-                onClick={() => onOpenView('quiz')}
+                onClick={() => runWithAccount(() => onOpenView('quiz'))}
                 className="px-4 py-2 rounded-xl text-xs font-bold bg-white border border-stone-300 text-slate-900 hover:border-amber-600 cursor-pointer"
               >
                 Open Knowledge Test
@@ -713,7 +713,7 @@ export default function HomepageHub({
               runWithAccount(() => onSelectNoteIndex(noteIdx))
               onOpenView('notes');
             }}
-            onOpenKnowledgeTest={() => onOpenView('quiz')}
+            onOpenKnowledgeTest={() => runWithAccount(() => onOpenView('quiz'))}
           />
         </section>
 
@@ -728,21 +728,21 @@ export default function HomepageHub({
             <div className="flex flex-wrap gap-3">
               <button
                 type="button"
-                onClick={() => onOpenView('faq')}
+                onClick={() => runWithAccount(() => onOpenView('faq'))}
                 className="px-4 py-2.5 rounded-xl text-xs font-bold border border-stone-300 text-slate-900 hover:bg-stone-50 cursor-pointer"
               >
                 Read FAQ
               </button>
               <button
                 type="button"
-                onClick={() => onOpenView('referralForm')}
+                onClick={() => runWithAccount(() => onOpenView('referralForm'))}
                 className="px-4 py-2.5 rounded-xl text-xs font-bold bg-amber-600 text-white hover:bg-amber-700 cursor-pointer"
               >
                 Submit Referral
               </button>
               <button
                 type="button"
-                onClick={() => onOpenView('contact')}
+                onClick={() => runWithAccount(() => onOpenView('contact'))}
                 className="px-4 py-2.5 rounded-xl text-xs font-semibold border border-stone-300 text-slate-700 hover:text-slate-900 cursor-pointer"
               >
                 Contact Support
@@ -765,17 +765,17 @@ export default function HomepageHub({
           <div className="md:col-span-3 space-y-2">
             <p className="text-xs font-bold uppercase tracking-wider text-amber-800">Platform</p>
             <nav aria-label="Footer Platform Links" className="flex flex-col gap-1 text-sm text-slate-700">
-              <a href="/?view=faq" onClick={(e) => { e.preventDefault(); onOpenView('faq'); }} className="text-left py-1.5 hover:text-slate-950">About &amp; FAQ</a>
-              <a href="/?view=contact" onClick={(e) => { e.preventDefault(); onOpenView('contact'); }} className="text-left py-1.5 hover:text-slate-950">Contact Us</a>
-              <a href="/?view=notes" onClick={(e) => { e.preventDefault(); onOpenView('notes'); }} className="text-left py-1.5 hover:text-slate-950">Syllabus Notes</a>
-              <a href="/?view=quiz" onClick={(e) => { e.preventDefault(); onOpenView('quiz'); }} className="text-left py-1.5 hover:text-slate-950">Knowledge Test</a>
+              <a href="/?view=faq" onClick={(e) => { e.preventDefault(); runWithAccount(() => onOpenView('faq')); }} className="text-left py-1.5 hover:text-slate-950">About &amp; FAQ</a>
+              <a href="/?view=contact" onClick={(e) => { e.preventDefault(); runWithAccount(() => onOpenView('contact')); }} className="text-left py-1.5 hover:text-slate-950">Contact Us</a>
+              <a href="/?view=notes" onClick={(e) => { e.preventDefault(); runWithAccount(() => onOpenView('notes')); }} className="text-left py-1.5 hover:text-slate-950">Syllabus Notes</a>
+              <a href="/?view=quiz" onClick={(e) => { e.preventDefault(); runWithAccount(() => onOpenView('quiz')); }} className="text-left py-1.5 hover:text-slate-950">Knowledge Test</a>
             </nav>
           </div>
           <div className="md:col-span-4 space-y-2">
             <p className="text-xs font-bold uppercase tracking-wider text-amber-800">Legal &amp; Disclaimer</p>
             <nav aria-label="Footer Legal Links" className="flex flex-col gap-1 text-sm text-slate-700">
-              <a href="/?view=privacy" onClick={(e) => { e.preventDefault(); onOpenView('privacy'); }} className="text-left py-1.5 hover:text-slate-950">Privacy Policy</a>
-              <a href="/?view=terms" onClick={(e) => { e.preventDefault(); onOpenView('terms'); }} className="text-left py-1.5 hover:text-slate-950">Terms of Service &amp; Disclaimer</a>
+              <a href="/?view=privacy" onClick={(e) => { e.preventDefault(); runWithAccount(() => onOpenView('privacy')); }} className="text-left py-1.5 hover:text-slate-950">Privacy Policy</a>
+              <a href="/?view=terms" onClick={(e) => { e.preventDefault(); runWithAccount(() => onOpenView('terms')); }} className="text-left py-1.5 hover:text-slate-950">Terms of Service &amp; Disclaimer</a>
             </nav>
           </div>
         </div>
