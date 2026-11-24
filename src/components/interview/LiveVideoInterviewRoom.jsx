@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+﻿import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   Camera,
   CameraOff,
@@ -84,24 +84,18 @@ export default function LiveVideoInterviewRoom({
   onSwitchToTextMode,
   onExitToHub,
 }) {
-  if (!session) {
-    return (
-      <div className="p-6 text-sm text-slate-200 bg-[#081C33] rounded-2xl">
-        No active interview session found. Please start or resume a session from the hub.
-      </div>
-    );
-  }
-  const questions = Array.isArray(session.questions) ? session.questions : [];
+  const questions = Array.isArray(session?.questions) ? session.questions : [];
   const totalQ = Math.max(1, questions.length);
-  const [stepIdx, setStepIdx] = useState(() =>
-    Math.min(Math.max(0, Number(session.currentIndex) || 0), totalQ - 1)
-  );
+  const clampedSessionIdx = Math.min(Math.max(0, Number(session?.currentIndex) || 0), totalQ - 1);
+  const [stepIdx, setStepIdx] = useState(() => clampedSessionIdx);
+  const prevSessionIdxRef = useRef(session?.currentIndex);
 
   useEffect(() => {
-    setStepIdx(Math.min(Math.max(0, Number(session.currentIndex) || 0), totalQ - 1));
-    const propIdx = Math.min(Math.max(0, Number(session.currentIndex) || 0), totalQ - 1);
-    setStepIdx((prev) => (propIdx > prev ? propIdx : prev));
-  }, [session.currentIndex, totalQ]);
+    if (prevSessionIdxRef.current !== session?.currentIndex) {
+      prevSessionIdxRef.current = session?.currentIndex;
+      setStepIdx((prev) => (clampedSessionIdx > prev ? clampedSessionIdx : prev));
+    }
+  }, [session?.currentIndex, clampedSessionIdx]);
 
   const currentIdx = Math.min(Math.max(0, stepIdx), totalQ - 1);
   const currentQ = questions[currentIdx] || null;
@@ -154,7 +148,7 @@ export default function LiveVideoInterviewRoom({
   const latestFeedbackRef = useRef(latestFeedback);
   const isEvaluatingRef = useRef(isEvaluating);
 
-  const setStreamAudioEnabled = useCallback((enabled) => {
+const setStreamAudioEnabled = useCallback((enabled) => {
     if (!streamRef.current) return;
     streamRef.current.getAudioTracks().forEach((track) => {
       try {
@@ -287,6 +281,8 @@ export default function LiveVideoInterviewRoom({
       setStatusMessage('Could not access microphone for voice clip recording.');
     }
   }, [isRecordingClip, selectedMicId]);
+
+  const [interimTranscript, setInterimTranscript] = useState('');
 
   const stopVoiceCapture = useCallback(() => {
     manualStopRef.current = true;
@@ -438,7 +434,7 @@ export default function LiveVideoInterviewRoom({
         `Unable to start speech capture (${err?.message || 'error'}). Type your answer below anytime.`
       );
     }
-  }, [setStreamAudioEnabled, startMicMeter]);
+  }, [setStreamAudioEnabled, startMicMeter, stopMicMeter]);
 
   const triggerSpeechRecognitionOnce = startVoiceCapture;
 
@@ -499,7 +495,6 @@ export default function LiveVideoInterviewRoom({
     const wantAudio = micEnabled;
 
     stopMediaStream();
-    setMediaError('');
 
     if (!wantVideo && !wantAudio) {
       return () => {
@@ -508,13 +503,17 @@ export default function LiveVideoInterviewRoom({
     }
 
     if (typeof window !== 'undefined' && !window.isSecureContext) {
-      setMediaError('Camera/mic require HTTPS or localhost. Typed answers work without camera/mic.');
-      return;
+      const errTimer = window.setTimeout(() => {
+        setMediaError('Camera/mic require HTTPS or localhost. Typed answers work without camera/mic.');
+      }, 0);
+      return () => window.clearTimeout(errTimer);
     }
 
     if (!navigator?.mediaDevices?.getUserMedia) {
-      setMediaError('Camera/mic APIs unavailable in this browser. Use typed answers or Text Mode.');
-      return;
+      const apiErrTimer = window.setTimeout(() => {
+        setMediaError('Camera/mic APIs unavailable in this browser. Use typed answers or Text Mode.');
+      }, 0);
+      return () => window.clearTimeout(apiErrTimer);
     }
 
     const constraints = {
@@ -533,6 +532,7 @@ export default function LiveVideoInterviewRoom({
     navigator.mediaDevices
       .getUserMedia(constraints)
       .then((stream) => {
+        setMediaError('');
         if (cancelled) {
           stream.getTracks().forEach((t) => t.stop());
           return;
@@ -567,7 +567,7 @@ export default function LiveVideoInterviewRoom({
     clearTimersAndSpeech();
       stopMediaStream();
     };
-  }, [clearTimersAndSpeech, stopMediaStream]);
+  }, [clearTimersAndSpeech, stopMediaStream, stopVoiceCapture]);
 
   // Timer
   useEffect(() => {
@@ -585,7 +585,6 @@ export default function LiveVideoInterviewRoom({
     return () => window.clearInterval(id);
   }, []);
 
-  const [interimTranscript, setInterimTranscript] = useState('');
 
   useEffect(() => {
     micEnabledRef.current = micEnabled;
@@ -649,7 +648,7 @@ export default function LiveVideoInterviewRoom({
         finishSpeakingToListening();
       }
     },
-    [clearTimersAndSpeech, isPaused, ttsEnabled, startVoiceCapture]
+    [clearTimersAndSpeech, isPaused, ttsEnabled, triggerSpeechRecognitionOnce]
   );
 
   // Present greeting/intro on first question, or current question / follow-up once per turn
@@ -659,15 +658,19 @@ export default function LiveVideoInterviewRoom({
     if (lastTurnKeyRef.current === turnKey) return;
     lastTurnKeyRef.current = turnKey;
 
+    let lineToPlay = currentQ.prompt;
     if (!introDoneRef.current && currentIdx === 0 && !followUpActive) {
       introDoneRef.current = true;
-      const greeting = `Good morning, and welcome to your ${session.role || 'AML Compliance'} interview for ${session.company || 'your target role'}. We will discuss your experience, technical understanding, and investigation approach. ${currentQ.prompt}`;
-      playInterviewerLine(greeting);
+      lineToPlay = `Good morning, and welcome to your ${session.role || 'AML Compliance'} interview for ${session.company || 'your target role'}. We will discuss your experience, technical understanding, and investigation approach. ${currentQ.prompt}`;
     } else if (followUpActive && currentQ.followUpPrompt) {
-      playInterviewerLine(currentQ.followUpPrompt);
-    } else {
-      playInterviewerLine(currentQ.prompt);
+      lineToPlay = currentQ.followUpPrompt;
     }
+
+    const playTimer = window.setTimeout(() => {
+      playInterviewerLine(lineToPlay);
+    }, 0);
+
+    return () => window.clearTimeout(playTimer);
   }, [currentQ, currentIdx, followUpActive, isPaused, latestFeedback, session.id, session.role, session.company, playInterviewerLine]);
 
   const handleSubmit = async ({ skipped = false }) => {
@@ -758,9 +761,16 @@ export default function LiveVideoInterviewRoom({
   };
 
   const completionPct = useMemo(
-    () => Math.round((((session.records || []).length) / totalQ) * 100),
+    () => Math.round((((session?.records || []).length) / totalQ) * 100),
     [session.records, totalQ]
   );
+  if (!session) {
+    return (
+      <div className="p-6 text-sm text-slate-200 bg-[#081C33] rounded-2xl">
+        No active interview session found. Please start or resume a session from the hub.
+      </div>
+    );
+  }
 
   if (!currentQ) return null;
 
@@ -772,7 +782,6 @@ export default function LiveVideoInterviewRoom({
     ? 'Thinking'
     : 'Listening';
 
-  try {
     return (
     <div className="min-h-dvh overflow-x-hidden bg-[#061324] text-slate-100 flex flex-col justify-between">
       {/* Header */}
@@ -1353,19 +1362,4 @@ export default function LiveVideoInterviewRoom({
     </footer>
     </div>
     );
-  } catch (renderErr) {
-    return (
-      <div className="min-h-[70vh] bg-[#081C33] text-slate-100 p-6 flex items-center justify-center">
-        <div className="max-w-2xl w-full rounded-2xl border border-rose-400/40 bg-slate-900/90 p-5 space-y-2">
-          <h2 className="text-base font-bold text-rose-300">Live AI Interview Render Error</h2>
-          <p className="text-xs text-slate-200 font-mono break-all">
-            {renderErr?.message || String(renderErr)}
-          </p>
-          <pre className="text-[11px] text-slate-400 overflow-x-auto max-h-48 whitespace-pre-wrap">
-            {renderErr?.stack || ''}
-          </pre>
-        </div>
-      </div>
-    );
-  }
 }

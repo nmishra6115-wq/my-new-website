@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './design-tokens.css';
 import { supabase } from './supabaseClient';
-import { upsertKt2Learner, fetchKt2Attempts, insertKt2Attempt } from './data/kt2SupabaseSync';
+import { fetchKt2Attempts, insertKt2Attempt } from './data/kt2SupabaseSync';
 import { applyLearnerNameToPassport, recordAccountInSupabase } from './data/supabaseAuthSync';
 import SkillPassportView from './components/SkillPassportView';
 import { notesContent, privacyPolicy, termsOfService, faqData, contactContent } from './content';
@@ -176,7 +176,9 @@ const LEARNER_STORAGE_KEY = 'amldecode_kt2_learner_v1';
         setLearner(profile);
         try {
           window.localStorage.setItem(LEARNER_STORAGE_KEY, JSON.stringify(profile));
-        } catch {}
+        } catch {
+          // Storage unavailable
+        }
         applyLearnerNameToPassport(fullName, profile.email);
         recordAccountInSupabase({ fullName, email: profile.email, authUserId: user.id });
       }
@@ -200,7 +202,9 @@ const LEARNER_STORAGE_KEY = 'amldecode_kt2_learner_v1';
         setLearner(profile);
         try {
           window.localStorage.setItem(LEARNER_STORAGE_KEY, JSON.stringify(profile));
-        } catch {}
+        } catch {
+          // Storage unavailable
+        }
         applyLearnerNameToPassport(fullName, profile.email);
       }
     });
@@ -209,6 +213,7 @@ const LEARNER_STORAGE_KEY = 'amldecode_kt2_learner_v1';
       active = false;
       authListener?.subscription?.unsubscribe();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleLoginSuccess = (profile, configToStart) => {
@@ -297,12 +302,28 @@ const LEARNER_STORAGE_KEY = 'amldecode_kt2_learner_v1';
   const requestOpenView = (view) => {
     if (!view) {
       setActiveView(null);
+      setPendingViewAfterLogin(null);
       window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+    if (!learner?.email) {
+      setPendingViewAfterLogin(view);
+      setIsLoginModalOpen(true);
       return;
     }
     setActiveView(view);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
+
+  useEffect(() => {
+    if (!activeView || learner?.email) return;
+    const timer = window.setTimeout(() => {
+      setPendingViewAfterLogin((prev) => prev || activeView);
+      setActiveView(null);
+      setIsLoginModalOpen(true);
+    }, 0);
+    return () => window.clearTimeout(timer);
+  }, [activeView, learner]);
 
   const handleBackHome = () => {
     setActiveView(null);
@@ -425,7 +446,7 @@ const LEARNER_STORAGE_KEY = 'amldecode_kt2_learner_v1';
       document.head.appendChild(canonical);
     }
     canonical.setAttribute('href', `https://amldecode.in${current.path}`);
-  }, [activeView, pageIndex, notesContent]);
+  }, [activeView, pageIndex]);
 
   const faqCategories = ['All', ...Array.from(new Set(faqData.map((f) => f.category).filter(Boolean)))];
   const filteredFaqs =
@@ -441,7 +462,9 @@ const LEARNER_STORAGE_KEY = 'amldecode_kt2_learner_v1';
         onAuthSuccess={(profile) => handleLoginSuccess(profile, null)}
         onSignOut={() => {
           setLearner(null);
-          try { window.localStorage.removeItem('amldecode_kt2_learner_v1'); } catch {}
+          try { window.localStorage.removeItem('amldecode_kt2_learner_v1'); } catch {
+          // Storage unavailable
+        }
         }}
       />
     );
@@ -812,10 +835,12 @@ const LEARNER_STORAGE_KEY = 'amldecode_kt2_learner_v1';
             <LearnerLoginModal
         isOpen={isLoginModalOpen}
         pendingConfig={pendingStartConfig}
+        pendingView={pendingViewAfterLogin}
         initialLearner={learner}
         onClose={() => {
           setIsLoginModalOpen(false);
           setPendingStartConfig(null);
+          setPendingViewAfterLogin(null);
         }}
         onLoginSuccess={handleLoginSuccess}
       />

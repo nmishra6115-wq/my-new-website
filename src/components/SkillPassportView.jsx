@@ -9,7 +9,6 @@ import {
   buildRecommendations,
   buildLinkedInShareText,
   generateVerificationToken,
-  createEmptyPassportState,
 } from '../data/amlSkillPassportEngine';
 
 export default function SkillPassportView({
@@ -235,6 +234,7 @@ export default function SkillPassportView({
     return { current: 0, target: 1, percent: 0, label: '0% complete' };
   }
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const activeBadgeProgress = useMemo(() => getBadgeProgress(activeBadgeObj), [activeBadgeObj, passport, overallScore]);
 
 
@@ -655,28 +655,7 @@ export default function SkillPassportView({
     }
   }
 
-  function handleExportJson() {
-    try {
-      const payload = JSON.stringify({ exportedAt: new Date().toISOString(), passport }, null, 2);
-      const blob = new Blob([payload], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'amldecode-skill-passport.json';
-      a.click();
-      URL.revokeObjectURL(url);
-      notify('Exported your Skill Certificate data as JSON.');
-    } catch {
-      notify('Could not export passport JSON.');
-    }
-  }
 
-  function handleResetLocalPassport() {
-    const fresh = createEmptyPassportState(currentUser);
-    savePassportState(fresh);
-    setPassport(fresh);
-    notify('Cleared local Skill Certificate records.');
-  }
 
   if (verifyToken) {
     const matchedShare = Object.values(passport.publicShares || {}).find((s) => s.publicToken === verifyToken);

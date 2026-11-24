@@ -29,6 +29,19 @@ export function normalizeCanonicalUrl(rawUrl) {
   }
 }
 
+
+function buildFallbackJobId(seedStr) {
+  let h1 = 0x811c9dc5;
+  let h2 = 0x9e3779b9;
+  for (let i = 0; i < seedStr.length; i += 1) {
+    const code = seedStr.charCodeAt(i);
+    h1 ^= code;
+    h1 = Math.imul(h1, 0x01000193);
+    h2 = Math.imul(h2 ^ code, 0x85ebca6b) >>> 0;
+  }
+  return `job-${(h1 >>> 0).toString(16).padStart(8, "0")}${(h2 >>> 0).toString(16).padStart(8, "0").slice(0, 8)}`;
+}
+
 export function normalizeJobRecord(rawJob, nowMs = Date.now()) {
   const verifiedIso = new Date(nowMs).toISOString();
   const title = String(rawJob?.title || '').trim();
@@ -49,7 +62,7 @@ export function normalizeJobRecord(rawJob, nowMs = Date.now()) {
       : verifiedIso;
 
   return {
-    id: rawJob?.id || `job-${Buffer.from(`${employer}|${title}|${canonicalUrl}`).toString('hex').slice(0, 16)}`,
+    id: rawJob?.id || buildFallbackJobId(`${employer}|${title}|${canonicalUrl}`),
     sourceId: rawJob?.sourceId || 'unspecified-source',
     sourceLabel: rawJob?.sourceLabel || rawJob?.sourceId || 'Verified Feed',
     sourceJobId: rawJob?.sourceJobId ? String(rawJob.sourceJobId).trim() : null,

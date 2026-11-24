@@ -1,8 +1,26 @@
-﻿import { useState } from 'react';
+import { useEffect, useState } from 'react';
+
+const VIEW_LABELS = {
+  notes: 'Syllabus Notes',
+  quiz: 'Knowledge Test & Case Simulations',
+  jobs: 'Compliance Careers & Job Matcher',
+  network: 'Network & Briefings',
+  available: 'Available Referrals',
+  referralForm: 'Submit Network Referral',
+  contribute: 'Recruiter Desk',
+  faq: 'FAQ',
+  contact: 'Contact Us',
+  privacy: 'Privacy Policy',
+  terms: 'Terms of Service',
+  'skill-passport': 'AMLDecode Skill Certificate',
+  'daily-challenge': 'Daily Challenge',
+  'ai-interview': 'AI Interview Practice',
+};
 
 export default function LearnerLoginModal({
   isOpen,
   pendingConfig,
+  pendingView = null,
   initialLearner,
   onClose,
   onLoginSuccess,
@@ -11,7 +29,20 @@ export default function LearnerLoginModal({
   const [email, setEmail] = useState(initialLearner?.email || '');
   const [error, setError] = useState('');
 
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape') {
+        onClose?.();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
+
+  const targetPageLabel = pendingView ? (VIEW_LABELS[pendingView] || pendingView) : null;
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -19,7 +50,7 @@ export default function LearnerLoginModal({
     const trimmedEmail = email.trim();
 
     if (!trimmedName || !trimmedEmail || !trimmedEmail.includes('@')) {
-      setError('Please enter your full name and a valid email address to continue.');
+      setError('Please enter your full name and a valid email address to create your account or sign in.');
       return;
     }
 
@@ -53,27 +84,35 @@ export default function LearnerLoginModal({
         <div className="flex items-start justify-between gap-3 border-b border-white/10 pb-4">
           <div>
             <p className="text-[11px] font-bold uppercase tracking-widest text-[#C4A77D]">
-              Learner Sign-In Required
+              Account Required for Pages
             </p>
             <h2
               id="kt2-login-title"
               className="text-xl font-extrabold text-[#F5F8FC] mt-1"
             >
-              Sign In to Start Assessment
+              Create Account or Sign In
             </h2>
+            <p className="text-xs text-[#9BB0C7] mt-1">
+              The homepage is open to everyone. Create an account or sign in to view platform pages.
+            </p>
             {pendingConfig && (
-              <p className="text-xs text-[#9BB0C7] mt-1">
+              <p className="text-xs text-[#9BB0C7] mt-1.5">
                 Queued: <span className="text-[#F5F8FC] font-semibold">{pendingConfig.domain}</span>{' '}
                 · <span className="text-[#F5F8FC] font-semibold">{pendingConfig.difficulty}</span>{' '}
                 · <span className="text-[#F5F8FC] font-semibold">{pendingConfig.count} Qs</span>
+              </p>
+            )}
+            {!pendingConfig && targetPageLabel && (
+              <p className="text-xs text-[#9BB0C7] mt-1.5">
+                Requested page: <span className="text-[#F4B860] font-semibold">{targetPageLabel}</span>
               </p>
             )}
           </div>
           <button
             type="button"
             onClick={onClose}
-            aria-label="Close login modal"
-            className="text-xs font-bold text-[#9BB0C7] hover:text-[#F5F8FC] px-2 py-1 rounded-lg border border-white/10 cursor-pointer"
+            aria-label="Close account and sign-in modal"
+            className="text-xs font-bold text-[#9BB0C7] hover:text-[#F5F8FC] px-2 py-1 rounded-lg border border-white/10 cursor-pointer shrink-0"
           >
             Esc / Close
           </button>
@@ -132,7 +171,7 @@ export default function LearnerLoginModal({
               type="submit"
               className="px-5 py-2.5 rounded-xl bg-[#C4A77D] text-[#081C33] text-xs font-extrabold tracking-wide hover:bg-[#d2b891] transition-colors cursor-pointer"
             >
-              Continue to Assessment
+              {pendingConfig ? 'Continue to Assessment' : 'Continue to Page'}
             </button>
           </div>
         </form>

@@ -2,6 +2,19 @@ import { supabase } from '../supabaseClient';
 import { loadPassportState, savePassportState } from './amlSkillPassportEngine';
 import { upsertKt2Learner } from './kt2SupabaseSync';
 
+const recentAuthLogMap = new Map();
+
+function shouldRecordAuthEvent(email, eventType) {
+  const key = `${email}:${eventType}`;
+  const nowMs = Date.now();
+  const prevMs = recentAuthLogMap.get(key) || 0;
+  if (nowMs - prevMs < 4000) {
+    return false;
+  }
+  recentAuthLogMap.set(key, nowMs);
+  return true;
+}
+
 export function applyLearnerNameToPassport(name, email = '') {
   const cleanName = String(name || '').trim();
   const cleanEmail = String(email || '').trim().toLowerCase();
@@ -27,7 +40,12 @@ export function applyLearnerNameToPassport(name, email = '') {
   }
 }
 
-export async function recordAccountInSupabase({ fullName, email, authUserId = null }) {
+export async function recordAccountInSupabase({
+  fullName,
+  email,
+  authUserId = null,
+  eventType = 'session',
+}) {
   const cleanEmail = String(email || '').trim().toLowerCase();
   const cleanName = String(fullName || '').trim() || cleanEmail.split('@')[0] || 'Learner';
   if (!cleanEmail) return null;
@@ -37,18 +55,44 @@ export async function recordAccountInSupabase({ fullName, email, authUserId = nu
   if (!supabase) return null;
   try {
     const now = new Date().toISOString();
+    const { data: existing } = await supabase
+      .from('learner_accounts')
+      .select('login_count, first_signed_up_at')
+      .eq('email', cleanEmail)
+      .maybeSingle();
+
+    const shouldCountLogin =
+      (eventType === 'signup' || eventType === 'login') &&
+      shouldRecordAuthEvent(cleanEmail, eventType);
+
+    const nextLoginCount =
+      (Number(existing?.login_count) || 0) + (shouldCountLogin ? 1 : 0);
+
     const payload = {
       email: cleanEmail,
       full_name: cleanName,
+      first_signed_up_at: existing?.first_signed_up_at || now,
       last_signed_in_at: now,
+      login_count: nextLoginCount,
       updated_at: now,
       ...(authUserId ? { auth_user_id: authUserId } : {}),
     };
+
     const { data, error } = await supabase
       .from('learner_accounts')
       .upsert(payload, { onConflict: 'email' })
       .select()
       .maybeSingle();
+
+    if (shouldCountLogin) {
+      await supabase.from('auth_activity_logs').insert({
+        email: cleanEmail,
+        full_name: cleanName,
+        auth_user_id: authUserId || null,
+        event_type: eventType,
+        created_at: now,
+      });
+    }
 
     if (error) return null;
     return data;
@@ -92,6 +136,7 @@ export async function signUpWithEmailPassword({ fullName, email, password }) {
     fullName: cleanName,
     email: cleanEmail,
     authUserId: user?.id || null,
+    eventType: 'signup',
   });
   applyLearnerNameToPassport(cleanName, cleanEmail);
 
@@ -147,6 +192,7 @@ export async function signInWithEmailPassword({ email, password, fullName = '' }
     fullName: resolvedName,
     email: cleanEmail,
     authUserId: user?.id || null,
+    eventType: 'login',
   });
   applyLearnerNameToPassport(resolvedName, cleanEmail);
 
