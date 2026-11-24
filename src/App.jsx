@@ -629,13 +629,29 @@ const isCareersAdmin = Boolean(
             <span className="text-[#F5F8FC] font-semibold truncate">{viewBreadcrumbLabel}</span>
           </nav>
 
-          <button
-            type="button"
-            onClick={() => setActiveView('notes')}
-            className="text-xs font-semibold text-[#C4A77D] hover:underline shrink-0"
-          >
-            Syllabus Notes →
-          </button>
+          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+            <button
+              type="button"
+              onClick={() => setActiveView('referralForm')}
+              className="text-xs font-semibold text-[#F4B860] hover:underline"
+            >
+              Submit Referral
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveView('contribute')}
+              className="text-xs font-semibold text-[#F5F8FC] hover:text-[#C4A77D]"
+            >
+              Recruiter Desk
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveView('notes')}
+              className="text-xs font-semibold text-[#C4A77D] hover:underline"
+            >
+              Syllabus Notes →
+            </button>
+          </div>
         </div>
       </header>
 
