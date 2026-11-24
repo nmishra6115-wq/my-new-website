@@ -1073,9 +1073,10 @@ export default function HomepageHub({
                   minLength={6}
                   value={authPassword}
                   onChange={(e) => setAuthPassword(e.target.value)}
-                  placeholder={authMode === 'reset' ? 'Choose a new password (min 6 chars)' : 'At least 6 characters'}
+                  placeholder={authMode === 'reset' ? 'New password (A-z, 0-9 & symbol)' : 'At least 8 chars (A-z, 0-9 & symbol)'}
                   className="w-full rounded-xl bg-stone-50 dark:bg-slate-950 border border-stone-300 dark:border-slate-700 px-3.5 py-2.5 text-sm text-slate-900 dark:text-white focus:outline-none focus:border-amber-600"
                 />
+                <p className="mt-1 text-[11px] text-slate-500 dark:text-slate-400">Use uppercase, lowercase, a number, and a symbol.</p>
               </div>
 
               {authError && (
