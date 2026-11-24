@@ -243,3 +243,40 @@ export async function signOutLearnerAccount() {
     // Ignore sign-out network errors
   }
 }
+
+export async function completePasswordResetWithCode({ email, code, newPassword }) {
+  const cleanEmail = String(email || '').trim().toLowerCase();
+  const cleanCode = String(code || '').trim().replace(/\s+/g, '');
+  const cleanPassword = String(newPassword || '');
+
+  if (!cleanEmail || !cleanEmail.includes('@')) {
+    return { error: 'Please enter your registered email address.' };
+  }
+  if (!cleanCode) {
+    return { error: 'Please enter the 6-digit verification code sent to your email.' };
+  }
+  if (cleanPassword.length < 6) {
+    return { error: 'New password must be at least 6 characters.' };
+  }
+
+  const { error: verifyError } = await supabase.auth.verifyOtp({
+    email: cleanEmail,
+    token: cleanCode,
+    type: 'recovery',
+  });
+
+  if (verifyError) {
+    return { error: verifyError.message || 'Invalid or expired verification code.' };
+  }
+
+  const { error: updateError } = await supabase.auth.updateUser({
+    password: cleanPassword,
+  });
+
+  if (updateError) {
+    return { error: updateError.message || 'Could not update password.' };
+  }
+
+  await supabase.auth.signOut();
+  return { updated: true };
+}

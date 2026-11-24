@@ -5,7 +5,7 @@ import { notesContent, faqData } from '../content';
 import { jobOpenings } from '../jobs';
 import { kycNews } from '../news';
 import { Sun, Moon, UserCheck, LogOut, X } from 'lucide-react';
-import { signUpWithEmailPassword, requestPasswordResetEmail, signInWithEmailPassword, signOutLearnerAccount } from '../data/supabaseAuthSync';
+import { signUpWithEmailPassword, requestPasswordResetEmail, completePasswordResetWithCode, signInWithEmailPassword, signOutLearnerAccount } from '../data/supabaseAuthSync';
 import { supabase } from '../supabaseClient';
 import { useThemeMode } from '../hooks/useThemeMode';
 import BannerAd468 from './BannerAd468';
@@ -41,6 +41,7 @@ export default function HomepageHub({
   const [authName, setAuthName] = useState(learner?.name || '');
   const [authEmail, setAuthEmail] = useState(learner?.email || '');
   const [authPassword, setAuthPassword] = useState('');
+  const [authResetCode, setAuthResetCode] = useState('');
   const [authBusy, setAuthBusy] = useState(false);
   const [showResetOption, setShowResetOption] = useState(false);
   const [authError, setAuthError] = useState('');
@@ -62,13 +63,14 @@ export default function HomepageHub({
       const authType = hashParams.get('type') || searchParams.get('type') || '';
       const hasAccessToken = Boolean(hashParams.get('access_token') || hashParams.get('token_hash') || searchParams.get('code'));
       const hasMessage = Boolean(hashParams.get('message') || searchParams.get('message'));
+      const isResetParam = searchParams.get('reset') === '1' || hashParams.get('reset') === '1';
       const isEmailVerifyReturn = authType === 'signup' || authType === 'email' || hasMessage || (hasAccessToken && authType !== 'recovery');
 
-      if (!errorDesc && !isEmailVerifyReturn) return;
+      if (!errorDesc && !isEmailVerifyReturn && !isResetParam) return;
 
       try {
         const cleanUrl = `${window.location.pathname}${window.location.search}`
-          .replace(/([?&])(code|type|token_hash|message|error|error_code|error_description)=[^&]*/g, '$1')
+          .replace(/([?&])(code|type|token_hash|message|error|error_code|error_description|reset)=[^&]*/g, '$1')
           .replace(/[?&]$/, '')
           .replace(/\?&/, '?');
         window.history.replaceState({}, document.title, cleanUrl || window.location.pathname);
@@ -76,7 +78,7 @@ export default function HomepageHub({
         // Ignore history state restrictions
       }
 
-      setAuthMode('login');
+      setAuthMode(isResetParam && !errorDesc ? 'reset' : 'login');
       setAuthPassword('');
       setAuthModalOpen(true);
 
@@ -86,8 +88,22 @@ export default function HomepageHub({
         setAuthError(decodeURIComponent(errorDesc.replace(/\+/g, ' ')));
       } else if (isEmailVerifyReturn) {
         setAuthError('');
-        setShowResetOption(false);
+      setShowResetOption(false);
+
+      if (authMode === 'reset') {
+        setAuthMode('login');
+        setAuthResetCode('');
+        setAuthPassword('');
+        setAuthError('');
+        setAuthNotice('Password updated! Log in now with your email and new password.');
+        return;
+      }
         setAuthNotice('Email verified! Log in now with your email and password.');
+      } else if (isResetParam) {
+        setAuthError('');
+        setShowResetOption(false);
+        setAuthResetCode('');
+        setAuthNotice('Enter the 6-digit verification code sent to your email and choose a new password.');
       }
     };
 
@@ -122,11 +138,17 @@ export default function HomepageHub({
               email: authEmail,
               password: authPassword,
             })
-          : await signInWithEmailPassword({
-              fullName: authName,
-              email: authEmail,
-              password: authPassword,
-            });
+          : authMode === 'reset'
+            ? await completePasswordResetWithCode({
+                email: authEmail,
+                code: authResetCode,
+                newPassword: authPassword,
+              })
+            : await signInWithEmailPassword({
+                fullName: authName,
+                email: authEmail,
+                password: authPassword,
+              });
 
       if (res.error) {
         setAuthError(res.error);
@@ -958,7 +980,7 @@ export default function HomepageHub({
                   AMLDecode Learner Account
                 </p>
                 <h2 className="text-xl font-extrabold text-slate-900 dark:text-white mt-1">
-                  {authMode === 'signup' ? 'Create Your Account' : 'Log In to Your Account'}
+                  {authMode === 'signup' ? 'Create Your Account' : authMode === 'reset' ? 'Reset Your Password' : 'Log In to Your Account'}
                 </h2>
                 <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
                   Your name is mapped directly to your Skill Certificate and saved to your learner profile.
@@ -1022,9 +1044,28 @@ export default function HomepageHub({
                 />
               </div>
 
+              {authMode === 'reset' && (
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                    6-Digit Verification Code
+                  </label>
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    autoComplete="one-time-code"
+                    required
+                    maxLength={8}
+                    value={authResetCode}
+                    onChange={(e) => setAuthResetCode(e.target.value)}
+                    placeholder="Enter 6-digit code from email"
+                    className="w-full rounded-xl bg-stone-50 dark:bg-slate-950 border border-stone-300 dark:border-slate-700 px-3.5 py-2.5 text-sm tracking-widest font-mono text-slate-900 dark:text-white focus:outline-none focus:border-amber-600"
+                  />
+                </div>
+              )}
+
               <div>
                 <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
-                  Password
+                  {authMode === 'reset' ? 'New Password' : 'Password'}
                 </label>
                 <input
                   type="password"
@@ -1032,7 +1073,7 @@ export default function HomepageHub({
                   minLength={6}
                   value={authPassword}
                   onChange={(e) => setAuthPassword(e.target.value)}
-                  placeholder="At least 6 characters"
+                  placeholder={authMode === 'reset' ? 'Choose a new password (min 6 chars)' : 'At least 6 characters'}
                   className="w-full rounded-xl bg-stone-50 dark:bg-slate-950 border border-stone-300 dark:border-slate-700 px-3.5 py-2.5 text-sm text-slate-900 dark:text-white focus:outline-none focus:border-amber-600"
                 />
               </div>
@@ -1053,7 +1094,7 @@ export default function HomepageHub({
                 disabled={authBusy}
                 className="w-full rounded-xl bg-amber-600 hover:bg-amber-700 disabled:opacity-60 py-2.5 text-xs font-extrabold uppercase tracking-wider text-white transition cursor-pointer"
               >
-                {authBusy ? 'Please wait...' : authMode === 'signup' ? 'Create Account & Continue' : 'Log In & Continue'}
+                {authBusy ? 'Please wait...' : authMode === 'signup' ? 'Create Account & Continue' : authMode === 'reset' ? 'Verify Code & Update Password' : 'Log In & Continue'}
               </button>
 
               {(showResetOption || authMode === 'login') && (
@@ -1071,7 +1112,10 @@ export default function HomepageHub({
                           setAuthError(resetRes.error);
                         } else {
                           setShowResetOption(false);
-                          setAuthNotice('Password reset link sent from alerts@amldecode.in. Check your inbox and spam folder.');
+                          setAuthMode('reset');
+                          setAuthResetCode('');
+                          setAuthPassword('');
+                          setAuthNotice('6-digit reset code sent from alerts@amldecode.in. Enter the code and your new password below.');
                         }
                       } finally {
                         setAuthBusy(false);
@@ -1080,6 +1124,47 @@ export default function HomepageHub({
                     className="text-xs font-semibold text-amber-500 hover:text-amber-400 underline underline-offset-2 disabled:opacity-60 cursor-pointer"
                   >
                     Reset Password
+                  </button>
+                </div>
+              )}
+
+              {authMode === 'reset' && (
+                <div className="pt-1 flex items-center justify-between text-xs">
+                  <button
+                    type="button"
+                    disabled={authBusy}
+                    onClick={async () => {
+                      setAuthError('');
+                      setAuthNotice('');
+                      setAuthBusy(true);
+                      try {
+                        const resetRes = await requestPasswordResetEmail(authEmail);
+                        if (resetRes.error) {
+                          setAuthError(resetRes.error);
+                        } else {
+                          setAuthNotice('New 6-digit code sent from alerts@amldecode.in.');
+                        }
+                      } finally {
+                        setAuthBusy(false);
+                      }
+                    }}
+                    className="font-semibold text-amber-500 hover:text-amber-400 underline underline-offset-2 disabled:opacity-60 cursor-pointer"
+                  >
+                    Resend Code
+                  </button>
+                  <button
+                    type="button"
+                    disabled={authBusy}
+                    onClick={() => {
+                      setAuthMode('login');
+                      setAuthResetCode('');
+                      setAuthPassword('');
+                      setAuthError('');
+                      setAuthNotice('');
+                    }}
+                    className="font-semibold text-slate-500 hover:text-slate-300 underline underline-offset-2 disabled:opacity-60 cursor-pointer"
+                  >
+                    Back to Log In
                   </button>
                 </div>
               )}
