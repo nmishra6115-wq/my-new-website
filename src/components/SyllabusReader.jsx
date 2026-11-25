@@ -1,5 +1,6 @@
-﻿import React, { useEffect, useMemo, useRef, useState } from 'react';
+﻿import { useEffect, useMemo, useRef, useState } from 'react';
 import { TopicBadge } from './AcademyPrimitives';
+import { MODULE_BY_INDEX } from '../data/moduleRegistry';
 
 function extractTocItems(rawContent) {
   if (typeof rawContent !== 'string') return [];
@@ -80,14 +81,10 @@ export default function SyllabusReader({
     return () => window.removeEventListener('scroll', handleScroll);
   }, [pageIndex]);
 
+  const activeEntry = MODULE_BY_INDEX.get(pageIndex);
   const handleCopyLink = async () => {
-    const slug = encodeURIComponent(
-      (currentModule.title || `module-${pageIndex + 1}`)
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/^-|-$/g, '')
-    );
-    const shareUrl = `${window.location.origin}${window.location.pathname}#module=${pageIndex + 1}-${slug}`;
+    const sharePath = activeEntry ? activeEntry.routePath : '/notes';
+    const shareUrl = `${window.location.origin}${sharePath}`;
     try {
       await navigator.clipboard.writeText(shareUrl);
       setCopied(true);
@@ -122,11 +119,27 @@ export default function SyllabusReader({
         </div>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between gap-4">
           <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-xs text-[#B8C7D9] truncate">
-            <button type="button" onClick={onBackHome} className="hover:text-[#21D7C4] font-medium shrink-0">
+            <a
+              href="/"
+              onClick={(e) => {
+                e.preventDefault();
+                onBackHome();
+              }}
+              className="hover:text-[#21D7C4] font-medium shrink-0"
+            >
               Home
-            </button>
+            </a>
             <span className="text-[#7E93AB]">/</span>
-            <span className="text-[#B8C7D9] shrink-0">Syllabus Notes</span>
+            <a
+              href="/notes"
+              onClick={(e) => {
+                e.preventDefault();
+                onSelectModule(0);
+              }}
+              className="text-[#B8C7D9] hover:text-[#21D7C4] shrink-0"
+            >
+              Syllabus Notes
+            </a>
             <span className="text-[#7E93AB]">/</span>
             <span className="text-[#F5F8FC] font-semibold truncate">{currentModule.title}</span>
           </nav>
@@ -169,22 +182,30 @@ export default function SyllabusReader({
                 ref={sidebarRef}
                 className="flex lg:flex-col gap-2 overflow-x-auto lg:overflow-y-auto max-h-none lg:max-h-[55vh] pb-2 lg:pb-0 pr-1"
               >
-                {notesContent.map((mod, idx) => (
-                  <button
-                    key={idx}
-                    type="button"
-                    ref={(el) => (pillRefs.current[idx] = el)}
-                    onClick={() => onSelectModule(idx)}
-                    className={`shrink-0 lg:shrink min-w-[200px] lg:min-w-0 w-auto lg:w-full text-left px-3.5 py-2.5 rounded-xl border text-xs transition-colors ${
-                      idx === pageIndex
-                        ? 'bg-[#21D7C4]/15 border-[#21D7C4] text-[#21D7C4] font-bold'
-                        : 'bg-[#081524] border-[var(--amld-border)] text-[#B8C7D9] hover:text-[#F5F8FC]'
-                    }`}
-                  >
-                    <span className="block text-[10px] opacity-70">0{idx + 1 > 9 ? '' : ''}{idx + 1}</span>
-                    <span className="line-clamp-2 mt-0.5">{mod.title}</span>
-                  </button>
-                ))}
+                {notesContent.map((mod, idx) => {
+                  const modEntry = MODULE_BY_INDEX.get(idx);
+                  const modHref = modEntry ? modEntry.routePath : '/notes';
+                  return (
+                    <a
+                      key={idx}
+                      href={modHref}
+                      ref={(el) => (pillRefs.current[idx] = el)}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        onSelectModule(idx);
+                      }}
+                      aria-current={idx === pageIndex ? 'page' : undefined}
+                      className={`block shrink-0 lg:shrink min-w-[200px] lg:min-w-0 w-auto lg:w-full text-left px-3.5 py-2.5 rounded-xl border text-xs transition-colors ${
+                        idx === pageIndex
+                          ? 'bg-[#21D7C4]/15 border-[#21D7C4] text-[#21D7C4] font-bold'
+                          : 'bg-[#081524] border-[var(--amld-border)] text-[#B8C7D9] hover:text-[#F5F8FC]'
+                      }`}
+                    >
+                      <span className="block text-[10px] opacity-70">{idx + 1 < 10 ? `0${idx + 1}` : idx + 1}</span>
+                      <span className="line-clamp-2 mt-0.5">{mod.title}</span>
+                    </a>
+                  );
+                })}
               </div>
             </div>
 
@@ -276,16 +297,23 @@ export default function SyllabusReader({
               {Array.isArray(relatedIndices) && relatedIndices.length > 0 && typeof onSelectModule === 'function' && (
                 <div className="pt-2 flex flex-wrap items-center gap-2">
                   <span className="text-xs font-semibold text-[#9BB0C7] mr-1">Related Modules:</span>
-                  {relatedIndices.map((relIdx) => (
-                    <button
-                      key={relIdx}
-                      type="button"
-                      onClick={() => onSelectModule(relIdx)}
-                      className="px-3 py-1.5 rounded-lg bg-[#081524] border border-[var(--amld-border)] text-xs font-semibold text-[#C4A77D] hover:border-[#21D7C4]/60 cursor-pointer"
-                    >
-                      {notesContent[relIdx]?.title || `Module ${relIdx + 1}`}
-                    </button>
-                  ))}
+                  {relatedIndices.map((relIdx) => {
+                    const relEntry = MODULE_BY_INDEX.get(relIdx);
+                    const relHref = relEntry ? relEntry.routePath : '/notes';
+                    return (
+                      <a
+                        key={relIdx}
+                        href={relHref}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          onSelectModule(relIdx);
+                        }}
+                        className="px-3 py-1.5 rounded-lg bg-[#081524] border border-[var(--amld-border)] text-xs font-semibold text-[#C4A77D] hover:border-[#21D7C4]/60 cursor-pointer"
+                      >
+                        {notesContent[relIdx]?.title || `Module ${relIdx + 1}`}
+                      </a>
+                    );
+                  })}
                 </div>
               )}
             </section>
@@ -327,38 +355,61 @@ export default function SyllabusReader({
               {Array.isArray(relatedIndices) && relatedIndices.length > 0 && typeof onSelectModule === 'function' && (
                 <div className="pt-2 flex flex-wrap items-center gap-2">
                   <span className="text-xs font-semibold text-[#9BB0C7] mr-1">Related Modules:</span>
-                  {relatedIndices.map((relIdx) => (
-                    <button
-                      key={relIdx}
-                      type="button"
-                      onClick={() => onSelectModule(relIdx)}
-                      className="px-3 py-1.5 rounded-lg bg-[#081524] border border-[var(--amld-border)] text-xs font-semibold text-[#C4A77D] hover:border-[#21D7C4]/60 cursor-pointer"
-                    >
-                      {notesContent[relIdx]?.title || `Module ${relIdx + 1}`}
-                    </button>
-                  ))}
+                  {relatedIndices.map((relIdx) => {
+                    const relEntry = MODULE_BY_INDEX.get(relIdx);
+                    const relHref = relEntry ? relEntry.routePath : '/notes';
+                    return (
+                      <a
+                        key={relIdx}
+                        href={relHref}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          onSelectModule(relIdx);
+                        }}
+                        className="px-3 py-1.5 rounded-lg bg-[#081524] border border-[var(--amld-border)] text-xs font-semibold text-[#C4A77D] hover:border-[#21D7C4]/60 cursor-pointer"
+                      >
+                        {notesContent[relIdx]?.title || `Module ${relIdx + 1}`}
+                      </a>
+                    );
+                  })}
                 </div>
               )}
             </section>
 
             {/* Module Step Controls */}
             <div className="pt-8 mt-8 border-t border-[var(--amld-border)] flex flex-wrap items-center justify-between gap-4">
-              <button
-                type="button"
-                disabled={pageIndex <= 0}
-                onClick={() => onSelectModule(Math.max(0, pageIndex - 1))}
-                className="px-4 py-2.5 rounded-xl text-xs font-semibold border border-[var(--amld-border)] bg-[#081524] text-[#F5F8FC] disabled:opacity-40"
-              >
-                ← Previous Module
-              </button>
-              <button
-                type="button"
-                disabled={pageIndex >= notesContent.length - 1}
-                onClick={() => onSelectModule(Math.min(notesContent.length - 1, pageIndex + 1))}
-                className="amld-btn-primary px-5 py-2.5 rounded-xl text-xs font-bold disabled:opacity-40"
-              >
-                Next Module →
-              </button>
+              {pageIndex > 0 ? (
+                <a
+                  href={MODULE_BY_INDEX.get(pageIndex - 1)?.routePath || '/notes'}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    onSelectModule(Math.max(0, pageIndex - 1));
+                  }}
+                  className="px-4 py-2.5 rounded-xl text-xs font-semibold border border-[var(--amld-border)] bg-[#081524] text-[#F5F8FC]"
+                >
+                  ← Previous Module
+                </a>
+              ) : (
+                <span className="px-4 py-2.5 rounded-xl text-xs font-semibold border border-[var(--amld-border)] bg-[#081524] text-[#F5F8FC] opacity-40">
+                  ← Previous Module
+                </span>
+              )}
+              {pageIndex < notesContent.length - 1 ? (
+                <a
+                  href={MODULE_BY_INDEX.get(pageIndex + 1)?.routePath || '/notes'}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    onSelectModule(Math.min(notesContent.length - 1, pageIndex + 1));
+                  }}
+                  className="amld-btn-primary px-5 py-2.5 rounded-xl text-xs font-bold"
+                >
+                  Next Module →
+                </a>
+              ) : (
+                <span className="amld-btn-primary px-5 py-2.5 rounded-xl text-xs font-bold opacity-40">
+                  Next Module →
+                </span>
+              )}
             </div>
 
             {/* Related Modules */}
@@ -368,22 +419,27 @@ export default function SyllabusReader({
                   Related Syllabus Modules
                 </p>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  {relatedIndices.map((relIdx) => (
-                    <button
-                      key={relIdx}
-                      type="button"
-                      onClick={() => {
-                        onSelectModule(relIdx);
-                        window.scrollTo({ top: 0, behavior: 'smooth' });
-                      }}
-                      className="text-left p-4 rounded-xl bg-[#081524] border border-[var(--amld-border)] hover:border-[#21D7C4]/50 transition-colors"
-                    >
-                      <span className="text-[11px] text-[#F4B860] block mb-1">Module {relIdx + 1}</span>
-                      <span className="text-sm font-semibold text-[#F5F8FC] line-clamp-2">
-                        {notesContent[relIdx]?.title}
-                      </span>
-                    </button>
-                  ))}
+                  {relatedIndices.map((relIdx) => {
+                    const relEntry = MODULE_BY_INDEX.get(relIdx);
+                    const relHref = relEntry ? relEntry.routePath : '/notes';
+                    return (
+                      <a
+                        key={relIdx}
+                        href={relHref}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          onSelectModule(relIdx);
+                          window.scrollTo({ top: 0, behavior: 'smooth' });
+                        }}
+                        className="block text-left p-4 rounded-xl bg-[#081524] border border-[var(--amld-border)] hover:border-[#21D7C4]/50 transition-colors"
+                      >
+                        <span className="text-[11px] text-[#F4B860] block mb-1">Module {relIdx + 1}</span>
+                        <span className="text-sm font-semibold text-[#F5F8FC] line-clamp-2">
+                          {notesContent[relIdx]?.title}
+                        </span>
+                      </a>
+                    );
+                  })}
                 </div>
               </section>
             )}

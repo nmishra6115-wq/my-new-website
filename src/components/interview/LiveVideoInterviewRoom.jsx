@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+﻿import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   Camera,
   CameraOff,
@@ -84,24 +84,18 @@ export default function LiveVideoInterviewRoom({
   onSwitchToTextMode,
   onExitToHub,
 }) {
-  if (!session) {
-    return (
-      <div className="p-6 text-sm text-slate-200 bg-[#081C33] rounded-2xl">
-        No active interview session found. Please start or resume a session from the hub.
-      </div>
-    );
-  }
-  const questions = Array.isArray(session.questions) ? session.questions : [];
+  const questions = Array.isArray(session?.questions) ? session.questions : [];
   const totalQ = Math.max(1, questions.length);
-  const [stepIdx, setStepIdx] = useState(() =>
-    Math.min(Math.max(0, Number(session.currentIndex) || 0), totalQ - 1)
-  );
+  const clampedSessionIdx = Math.min(Math.max(0, Number(session?.currentIndex) || 0), totalQ - 1);
+  const [stepIdx, setStepIdx] = useState(() => clampedSessionIdx);
+  const prevSessionIdxRef = useRef(session?.currentIndex);
 
   useEffect(() => {
-    setStepIdx(Math.min(Math.max(0, Number(session.currentIndex) || 0), totalQ - 1));
-    const propIdx = Math.min(Math.max(0, Number(session.currentIndex) || 0), totalQ - 1);
-    setStepIdx((prev) => (propIdx > prev ? propIdx : prev));
-  }, [session.currentIndex, totalQ]);
+    if (prevSessionIdxRef.current !== session?.currentIndex) {
+      prevSessionIdxRef.current = session?.currentIndex;
+      setStepIdx((prev) => (clampedSessionIdx > prev ? clampedSessionIdx : prev));
+    }
+  }, [session?.currentIndex, clampedSessionIdx]);
 
   const currentIdx = Math.min(Math.max(0, stepIdx), totalQ - 1);
   const currentQ = questions[currentIdx] || null;
@@ -154,7 +148,7 @@ export default function LiveVideoInterviewRoom({
   const latestFeedbackRef = useRef(latestFeedback);
   const isEvaluatingRef = useRef(isEvaluating);
 
-  const setStreamAudioEnabled = useCallback((enabled) => {
+const setStreamAudioEnabled = useCallback((enabled) => {
     if (!streamRef.current) return;
     streamRef.current.getAudioTracks().forEach((track) => {
       try {
@@ -287,6 +281,8 @@ export default function LiveVideoInterviewRoom({
       setStatusMessage('Could not access microphone for voice clip recording.');
     }
   }, [isRecordingClip, selectedMicId]);
+
+  const [interimTranscript, setInterimTranscript] = useState('');
 
   const stopVoiceCapture = useCallback(() => {
     manualStopRef.current = true;
@@ -438,7 +434,7 @@ export default function LiveVideoInterviewRoom({
         `Unable to start speech capture (${err?.message || 'error'}). Type your answer below anytime.`
       );
     }
-  }, [setStreamAudioEnabled, startMicMeter]);
+  }, [setStreamAudioEnabled, startMicMeter, stopMicMeter]);
 
   const triggerSpeechRecognitionOnce = startVoiceCapture;
 
@@ -499,7 +495,6 @@ export default function LiveVideoInterviewRoom({
     const wantAudio = micEnabled;
 
     stopMediaStream();
-    setMediaError('');
 
     if (!wantVideo && !wantAudio) {
       return () => {
@@ -508,13 +503,17 @@ export default function LiveVideoInterviewRoom({
     }
 
     if (typeof window !== 'undefined' && !window.isSecureContext) {
-      setMediaError('Camera/mic require HTTPS or localhost. Typed answers work without camera/mic.');
-      return;
+      const errTimer = window.setTimeout(() => {
+        setMediaError('Camera/mic require HTTPS or localhost. Typed answers work without camera/mic.');
+      }, 0);
+      return () => window.clearTimeout(errTimer);
     }
 
     if (!navigator?.mediaDevices?.getUserMedia) {
-      setMediaError('Camera/mic APIs unavailable in this browser. Use typed answers or Text Mode.');
-      return;
+      const apiErrTimer = window.setTimeout(() => {
+        setMediaError('Camera/mic APIs unavailable in this browser. Use typed answers or Text Mode.');
+      }, 0);
+      return () => window.clearTimeout(apiErrTimer);
     }
 
     const constraints = {
@@ -533,6 +532,7 @@ export default function LiveVideoInterviewRoom({
     navigator.mediaDevices
       .getUserMedia(constraints)
       .then((stream) => {
+        setMediaError('');
         if (cancelled) {
           stream.getTracks().forEach((t) => t.stop());
           return;
@@ -567,7 +567,7 @@ export default function LiveVideoInterviewRoom({
     clearTimersAndSpeech();
       stopMediaStream();
     };
-  }, [clearTimersAndSpeech, stopMediaStream]);
+  }, [clearTimersAndSpeech, stopMediaStream, stopVoiceCapture]);
 
   // Timer
   useEffect(() => {
@@ -585,7 +585,6 @@ export default function LiveVideoInterviewRoom({
     return () => window.clearInterval(id);
   }, []);
 
-  const [interimTranscript, setInterimTranscript] = useState('');
 
   useEffect(() => {
     micEnabledRef.current = micEnabled;
@@ -649,7 +648,7 @@ export default function LiveVideoInterviewRoom({
         finishSpeakingToListening();
       }
     },
-    [clearTimersAndSpeech, isPaused, ttsEnabled, startVoiceCapture]
+    [clearTimersAndSpeech, isPaused, ttsEnabled, triggerSpeechRecognitionOnce]
   );
 
   // Present greeting/intro on first question, or current question / follow-up once per turn
@@ -659,15 +658,19 @@ export default function LiveVideoInterviewRoom({
     if (lastTurnKeyRef.current === turnKey) return;
     lastTurnKeyRef.current = turnKey;
 
+    let lineToPlay = currentQ.prompt;
     if (!introDoneRef.current && currentIdx === 0 && !followUpActive) {
       introDoneRef.current = true;
-      const greeting = `Good morning, and welcome to your ${session.role || 'AML Compliance'} interview for ${session.company || 'your target role'}. We will discuss your experience, technical understanding, and investigation approach. ${currentQ.prompt}`;
-      playInterviewerLine(greeting);
+      lineToPlay = `Good morning, and welcome to your ${session.role || 'AML Compliance'} interview for ${session.company || 'your target role'}. We will discuss your experience, technical understanding, and investigation approach. ${currentQ.prompt}`;
     } else if (followUpActive && currentQ.followUpPrompt) {
-      playInterviewerLine(currentQ.followUpPrompt);
-    } else {
-      playInterviewerLine(currentQ.prompt);
+      lineToPlay = currentQ.followUpPrompt;
     }
+
+    const playTimer = window.setTimeout(() => {
+      playInterviewerLine(lineToPlay);
+    }, 0);
+
+    return () => window.clearTimeout(playTimer);
   }, [currentQ, currentIdx, followUpActive, isPaused, latestFeedback, session.id, session.role, session.company, playInterviewerLine]);
 
   const handleSubmit = async ({ skipped = false }) => {
@@ -758,9 +761,16 @@ export default function LiveVideoInterviewRoom({
   };
 
   const completionPct = useMemo(
-    () => Math.round((((session.records || []).length) / totalQ) * 100),
+    () => Math.round((((session?.records || []).length) / totalQ) * 100),
     [session.records, totalQ]
   );
+  if (!session) {
+    return (
+      <div className="p-6 text-sm text-slate-200 bg-[#081C33] rounded-2xl">
+        No active interview session found. Please start or resume a session from the hub.
+      </div>
+    );
+  }
 
   if (!currentQ) return null;
 
@@ -772,9 +782,8 @@ export default function LiveVideoInterviewRoom({
     ? 'Thinking'
     : 'Listening';
 
-  try {
     return (
-    <div className="min-h-screen bg-[#061324] text-slate-100 flex flex-col justify-between">
+    <div className="min-h-dvh overflow-x-hidden bg-[#061324] text-slate-100 flex flex-col justify-between">
       {/* Header */}
       <header className="px-4 sm:px-6 py-3 border-b border-white/10 bg-[#081C33]/95 flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-3 min-w-0">
@@ -831,7 +840,7 @@ export default function LiveVideoInterviewRoom({
           {/* Left: AI Interviewer */}
           <section
             aria-label="AI Interviewer"
-            className="relative rounded-2xl overflow-hidden border border-white/15 bg-gradient-to-b from-[#132944] via-[#0C1D33] to-[#081424] min-h-[340px] sm:min-h-[390px] flex flex-col justify-between p-4 sm:p-6"
+            className="relative rounded-2xl overflow-hidden border border-white/15 bg-gradient-to-b from-[#132944] via-[#0C1D33] to-[#081424] min-h-[250px] sm:min-h-[390px] flex flex-col justify-between p-3.5 sm:p-6"
           >
             <div className="flex items-center justify-between">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-black/35 border border-white/10 text-xs">
@@ -847,7 +856,7 @@ export default function LiveVideoInterviewRoom({
             <div className="my-auto flex flex-col items-center justify-center py-3">
               <svg
                 viewBox="0 0 240 240"
-                className="w-40 h-40 sm:w-44 sm:h-44 drop-shadow-xl"
+                className="w-28 h-28 sm:w-44 sm:h-44 drop-shadow-xl"
                 role="img"
                 aria-label="Animated AI compliance interviewer avatar"
               >
@@ -921,10 +930,7 @@ export default function LiveVideoInterviewRoom({
           {/* Right (Desktop) / PiP (Mobile): Candidate Camera */}
           <section
             aria-label="Candidate Camera"
-            className="
-              fixed bottom-24 right-4 z-30 w-32 h-24 rounded-xl overflow-hidden border-2 border-[#C4A77D]/70 shadow-2xl bg-[#0B192C]
-              lg:static lg:w-auto lg:h-auto lg:min-h-[390px] lg:rounded-2xl lg:border lg:border-white/15 lg:shadow-none lg:flex lg:flex-col lg:justify-between lg:p-5
-            "
+            className="mt-3 w-full aspect-video max-h-[190px] sm:max-h-[240px] rounded-2xl overflow-hidden border border-[#C4A77D]/50 bg-[#0B192C] shadow-lg lg:mt-0 lg:max-h-none lg:w-auto lg:h-auto lg:min-h-[390px] lg:border-white/15 lg:shadow-none lg:flex lg:flex-col lg:justify-between lg:p-5"
           >
             <video
               ref={videoRef}
@@ -1349,22 +1355,11 @@ export default function LiveVideoInterviewRoom({
             </button>
           </div>
         </div>
-      </footer>
+      
+      <div className="mt-4 border-t pt-3 text-center border-white/10">
+        <p className="text-xs text-slate-400">Developed & Designed By Nitesh Mishra</p>
+      </div>
+    </footer>
     </div>
     );
-  } catch (renderErr) {
-    return (
-      <div className="min-h-[70vh] bg-[#081C33] text-slate-100 p-6 flex items-center justify-center">
-        <div className="max-w-2xl w-full rounded-2xl border border-rose-400/40 bg-slate-900/90 p-5 space-y-2">
-          <h2 className="text-base font-bold text-rose-300">Live AI Interview Render Error</h2>
-          <p className="text-xs text-slate-200 font-mono break-all">
-            {renderErr?.message || String(renderErr)}
-          </p>
-          <pre className="text-[11px] text-slate-400 overflow-x-auto max-h-48 whitespace-pre-wrap">
-            {renderErr?.stack || ''}
-          </pre>
-        </div>
-      </div>
-    );
-  }
 }

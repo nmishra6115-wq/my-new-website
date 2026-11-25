@@ -1,15 +1,18 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { AcademyBrandMark, IntelligenceCard, SectionHeader, TopicBadge } from './AcademyPrimitives';
 import DailyChallengeCard from './DailyChallengeCard';
 import { notesContent, faqData } from '../content';
+import { MODULE_BY_INDEX } from '../data/moduleRegistry';
 import { jobOpenings } from '../jobs';
 import { kycNews } from '../news';
 import { Sun, Moon, UserCheck, LogOut, X } from 'lucide-react';
-import { signUpWithEmailPassword, signInWithEmailPassword, signOutLearnerAccount } from '../data/supabaseAuthSync';
+import { signUpWithEmailPassword, requestPasswordResetEmail, completePasswordResetWithCode, signInWithEmailPassword, signOutLearnerAccount } from '../data/supabaseAuthSync';
+import { supabase } from '../supabaseClient';
 import { useThemeMode } from '../hooks/useThemeMode';
 import BannerAd468 from './BannerAd468';
 import SupportDeveloperBanner from './SupportDeveloperBanner';
 
+import NativeAdBanner from './NativeAdBanner';
 const PATHWAY_MATCHERS = [
   { label: 'AML Fundamentals', keywords: ['aml', 'money laundering'] },
   { label: 'KYC', keywords: ['kyc', 'client onboarding', 'lifecycle'] },
@@ -39,11 +42,89 @@ export default function HomepageHub({
   const [authName, setAuthName] = useState(learner?.name || '');
   const [authEmail, setAuthEmail] = useState(learner?.email || '');
   const [authPassword, setAuthPassword] = useState('');
+  const [authResetCode, setAuthResetCode] = useState('');
   const [authBusy, setAuthBusy] = useState(false);
+  const [showResetOption, setShowResetOption] = useState(false);
   const [authError, setAuthError] = useState('');
   const [authNotice, setAuthNotice] = useState('');
   const [accountInfoOpen, setAccountInfoOpen] = useState(false);
   const [pendingAfterAuth, setPendingAfterAuth] = useState(null);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return undefined;
+
+    const inspectReturnUrl = () => {
+      const rawHash = window.location.hash || '';
+      const rawSearch = window.location.search || '';
+      const hashStr = rawHash.startsWith('#') ? rawHash.slice(1) : rawHash;
+      const hashParams = new URLSearchParams(hashStr);
+      const searchParams = new URLSearchParams(rawSearch);
+
+      const errorDesc = hashParams.get('error_description') || searchParams.get('error_description') || hashParams.get('error') || searchParams.get('error');
+      const authType = hashParams.get('type') || searchParams.get('type') || '';
+      const hasAccessToken = Boolean(hashParams.get('access_token') || hashParams.get('token_hash') || searchParams.get('code'));
+      const hasMessage = Boolean(hashParams.get('message') || searchParams.get('message'));
+      const isResetParam = searchParams.get('reset') === '1' || hashParams.get('reset') === '1';
+      const isEmailVerifyReturn = authType === 'signup' || authType === 'email' || hasMessage || (hasAccessToken && authType !== 'recovery');
+
+      if (!errorDesc && !isEmailVerifyReturn && !isResetParam) return;
+
+      try {
+        const cleanUrl = `${window.location.pathname}${window.location.search}`
+          .replace(/([?&])(code|type|token_hash|message|error|error_code|error_description|reset)=[^&]*/g, '$1')
+          .replace(/[?&]$/, '')
+          .replace(/\?&/, '?');
+        window.history.replaceState({}, document.title, cleanUrl || window.location.pathname);
+      } catch {
+        // Ignore history state restrictions
+      }
+
+      setAuthMode(isResetParam && !errorDesc ? 'reset' : 'login');
+      setAuthPassword('');
+      setAuthModalOpen(true);
+
+      if (errorDesc) {
+        setAuthNotice('');
+        setShowResetOption(true);
+        setAuthError(decodeURIComponent(errorDesc.replace(/\+/g, ' ')));
+      } else if (isEmailVerifyReturn) {
+        setAuthError('');
+      setShowResetOption(false);
+
+      if (authMode === 'reset') {
+        setAuthMode('login');
+        setAuthResetCode('');
+        setAuthPassword('');
+        setAuthError('');
+        setAuthNotice('Password updated! Log in now with your email and new password.');
+        return;
+      }
+        setAuthNotice('Email verified! Log in now with your email and password.');
+      } else if (isResetParam) {
+        setAuthError('');
+        setShowResetOption(false);
+        setAuthResetCode('');
+        setAuthNotice('Enter the 6-digit verification code sent to your email and choose a new password.');
+      }
+    };
+
+    inspectReturnUrl();
+    window.addEventListener('hashchange', inspectReturnUrl);
+
+    const subscription = supabase?.auth?.onAuthStateChange?.((event, session) => {
+      if ((event === 'SIGNED_IN' || event === 'USER_UPDATED') && !learner?.email) {
+        const verifiedEmail = session?.user?.email || '';
+        if (verifiedEmail) {
+          setAuthEmail((prev) => prev || verifiedEmail);
+        }
+      }
+    })?.data?.subscription;
+
+    return () => {
+      window.removeEventListener('hashchange', inspectReturnUrl);
+      subscription?.unsubscribe?.();
+    };
+  }, [learner?.email]);
 
   async function handleAuthSubmit(e) {
     e.preventDefault();
@@ -58,14 +139,43 @@ export default function HomepageHub({
               email: authEmail,
               password: authPassword,
             })
-          : await signInWithEmailPassword({
-              fullName: authName,
-              email: authEmail,
-              password: authPassword,
-            });
+          : authMode === 'reset'
+            ? await completePasswordResetWithCode({
+                email: authEmail,
+                code: authResetCode,
+                newPassword: authPassword,
+              })
+            : await signInWithEmailPassword({
+                fullName: authName,
+                email: authEmail,
+                password: authPassword,
+              });
 
       if (res.error) {
         setAuthError(res.error);
+        return;
+      }
+
+      if (res.alreadyRegistered) {
+        setAuthMode('login');
+        setAuthPassword('');
+        setAuthNotice('');
+        setShowResetOption(true);
+        setAuthError('This email is already registered. Please log in with your password, or reset your password below.');
+        return;
+      }
+
+      setShowResetOption(false);
+
+      if (authMode === 'signup') {
+        setAuthMode('login');
+        setAuthPassword('');
+        setAuthError('');
+        setAuthNotice(
+          res.needsEmailConfirmation
+            ? 'Account created! Please confirm your email from alerts@amldecode.in first, then enter your email and password below to log in.'
+            : 'Account created! Please enter your email and password below to log in.'
+        );
         return;
       }
 
@@ -73,16 +183,12 @@ export default function HomepageHub({
         onAuthSuccess(res.profile);
       }
 
-      if (res.needsEmailConfirmation) {
-        setAuthNotice('Account created! Check your inbox to confirm your email if required. Your name is set for your certificate.');
-      } else {
-        setAuthModalOpen(false);
-        setAuthPassword('');
-        const queued = pendingAfterAuth;
-        setPendingAfterAuth(null);
-        if (typeof queued === 'function') {
-          queued();
-        }
+      setAuthModalOpen(false);
+      setAuthPassword('');
+      const queued = pendingAfterAuth;
+      setPendingAfterAuth(null);
+      if (typeof queued === 'function') {
+        queued();
       }
     } finally {
       setAuthBusy(false);
@@ -176,35 +282,35 @@ export default function HomepageHub({
             <div className="inline-flex items-center rounded-full bg-stone-100/90 dark:bg-slate-950/90 border border-stone-200 dark:border-slate-800 p-0.5">
               <button
                 type="button"
-                onClick={() => onOpenView('notes')}
+                onClick={() => runWithAccount(() => onOpenView('notes'))}
                 className="whitespace-nowrap shrink-0 px-2.5 py-1 rounded-full text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-800 hover:text-slate-950 dark:hover:text-white transition-colors cursor-pointer"
               >
                 Notes
               </button>
               <button
                 type="button"
-                onClick={() => onOpenView('quiz')}
+                onClick={() => runWithAccount(() => onOpenView('quiz'))}
                 className="whitespace-nowrap shrink-0 px-2.5 py-1 rounded-full text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-800 hover:text-slate-950 dark:hover:text-white transition-colors cursor-pointer"
               >
                 Tests
               </button>
               <button
                 type="button"
-                onClick={() => onOpenView('ai-interview')}
+                onClick={() => runWithAccount(() => onOpenView('ai-interview'))}
                 className="whitespace-nowrap shrink-0 px-2.5 py-1 rounded-full text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-800 hover:text-slate-950 dark:hover:text-white transition-colors cursor-pointer"
               >
                 AI Interview
               </button>
               <button
                 type="button"
-                onClick={() => onOpenView('daily-challenge')}
+                onClick={() => runWithAccount(() => onOpenView('daily-challenge'))}
                 className="whitespace-nowrap shrink-0 px-2.5 py-1 rounded-full text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-800 hover:text-slate-950 dark:hover:text-white transition-colors cursor-pointer"
               >
                 Daily Challenge
               </button>
               <button
                 type="button"
-                onClick={() => onOpenView('skill-passport')}
+                onClick={() => runWithAccount(() => onOpenView('skill-passport'))}
                 className="whitespace-nowrap shrink-0 px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-500/15 text-amber-800 dark:text-amber-300 hover:bg-amber-500/25 transition-colors cursor-pointer"
               >
                 Skill Certificate
@@ -218,7 +324,7 @@ export default function HomepageHub({
             </a>
             <button
               type="button"
-              onClick={() => onOpenView('jobs')}
+              onClick={() => runWithAccount(() => onOpenView('jobs'))}
               className="whitespace-nowrap shrink-0 text-xs font-medium text-slate-700 dark:text-slate-300 hover:text-amber-700 dark:hover:text-amber-400 transition-colors cursor-pointer"
             >
               Jobs
@@ -301,7 +407,7 @@ export default function HomepageHub({
             </button>
             <button
               type="button"
-              onClick={() => onOpenView('contribute')}
+              onClick={() => runWithAccount(() => onOpenView('contribute'))}
               className="whitespace-nowrap shrink-0 px-3 py-1.5 rounded-full text-xs font-bold bg-amber-600 text-white hover:bg-amber-700 transition-colors cursor-pointer"
             >
               Recruiter Desk
@@ -354,31 +460,31 @@ export default function HomepageHub({
 
         {mobileOpen && (
           <div className="lg:hidden bg-white dark:bg-slate-900 border-t border-stone-200 dark:border-slate-800 px-4 py-4 space-y-2 text-sm">
-            <button type="button" onClick={() => { setMobileOpen(false); onOpenView('notes'); }} className="block w-full text-left py-2 text-slate-800 dark:text-slate-100 hover:text-amber-700 dark:hover:text-amber-400 cursor-pointer">
+            <button type="button" onClick={() => { setMobileOpen(false); runWithAccount(() => onOpenView('notes')); }} className="block w-full text-left py-2 text-slate-800 dark:text-slate-100 hover:text-amber-700 dark:hover:text-amber-400 cursor-pointer">
               Syllabus Notes
             </button>
             <a href="#pathways" onClick={() => setMobileOpen(false)} className="block py-2 text-slate-700 dark:text-slate-200 hover:text-amber-700 dark:hover:text-amber-400">
               Learning Pathways
             </a>
-            <button type="button" onClick={() => { setMobileOpen(false); onOpenView('quiz'); }} className="block w-full text-left py-2 text-slate-800 dark:text-slate-100 hover:text-amber-700 dark:hover:text-amber-400 cursor-pointer">
+            <button type="button" onClick={() => { setMobileOpen(false); runWithAccount(() => onOpenView('quiz')); }} className="block w-full text-left py-2 text-slate-800 dark:text-slate-100 hover:text-amber-700 dark:hover:text-amber-400 cursor-pointer">
               Knowledge Test
             </button>
-            <button type="button" onClick={() => { setMobileOpen(false); onOpenView('ai-interview'); }} className="block w-full text-left py-2 text-slate-800 dark:text-slate-100 hover:text-amber-700 dark:hover:text-amber-400 cursor-pointer">
+            <button type="button" onClick={() => { setMobileOpen(false); runWithAccount(() => onOpenView('ai-interview')); }} className="block w-full text-left py-2 text-slate-800 dark:text-slate-100 hover:text-amber-700 dark:hover:text-amber-400 cursor-pointer">
               AI Interview
             </button>
-            <button type="button" onClick={() => { setMobileOpen(false); onOpenView('daily-challenge'); }} className="block w-full text-left py-2 text-slate-800 dark:text-slate-100 hover:text-amber-700 dark:hover:text-amber-400 cursor-pointer">
+            <button type="button" onClick={() => { setMobileOpen(false); runWithAccount(() => onOpenView('daily-challenge')); }} className="block w-full text-left py-2 text-slate-800 dark:text-slate-100 hover:text-amber-700 dark:hover:text-amber-400 cursor-pointer">
               Daily Challenge
             </button>
-            <button type="button" onClick={() => { setMobileOpen(false); onOpenView('jobs'); }} className="block w-full text-left py-2 text-slate-800 dark:text-slate-100 hover:text-amber-700 dark:hover:text-amber-400 cursor-pointer">
+            <button type="button" onClick={() => { setMobileOpen(false); runWithAccount(() => onOpenView('jobs')); }} className="block w-full text-left py-2 text-slate-800 dark:text-slate-100 hover:text-amber-700 dark:hover:text-amber-400 cursor-pointer">
               Jobs
             </button>
-            <button type="button" onClick={() => { setMobileOpen(false); onOpenView('skill-passport'); }} className="block w-full text-left py-2 text-slate-800 dark:text-slate-100 hover:text-amber-700 dark:hover:text-amber-400 cursor-pointer">
+            <button type="button" onClick={() => { setMobileOpen(false); runWithAccount(() => onOpenView('skill-passport')); }} className="block w-full text-left py-2 text-slate-800 dark:text-slate-100 hover:text-amber-700 dark:hover:text-amber-400 cursor-pointer">
               Skill Certificate
             </button>
-            <button type="button" onClick={() => { setMobileOpen(false); onOpenView('referralForm'); }} className="block w-full text-left py-2 text-slate-700 dark:text-slate-200 hover:text-amber-700 dark:hover:text-amber-400 cursor-pointer">
+            <button type="button" onClick={() => { setMobileOpen(false); runWithAccount(() => onOpenView('referralForm')); }} className="block w-full text-left py-2 text-slate-700 dark:text-slate-200 hover:text-amber-700 dark:hover:text-amber-400 cursor-pointer">
               Submit Referral
             </button>
-            <button type="button" onClick={() => { setMobileOpen(false); onOpenView('contribute'); }} className="block w-full text-left py-2 text-amber-700 dark:text-amber-400 font-semibold cursor-pointer">
+            <button type="button" onClick={() => { setMobileOpen(false); runWithAccount(() => onOpenView('contribute')); }} className="block w-full text-left py-2 text-amber-700 dark:text-amber-400 font-semibold cursor-pointer">
               Recruiter Desk
             </button>
           </div>
@@ -403,21 +509,21 @@ export default function HomepageHub({
               <div className="pt-2 flex flex-wrap gap-3">
                 <button
                   type="button"
-                  onClick={() => onOpenView('notes')}
+                  onClick={() => runWithAccount(() => onOpenView('notes'))}
                   className="px-5 py-3 rounded-xl text-sm font-bold bg-amber-400 text-slate-950 hover:bg-amber-300 transition-colors cursor-pointer"
                 >
                   Explore Syllabus Notes
                 </button>
                 <button
                   type="button"
-                  onClick={() => onOpenView('quiz')}
+                  onClick={() => runWithAccount(() => onOpenView('quiz'))}
                   className="px-5 py-3 rounded-xl text-sm font-semibold bg-white/10 text-white border border-white/20 hover:bg-white/15 transition-colors cursor-pointer"
                 >
                   Take Knowledge Test
                 </button>
                 <button
                   type="button"
-                  onClick={() => onOpenView('jobs')}
+                  onClick={() => runWithAccount(() => onOpenView('jobs'))}
                   className="px-5 py-3 rounded-xl text-sm font-semibold text-amber-200 border border-amber-300/40 hover:bg-amber-400/10 transition-colors cursor-pointer"
                 >
                   Browse Compliance Jobs
@@ -440,7 +546,7 @@ export default function HomepageHub({
               </div>
               <button
                 type="button"
-                onClick={() => onOpenView('quiz')}
+                onClick={() => runWithAccount(() => onOpenView('quiz'))}
                 className="text-sm font-bold text-amber-800 hover:text-amber-950 w-fit cursor-pointer"
               >
                 Launch Knowledge Test →
@@ -457,7 +563,7 @@ export default function HomepageHub({
               </div>
               <button
                 type="button"
-                onClick={() => onOpenView('notes')}
+                onClick={() => runWithAccount(() => onOpenView('notes'))}
                 className="text-sm font-bold text-amber-800 hover:text-amber-950 w-fit cursor-pointer"
               >
                 Open Syllabus Notes →
@@ -474,11 +580,50 @@ export default function HomepageHub({
               </div>
               <button
                 type="button"
-                onClick={() => onOpenView('jobs')}
+                onClick={() => runWithAccount(() => onOpenView('jobs'))}
                 className="text-sm font-bold text-amber-800 hover:text-amber-950 w-fit cursor-pointer"
               >
                 Explore Careers AI →
               </button>
+            </div>
+          </div>
+        </section>
+
+        {/* Concise AML & Financial Crime Practice Overview */}
+        <section id="aml-focus-overview" aria-label="AML Learning & Career Focus Areas" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
+          <div className="rounded-2xl bg-white p-6 sm:p-7 border border-stone-200 shadow-2xs space-y-4">
+            <div className="space-y-1.5">
+              <p className="text-xs font-bold uppercase tracking-wider text-amber-700">Practical Compliance Coverage</p>
+              <h2 className="text-xl font-bold text-slate-900">How AMLDecode Supports Analyst &amp; Compliance Readiness</h2>
+              <p className="text-sm text-slate-600 leading-relaxed max-w-4xl">
+                AMLDecode brings together structured study notes, scenario drills, and role discovery for analysts and compliance learners across India and global financial crime teams.
+              </p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
+              <div className="rounded-xl bg-stone-50 p-4 border border-stone-200/80 space-y-1">
+                <h3 className="font-bold text-slate-900">AML/KYC Interview Preparation</h3>
+                <p className="text-slate-600 leading-relaxed">Review customer due diligence, enhanced due diligence, beneficial ownership, and red-flag reasoning commonly tested in analyst interviews.</p>
+              </div>
+              <div className="rounded-xl bg-stone-50 p-4 border border-stone-200/80 space-y-1">
+                <h3 className="font-bold text-slate-900">Transaction Monitoring Case Studies</h3>
+                <p className="text-slate-600 leading-relaxed">Work through structured alert investigations covering unusual cash activity, rapid layering, and escalation rationales.</p>
+              </div>
+              <div className="rounded-xl bg-stone-50 p-4 border border-stone-200/80 space-y-1">
+                <h3 className="font-bold text-slate-900">SAR Writing Practice</h3>
+                <p className="text-slate-600 leading-relaxed">Practice organizing clear, factual suspicious activity narratives that connect customer profiles, observed behavior, and risk indicators.</p>
+              </div>
+              <div className="rounded-xl bg-stone-50 p-4 border border-stone-200/80 space-y-1">
+                <h3 className="font-bold text-slate-900">AML Daily Quizzes</h3>
+                <p className="text-slate-600 leading-relaxed">Reinforce core concepts every day with short, targeted questions on sanctions screening, KYC controls, and investigation judgment.</p>
+              </div>
+              <div className="rounded-xl bg-stone-50 p-4 border border-stone-200/80 space-y-1">
+                <h3 className="font-bold text-slate-900">AML/KYC Job Opportunities</h3>
+                <p className="text-slate-600 leading-relaxed">Browse compliance, KYC, and transaction monitoring roles alongside career guidance and referral workflows.</p>
+              </div>
+              <div className="rounded-xl bg-stone-50 p-4 border border-stone-200/80 space-y-1">
+                <h3 className="font-bold text-slate-900">AML Skill Assessments</h3>
+                <p className="text-slate-600 leading-relaxed">Track strengths and gaps across core compliance domains to focus study time where it matters most.</p>
+              </div>
             </div>
           </div>
         </section>
@@ -597,6 +742,8 @@ export default function HomepageHub({
           </div>
         </section>
 
+      <NativeAdBanner />
+
         {/* Learning Pathways */}
         <section id="pathways" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-14">
           <SectionHeader
@@ -604,33 +751,42 @@ export default function HomepageHub({
             title="Learning Pathways"
             subtitle="Jump directly into existing compliance study modules organized by core subject area."
             action={
-              <button
-                type="button"
-                onClick={() => onOpenView('notes')}
+              <a
+                href="/notes"
+                onClick={(e) => {
+                  e.preventDefault();
+                  runWithAccount(() => onOpenView('notes'));
+                }}
                 className="text-xs font-bold text-amber-800 hover:underline cursor-pointer"
               >
                 View all {notesContent.length} modules →
-              </button>
+              </a>
             }
           />
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-            {pathways.map((p) => (
-              <button
-                key={p.label}
-                type="button"
-                onClick={() => {
-                  runWithAccount(() => onSelectNoteIndex(p.noteIndex))
-                  onOpenView('notes');
-                }}
-                className="rounded-2xl bg-white p-5 border border-stone-200 hover:border-amber-600/60 shadow-2xs text-left flex flex-col justify-between gap-3 transition-all cursor-pointer"
-              >
-                <div>
-                  <TopicBadge tone="teal">{p.label}</TopicBadge>
-                  <p className="mt-3 text-sm font-semibold text-slate-900 leading-snug">{p.moduleTitle}</p>
-                </div>
-                <span className="text-xs font-bold text-amber-800">Open module →</span>
-              </button>
-            ))}
+            {pathways.map((p) => {
+              const pHref = MODULE_BY_INDEX.get(p.noteIndex)?.routePath || '/notes';
+              return (
+                <a
+                  key={p.label}
+                  href={pHref}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    runWithAccount(() => {
+                      onSelectNoteIndex(p.noteIndex);
+                      onOpenView('notes');
+                    });
+                  }}
+                  className="rounded-2xl bg-white p-5 border border-stone-200 hover:border-amber-600/60 shadow-2xs text-left flex flex-col justify-between gap-3 transition-all cursor-pointer"
+                >
+                  <div>
+                    <TopicBadge tone="teal">{p.label}</TopicBadge>
+                    <p className="mt-3 text-sm font-semibold text-slate-900 leading-snug">{p.moduleTitle}</p>
+                  </div>
+                  <span className="text-xs font-bold text-amber-800">Open module →</span>
+                </a>
+              );
+            })}
           </div>
         </section>
 
@@ -652,16 +808,19 @@ export default function HomepageHub({
                       {typeof mod.content === 'string' ? mod.content : 'Structured compliance study module.'}
                     </p>
                   </div>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      runWithAccount(() => onSelectNoteIndex(idx))
-                      onOpenView('notes');
+                  <a
+                    href={MODULE_BY_INDEX.get(idx)?.routePath || '/notes'}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      runWithAccount(() => {
+                        onSelectNoteIndex(idx);
+                        onOpenView('notes');
+                      });
                     }}
                     className="mt-4 text-left text-xs font-bold text-amber-800 hover:underline cursor-pointer"
                   >
                     Read full module →
-                  </button>
+                  </a>
                 </IntelligenceCard>
               ))}
             </div>
@@ -697,7 +856,7 @@ export default function HomepageHub({
             action={
               <button
                 type="button"
-                onClick={() => onOpenView('quiz')}
+                onClick={() => runWithAccount(() => onOpenView('quiz'))}
                 className="px-4 py-2 rounded-xl text-xs font-bold bg-white border border-stone-300 text-slate-900 hover:border-amber-600 cursor-pointer"
               >
                 Open Knowledge Test
@@ -710,7 +869,7 @@ export default function HomepageHub({
               runWithAccount(() => onSelectNoteIndex(noteIdx))
               onOpenView('notes');
             }}
-            onOpenKnowledgeTest={() => onOpenView('quiz')}
+            onOpenKnowledgeTest={() => runWithAccount(() => onOpenView('quiz'))}
           />
         </section>
 
@@ -725,21 +884,28 @@ export default function HomepageHub({
             <div className="flex flex-wrap gap-3">
               <button
                 type="button"
-                onClick={() => onOpenView('faq')}
+                onClick={() => runWithAccount(() => onOpenView('faq'))}
                 className="px-4 py-2.5 rounded-xl text-xs font-bold border border-stone-300 text-slate-900 hover:bg-stone-50 cursor-pointer"
               >
                 Read FAQ
               </button>
               <button
                 type="button"
-                onClick={() => onOpenView('referralForm')}
+                onClick={() => runWithAccount(() => onOpenView('referralForm'))}
                 className="px-4 py-2.5 rounded-xl text-xs font-bold bg-amber-600 text-white hover:bg-amber-700 cursor-pointer"
               >
                 Submit Referral
               </button>
               <button
                 type="button"
-                onClick={() => onOpenView('contact')}
+                onClick={() => runWithAccount(() => onOpenView('contribute'))}
+                className="px-4 py-2.5 rounded-xl text-xs font-bold border border-amber-500/40 text-amber-800 dark:text-amber-300 hover:bg-amber-50/60 dark:hover:bg-amber-950/30 cursor-pointer"
+              >
+                Recruiter Desk
+              </button>
+              <button
+                type="button"
+                onClick={() => runWithAccount(() => onOpenView('contact'))}
                 className="px-4 py-2.5 rounded-xl text-xs font-semibold border border-stone-300 text-slate-700 hover:text-slate-900 cursor-pointer"
               >
                 Contact Support
@@ -762,21 +928,25 @@ export default function HomepageHub({
           <div className="md:col-span-3 space-y-2">
             <p className="text-xs font-bold uppercase tracking-wider text-amber-800">Platform</p>
             <nav aria-label="Footer Platform Links" className="flex flex-col gap-1 text-sm text-slate-700">
-              <a href="/?view=faq" onClick={(e) => { e.preventDefault(); onOpenView('faq'); }} className="text-left py-1.5 hover:text-slate-950">About &amp; FAQ</a>
-              <a href="/?view=contact" onClick={(e) => { e.preventDefault(); onOpenView('contact'); }} className="text-left py-1.5 hover:text-slate-950">Contact Us</a>
-              <a href="/?view=notes" onClick={(e) => { e.preventDefault(); onOpenView('notes'); }} className="text-left py-1.5 hover:text-slate-950">Syllabus Notes</a>
-              <a href="/?view=quiz" onClick={(e) => { e.preventDefault(); onOpenView('quiz'); }} className="text-left py-1.5 hover:text-slate-950">Knowledge Test</a>
+              <a href="/?view=faq" onClick={(e) => { e.preventDefault(); runWithAccount(() => onOpenView('faq')); }} className="text-left py-1.5 hover:text-slate-950">About &amp; FAQ</a>
+              <a href="/?view=contact" onClick={(e) => { e.preventDefault(); runWithAccount(() => onOpenView('contact')); }} className="text-left py-1.5 hover:text-slate-950">Contact Us</a>
+              <a href="/notes" onClick={(e) => { e.preventDefault(); runWithAccount(() => onOpenView('notes')); }} className="text-left py-1.5 hover:text-slate-950">Syllabus Notes</a>
+              <a href="/?view=quiz" onClick={(e) => { e.preventDefault(); runWithAccount(() => onOpenView('quiz')); }} className="text-left py-1.5 hover:text-slate-950">Knowledge Test</a>
             </nav>
           </div>
           <div className="md:col-span-4 space-y-2">
             <p className="text-xs font-bold uppercase tracking-wider text-amber-800">Legal &amp; Disclaimer</p>
             <nav aria-label="Footer Legal Links" className="flex flex-col gap-1 text-sm text-slate-700">
-              <a href="/?view=privacy" onClick={(e) => { e.preventDefault(); onOpenView('privacy'); }} className="text-left py-1.5 hover:text-slate-950">Privacy Policy</a>
-              <a href="/?view=terms" onClick={(e) => { e.preventDefault(); onOpenView('terms'); }} className="text-left py-1.5 hover:text-slate-950">Terms of Service &amp; Disclaimer</a>
+              <a href="/?view=privacy" onClick={(e) => { e.preventDefault(); runWithAccount(() => onOpenView('privacy')); }} className="text-left py-1.5 hover:text-slate-950">Privacy Policy</a>
+              <a href="/?view=terms" onClick={(e) => { e.preventDefault(); runWithAccount(() => onOpenView('terms')); }} className="text-left py-1.5 hover:text-slate-950">Terms of Service &amp; Disclaimer</a>
             </nav>
           </div>
         </div>
-      </footer>
+      
+      <div className="mt-8 border-t pt-4 text-center border-slate-300">
+        <p className="font-medium text-black">Developed & Designed By Nitesh Mishra</p>
+      </div>
+    </footer>
     
 
       {accountInfoOpen && learner?.email && (
@@ -869,7 +1039,7 @@ export default function HomepageHub({
                   AMLDecode Learner Account
                 </p>
                 <h2 className="text-xl font-extrabold text-slate-900 dark:text-white mt-1">
-                  {authMode === 'signup' ? 'Create Your Account' : 'Log In to Your Account'}
+                  {authMode === 'signup' ? 'Create Your Account' : authMode === 'reset' ? 'Reset Your Password' : 'Log In to Your Account'}
                 </h2>
                 <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
                   Your name is mapped directly to your Skill Certificate and saved to your learner profile.
@@ -933,9 +1103,28 @@ export default function HomepageHub({
                 />
               </div>
 
+              {authMode === 'reset' && (
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                    6-Digit Verification Code
+                  </label>
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    autoComplete="one-time-code"
+                    required
+                    maxLength={8}
+                    value={authResetCode}
+                    onChange={(e) => setAuthResetCode(e.target.value)}
+                    placeholder="Enter 6-digit code from email"
+                    className="w-full rounded-xl bg-stone-50 dark:bg-slate-950 border border-stone-300 dark:border-slate-700 px-3.5 py-2.5 text-sm tracking-widest font-mono text-slate-900 dark:text-white focus:outline-none focus:border-amber-600"
+                  />
+                </div>
+              )}
+
               <div>
                 <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
-                  Password
+                  {authMode === 'reset' ? 'New Password' : 'Password'}
                 </label>
                 <input
                   type="password"
@@ -943,9 +1132,10 @@ export default function HomepageHub({
                   minLength={6}
                   value={authPassword}
                   onChange={(e) => setAuthPassword(e.target.value)}
-                  placeholder="At least 6 characters"
+                  placeholder={authMode === 'reset' ? 'New password (A-z, 0-9 & symbol)' : 'At least 8 chars (A-z, 0-9 & symbol)'}
                   className="w-full rounded-xl bg-stone-50 dark:bg-slate-950 border border-stone-300 dark:border-slate-700 px-3.5 py-2.5 text-sm text-slate-900 dark:text-white focus:outline-none focus:border-amber-600"
                 />
+                <p className="mt-1 text-[11px] text-slate-500 dark:text-slate-400">Use uppercase, lowercase, a number, and a symbol.</p>
               </div>
 
               {authError && (
@@ -964,8 +1154,80 @@ export default function HomepageHub({
                 disabled={authBusy}
                 className="w-full rounded-xl bg-amber-600 hover:bg-amber-700 disabled:opacity-60 py-2.5 text-xs font-extrabold uppercase tracking-wider text-white transition cursor-pointer"
               >
-                {authBusy ? 'Please wait...' : authMode === 'signup' ? 'Create Account & Continue' : 'Log In & Continue'}
+                {authBusy ? 'Please wait...' : authMode === 'signup' ? 'Create Account & Continue' : authMode === 'reset' ? 'Verify Code & Update Password' : 'Log In & Continue'}
               </button>
+
+              {(showResetOption || authMode === 'login') && (
+                <div className="pt-1 text-center">
+                  <button
+                    type="button"
+                    disabled={authBusy}
+                    onClick={async () => {
+                      setAuthError('');
+                      setAuthNotice('');
+                      setAuthBusy(true);
+                      try {
+                        const resetRes = await requestPasswordResetEmail(authEmail);
+                        if (resetRes.error) {
+                          setAuthError(resetRes.error);
+                        } else {
+                          setShowResetOption(false);
+                          setAuthMode('reset');
+                          setAuthResetCode('');
+                          setAuthPassword('');
+                          setAuthNotice('6-digit reset code sent from alerts@amldecode.in. Enter the code and your new password below.');
+                        }
+                      } finally {
+                        setAuthBusy(false);
+                      }
+                    }}
+                    className="text-xs font-semibold text-amber-500 hover:text-amber-400 underline underline-offset-2 disabled:opacity-60 cursor-pointer"
+                  >
+                    Reset Password
+                  </button>
+                </div>
+              )}
+
+              {authMode === 'reset' && (
+                <div className="pt-1 flex items-center justify-between text-xs">
+                  <button
+                    type="button"
+                    disabled={authBusy}
+                    onClick={async () => {
+                      setAuthError('');
+                      setAuthNotice('');
+                      setAuthBusy(true);
+                      try {
+                        const resetRes = await requestPasswordResetEmail(authEmail);
+                        if (resetRes.error) {
+                          setAuthError(resetRes.error);
+                        } else {
+                          setAuthNotice('New 6-digit code sent from alerts@amldecode.in.');
+                        }
+                      } finally {
+                        setAuthBusy(false);
+                      }
+                    }}
+                    className="font-semibold text-amber-500 hover:text-amber-400 underline underline-offset-2 disabled:opacity-60 cursor-pointer"
+                  >
+                    Resend Code
+                  </button>
+                  <button
+                    type="button"
+                    disabled={authBusy}
+                    onClick={() => {
+                      setAuthMode('login');
+                      setAuthResetCode('');
+                      setAuthPassword('');
+                      setAuthError('');
+                      setAuthNotice('');
+                    }}
+                    className="font-semibold text-slate-500 hover:text-slate-300 underline underline-offset-2 disabled:opacity-60 cursor-pointer"
+                  >
+                    Back to Log In
+                  </button>
+                </div>
+              )}
             </form>
           </div>
         </div>

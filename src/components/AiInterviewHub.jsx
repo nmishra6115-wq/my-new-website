@@ -308,7 +308,7 @@ export default function AiInterviewHub({
                       Continue Your Interview
                     </h2>
                     <p className="text-xs text-slate-600 dark:text-slate-400">
-                      {inProgressSession.role} ? {inProgressSession.company} ({inProgressSession.experienceLevel}) ? Question{' '}
+                      {inProgressSession.role} - {inProgressSession.company} ({inProgressSession.experienceLevel}) - Question{' '}
                       {(inProgressSession.currentIndex || 0) + 1} of {inProgressSession.questionCount}
                     </p>
                   </div>
@@ -331,7 +331,7 @@ export default function AiInterviewHub({
                       Latest Practice Snapshot
                     </span>
                     <h2 className="text-lg font-extrabold text-[#081C33] dark:text-white">
-                      Score: {latestCompleted.overallScore ?? 0}/100 ? {latestCompleted.role}
+                      Score: {latestCompleted.overallScore ?? 0}/100 - {latestCompleted.role}
                     </h2>
                     <p className="text-xs text-slate-600 dark:text-slate-400">
                       Company Context: {latestCompleted.company} ({latestCompleted.experienceLevel}). Recommended next step: run another {latestCompleted.role} session focusing on any lower-scoring rubric dimensions.
@@ -369,10 +369,10 @@ export default function AiInterviewHub({
                     <div>
                       <div className="text-sm font-bold text-[#081C33] dark:text-slate-100 flex items-center gap-2">
                         <Briefcase className="w-3.5 h-3.5 text-[#1E3A5F] dark:text-[#C4A77D]" />
-                        {s.role} ? {s.company}
+                        {s.role} - {s.company}
                       </div>
                       <div className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                        {s.experienceLevel} ? {(s.records || []).length}/{s.questionCount} questions ? Score: {s.overallScore ?? 0}/100
+                        {s.experienceLevel} - {(s.records || []).length}/{s.questionCount} questions - Score: {s.overallScore ?? 0}/100
                       </div>
                     </div>
 

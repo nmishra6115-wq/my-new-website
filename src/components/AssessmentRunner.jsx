@@ -1,6 +1,7 @@
 ﻿import { useState, useEffect, useMemo } from 'react';
 import { recordCompletedAttempt, readStoredRecentAttempts } from '../data/knowledgeTestBank';
 import AiTutorPanel from './AiTutorPanel';
+import { completeLearnerTask } from '../data/amlSkillPassportEngine';
 
 function formatDuration(seconds) {
   const safe = Math.max(0, Number(seconds) || 0);

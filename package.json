@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "postbuild": "node scripts/seoBuildPipeline.mjs"
   },
   "dependencies": {
     "@lottiefiles/react-lottie-player": "^3.6.0",

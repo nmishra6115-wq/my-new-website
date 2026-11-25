@@ -2,6 +2,19 @@ import { supabase } from '../supabaseClient';
 import { loadPassportState, savePassportState } from './amlSkillPassportEngine';
 import { upsertKt2Learner } from './kt2SupabaseSync';
 
+const recentAuthLogMap = new Map();
+
+function shouldRecordAuthEvent(email, eventType) {
+  const key = `${email}:${eventType}`;
+  const nowMs = Date.now();
+  const prevMs = recentAuthLogMap.get(key) || 0;
+  if (nowMs - prevMs < 4000) {
+    return false;
+  }
+  recentAuthLogMap.set(key, nowMs);
+  return true;
+}
+
 export function applyLearnerNameToPassport(name, email = '') {
   const cleanName = String(name || '').trim();
   const cleanEmail = String(email || '').trim().toLowerCase();
@@ -27,7 +40,12 @@ export function applyLearnerNameToPassport(name, email = '') {
   }
 }
 
-export async function recordAccountInSupabase({ fullName, email, authUserId = null }) {
+export async function recordAccountInSupabase({
+  fullName,
+  email,
+  authUserId = null,
+  eventType = 'session',
+}) {
   const cleanEmail = String(email || '').trim().toLowerCase();
   const cleanName = String(fullName || '').trim() || cleanEmail.split('@')[0] || 'Learner';
   if (!cleanEmail) return null;
@@ -37,18 +55,44 @@ export async function recordAccountInSupabase({ fullName, email, authUserId = nu
   if (!supabase) return null;
   try {
     const now = new Date().toISOString();
+    const { data: existing } = await supabase
+      .from('learner_accounts')
+      .select('login_count, first_signed_up_at')
+      .eq('email', cleanEmail)
+      .maybeSingle();
+
+    const shouldCountLogin =
+      (eventType === 'signup' || eventType === 'login') &&
+      shouldRecordAuthEvent(cleanEmail, eventType);
+
+    const nextLoginCount =
+      (Number(existing?.login_count) || 0) + (shouldCountLogin ? 1 : 0);
+
     const payload = {
       email: cleanEmail,
       full_name: cleanName,
+      first_signed_up_at: existing?.first_signed_up_at || now,
       last_signed_in_at: now,
+      login_count: nextLoginCount,
       updated_at: now,
       ...(authUserId ? { auth_user_id: authUserId } : {}),
     };
+
     const { data, error } = await supabase
       .from('learner_accounts')
       .upsert(payload, { onConflict: 'email' })
       .select()
       .maybeSingle();
+
+    if (shouldCountLogin) {
+      await supabase.from('auth_activity_logs').insert({
+        email: cleanEmail,
+        full_name: cleanName,
+        auth_user_id: authUserId || null,
+        event_type: eventType,
+        created_at: now,
+      });
+    }
 
     if (error) return null;
     return data;
@@ -84,14 +128,24 @@ export async function signUpWithEmailPassword({ fullName, email, password }) {
   });
 
   if (error) {
-    return { error: error.message || 'Unable to create account.' };
+    const msg = String(error.message || '');
+    if (/already registered|already exists|user already/i.test(msg)) {
+      return { alreadyRegistered: true, email: cleanEmail };
+    }
+    return { error: msg || 'Unable to create account.' };
   }
 
   const user = data?.user || null;
+  const isExistingUser = Boolean(user && Array.isArray(user.identities) && user.identities.length === 0);
+  if (isExistingUser) {
+    return { alreadyRegistered: true, email: cleanEmail };
+  }
+
   await recordAccountInSupabase({
     fullName: cleanName,
     email: cleanEmail,
     authUserId: user?.id || null,
+    eventType: 'signup',
   });
   applyLearnerNameToPassport(cleanName, cleanEmail);
 
@@ -106,6 +160,25 @@ export async function signUpWithEmailPassword({ fullName, email, password }) {
       loggedInAt: new Date().toISOString(),
     },
   };
+}
+
+export async function requestPasswordResetEmail(email) {
+  const cleanEmail = String(email || '').trim().toLowerCase();
+  if (!cleanEmail || !cleanEmail.includes('@')) {
+    return { error: 'Please enter your email address first so we can send a reset link.' };
+  }
+  if (!supabase?.auth?.resetPasswordForEmail) {
+    return { error: 'Password reset service is unavailable in this environment.' };
+  }
+  const redirectTo = typeof window !== 'undefined' && window.location?.origin ? window.location.origin : undefined;
+  const { error } = await supabase.auth.resetPasswordForEmail(
+    cleanEmail,
+    redirectTo ? { redirectTo } : undefined
+  );
+  if (error) {
+    return { error: error.message || 'Unable to send password reset email.' };
+  }
+  return { sent: true };
 }
 
 export async function signInWithEmailPassword({ email, password, fullName = '' }) {
@@ -147,6 +220,7 @@ export async function signInWithEmailPassword({ email, password, fullName = '' }
     fullName: resolvedName,
     email: cleanEmail,
     authUserId: user?.id || null,
+    eventType: 'login',
   });
   applyLearnerNameToPassport(resolvedName, cleanEmail);
 
@@ -168,4 +242,41 @@ export async function signOutLearnerAccount() {
   } catch {
     // Ignore sign-out network errors
   }
+}
+
+export async function completePasswordResetWithCode({ email, code, newPassword }) {
+  const cleanEmail = String(email || '').trim().toLowerCase();
+  const cleanCode = String(code || '').trim().replace(/\s+/g, '');
+  const cleanPassword = String(newPassword || '');
+
+  if (!cleanEmail || !cleanEmail.includes('@')) {
+    return { error: 'Please enter your registered email address.' };
+  }
+  if (!cleanCode) {
+    return { error: 'Please enter the 6-digit verification code sent to your email.' };
+  }
+  if (cleanPassword.length < 6) {
+    return { error: 'New password must be at least 6 characters.' };
+  }
+
+  const { error: verifyError } = await supabase.auth.verifyOtp({
+    email: cleanEmail,
+    token: cleanCode,
+    type: 'recovery',
+  });
+
+  if (verifyError) {
+    return { error: verifyError.message || 'Invalid or expired verification code.' };
+  }
+
+  const { error: updateError } = await supabase.auth.updateUser({
+    password: cleanPassword,
+  });
+
+  if (updateError) {
+    return { error: updateError.message || 'Could not update password.' };
+  }
+
+  await supabase.auth.signOut();
+  return { updated: true };
 }
