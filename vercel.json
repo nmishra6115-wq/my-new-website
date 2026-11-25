@@ -12,5 +12,11 @@
       "source": "/((?!api/|assets/|sitemap\\.xml|robots\\.txt|logo\\.png).*)",
       "destination": "/index.html"
     }
+  ],
+  "crons": [
+    {
+      "path": "/api/cron/daily-state-jobs",
+      "schedule": "30 3 * * *"
+    }
   ]
 }
