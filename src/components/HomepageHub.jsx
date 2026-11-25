@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { AcademyBrandMark, IntelligenceCard, SectionHeader, TopicBadge } from './AcademyPrimitives';
 import DailyChallengeCard from './DailyChallengeCard';
 import { notesContent, faqData } from '../content';
+import { MODULE_BY_INDEX } from '../data/moduleRegistry';
 import { jobOpenings } from '../jobs';
 import { kycNews } from '../news';
 import { Sun, Moon, UserCheck, LogOut, X } from 'lucide-react';
@@ -750,33 +751,42 @@ export default function HomepageHub({
             title="Learning Pathways"
             subtitle="Jump directly into existing compliance study modules organized by core subject area."
             action={
-              <button
-                type="button"
-                onClick={() => runWithAccount(() => onOpenView('notes'))}
+              <a
+                href="/notes"
+                onClick={(e) => {
+                  e.preventDefault();
+                  runWithAccount(() => onOpenView('notes'));
+                }}
                 className="text-xs font-bold text-amber-800 hover:underline cursor-pointer"
               >
                 View all {notesContent.length} modules →
-              </button>
+              </a>
             }
           />
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-            {pathways.map((p) => (
-              <button
-                key={p.label}
-                type="button"
-                onClick={() => {
-                  runWithAccount(() => onSelectNoteIndex(p.noteIndex))
-                  onOpenView('notes');
-                }}
-                className="rounded-2xl bg-white p-5 border border-stone-200 hover:border-amber-600/60 shadow-2xs text-left flex flex-col justify-between gap-3 transition-all cursor-pointer"
-              >
-                <div>
-                  <TopicBadge tone="teal">{p.label}</TopicBadge>
-                  <p className="mt-3 text-sm font-semibold text-slate-900 leading-snug">{p.moduleTitle}</p>
-                </div>
-                <span className="text-xs font-bold text-amber-800">Open module →</span>
-              </button>
-            ))}
+            {pathways.map((p) => {
+              const pHref = MODULE_BY_INDEX.get(p.noteIndex)?.routePath || '/notes';
+              return (
+                <a
+                  key={p.label}
+                  href={pHref}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    runWithAccount(() => {
+                      onSelectNoteIndex(p.noteIndex);
+                      onOpenView('notes');
+                    });
+                  }}
+                  className="rounded-2xl bg-white p-5 border border-stone-200 hover:border-amber-600/60 shadow-2xs text-left flex flex-col justify-between gap-3 transition-all cursor-pointer"
+                >
+                  <div>
+                    <TopicBadge tone="teal">{p.label}</TopicBadge>
+                    <p className="mt-3 text-sm font-semibold text-slate-900 leading-snug">{p.moduleTitle}</p>
+                  </div>
+                  <span className="text-xs font-bold text-amber-800">Open module →</span>
+                </a>
+              );
+            })}
           </div>
         </section>
 
@@ -798,16 +808,19 @@ export default function HomepageHub({
                       {typeof mod.content === 'string' ? mod.content : 'Structured compliance study module.'}
                     </p>
                   </div>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      runWithAccount(() => onSelectNoteIndex(idx))
-                      onOpenView('notes');
+                  <a
+                    href={MODULE_BY_INDEX.get(idx)?.routePath || '/notes'}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      runWithAccount(() => {
+                        onSelectNoteIndex(idx);
+                        onOpenView('notes');
+                      });
                     }}
                     className="mt-4 text-left text-xs font-bold text-amber-800 hover:underline cursor-pointer"
                   >
                     Read full module →
-                  </button>
+                  </a>
                 </IntelligenceCard>
               ))}
             </div>
@@ -917,7 +930,7 @@ export default function HomepageHub({
             <nav aria-label="Footer Platform Links" className="flex flex-col gap-1 text-sm text-slate-700">
               <a href="/?view=faq" onClick={(e) => { e.preventDefault(); runWithAccount(() => onOpenView('faq')); }} className="text-left py-1.5 hover:text-slate-950">About &amp; FAQ</a>
               <a href="/?view=contact" onClick={(e) => { e.preventDefault(); runWithAccount(() => onOpenView('contact')); }} className="text-left py-1.5 hover:text-slate-950">Contact Us</a>
-              <a href="/?view=notes" onClick={(e) => { e.preventDefault(); runWithAccount(() => onOpenView('notes')); }} className="text-left py-1.5 hover:text-slate-950">Syllabus Notes</a>
+              <a href="/notes" onClick={(e) => { e.preventDefault(); runWithAccount(() => onOpenView('notes')); }} className="text-left py-1.5 hover:text-slate-950">Syllabus Notes</a>
               <a href="/?view=quiz" onClick={(e) => { e.preventDefault(); runWithAccount(() => onOpenView('quiz')); }} className="text-left py-1.5 hover:text-slate-950">Knowledge Test</a>
             </nav>
           </div>

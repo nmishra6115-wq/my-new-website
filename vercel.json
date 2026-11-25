@@ -1,0 +1,16 @@
+{
+  "rewrites": [
+    {
+      "source": "/notes/:slug",
+      "destination": "/notes/:slug/index.html"
+    },
+    {
+      "source": "/notes",
+      "destination": "/notes/index.html"
+    },
+    {
+      "source": "/((?!api/|assets/|sitemap\\.xml|robots\\.txt|logo\\.png).*)",
+      "destination": "/index.html"
+    }
+  ]
+}

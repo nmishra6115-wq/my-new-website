@@ -5,6 +5,7 @@ import { fetchKt2Attempts, insertKt2Attempt } from './data/kt2SupabaseSync';
 import { applyLearnerNameToPassport, recordAccountInSupabase } from './data/supabaseAuthSync';
 const SkillPassportView = lazy(() => import('./components/SkillPassportView'));
 import { notesContent, privacyPolicy, termsOfService, faqData, contactContent } from './content';
+import { MODULE_BY_SLUG, MODULE_BY_INDEX } from './data/moduleRegistry';
 import { kycNews } from './news';
 import HomepageHub from './components/HomepageHub';
 const SyllabusReader = lazy(() => import('./components/SyllabusReader'));
@@ -88,13 +89,21 @@ class SkillPassportErrorBoundary extends React.Component {
 }
 
 export default function App() {
+  const [notFoundSlug, setNotFoundSlug] = useState(null);
   const [activeView, setActiveView] = useState(() => {
     try {
       const pathname = window.location.pathname || '';
       const searchParams = new URLSearchParams(window.location.search);
       const verifyMatch = pathname.match(/^\/verify\/achievement\/([^/?#]+)/);
       const hasVerifyToken = Boolean(verifyMatch?.[1] || searchParams.get('verify'));
-      const pathView = pathname === '/ai-interview' ? 'ai-interview' : (pathname === '/skill-passport' || hasVerifyToken ? 'skill-passport' : null);
+      const notesMatch = pathname.match(/^\/notes(?:\/([^/?#]+))?\/?$/);
+      const pathView = notesMatch
+        ? 'notes'
+        : pathname === '/ai-interview'
+        ? 'ai-interview'
+        : pathname === '/skill-passport' || hasVerifyToken
+        ? 'skill-passport'
+        : null;
       const param = searchParams.get('view') || pathView;
       const allowed = ['notes', 'quiz', 'jobs', 'network', 'available', 'referralForm', 'contribute', 'faq', 'contact', 'privacy', 'terms', 'disclaimer', 'about', 'skill-passport'];
       return allowed.includes(param) ? param : null;
@@ -102,7 +111,27 @@ export default function App() {
       return null;
     }
   });
-  const [pageIndex, setPageIndex] = useState(0);
+  const [pageIndex, setPageIndex] = useState(() => {
+    try {
+      const pathname = window.location.pathname || '';
+      const searchParams = new URLSearchParams(window.location.search);
+      const notesMatch = pathname.match(/^\/notes\/([^/?#]+)\/?$/);
+      if (notesMatch?.[1]) {
+        const entry = MODULE_BY_SLUG.get(decodeURIComponent(notesMatch[1]).toLowerCase());
+        if (entry) return entry.index;
+      }
+      const modParam = searchParams.get('module');
+      if (modParam !== null) {
+        const parsed = Number.parseInt(modParam, 10);
+        if (!Number.isNaN(parsed) && parsed >= 1 && parsed <= notesContent.length) {
+          return parsed - 1;
+        }
+      }
+      return 0;
+    } catch {
+      return 0;
+    }
+  });
   const [isLoading, setIsLoading] = useState(true);
   const [submissions, setSubmissions] = useState([]);
   const [partnerFiles, setPartnerFiles] = useState([]);
@@ -243,6 +272,59 @@ const LEARNER_STORAGE_KEY = 'amldecode_kt2_learner_v1';
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
+
+  useEffect(() => {
+    const syncFromLocation = () => {
+      try {
+        const pathname = window.location.pathname || '';
+        const searchParams = new URLSearchParams(window.location.search);
+        const notesSlugMatch = pathname.match(/^\/notes\/([^/?#]+)\/?$/);
+        const notesIndexMatch = /^\/notes\/?$/.test(pathname);
+
+        if (notesSlugMatch?.[1]) {
+          const decodedSlug = decodeURIComponent(notesSlugMatch[1]).toLowerCase();
+          const entry = MODULE_BY_SLUG.get(decodedSlug);
+          if (entry) {
+            setNotFoundSlug(null);
+            setPageIndex(entry.index);
+            setActiveView('notes');
+          } else {
+            setNotFoundSlug(decodedSlug);
+            setActiveView('notes');
+          }
+          return;
+        }
+
+        if (notesIndexMatch) {
+          setNotFoundSlug(null);
+          setActiveView('notes');
+          return;
+        }
+
+        const viewParam = searchParams.get('view');
+        const modParam = searchParams.get('module');
+        if (viewParam === 'notes' && modParam !== null) {
+          const parsed = Number.parseInt(modParam, 10);
+          if (!Number.isNaN(parsed) && parsed >= 1 && parsed <= notesContent.length) {
+            const targetIdx = parsed - 1;
+            const entry = MODULE_BY_INDEX.get(targetIdx);
+            setNotFoundSlug(null);
+            setPageIndex(targetIdx);
+            setActiveView('notes');
+            if (entry && window.location.pathname !== entry.routePath) {
+              window.history.replaceState({}, '', entry.routePath);
+            }
+          }
+        }
+      } catch {
+        // Ignore history sync errors
+      }
+    };
+
+    syncFromLocation();
+    window.addEventListener('popstate', syncFromLocation);
+    return () => window.removeEventListener('popstate', syncFromLocation);
+  }, []);
 
   useEffect(() => {
     if (!learner?.email) return;
@@ -386,13 +468,17 @@ const LEARNER_STORAGE_KEY = 'amldecode_kt2_learner_v1';
   };
 
   useEffect(() => {
+    const activeModuleEntry = MODULE_BY_INDEX.get(pageIndex);
+    const notesCanonicalPath = activeModuleEntry ? activeModuleEntry.routePath : '/notes';
     const viewMeta = {
       notes: {
-        title: `${notesContent[pageIndex]?.title || 'Syllabus Notes'} - AMLDecode`,
-        desc: 'Structured AML, KYC, CDD, EDD, sanctions screening, transaction monitoring, and SAR compliance notes.',
-        path: `/?view=notes&module=${pageIndex + 1}`,
-        crumbLabel: notesContent[pageIndex]?.title || 'Syllabus Notes',
-        indexable: true,
+        title: activeModuleEntry ? activeModuleEntry.metaTitle : 'AML & KYC Study Notes — AMLDecode',
+        desc: activeModuleEntry
+          ? activeModuleEntry.metaDescription
+          : 'Structured AML, KYC, CDD, EDD, sanctions screening, transaction monitoring, and SAR compliance notes.',
+        path: notesCanonicalPath,
+        crumbLabel: activeModuleEntry?.title || 'Syllabus Notes',
+        indexable: !notFoundSlug,
       },
       'daily-challenge': {
         title: 'Daily AML Challenge, Transaction Monitoring & SAR Drills - AMLDecode',
@@ -575,12 +661,65 @@ const LEARNER_STORAGE_KEY = 'amldecode_kt2_learner_v1';
   }
 
   if (activeView === 'notes') {
+    if (notFoundSlug) {
+      return (
+        <main className="min-h-screen bg-[#081524] text-[#F5F8FC] flex items-center justify-center px-6 py-16">
+          <div className="max-w-xl w-full rounded-2xl border border-white/15 bg-white/5 p-8 space-y-4">
+            <p className="text-xs uppercase tracking-wider text-cyan-300">404 — Learning Module Not Found</p>
+            <h1 className="text-2xl font-bold">We could not find that AML/KYC module</h1>
+            <p className="text-sm text-slate-300">
+              The requested learning module URL (<code className="text-cyan-200">/notes/{notFoundSlug}</code>) does not match an active module in AMLDecode.
+            </p>
+            <div className="flex flex-wrap gap-3 pt-2">
+              <a
+                href="/notes"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setNotFoundSlug(null);
+                  setPageIndex(0);
+                  setActiveView('notes');
+                  window.history.pushState({}, '', '/notes');
+                }}
+                className="px-4 py-2 rounded-lg bg-cyan-500 text-slate-950 font-semibold text-sm"
+              >
+                Browse All 34 Modules
+              </a>
+              <a
+                href="/"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setNotFoundSlug(null);
+                  setActiveView(null);
+                  window.history.pushState({}, '', '/');
+                }}
+                className="px-4 py-2 rounded-lg border border-white/20 text-sm font-medium"
+              >
+                Back to Home
+              </a>
+            </div>
+          </div>
+        </main>
+      );
+    }
     return (
       <SyllabusReader
         notesContent={notesContent}
         pageIndex={pageIndex}
-        onSelectModule={(idx) => setPageIndex(idx)}
-        onBackHome={handleBackHome}
+        onSelectModule={(idx) => {
+          setNotFoundSlug(null);
+          setPageIndex(idx);
+          const entry = MODULE_BY_INDEX.get(idx);
+          if (entry) {
+            window.history.pushState({}, '', entry.routePath);
+          }
+        }}
+        onBackHome={() => {
+          setNotFoundSlug(null);
+          handleBackHome();
+          if (window.location.pathname.startsWith('/notes')) {
+            window.history.pushState({}, '', '/');
+          }
+        }}
       />
     );
   }
