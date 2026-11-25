@@ -9,6 +9,7 @@ import {
   writeStoredAlerts,
 } from '../data/careersSmartFeatures';
 import { readAdminConfig, writeAdminConfig } from '../data/careersAdminControls';
+import JobAlertsModal from './JobAlertsModal';
 import {
   FINCRIME_SKILL_TAXONOMY,
   ROLE_TRACKS,
@@ -148,6 +149,7 @@ export default function CareersAiHub({ onOpenView, isAdmin = false }) {
   const [activeTab, setActiveTab] = useState('all'); // 'all' | 'recommended' | 'saved' | 'tracking'
   const [showMatchStudio, setShowMatchStudio] = useState(false);
   const [showAlertsPanel, setShowAlertsPanel] = useState(false);
+  const [isAlertsModalOpen, setIsAlertsModalOpen] = useState(false);
   const [showFeedDiagnostics, setShowFeedDiagnostics] = useState(false);
   const canShowFeedDiagnostics = Boolean(isAdmin && showFeedDiagnostics);
   const [isSyncingNow, setIsSyncingNow] = useState(false);
@@ -735,6 +737,7 @@ export default function CareersAiHub({ onOpenView, isAdmin = false }) {
             >
               {showAlertsPanel ? 'Hide Job Alerts' : `Job Alerts (${alerts.length})`}
             </button>
+            <button type="button" onClick={() => setIsAlertsModalOpen(true)} className="px-3.5 py-2.5 rounded-xl text-xs font-bold bg-emerald-500 text-slate-950 hover:bg-emerald-400 transition-colors cursor-pointer">Subscribe Modal</button>
             {isAdmin && (
               <button
                 type="button"
@@ -825,6 +828,12 @@ export default function CareersAiHub({ onOpenView, isAdmin = false }) {
             </div>
           </div>
         )}
+
+        <JobAlertsModal
+          isOpen={isAlertsModalOpen}
+          onClose={() => setIsAlertsModalOpen(false)}
+          defaultState={filters.state && filters.state !== 'All India' ? filters.state : ''}
+        />
 
         {/* Phase 4 Job Alerts & Consent Drawer */}
         {showAlertsPanel && (
@@ -1470,3 +1479,4 @@ export default function CareersAiHub({ onOpenView, isAdmin = false }) {
     </section>
   );
 }
+
