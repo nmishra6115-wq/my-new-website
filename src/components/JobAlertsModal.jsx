@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 const SUPABASE_URL = (import.meta.env.VITE_SUPABASE_URL || "").replace(/\/+$/, "");
 const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || "";
@@ -120,9 +120,6 @@ export default function JobAlertsModal({ isOpen, onClose, defaultState = "" }) {
       >
         <div className="flex items-start justify-between gap-4">
           <div>
-            <span className="inline-block rounded-full border border-emerald-400/30 bg-emerald-500/10 px-2.5 py-0.5 text-[11px] font-semibold tracking-wide text-emerald-300 uppercase">
-              AMLDecode Job Tracker
-            </span>
             <h3 id="job-alerts-modal-title" className="mt-2 text-lg font-bold text-white">
               Get FinCrime &amp; AML Role Alerts
             </h3>
@@ -138,7 +135,7 @@ export default function JobAlertsModal({ isOpen, onClose, defaultState = "" }) {
         </div>
 
         <p className="mt-2 text-xs leading-relaxed text-slate-300">
-          Curated AML, KYC/CDD, KYB, Sanctions, and Financial Crime openings across India after each job sync—no spam, one-click opt-out anytime.
+          Curated AML, KYC/CDD, KYB, Sanctions, and Financial Crime openings across India after each job sync�no spam, one-click opt-out anytime.
         </p>
 
         <form onSubmit={handleSubmit} className="mt-4 space-y-3.5 text-xs">
