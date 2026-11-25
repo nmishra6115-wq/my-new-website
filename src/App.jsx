@@ -1022,7 +1022,6 @@ const isCareersAdmin = Boolean(
           <div className="max-w-4xl mx-auto space-y-6">
             <div className="border-b border-stone-200 pb-5 flex flex-wrap items-end justify-between gap-4">
               <div>
-                <p className="text-xs font-bold uppercase tracking-wider text-amber-800">Platform Guide</p>
                 <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 mt-1">Frequently Asked Questions</h1>
               </div>
               <div className="flex flex-wrap gap-2">
