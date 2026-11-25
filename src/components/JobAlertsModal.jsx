@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+﻿import React, { useEffect, useState } from "react";
 
 const SUPABASE_URL = (import.meta.env.VITE_SUPABASE_URL || "").replace(/\/+$/, "");
 const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || "";
@@ -74,7 +74,7 @@ export default function JobAlertsModal({ isOpen, onClose, defaultState = "" }) {
           "Content-Type": "application/json",
           apikey: SUPABASE_ANON_KEY,
           Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
-          Prefer: "return=representation",
+          Prefer: "return=minimal",
         },
         body: JSON.stringify(payload),
       });
@@ -135,7 +135,7 @@ export default function JobAlertsModal({ isOpen, onClose, defaultState = "" }) {
         </div>
 
         <p className="mt-2 text-xs leading-relaxed text-slate-300">
-          Curated AML, KYC/CDD, KYB, Sanctions, and Financial Crime openings across India after each job sync�no spam, one-click opt-out anytime.
+          Curated AML, KYC/CDD, KYB, Sanctions, and Financial Crime openings across India after each job syncï¿½no spam, one-click opt-out anytime.
         </p>
 
         <form onSubmit={handleSubmit} className="mt-4 space-y-3.5 text-xs">
@@ -230,4 +230,5 @@ export default function JobAlertsModal({ isOpen, onClose, defaultState = "" }) {
     </div>
   );
 }
+
 
