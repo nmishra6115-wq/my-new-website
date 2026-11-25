@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+﻿import { useEffect, useMemo, useState } from 'react';
 import { AcademyBrandMark, IntelligenceCard, SectionHeader, TopicBadge } from './AcademyPrimitives';
 import DailyChallengeCard from './DailyChallengeCard';
 import { notesContent, faqData } from '../content';
@@ -13,6 +13,7 @@ import BannerAd468 from './BannerAd468';
 import SupportDeveloperBanner from './SupportDeveloperBanner';
 
 import NativeAdBanner from './NativeAdBanner';
+import MidPageScriptAd from './MidPageScriptAd';
 const PATHWAY_MATCHERS = [
   { label: 'AML Fundamentals', keywords: ['aml', 'money laundering'] },
   { label: 'KYC', keywords: ['kyc', 'client onboarding', 'lifecycle'] },
@@ -549,7 +550,7 @@ export default function HomepageHub({
                 onClick={() => runWithAccount(() => onOpenView('quiz'))}
                 className="text-sm font-bold text-amber-800 hover:text-amber-950 w-fit cursor-pointer"
               >
-                Launch Knowledge Test →
+                Launch Knowledge Test â†’
               </button>
             </div>
 
@@ -566,7 +567,7 @@ export default function HomepageHub({
                 onClick={() => runWithAccount(() => onOpenView('notes'))}
                 className="text-sm font-bold text-amber-800 hover:text-amber-950 w-fit cursor-pointer"
               >
-                Open Syllabus Notes →
+                Open Syllabus Notes â†’
               </button>
             </div>
 
@@ -583,7 +584,7 @@ export default function HomepageHub({
                 onClick={() => runWithAccount(() => onOpenView('jobs'))}
                 className="text-sm font-bold text-amber-800 hover:text-amber-950 w-fit cursor-pointer"
               >
-                Explore Careers AI →
+                Explore Careers AI â†’
               </button>
             </div>
           </div>
@@ -698,7 +699,7 @@ export default function HomepageHub({
                           className="block p-3.5 rounded-xl bg-[#F8F7F4] border border-stone-200 hover:border-amber-600/50 transition-colors"
                         >
                           <p className="text-sm font-semibold text-slate-900">{job.role}</p>
-                          <p className="text-xs text-slate-600 mt-0.5">{job.company} · {job.location}</p>
+                          <p className="text-xs text-slate-600 mt-0.5">{job.company} Â· {job.location}</p>
                         </a>
                       ))}
                     </div>
@@ -743,6 +744,7 @@ export default function HomepageHub({
         </section>
 
       <NativeAdBanner />
+        <MidPageScriptAd />
 
         {/* Learning Pathways */}
         <section id="pathways" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-14">
@@ -759,7 +761,7 @@ export default function HomepageHub({
                 }}
                 className="text-xs font-bold text-amber-800 hover:underline cursor-pointer"
               >
-                View all {notesContent.length} modules →
+                View all {notesContent.length} modules â†’
               </a>
             }
           />
@@ -783,7 +785,7 @@ export default function HomepageHub({
                     <TopicBadge tone="teal">{p.label}</TopicBadge>
                     <p className="mt-3 text-sm font-semibold text-slate-900 leading-snug">{p.moduleTitle}</p>
                   </div>
-                  <span className="text-xs font-bold text-amber-800">Open module →</span>
+                  <span className="text-xs font-bold text-amber-800">Open module â†’</span>
                 </a>
               );
             })}
@@ -819,7 +821,7 @@ export default function HomepageHub({
                     }}
                     className="mt-4 text-left text-xs font-bold text-amber-800 hover:underline cursor-pointer"
                   >
-                    Read full module →
+                    Read full module â†’
                   </a>
                 </IntelligenceCard>
               ))}
@@ -852,7 +854,7 @@ export default function HomepageHub({
           <SectionHeader
             eyebrow="Daily Challenge"
             title="AMLDecode AI Daily Knowledge Challenge"
-            subtitle="Test your AML, KYC, transaction monitoring, SAR, and sanctions judgment daily—with instant feedback and source-backed explanations."
+            subtitle="Test your AML, KYC, transaction monitoring, SAR, and sanctions judgment dailyâ€”with instant feedback and source-backed explanations."
             action={
               <button
                 type="button"
@@ -1235,3 +1237,4 @@ export default function HomepageHub({
 </div>
   );
 }
+
