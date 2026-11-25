@@ -380,6 +380,7 @@ const LEARNER_STORAGE_KEY = 'amldecode_kt2_learner_v1';
     };
   }, []);
 
+  const PUBLIC_UNAUTHENTICATED_VIEWS = new Set(['faq', 'contact', 'privacy', 'terms']);
   const [pendingViewAfterLogin, setPendingViewAfterLogin] = useState(null);
 
   const requestOpenView = (view) => {
@@ -399,7 +400,7 @@ const LEARNER_STORAGE_KEY = 'amldecode_kt2_learner_v1';
   };
 
   useEffect(() => {
-    if (!activeView || learner?.email) return;
+    if (!activeView || learner?.email || PUBLIC_UNAUTHENTICATED_VIEWS.has(activeView)) return;
     const timer = window.setTimeout(() => {
       setPendingViewAfterLogin((prev) => prev || activeView);
       setActiveView(null);

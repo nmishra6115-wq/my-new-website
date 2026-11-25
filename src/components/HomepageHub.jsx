@@ -884,7 +884,7 @@ export default function HomepageHub({
             <div className="flex flex-wrap gap-3">
               <button
                 type="button"
-                onClick={() => runWithAccount(() => onOpenView('faq'))}
+                onClick={() => onOpenView('faq')}
                 className="px-4 py-2.5 rounded-xl text-xs font-bold border border-stone-300 text-slate-900 hover:bg-stone-50 cursor-pointer"
               >
                 Read FAQ
@@ -905,7 +905,7 @@ export default function HomepageHub({
               </button>
               <button
                 type="button"
-                onClick={() => runWithAccount(() => onOpenView('contact'))}
+                onClick={() => onOpenView('contact')}
                 className="px-4 py-2.5 rounded-xl text-xs font-semibold border border-stone-300 text-slate-700 hover:text-slate-900 cursor-pointer"
               >
                 Contact Support
