@@ -888,7 +888,6 @@ const isCareersAdmin = Boolean(
           <div className="space-y-8">
             <div className="border-b border-[var(--amld-border)] pb-6 flex flex-wrap items-end justify-between gap-4">
               <div>
-                <p className="text-xs font-bold uppercase tracking-wider text-[#F4B860]">Compliance Talent & Insights</p>
                 {activeView !== 'jobs' && (
                   <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-[#F5F8FC] mt-1">
                     {activeView === 'network' ? 'Regulatory & Compliance Headlines' : 'Referral & Partner Desk'}

@@ -145,14 +145,6 @@ export default function SyllabusReader({
           </nav>
 
           <div className="flex items-center gap-2 shrink-0">
-            <span className="hidden sm:inline text-xs text-[#7E93AB]">{readProgress}% read</span>
-            <button
-              type="button"
-              onClick={handleCopyLink}
-              className="px-3 py-1.5 rounded-lg text-xs font-semibold border border-[var(--amld-border)] bg-[#0D1E30] text-[#F5F8FC] hover:border-[#21D7C4]/50"
-            >
-              {copied ? 'Link Copied' : 'Copy Link'}
-            </button>
           </div>
         </div>
       </div>
@@ -160,12 +152,6 @@ export default function SyllabusReader({
       <div className="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12 flex-grow">
         {/* Publication Article Header */}
         <header className="mb-8 pb-6 border-b border-[var(--amld-border)]">
-          <div className="flex flex-wrap items-center gap-3 mb-3">
-            <TopicBadge tone="teal">
-              Module {pageIndex + 1} of {notesContent.length}
-            </TopicBadge>
-            <TopicBadge tone="amber">Compliance Syllabus</TopicBadge>
-          </div>
           <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-[#081C33]">
             {currentModule.title}
           </h1>
