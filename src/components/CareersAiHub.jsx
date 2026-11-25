@@ -192,6 +192,17 @@ export default function CareersAiHub({ onOpenView, isAdmin = false }) {
   }, [filters]);
 
   useEffect(() => {
+    try {
+      const dismissedKey = 'amldecode_job_update_popup_dismissed_v1';
+      if (window.sessionStorage.getItem(dismissedKey) !== '1') {
+        setIsAlertsModalOpen(true);
+      }
+    } catch {
+      setIsAlertsModalOpen(true);
+    }
+  }, []);
+
+  useEffect(() => {
     writeJsonStorage(SAVED_JOBS_KEY, savedIds);
   }, [savedIds]);
 
@@ -737,7 +748,7 @@ export default function CareersAiHub({ onOpenView, isAdmin = false }) {
             >
               {showAlertsPanel ? 'Hide Job Alerts' : `Job Alerts (${alerts.length})`}
             </button>
-            <button type="button" onClick={() => setIsAlertsModalOpen(true)} className="px-3.5 py-2.5 rounded-xl text-xs font-bold bg-emerald-500 text-slate-950 hover:bg-emerald-400 transition-colors cursor-pointer">Subscribe Modal</button>
+            <button type="button" onClick={() => setIsAlertsModalOpen(true)} className="px-3.5 py-2.5 rounded-xl text-xs font-bold bg-emerald-500 text-slate-950 hover:bg-emerald-400 transition-colors cursor-pointer">Subscribe for job update</button>
             {isAdmin && (
               <button
                 type="button"
@@ -831,7 +842,14 @@ export default function CareersAiHub({ onOpenView, isAdmin = false }) {
 
         <JobAlertsModal
           isOpen={isAlertsModalOpen}
-          onClose={() => setIsAlertsModalOpen(false)}
+          onClose={() => {
+            try {
+              window.sessionStorage.setItem('amldecode_job_update_popup_dismissed_v1', '1');
+            } catch {
+              // Ignore storage restrictions
+            }
+            setIsAlertsModalOpen(false);
+          }}
           defaultState={filters.state && filters.state !== 'All India' ? filters.state : ''}
         />
 
@@ -1479,4 +1497,5 @@ export default function CareersAiHub({ onOpenView, isAdmin = false }) {
     </section>
   );
 }
+
 
