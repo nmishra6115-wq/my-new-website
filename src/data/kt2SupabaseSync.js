@@ -4,22 +4,16 @@ export async function upsertKt2Learner(profile) {
   if (!supabase || !profile?.email) return null;
   try {
     const now = new Date().toISOString();
-    const { data, error } = await supabase
-      .from('kt2_learners')
-      .upsert(
-        {
-          email: profile.email.trim().toLowerCase(),
-          name: profile.name.trim(),
-          last_login_at: now,
-          updated_at: now,
-        },
-        { onConflict: 'email' }
-      )
-      .select()
-      .maybeSingle();
+    const { data, error } = await supabase.rpc('upsert_kt2_learner', {
+      p_email: profile.email.trim().toLowerCase(),
+      p_name: (profile.name || '').trim(),
+      p_last_login_at: now,
+      p_updated_at: now,
+    });
 
     if (error) return null;
-    return data;
+    if (Array.isArray(data)) return data[0] ?? null;
+    return data ?? null;
   } catch {
     return null;
   }
@@ -73,3 +67,4 @@ export async function insertKt2Attempt(learner, attempt) {
     return null;
   }
 }
+
