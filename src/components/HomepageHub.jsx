@@ -884,7 +884,7 @@ export default function HomepageHub({
             <div className="flex flex-wrap gap-3">
               <button
                 type="button"
-                onClick={() => runWithAccount(() => onOpenView('faq'))}
+                onClick={() => onOpenView('faq')}
                 className="px-4 py-2.5 rounded-xl text-xs font-bold border border-stone-300 text-slate-900 hover:bg-stone-50 cursor-pointer"
               >
                 Read FAQ
@@ -905,7 +905,7 @@ export default function HomepageHub({
               </button>
               <button
                 type="button"
-                onClick={() => runWithAccount(() => onOpenView('contact'))}
+                onClick={() => onOpenView('contact')}
                 className="px-4 py-2.5 rounded-xl text-xs font-semibold border border-stone-300 text-slate-700 hover:text-slate-900 cursor-pointer"
               >
                 Contact Support
@@ -928,8 +928,8 @@ export default function HomepageHub({
           <div className="md:col-span-3 space-y-2">
             <p className="text-xs font-bold uppercase tracking-wider text-amber-800">Platform</p>
             <nav aria-label="Footer Platform Links" className="flex flex-col gap-1 text-sm text-slate-700">
-              <a href="/?view=faq" onClick={(e) => { e.preventDefault(); runWithAccount(() => onOpenView('faq')); }} className="text-left py-1.5 hover:text-slate-950">About &amp; FAQ</a>
-              <a href="/?view=contact" onClick={(e) => { e.preventDefault(); runWithAccount(() => onOpenView('contact')); }} className="text-left py-1.5 hover:text-slate-950">Contact Us</a>
+              <a href="/?view=faq" onClick={(e) => { e.preventDefault(); onOpenView('faq'); }} className="text-left py-1.5 hover:text-slate-950">About &amp; FAQ</a>
+              <a href="/?view=contact" onClick={(e) => { e.preventDefault(); onOpenView('contact'); }} className="text-left py-1.5 hover:text-slate-950">Contact Us</a>
               <a href="/notes" onClick={(e) => { e.preventDefault(); runWithAccount(() => onOpenView('notes')); }} className="text-left py-1.5 hover:text-slate-950">Syllabus Notes</a>
               <a href="/?view=quiz" onClick={(e) => { e.preventDefault(); runWithAccount(() => onOpenView('quiz')); }} className="text-left py-1.5 hover:text-slate-950">Knowledge Test</a>
             </nav>
@@ -937,8 +937,8 @@ export default function HomepageHub({
           <div className="md:col-span-4 space-y-2">
             <p className="text-xs font-bold uppercase tracking-wider text-amber-800">Legal &amp; Disclaimer</p>
             <nav aria-label="Footer Legal Links" className="flex flex-col gap-1 text-sm text-slate-700">
-              <a href="/?view=privacy" onClick={(e) => { e.preventDefault(); runWithAccount(() => onOpenView('privacy')); }} className="text-left py-1.5 hover:text-slate-950">Privacy Policy</a>
-              <a href="/?view=terms" onClick={(e) => { e.preventDefault(); runWithAccount(() => onOpenView('terms')); }} className="text-left py-1.5 hover:text-slate-950">Terms of Service &amp; Disclaimer</a>
+              <a href="/?view=privacy" onClick={(e) => { e.preventDefault(); onOpenView('privacy'); }} className="text-left py-1.5 hover:text-slate-950">Privacy Policy</a>
+              <a href="/?view=terms" onClick={(e) => { e.preventDefault(); onOpenView('terms'); }} className="text-left py-1.5 hover:text-slate-950">Terms of Service &amp; Disclaimer</a>
             </nav>
           </div>
         </div>

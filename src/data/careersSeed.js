@@ -1,5 +1,5 @@
-import { jobOpenings } from '../jobs';
-import { normalizeIndiaLocation } from './indiaLocations';
+import { jobOpenings } from '../jobs.js';
+import { normalizeIndiaLocation } from './indiaLocations.js';
 
 export const ROLE_CATEGORIES = [
   'All Roles',

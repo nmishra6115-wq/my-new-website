@@ -380,6 +380,7 @@ const LEARNER_STORAGE_KEY = 'amldecode_kt2_learner_v1';
     };
   }, []);
 
+  const PUBLIC_UNAUTHENTICATED_VIEWS = new Set(['faq', 'contact', 'privacy', 'terms']);
   const [pendingViewAfterLogin, setPendingViewAfterLogin] = useState(null);
 
   const requestOpenView = (view) => {
@@ -389,7 +390,7 @@ const LEARNER_STORAGE_KEY = 'amldecode_kt2_learner_v1';
       window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
     }
-    if (!learner?.email) {
+    if (!learner?.email && !PUBLIC_UNAUTHENTICATED_VIEWS.has(view)) {
       setPendingViewAfterLogin(view);
       setIsLoginModalOpen(true);
       return;
@@ -399,7 +400,7 @@ const LEARNER_STORAGE_KEY = 'amldecode_kt2_learner_v1';
   };
 
   useEffect(() => {
-    if (!activeView || learner?.email) return;
+    if (!activeView || learner?.email || PUBLIC_UNAUTHENTICATED_VIEWS.has(activeView)) return;
     const timer = window.setTimeout(() => {
       setPendingViewAfterLogin((prev) => prev || activeView);
       setActiveView(null);
@@ -887,7 +888,6 @@ const isCareersAdmin = Boolean(
           <div className="space-y-8">
             <div className="border-b border-[var(--amld-border)] pb-6 flex flex-wrap items-end justify-between gap-4">
               <div>
-                <p className="text-xs font-bold uppercase tracking-wider text-[#F4B860]">Compliance Talent & Insights</p>
                 {activeView !== 'jobs' && (
                   <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-[#F5F8FC] mt-1">
                     {activeView === 'network' ? 'Regulatory & Compliance Headlines' : 'Referral & Partner Desk'}
@@ -1019,10 +1019,9 @@ const isCareersAdmin = Boolean(
 
         {activeView === 'faq' && (
           <div className="max-w-4xl mx-auto space-y-6">
-            <div className="border-b border-[var(--amld-border)] pb-5 flex flex-wrap items-end justify-between gap-4">
+            <div className="border-b border-stone-200 pb-5 flex flex-wrap items-end justify-between gap-4">
               <div>
-                <p className="text-xs font-bold uppercase tracking-wider text-[#C4A77D]">Platform Guide</p>
-                <h1 className="text-3xl sm:text-4xl font-extrabold text-[#F5F8FC] mt-1">Frequently Asked Questions</h1>
+                <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 mt-1">Frequently Asked Questions</h1>
               </div>
               <div className="flex flex-wrap gap-2">
                 {faqCategories.map((cat) => (
@@ -1030,10 +1029,10 @@ const isCareersAdmin = Boolean(
                     key={cat}
                     type="button"
                     onClick={() => setFaqCategory(cat)}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold border ${
+                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-colors cursor-pointer ${
                       faqCategory === cat
-                        ? 'bg-[#C4A77D]/15 border-[#C4A77D] text-[#C4A77D]'
-                        : 'bg-[#0D1E30] border-[var(--amld-border)] text-[#B8C7D9]'
+                        ? 'bg-slate-900 border-slate-900 text-white'
+                        : 'bg-white border-stone-300 text-slate-700 hover:bg-stone-100 hover:text-slate-900'
                     }`}
                   >
                     {cat}
@@ -1043,10 +1042,10 @@ const isCareersAdmin = Boolean(
             </div>
             <div className="space-y-4">
               {filteredFaqs.map((faq, idx) => (
-                <div key={idx} className="p-6 rounded-2xl bg-[#0D1E30] border border-[var(--amld-border)]">
-                  <span className="text-xs font-semibold text-[#C4A77D]">{faq.category}</span>
-                  <h2 className="text-base font-bold text-[#F5F8FC] mt-1">{faq.question}</h2>
-                  <p className="text-sm text-[#B8C7D9] mt-2 leading-relaxed">{faq.answer}</p>
+                <div key={idx} className="p-6 rounded-2xl bg-white border border-stone-200 shadow-xs">
+                  <span className="text-xs font-semibold text-amber-800">{faq.category}</span>
+                  <h2 className="text-base font-bold text-slate-900 mt-1">{faq.question}</h2>
+                  <p className="text-sm text-slate-700 mt-2 leading-relaxed">{faq.answer}</p>
                 </div>
               ))}
             </div>
@@ -1055,11 +1054,11 @@ const isCareersAdmin = Boolean(
 
         {activeView === 'contact' && (
           <div className="max-w-3xl mx-auto space-y-6">
-            <div className="border-b border-[var(--amld-border)] pb-5">
-              <p className="text-xs font-bold uppercase tracking-wider text-[#C4A77D]">Support & Inquiries</p>
-              <h1 className="text-3xl sm:text-4xl font-extrabold text-[#F5F8FC] mt-1">{contactContent.title}</h1>
+            <div className="border-b border-stone-200 pb-5">
+              <p className="text-xs font-bold uppercase tracking-wider text-amber-800">Support &amp; Inquiries</p>
+              <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 mt-1">{contactContent.title}</h1>
             </div>
-            <div className="p-6 sm:p-8 rounded-2xl bg-[#0D1E30] border border-[var(--amld-border)] text-sm sm:text-base text-[#B8C7D9] leading-relaxed whitespace-pre-line">
+            <div className="p-6 sm:p-8 rounded-2xl bg-white border border-stone-200 shadow-xs text-sm sm:text-base text-slate-700 leading-relaxed whitespace-pre-line">
               {contactContent.body}
             </div>
           </div>
@@ -1067,11 +1066,11 @@ const isCareersAdmin = Boolean(
 
         {activeView === 'privacy' && (
           <div className="max-w-3xl mx-auto space-y-6">
-            <div className="border-b border-[var(--amld-border)] pb-5">
-              <p className="text-xs font-bold uppercase tracking-wider text-[#F4B860]">Data Governance</p>
-              <h1 className="text-3xl sm:text-4xl font-extrabold text-[#F5F8FC] mt-1">{privacyPolicy.title}</h1>
+            <div className="border-b border-stone-200 pb-5">
+              <p className="text-xs font-bold uppercase tracking-wider text-amber-800">Data Governance</p>
+              <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 mt-1">{privacyPolicy.title}</h1>
             </div>
-            <div className="p-6 sm:p-8 rounded-2xl bg-[#0D1E30] border border-[var(--amld-border)] text-sm sm:text-base text-[#B8C7D9] leading-relaxed whitespace-pre-line">
+            <div className="p-6 sm:p-8 rounded-2xl bg-white border border-stone-200 shadow-xs text-sm sm:text-base text-slate-700 leading-relaxed whitespace-pre-line">
               {privacyPolicy.content}
             </div>
           </div>
@@ -1079,16 +1078,17 @@ const isCareersAdmin = Boolean(
 
         {activeView === 'terms' && (
           <div className="max-w-3xl mx-auto space-y-6">
-            <div className="border-b border-[var(--amld-border)] pb-5">
-              <p className="text-xs font-bold uppercase tracking-wider text-[#F4B860]">Platform Terms</p>
-              <h1 className="text-3xl sm:text-4xl font-extrabold text-[#F5F8FC] mt-1">{termsOfService.title}</h1>
+            <div className="border-b border-stone-200 pb-5">
+              <p className="text-xs font-bold uppercase tracking-wider text-amber-800">Platform Terms</p>
+              <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 mt-1">{termsOfService.title}</h1>
             </div>
-            <div className="p-6 sm:p-8 rounded-2xl bg-[#0D1E30] border border-[var(--amld-border)] text-sm sm:text-base text-[#B8C7D9] leading-relaxed whitespace-pre-line">
+            <div className="p-6 sm:p-8 rounded-2xl bg-white border border-stone-200 shadow-xs text-sm sm:text-base text-slate-700 leading-relaxed whitespace-pre-line">
               {termsOfService.content}
             </div>
           </div>
         )}
-            <LearnerLoginModal
+
+        <LearnerLoginModal
         isOpen={isLoginModalOpen}
         pendingConfig={pendingStartConfig}
         pendingView={pendingViewAfterLogin}

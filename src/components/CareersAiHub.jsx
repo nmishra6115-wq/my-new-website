@@ -152,6 +152,8 @@ export default function CareersAiHub({ onOpenView, isAdmin = false }) {
   const canShowFeedDiagnostics = Boolean(isAdmin && showFeedDiagnostics);
   const [isSyncingNow, setIsSyncingNow] = useState(false);
   const [adminConfig, setAdminConfig] = useState(() => readAdminConfig());
+  const [remoteJobs, setRemoteJobs] = useState([]);
+  const [remoteJobsSyncedAt, setRemoteJobsSyncedAt] = useState(null);
 
   const [alerts, setAlerts] = useState(() => readStoredAlerts());
   const [alertEmail, setAlertEmail] = useState('');
@@ -207,12 +209,77 @@ export default function CareersAiHub({ onOpenView, isAdmin = false }) {
     writeStoredAlerts(alerts);
   }, [alerts]);
 
+  useEffect(() => {
+    const supabaseUrl = import.meta.env?.VITE_SUPABASE_URL;
+    const supabaseAnonKey = import.meta.env?.VITE_SUPABASE_ANON_KEY;
+    if (!supabaseUrl || !supabaseAnonKey) return;
+
+    let cancelled = false;
+    const endpoint = `${supabaseUrl.replace(/\/+$/, '')}/rest/v1/compliance_jobs?is_active=eq.true&order=published_at.desc&limit=300`;
+
+    fetch(endpoint, {
+      headers: {
+        apikey: supabaseAnonKey,
+        Authorization: `Bearer ${supabaseAnonKey}`,
+      },
+    })
+      .then((res) => (res.ok ? res.json() : []))
+      .then((rows) => {
+        if (cancelled || !Array.isArray(rows)) return;
+        const mapped = rows.map((row, idx) => ({
+          id: row.dedupe_key || row.id || `supa-job-${idx}`,
+          title: row.title || 'Compliance Analyst',
+          employer: row.employer || 'Financial Institution',
+          state: row.state || 'All India',
+          city: row.city || 'All',
+          location: row.location_raw || [row.city, row.state].filter(Boolean).join(', ') || 'India',
+          roleCategory: row.role_category || 'AML / Transaction Monitoring',
+          experience: row.experience_band || '1-3 Years',
+          workMode: row.work_mode || 'Hybrid',
+          salary: row.salary_label || '',
+          applyUrl: row.apply_url || 'https://amldecode.in/?view=jobs',
+          summary: row.ai_summary || row.summary || '',
+          aiSummary: row.ai_summary || '',
+          skills: Array.isArray(row.skills) && row.skills.length > 0
+            ? row.skills
+            : Array.isArray(row.ai_match_tags)
+              ? row.ai_match_tags
+              : [],
+          publishedAt: row.published_at || row.fetched_date || new Date().toISOString(),
+          firstSeenAt: row.created_at || row.fetched_date || new Date().toISOString(),
+          source: row.source_name || 'Supabase Daily Sync',
+        }));
+        setRemoteJobs(mapped);
+        setRemoteJobsSyncedAt(new Date().toISOString());
+      })
+      .catch(() => {
+        // Keep seeded jobs on network/config fallback
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   const expiryDays = sanitizeExpiryDays(adminConfig?.expiryDays ?? DEFAULT_EXPIRY_DAYS);
 
   const lifecycleJobs = useMemo(() => {
     const seeded = buildInitialCareersJobs(nowMs);
-    return seeded.map((job) => evaluateJobLifecycle(job, { nowMs, expiryDays }));
-  }, [nowMs, expiryDays]);
+    const seenKeys = new Set();
+    const combined = [];
+
+    for (const job of [...remoteJobs, ...seeded]) {
+      const key = String(
+        job.id ||
+          `${(job.title || '').toLowerCase()}_${(job.employer || '').toLowerCase()}_${(job.state || '').toLowerCase()}`
+      );
+      if (seenKeys.has(key)) continue;
+      seenKeys.add(key);
+      combined.push(job);
+    }
+
+    return combined.map((job) => evaluateJobLifecycle(job, { nowMs, expiryDays }));
+  }, [nowMs, expiryDays, remoteJobs]);
 
   const allJobs = useMemo(
     () => lifecycleJobs.filter((job) => job.status === 'active'),
