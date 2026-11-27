@@ -1,4 +1,4 @@
-﻿import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { INDIA_STATES_AND_UTS, getCitiesForState } from '../data/indiaLocations';
 import { buildInitialCareersJobs, ROLE_CATEGORIES } from '../data/careersSeed';
 import {
@@ -10,6 +10,7 @@ import {
 } from '../data/careersSmartFeatures';
 import { readAdminConfig, writeAdminConfig } from '../data/careersAdminControls';
 import JobAlertsModal from './JobAlertsModal';
+import { supabase } from '../supabaseClient';
 import {
   FINCRIME_SKILL_TAXONOMY,
   ROLE_TRACKS,
@@ -614,9 +615,15 @@ export default function CareersAiHub({ onOpenView, isAdmin = false }) {
     setIsSyncingNow(true);
     const runDateIst = formatIstDateIso(nowMs);
     try {
+      const sessionResult = supabase?.auth?.getSession ? await supabase.auth.getSession() : null;
+      const accessToken = sessionResult?.data?.session?.access_token || '';
+      const headers = { 'Content-Type': 'application/json' };
+      if (accessToken) {
+        headers.Authorization = `Bearer ${accessToken}`;
+      }
       const response = await fetch('/api/jobs/sync', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers,
         body: JSON.stringify({
           expiryDays,
           sources: adminConfig.sources || [],

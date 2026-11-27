@@ -3,19 +3,20 @@ import { VERIFIED_DAILY_CHALLENGES } from '../../src/data/dailyChallengeBank.js'
 
 export default async function handler(req, res) {
   if (req.method !== 'POST' && req.method !== 'GET') {
-    res.status(405).json({ error: 'Method Not Allowed' });
+    res.status(405).json({ ok: false, error: 'Method Not Allowed' });
     return;
   }
 
   const env = globalThis.process?.env || {};
-  const expectedSecret = env.DKC_CRON_SECRET;
-  const providedSecret =
+  const expectedSecret = String(env.DKC_CRON_SECRET || '').trim();
+  const providedSecret = String(
     req.headers['x-dkc-cron-secret'] ||
     req.headers.authorization?.replace(/^Bearer\s+/i, '') ||
-    '';
+    ''
+  ).trim();
 
-  if (expectedSecret && providedSecret !== expectedSecret) {
-    res.status(401).json({ error: 'Unauthorized' });
+  if (!expectedSecret || providedSecret !== expectedSecret) {
+    res.status(401).json({ ok: false, error: 'Unauthorized' });
     return;
   }
 
@@ -28,11 +29,7 @@ export default async function handler(req, res) {
     ok: result.ok,
     dateIsoIst: result.dateIsoIst,
     weekdayName: result.weekdayName,
-    rotationTopic: result.rotationTopic,
-    questionId: result.question?.id || null,
-    isFallback: result.isFallback,
-    fallbackReason: result.fallbackReason,
-    generatedPendingCount: result.generatedPendingCount,
-    auditLogCount: result.auditLogs.length,
+    published: result.published || null,
+    error: result.error || null,
   });
 }

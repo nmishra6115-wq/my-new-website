@@ -2,15 +2,20 @@
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
-    res.status(405).json({ error: 'Method Not Allowed' });
+    res.status(405).json({ ok: false, error: 'Method Not Allowed' });
     return;
   }
 
   const env = globalThis.process?.env || {};
-  const expectedSecret = env.DKC_CRON_SECRET;
-  const providedSecret = req.headers['x-dkc-cron-secret'] || req.headers.authorization?.replace(/^Bearer\s+/i, '');
-  if (expectedSecret && providedSecret !== expectedSecret) {
-    res.status(401).json({ error: 'Unauthorized' });
+  const expectedSecret = String(env.DKC_CRON_SECRET || '').trim();
+  const providedSecret = String(
+    req.headers['x-dkc-cron-secret'] ||
+    req.headers.authorization?.replace(/^Bearer\s+/i, '') ||
+    ''
+  ).trim();
+
+  if (!expectedSecret || providedSecret !== expectedSecret) {
+    res.status(401).json({ ok: false, error: 'Unauthorized' });
     return;
   }
 
@@ -18,27 +23,11 @@ export default async function handler(req, res) {
   const existingHashes = new Set(Array.isArray(body.existingHashes) ? body.existingHashes : []);
 
   const result = await generateValidatedDailyChallengeBatch({
-    topic: body.topic || 'AML',
-    count: body.count || 5,
+    now: new Date(),
     existingHashes,
+    geminiApiKey: env.GEMINI_API_KEY,
+    model: env.GEMINI_DKC_MODEL || env.GEMINI_INTERVIEW_MODEL,
   });
 
-  if (!result.ok) {
-    res.status(502).json({
-      ok: false,
-      error: result.error,
-      acceptedCount: 0,
-      rejectedCount: result.rejected.length,
-    });
-    return;
-  }
-
-  res.status(200).json({
-    ok: true,
-    model: result.model,
-    acceptedCount: result.accepted.length,
-    rejectedCount: result.rejected.length,
-    accepted: result.accepted,
-    rejected: result.rejected,
-  });
+  res.status(result.ok ? 200 : 502).json(result);
 }
